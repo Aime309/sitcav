@@ -1,6 +1,6 @@
 <!-- end loader -->
       <div id="mySidepanel" class="sidepanel">
-         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+         <a href="javascript:void(0)" class="closebtn" onclick={"closeNav()"}>×</a>
          <a href="index.html">Home </a>
          <a href="#about">About</a>
          <a href="#service">Services  </a>
@@ -25,7 +25,7 @@
                            <li><a href="#"><i class="fa fa-user" aria-hidden="true"></i></a></li>
                            <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
                         </ul>
-                        <button class="openbtn" onclick="openNav()"><img src="images/menu_icon.png" alt="#"/> </button>
+                        <button class="openbtn" onclick={"openNav()"}><img src="images/menu_icon.png" alt="#"/> </button>
                      </div>
                   </div>
                </div>
