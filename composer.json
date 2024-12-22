@@ -1,0 +1,41 @@
+{
+  "name": "flightphp/velt",
+  "description": "🚀 Velt is a quick and easy Svelte starter template with a FlightPHP backend 💻🌐✨",
+  "license": "MIT",
+  "type": "project",
+  "require": {
+    "flightphp/core": "^3.13",
+    "php": ">=7.4"
+  },
+  "scripts": {
+    "build": [
+      "composer install --no-dev -o",
+      "php -r \"if (!is_dir('node_modules')) `npm i`;\"",
+      "npm run build",
+      "composer archive"
+    ]
+  },
+  "archive": {
+    "exclude": [
+      ".vscode",
+      "node_modules",
+      "scripts",
+      ".editorconfig",
+      ".eslintrc.json",
+      ".gitignore",
+      ".git",
+      "biome.json",
+      "composer.*",
+      "LICENSE",
+      "package-lock.json",
+      "package.json",
+      "README.md",
+      "rollup.config.js",
+      "jsconfig.json",
+      "pnpm-*",
+      "main.js",
+      "*.svelte",
+      "*.map"
+    ]
+  }
+}
