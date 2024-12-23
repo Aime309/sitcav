@@ -2,8 +2,7 @@
   import "bootstrap/dist/css/bootstrap.min.css";
   import "../styles/style.css";
   import "../styles/responsive.css";
-  import "../styles/jquery.mCustomScrollbar.min.css";
-  import "fancybox/dist/css/jquery.fancybox.css";
+  import "../scripts/custom"
 
   function openNav() {
     document.getElementById("mySidepanel").style.width = "250px";

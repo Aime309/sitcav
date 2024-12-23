@@ -19,6 +19,6 @@
   },
   "dependencies": {
     "bootstrap": "^4.6.2",
-    "fancybox": "^2.1.8"
+    "jquery": "^3.7.1"
   }
 }
