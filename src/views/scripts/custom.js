@@ -6,8 +6,6 @@ $(() => {
     $('.loader_bg').fadeToggle()
   }, 1500)
 
-  $('[data-toggle="tooltip"]').tooltip()
-
   $('.main-menu ul li.megamenu').mouseover(function () {
     if (!$(this).parent().hasClass('#wrapper')) {
       $('#wrapper').addClass('overlay')
@@ -21,10 +19,6 @@ $(() => {
   $('#sidebarCollapse').on('click', function () {
     $('#sidebar').toggleClass('active')
     $(this).toggleClass('active')
-  })
-
-  $('#blogCarousel').carousel({
-    interval: 5000
   })
 })
 
