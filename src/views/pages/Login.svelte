@@ -1,6 +1,7 @@
 <script>
   import "bootstrap/dist/css/bootstrap.min.css";
   import "@fortawesome/fontawesome-free/css/all.min.css";
+  import "@fontsource/poppins";
   import "../styles/style.css";
   import "../styles/responsive.css";
   import "../scripts/custom";
