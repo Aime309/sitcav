@@ -1,9 +1,5 @@
-import { mount } from 'svelte'
 import App from './views/App.svelte'
 
-export default mount(App, {
-  props: {
-    name: 'World'
-  },
+export default new App({
   target: document.body
 })

@@ -6,9 +6,9 @@
 
 <VeltRouter>
   <Route path="/">
-    <Link to="./inicio">/inicio</Link>
+    <Link to="./ingresar">/ingresar</Link>
   </Route>
-  <Route path="/inicio">
+  <Route path="/ingresar">
     <Login />
   </Route>
 </VeltRouter>
