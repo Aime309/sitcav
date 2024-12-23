@@ -1,8 +1,9 @@
 <script>
   import "bootstrap/dist/css/bootstrap.min.css";
+  import "@fortawesome/fontawesome-free/css/all.min.css";
   import "../styles/style.css";
   import "../styles/responsive.css";
-  import "../scripts/custom"
+  import "../scripts/custom";
 
   function openNav() {
     document.getElementById("mySidepanel").style.width = "250px";

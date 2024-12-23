@@ -8,7 +8,6 @@
   <base href="<?= str_replace('index.php', '', $_SERVER['SCRIPT_NAME']) ?>" />
   <link rel="icon" href="./images/favicon.png" />
   <link rel="stylesheet" href="./global.css" />
-  <link rel="stylesheet" href="./fontawesome/css/font-awesome.min.css" />
   <link rel="stylesheet" href="./build/bundle.css">
   <script defer src="./build/bundle.js"></script>
 </head>
