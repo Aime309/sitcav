@@ -5,7 +5,10 @@
   "type": "project",
   "require": {
     "flightphp/core": "^3.13",
-    "php": ">=7.4"
+    "php": ">=7.4",
+    "leafs/auth": "^3.3",
+    "symfony/dotenv": "^7.2",
+    "leafs/leaf": "^3.10"
   },
   "scripts": {
     "build": [
@@ -37,5 +40,8 @@
       "*.svelte",
       "*.map"
     ]
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^7.2"
   }
 }

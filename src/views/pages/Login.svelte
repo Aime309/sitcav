@@ -21,11 +21,17 @@
         </h2>
       </div>
       <div class="d-none d-md-flex col-sm-3 col-md-3">
-        <img src="./images/favicon.png" alt="Logo de SITCAV" class="img-fluid" />
+        <img
+          src="./images/favicon.png"
+          alt="Logo de SITCAV"
+          class="img-fluid"
+        />
       </div>
       <div class="col-md-3">
         <form method="post">
-          <h3 class="d-none d-md-block text-light text-center">Iniciar sesión</h3>
+          <h3 class="d-none d-md-block text-light text-center">
+            Iniciar sesión
+          </h3>
           <h3 class="d-md-none text-center">Iniciar sesión</h3>
           <input
             type="number"
@@ -34,6 +40,7 @@
             min={0}
             class="form-control rounded-0 my-3"
             placeholder="Cédula"
+            value={12345678}
           />
           <input
             type="password"
@@ -41,6 +48,7 @@
             required
             class="form-control rounded-0 my-3"
             placeholder="Contraseña"
+            value="admin123"
           />
           <button class="btn rounded-0 w-100 text-light fw-bold">
             Ingresar
