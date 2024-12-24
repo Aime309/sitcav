@@ -1,10 +1,44 @@
 <script>
   import "bootstrap/dist/css/bootstrap.min.css";
   import "@fortawesome/fontawesome-free/css/all.min.css";
+  import "bootstrap/js/dist/dropdown";
+  import { Link } from "svelte-routing";
+  import ThemeToggler from "../components/ThemeToggler.svelte";
+  import theme from "../stores/theme";
 </script>
 
-<main>
-  <div class="container">
+<main
+  class="min-vh-100"
+  style:background-image="url(./images/banner@{$theme}.png)"
+>
+  <nav class="navbar navbar-expand-sm p-5">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="./">
+        <img src="./images/favicon.png" alt="Logo de SITCAV" height={55} />
+      </a>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+          <button
+            class="btn btn-link nav-link bg-transparent"
+            class:text-light={$theme === "dark"}
+            class:text-dark={$theme === "light"}
+            data-bs-toggle="dropdown"
+          >
+            <i class="fa-solid fa-user fs-1"></i>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end">
+            <Link class="dropdown-item" to="./ingresar">Ingresar</Link>
+            <Link class="dropdown-item" to="./registrarse">Registrarse</Link>
+          </div>
+        </li>
+        <li class="nav-item">
+          <ThemeToggler />
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
     <div class="row align-items-center">
       <div class="col-sm-9 col-md-6">
         <h1 class="fw-bold text-primary">
@@ -29,10 +63,7 @@
       </div>
       <div class="col-md-3">
         <form method="post">
-          <h3 class="d-none d-md-block text-light text-center">
-            Iniciar sesión
-          </h3>
-          <h3 class="d-md-none text-center">Iniciar sesión</h3>
+          <h3 class="text-center">Iniciar sesión</h3>
           <input
             type="number"
             name="idCard"
@@ -61,10 +92,7 @@
 
 <style>
   main {
-    background-image: url("../images/banner.png");
-    min-height: 100vh;
-    display: grid;
-    place-content: center;
+    background-size: cover;
   }
 
   h1 {
@@ -81,5 +109,9 @@
 
   img {
     max-height: 170px;
+  }
+
+  :global(.dropdown-menu) {
+    --bs-dropdown-min-width: unset;
   }
 </style>
