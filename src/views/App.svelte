@@ -6,15 +6,23 @@
   import Register from "./pages/Register.svelte";
   import "bootstrap/dist/css/bootstrap.min.css";
   import "@fortawesome/fontawesome-free/css/all.min.css";
-  import "bootstrap/dist/js/bootstrap.bundle.min";
   import { onMount } from "svelte";
-  import { Tooltip } from "bootstrap";
+  import { Tooltip, Dropdown } from "bootstrap";
 
   onMount(() => {
     document
       .querySelectorAll('[data-bs-toggle="tooltip"]')
       .forEach((element) => {
         new Tooltip(element);
+      });
+
+    document
+      .querySelectorAll('[data-bs-toggle="dropdown"]')
+      .forEach((element) => {
+        element.addEventListener("click", (event) => {
+          event.preventDefault();
+          new Dropdown(element);
+        });
       });
   });
 </script>
