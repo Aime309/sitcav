@@ -11,13 +11,13 @@
   class="min-vh-100"
   style:background-image="url(./images/banner@{$theme}.png)"
 >
-  <nav class="navbar navbar-expand-sm p-5">
+  <nav class="navbar navbar-expand p-5">
     <div class="container-fluid">
       <a class="navbar-brand" href="./">
         <img src="./images/favicon.png" alt="Logo de SITCAV" height={55} />
       </a>
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item dropdown">
+      <ul class="navbar-nav ms-auto d-flex">
+        <li class="dropdown">
           <button
             class="btn btn-link nav-link bg-transparent"
             class:text-light={$theme === "dark"}
@@ -31,7 +31,7 @@
             <Link class="dropdown-item" to="./registrarse">Registrarse</Link>
           </div>
         </li>
-        <li class="nav-item">
+        <li>
           <ThemeToggler />
         </li>
       </ul>
