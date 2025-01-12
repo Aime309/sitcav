@@ -13,5 +13,6 @@ auth()->config('messages.loginParamsError', 'Cédula o contraseña incorrecta');
 auth()->config('messages.loginPasswordError', auth()->config('messages.loginParamsError'));
 
 Flight::set('flight.views.path', ROOT . '/src/views');
+
 require ROOT . '/src/routes/index.php';
 Flight::start();

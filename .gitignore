@@ -12,3 +12,5 @@ composer.phar
 flightphp-velt-*
 .env
 *.db
+*.bkp
+*.dtmp
