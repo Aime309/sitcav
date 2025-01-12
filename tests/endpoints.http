@@ -1,0 +1,11 @@
+@url = http://localhost:8080/app
+
+POST {{url}}/api/registrarse
+Content-type: application/json
+
+{
+  "idCard": 28072391,
+  "password": "Fran.123",
+  "secret_question": "Color favorito",
+  "secret_answer": "vinotinto"
+}

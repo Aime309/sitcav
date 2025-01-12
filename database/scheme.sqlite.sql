@@ -9,10 +9,10 @@ create table users (
   idCard integer not null unique check (idCard > 0),
   password varchar(255) not null,
   role varchar(255) not null check (role in ("admin", "vendedor")),
-  is_active boolean default 1,
-  secret_questiom varchar(255) not null,
+  is_active boolean default true,
+  secret_question varchar(255) not null,
   secret_answer varchar(255) not null,
-  admin_id integer not null default id,
+  admin_id integer,
 
   foreign key (admin_id) references users(id)
 );
