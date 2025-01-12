@@ -5,6 +5,9 @@
   import { Link } from "svelte-routing";
   import ThemeToggler from "../components/ThemeToggler.svelte";
   import theme from "../stores/theme";
+  import title from "../stores/title";
+
+  $title = "Ingresar";
 </script>
 
 <main
