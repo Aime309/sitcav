@@ -1,3 +1,3 @@
 <?php
 
-header('Location: app');
+header('location: app');
