@@ -1,12 +1,13 @@
 {
   "require": {
     "flightphp/core": "^3.13",
-    "php": ">=7.4",
-    "leafs/auth": "^3.3",
-    "symfony/dotenv": "^7.2",
-    "leafs/leaf": "^3.10",
     "illuminate/container": "^11.37",
-    "illuminate/database": "^11.37"
+    "illuminate/database": "^11.37",
+    "leafs/auth": "^3.3",
+    "leafs/db": "^2.3",
+    "leafs/leaf": "^3.10",
+    "php": ">=7.4",
+    "symfony/dotenv": "^7.2"
   },
   "autoload": {
     "psr-4": {
@@ -22,6 +23,7 @@
     ]
   },
   "archive": {
+    "name": "sitcav",
     "exclude": [
       ".vscode",
       "node_modules",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "654b6543585ac83191a96be27618033e",
+    "content-hash": "bf5169013114ec9820707f34d8c34ceb",
     "packages": [
         {
             "name": "brick/math",
@@ -1019,16 +1019,16 @@
         },
         {
             "name": "leafs/db",
-            "version": "v2.2.2",
+            "version": "v2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/leafsphp/db.git",
-                "reference": "964e939c49d389235f8f10eb3fba6a07ef6f1791"
+                "reference": "bd7afbc182fa6b69080db3bd49d340ec4aa6f8fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leafsphp/db/zipball/964e939c49d389235f8f10eb3fba6a07ef6f1791",
-                "reference": "964e939c49d389235f8f10eb3fba6a07ef6f1791",
+                "url": "https://api.github.com/repos/leafsphp/db/zipball/bd7afbc182fa6b69080db3bd49d340ec4aa6f8fe",
+                "reference": "bd7afbc182fa6b69080db3bd49d340ec4aa6f8fe",
                 "shasum": ""
             },
             "require": {
@@ -1071,7 +1071,7 @@
             ],
             "support": {
                 "issues": "https://github.com/leafsphp/db/issues",
-                "source": "https://github.com/leafsphp/db/tree/v2.2.2"
+                "source": "https://github.com/leafsphp/db/tree/v2.3"
             },
             "funding": [
                 {
@@ -1083,7 +1083,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-12-16T18:46:41+00:00"
+            "time": "2025-01-09T16:44:48+00:00"
         },
         {
             "name": "leafs/exception",
@@ -1296,16 +1296,16 @@
         },
         {
             "name": "leafs/http",
-            "version": "v3.2",
+            "version": "v3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/leafsphp/http.git",
-                "reference": "7a8500a50c329aff57a9db95b134df4092194600"
+                "reference": "e276d9026a6fae5393c155e89f56c0c9dd12901b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leafsphp/http/zipball/7a8500a50c329aff57a9db95b134df4092194600",
-                "reference": "7a8500a50c329aff57a9db95b134df4092194600",
+                "url": "https://api.github.com/repos/leafsphp/http/zipball/e276d9026a6fae5393c155e89f56c0c9dd12901b",
+                "reference": "e276d9026a6fae5393c155e89f56c0c9dd12901b",
                 "shasum": ""
             },
             "require": {
@@ -1347,7 +1347,7 @@
             ],
             "support": {
                 "issues": "https://github.com/leafsphp/http/issues",
-                "source": "https://github.com/leafsphp/http/tree/v3.2"
+                "source": "https://github.com/leafsphp/http/tree/v3.3"
             },
             "funding": [
                 {
@@ -1359,7 +1359,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-12-06T14:39:34+00:00"
+            "time": "2024-12-23T11:31:46+00:00"
         },
         {
             "name": "leafs/leaf",
@@ -2080,16 +2080,16 @@
         },
         {
             "name": "symfony/finder",
-            "version": "v6.4.13",
+            "version": "v6.4.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "daea9eca0b08d0ed1dc9ab702a46128fd1be4958"
+                "reference": "1d0e8266248c5d9ab6a87e3789e6dc482af3c9c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/daea9eca0b08d0ed1dc9ab702a46128fd1be4958",
-                "reference": "daea9eca0b08d0ed1dc9ab702a46128fd1be4958",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/1d0e8266248c5d9ab6a87e3789e6dc482af3c9c7",
+                "reference": "1d0e8266248c5d9ab6a87e3789e6dc482af3c9c7",
                 "shasum": ""
             },
             "require": {
@@ -2124,7 +2124,7 @@
             "description": "Finds files and directories via an intuitive fluent interface",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/finder/tree/v6.4.13"
+                "source": "https://github.com/symfony/finder/tree/v6.4.17"
             },
             "funding": [
                 {
@@ -2140,7 +2140,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-01T08:30:56+00:00"
+            "time": "2024-12-29T13:51:37+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
