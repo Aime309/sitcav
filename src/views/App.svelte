@@ -4,27 +4,6 @@
   import Login from "./pages/Login.svelte";
   import Dashboard from "./pages/Dashboard.svelte";
   import Register from "./pages/Register.svelte";
-  import "bootstrap/dist/css/bootstrap.min.css";
-  import "@fortawesome/fontawesome-free/css/all.min.css";
-  import { onMount } from "svelte";
-  import { Tooltip, Dropdown } from "bootstrap";
-
-  onMount(() => {
-    document
-      .querySelectorAll('[data-bs-toggle="tooltip"]')
-      .forEach((element) => {
-        new Tooltip(element);
-      });
-
-    document
-      .querySelectorAll('[data-bs-toggle="dropdown"]')
-      .forEach((element) => {
-        element.addEventListener("click", (event) => {
-          event.preventDefault();
-          new Dropdown(element);
-        });
-      });
-  });
 </script>
 
 <VeltRouter>

@@ -1,8 +1,4 @@
 {
-  "name": "flightphp/velt",
-  "description": "🚀 Velt is a quick and easy Svelte starter template with a FlightPHP backend 💻🌐✨",
-  "license": "MIT",
-  "type": "project",
   "require": {
     "flightphp/core": "^3.13",
     "php": ">=7.4",

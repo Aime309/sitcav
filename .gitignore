@@ -5,7 +5,7 @@ composer.phar
 # You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
 # composer.lock
 /node_modules/
-/app/build/bundle.*
+/app/build/
 
 .DS_Store
 *.tar
@@ -14,3 +14,4 @@ flightphp-velt-*
 *.db
 *.bkp
 *.dtmp
+src/env.d.ts
