@@ -4,21 +4,43 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;
 use Symfony\Component\Dotenv\Dotenv;
 
-/** Absolute path to project root */
-const ROOT = __DIR__ . '/..';
+/////////////////////////
+// CONSTANTES GLOBALES //
+/////////////////////////
+/** Por ejemplo sería: `C:\xampp\htdocs\sitcav` */
+const CARPETA_RAIZ = __DIR__ . '/..';
 
-require ROOT . '/vendor/autoload.php';
+require CARPETA_RAIZ . '/vendor/autoload.php';
 
-(new Dotenv)->load(ROOT . '/.env');
+////////////////////////////////////////////////////
+// CARGAR VARIABLES DE ENTORNO - ver archivo .env //
+////////////////////////////////////////////////////
+(new Dotenv)->load(CARPETA_RAIZ . '/.env');
+
+////////////////////////////////////////////////////
+// CONFIGURAR LEAF AUTH (módulo de autenticación) //
+////////////////////////////////////////////////////
 auth()->config('session', true);
+auth()->config('db.table', 'usuarios');
+auth()->config('password.key', 'clave');
 auth()->config('messages.loginParamsError', 'Cédula o contraseña incorrecta');
 auth()->config('messages.loginPasswordError', auth()->config('messages.loginParamsError'));
 auth()->config('timestamps', false);
 
-Flight::set('flight.views.path', ROOT . '/src/views');
+//////////////////////////////////////////////
+// CONFIGURAR MOTOR DE PLANTILLAS DE FLIGHT //
+//////////////////////////////////////////////
+Flight::set('flight.views.path', CARPETA_RAIZ . '/src');
 
+///////////////////////////////////////////
+// CONFIGURAR CONTENEDOR DE DEPENDENCIAS //
+///////////////////////////////////////////
 $container = new Container;
 $container->singleton(PDO::class, static fn(): PDO => db()->connection());
+
+/////////////////////////
+// CONFIGURAR ELOQUENT //
+/////////////////////////
 $manager = new Manager;
 
 $manager->addConnection([
@@ -32,5 +54,12 @@ $manager->addConnection([
 $manager->setAsGlobal();
 $manager->bootEloquent();
 
-require ROOT . '/src/routes/index.php';
+//////////////////
+// CARGAR RUTAS //
+//////////////////
+require CARPETA_RAIZ . '/src/rutas/index.php';
+
+//////////////////////////
+// INICIAR EL FRAMEWORK //
+//////////////////////////
 Flight::start();

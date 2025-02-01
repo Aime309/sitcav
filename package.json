@@ -1,18 +1,19 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "start php -S localhost:8080 & node scripts/dev.mjs",
-    "build": "node scripts/build.mjs"
+    "dev": "start php -S localhost:8080 & node comandos/desarrollar.mjs",
+    "build": "node comandos/compilar.mjs"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
+    "@sveltestrap/sveltestrap": "^7.0.3",
     "@types/bootstrap": "^5.2.10",
     "bootstrap": "^5.3.3",
     "dotenv": "^16.4.7",
     "esbuild": "0.21.5",
     "esbuild-svelte": "^0.9.0",
     "jquery": "^3.7.1",
-    "svelte": "^5.19.6",
+    "svelte": "^4.2.19",
     "svelte-routing": "^2.13.0",
     "sweetalert2": "^11.15.10"
   }
