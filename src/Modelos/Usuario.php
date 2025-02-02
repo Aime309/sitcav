@@ -6,17 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * @property-read int $id
- * @property-read int $cedula
- * @property-read 'Administrador'|'Vendedor' $rol
- * @property-read bool $esta_activo
- * @property-read string $pregunta_secreta
- */
 final class Usuario extends Model
 {
   protected $table = 'usuarios';
-  protected $hidden = ['clave', 'respuesta_secreta'];
 
   function administrador(): BelongsTo
   {
@@ -26,5 +18,25 @@ final class Usuario extends Model
   function vendedores(): HasMany
   {
     return $this->hasMany(self::class, 'id_admin');
+  }
+
+  function cotizaciones(): HasMany
+  {
+    return $this->hasMany(Cotizacion::class, 'id_usuario');
+  }
+
+  function estados(): HasMany
+  {
+    return $this->hasMany(Estado::class, 'id_usuario');
+  }
+
+  function categoriasProducto(): HasMany
+  {
+    return $this->hasMany(CategoriaProducto::class, 'id_usuario');
+  }
+
+  function tiposPago(): HasMany
+  {
+    return $this->hasMany(TipoPago::class, 'id_usuario');
   }
 }

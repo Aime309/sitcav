@@ -12,7 +12,7 @@ drop table if exists localidades;
 drop table if exists estados;
 drop table if exists cotizaciones;
 drop table if exists tipos_pago;
-drop table if exists categorias;
+drop table if exists categorias_producto;
 drop table if exists negocios;
 drop table if exists usuarios;
 
@@ -88,7 +88,7 @@ create table proveedores (
   foreign key (id_sector) references sectores(id)
 );
 
-create table categorias (
+create table categorias_producto (
   id integer primary key autoincrement,
   nombre varchar(255) not null unique,
   id_usuario integer not null,
@@ -109,7 +109,7 @@ create table productos (
   id_categoria integer not null,
   id_proveedor integer not null,
 
-  foreign key (id_categoria) references categorias(id),
+  foreign key (id_categoria) references categorias_producto(id),
   foreign key (id_proveedor) references proveedores(id)
 );
 

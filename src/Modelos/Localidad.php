@@ -23,4 +23,19 @@ final class Localidad extends Model
   {
     return $this->belongsTo(Estado::class, 'id_estado');
   }
+
+  function clientes(): HasMany
+  {
+    return $this->hasMany(Cliente::class, 'id_localidad');
+  }
+
+  function negocios(): HasMany
+  {
+    return $this->hasMany(Negocio::class, 'id_localidad');
+  }
+
+  function proveedores(): HasMany
+  {
+    return $this->hasMany(Proveedor::class, 'id_localidad');
+  }
 }

@@ -9,7 +9,7 @@ delete from compras;
 delete from proveedores;
 delete from cotizaciones;
 delete from tipos_pago;
-delete from categorias;
+delete from categorias_producto;
 delete from negocios;
 delete from sectores;
 delete from localidades;
@@ -576,7 +576,7 @@ insert into proveedores (id, rif, nombre, telefono, id_estado) values
   (4, 'J-12345678-2', 'Ferretería El Constructor', '02121234567', 24),
   (5, 'J-12345678-3', 'Ferretería El Constructor', '02121234567', 24);
 
-insert into categorias (id, nombre, id_usuario) values
+insert into categorias_producto (id, nombre, id_usuario) values
   (1, 'Routers', 1),
   (2, 'Modems', 1),
   (3, 'Switches', 1),

@@ -6,22 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-final class Estado extends Model
+final class TipoPago extends Model
 {
-  protected $table = 'estados';
-
-  function localidades(): HasMany
-  {
-    return $this->hasMany(Localidad::class, 'id_estado');
-  }
+  protected $table = 'tipos_pago';
 
   function usuario(): BelongsTo
   {
     return $this->belongsTo(Usuario::class, 'id_usuario');
   }
 
-  function proveedores(): HasMany
+  function pagos(): HasMany
   {
-    return $this->hasMany(Proveedor::class, 'id_estado');
+    return $this->hasMany(Pago::class, 'id_tipo_pago');
   }
 }

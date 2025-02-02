@@ -6,9 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-final class Cliente extends Model
+final class Proveedor extends Model
 {
-  protected $table = 'clientes';
+  protected $table = 'proveedores';
+
+  function estado(): BelongsTo
+  {
+    return $this->belongsTo(Estado::class, 'id_estado');
+  }
 
   function localidad(): BelongsTo
   {
@@ -20,8 +25,13 @@ final class Cliente extends Model
     return $this->belongsTo(Sector::class, 'id_sector');
   }
 
-  function ventas(): HasMany
+  function productos(): HasMany
   {
-    return $this->hasMany(Venta::class, 'id_cliente');
+    return $this->hasMany(Producto::class, 'id_proveedor');
+  }
+
+  function compras(): HasMany
+  {
+    return $this->hasMany(Compra::class, 'id_proveedor');
   }
 }
