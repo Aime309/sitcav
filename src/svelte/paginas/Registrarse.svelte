@@ -16,6 +16,7 @@
     if (respuesta.ok) {
       navigate("./panel");
     } else {
+      alert(await respuesta.text())
       // Swal.fire({
       //   title: await respuesta.text(),
       //   icon: "error",
