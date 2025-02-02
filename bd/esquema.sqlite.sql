@@ -69,9 +69,7 @@ create table negocios (
   telefono varchar(255) check (telefono like '0__________' or telefono like '+%'),
   id_localidad integer not null,
   id_sector integer,
-  id_usuario integer not null,
 
-  foreign key (id_usuario) references usuarios(id),
   foreign key (id_localidad) references localidades(id),
   foreign key (id_sector) references sectores(id)
 );
@@ -84,32 +82,10 @@ create table proveedores (
   id_estado integer not null,
   id_localidad integer,
   id_sector integer,
-  id_usuario integer not null,
 
-  foreign key (id_usuario) references usuarios(id),
   foreign key (id_estado) references estados(id),
   foreign key (id_localidad) references localidades(id),
   foreign key (id_sector) references sectores(id)
-);
-
-create table compras (
-  id integer primary key autoincrement,
-  fecha_hora datetime default current_timestamp,
-  cotizacion_dolar_bolivares decimal(10, 2) not null check (cotizacion_dolar_bolivares > 0),
-  id_proveedor integer not null,
-
-  foreign key (id_proveedor) references proveedores(id)
-);
-
-create table detalles_compras (
-  id integer primary key autoincrement,
-  cantidad integer not null check (cantidad > 0),
-  precio_unitario_fijo_dolares decimal(10, 2) not null check (precio_unitario_fijo_dolares > 0),
-  id_producto integer not null,
-  id_compra integer not null,
-
-  foreign key (id_producto) references productos(id),
-  foreign key (id_compra) references compras(id)
 );
 
 create table categorias (
@@ -137,6 +113,26 @@ create table productos (
   foreign key (id_proveedor) references proveedores(id)
 );
 
+create table compras (
+  id integer primary key autoincrement,
+  fecha_hora datetime default current_timestamp,
+  cotizacion_dolar_bolivares decimal(10, 2) not null check (cotizacion_dolar_bolivares > 0),
+  id_proveedor integer not null,
+
+  foreign key (id_proveedor) references proveedores(id)
+);
+
+create table detalles_compras (
+  id integer primary key autoincrement,
+  cantidad integer not null check (cantidad > 0),
+  precio_unitario_fijo_dolares decimal(10, 2) not null check (precio_unitario_fijo_dolares > 0),
+  id_producto integer not null,
+  id_compra integer not null,
+
+  foreign key (id_producto) references productos(id),
+  foreign key (id_compra) references compras(id)
+);
+
 create table clientes (
   id integer primary key autoincrement,
   cedula integer not null unique check (cedula > 0),
@@ -145,11 +141,9 @@ create table clientes (
   telefono varchar(255) check (telefono like '0__________' or telefono like '+%'),
   id_localidad integer not null,
   id_sector integer,
-  id_usuario integer not null,
 
   foreign key (id_localidad) references localidades(id),
-  foreign key (id_sector) references sectores(id),
-  foreign key (id_usuario) references usuarios(id)
+  foreign key (id_sector) references sectores(id)
 );
 
 create table ventas (

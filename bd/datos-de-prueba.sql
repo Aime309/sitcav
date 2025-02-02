@@ -554,5 +554,5 @@ insert into localidades (id, id_estado, nombre) values
   (522, 25, 'Islas Los Hermanos');
 
 insert into negocios values
-  (1, 'J-1234567890', 'ACME', '02341231234', 260, null, 1),
-  (2, 'J-123456789', 'ACME', '02341231235', 260, null, 3);
+  (1, 'J-1234567890', 'ACME', '02341231234', 260, null),
+  (2, 'J-123456789', 'ACME', '02341231235', 260, null);
