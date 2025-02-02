@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="./global.css" />
   <link rel="stylesheet" href="./build/bundle.css">
   <script defer src="./build/bundle.js"></script>
+  <title>SITCAV</title>
 </head>
 
 <body>

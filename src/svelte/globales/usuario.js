@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { readable } from 'svelte/store'
+import { readable } from "svelte/store";
 
 /** @type {{id?: number, cedula?: number, estaAutenticado: boolean}} */
 const estadoInicial = {
@@ -8,19 +8,19 @@ const estadoInicial = {
   cedula: undefined,
 
   get estaAutenticado() {
-    return this.id !== undefined
-  }
-}
+    return this.id !== undefined;
+  },
+};
 
-const usuario = readable(estadoInicial, set => {
-  fetch('./api/perfil')
-    .then(respuesta => respuesta.json())
-    .then(datosDelUsuario =>
+const usuario = readable(estadoInicial, (set) => {
+  fetch("./api/perfil")
+    .then((respuesta) => respuesta.json())
+    .then((datosDelUsuario) =>
       set({
         ...estadoInicial,
-        ...datosDelUsuario
-      })
-    )
-})
+        ...datosDelUsuario,
+      }),
+    );
+});
 
-export default usuario
+export default usuario;

@@ -1,11 +1,12 @@
 import { readFileSync, existsSync, copyFileSync, writeFileSync } from 'node:fs'
 import { parse } from 'dotenv'
-import sveltePlugin from 'esbuild-svelte'
+import esbuildSvelte from 'esbuild-svelte'
+import { sveltePreprocess } from 'svelte-preprocess'
 
 /** @type {import('esbuild').BuildOptions} */
 export const commonOptions = {
   bundle: true,
-  entryPoints: ['src/index.js'],
+  entryPoints: ['src/index.ts'],
   format: 'esm',
   loader: {
     '.module.css': 'local-css',
@@ -15,7 +16,9 @@ export const commonOptions = {
   },
   outfile: 'app/build/bundle.js',
   target: ['es2018'],
-  plugins: [sveltePlugin({})],
+  plugins: [esbuildSvelte({
+    preprocess: sveltePreprocess(),
+  })],
   conditions: ['main']
 }
 

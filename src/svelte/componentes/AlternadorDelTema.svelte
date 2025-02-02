@@ -1,46 +1,39 @@
 <script>
   import tema from "../globales/tema";
+  import Icono from "./Icono.svelte";
 </script>
 
 <div class="dropdown">
   <button
-    class="btn btn-link text-decoration-none d-flex align-items-center fs-1"
-    class:text-light={$tema === "dark"}
-    class:text-dark={$tema === "light"}
+    class="nav-link text-bg-{$tema} bg-transparent"
     data-bs-toggle="dropdown"
   >
     {#if $tema === "dark"}
-      <i class="fa-solid fa-moon"></i>
+      <Icono nombre="moon" tamañoFijo tamaño="2x" />
     {:else if $tema === "light"}
-      <i class="fa-solid fa-sun"></i>
+      <Icono nombre="sun" tamañoFijo tamaño="2x" />
     {/if}
   </button>
-  <ul class="dropdown-menu dropdown-menu-end">
-    <li>
+  <div class="dropdown-menu dropdown-menu-end p-0">
+    <li class="dropdown-item p-0">
       <button
-        class="dropdown-item d-flex align-items-center"
-        class:active={$tema === 'light'}
+        class="btn btn-outline-primary w-100 rounded-0 d-flex justify-content-between align-items-center gap-2"
+        class:active={$tema === "light"}
         on:click={tema.activarTemaClaro}
       >
-        <i class="fa-solid fa-sun me-2"></i>
+        <Icono nombre="sun" tamañoFijo />
         Claro
       </button>
     </li>
-    <li>
+    <li class="dropdown-item p-0">
       <button
-        class="dropdown-item d-flex align-items-center"
-        class:active={$tema === 'dark'}
+        class="btn btn-outline-primary w-100 rounded-0 d-flex justify-content-between align-items-center gap-2"
+        class:active={$tema === "dark"}
         on:click={tema.activarTemaOscuro}
       >
-        <i class="fa-solid fa-moon me-2"></i>
+        <Icono nombre="moon" tamañoFijo />
         Oscuro
       </button>
     </li>
-  </ul>
+  </div>
 </div>
-
-<style>
-  .btn-link {
-    min-width: 46px;
-  }
-</style>

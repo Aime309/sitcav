@@ -1,28 +1,28 @@
-import { writable } from 'svelte/store'
+import { writable } from "svelte/store";
 
 function crearTemaGlobal() {
-  const { set, subscribe } = writable('light', set => {
-    const temaPorDefecto = localStorage.getItem('tema') ?? 'light'
+  const { set, subscribe } = writable("light", (set) => {
+    const temaPorDefecto = localStorage.getItem("tema") ?? "light";
 
-    set(temaPorDefecto)
-  })
+    set(temaPorDefecto);
+  });
 
-  subscribe(temaActual => {
-    document.documentElement.setAttribute('data-bs-theme', temaActual)
-    localStorage.setItem('tema', temaActual)
-  })
+  subscribe((temaActual) => {
+    document.documentElement.setAttribute("data-bs-theme", temaActual);
+    localStorage.setItem("tema", temaActual);
+  });
 
   return {
     subscribe,
     activarTemaOscuro() {
-      set('dark')
+      set("dark");
     },
     activarTemaClaro() {
-      set('light')
-    }
-  }
+      set("light");
+    },
+  };
 }
 
-const tema = crearTemaGlobal()
+const tema = crearTemaGlobal();
 
-export default tema
+export default tema;

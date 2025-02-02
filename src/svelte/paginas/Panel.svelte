@@ -9,7 +9,7 @@
 
 <MenuPrivado />
 
-<div class="container">
+<!--<div class="container">
   <Contadores />
   <div class="row">
     <div class="col-md-8 col-sm-8 col-xs-12">
@@ -29,7 +29,6 @@
             <img src="assets/img/3.jpg" alt="" />
           </div>
         </div>
-        <!--INDICATORS-->
         <ol class="carousel-indicators">
           <li
             data-target="#carousel-example"
@@ -39,7 +38,6 @@
           <li data-target="#carousel-example" data-slide-to="1"></li>
           <li data-target="#carousel-example" data-slide-to="2"></li>
         </ol>
-        <!--PREVIUS-NEXT BUTTONS-->
         <a
           class="left carousel-control"
           href="#carousel-example"
@@ -226,7 +224,6 @@
                   Donec sit amet ligula enim. Duis vel condimentum massa.
                   Maecenas eget congue dui interdum nibh et, volutpat dolor.
                 </p>
-                <!-- Nested media object -->
                 <div class="media">
                   <a class="pull-left" href="#">
                     <img
@@ -239,7 +236,6 @@
                     Donec sit amet ligula enim. Duis vel condimentum massa. Maecenas
                     eget congue dui. Vestibulum et eros consectetur, interdum nibh
                     et, volutpat dolor.
-                    <!-- Nested media object -->
                     <div class="media">
                       <a class="pull-left" href="#">
                         <img
@@ -402,3 +398,4 @@
 </div>
 
 <PieDePagina />
+-->

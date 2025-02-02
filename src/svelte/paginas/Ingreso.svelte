@@ -1,7 +1,7 @@
 <script>
   import tema from "../globales/tema";
   import titulo from "../globales/titulo";
-  import EncabezadoPublico from "../componentes/EncabezadoPublico.svelte";
+  import MenuPublico from "../componentes/MenuPublico.svelte";
   import Icono from "../componentes/Icono.svelte";
 
   $titulo = "Ingresar";
@@ -11,7 +11,7 @@
   class="min-vh-100"
   style:background-image="url('./imagenes/banner@{$tema}.png')"
 >
-  <EncabezadoPublico />
+  <MenuPublico />
 
   <div class="container mt-5">
     <div class="row align-items-center">

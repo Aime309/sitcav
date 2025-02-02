@@ -1,8 +1,8 @@
 <script>
   import titulo from "../globales/titulo";
   import { navigate } from "svelte-routing";
-  import Swal from "sweetalert2";
-  import EncabezadoPublico from "../componentes/EncabezadoPublico.svelte";
+  // import Swal from "sweetalert2";
+  import MenuPublico from "../componentes/MenuPublico.svelte";
 
   const patronDeClave = "(?=.*\\d)(?=.*[A-ZÑ])(?=.*[a-zñ])(?=.*\\W).{8,}";
   $titulo = "Registrarse";
@@ -16,15 +16,15 @@
     if (respuesta.ok) {
       navigate("./panel");
     } else {
-      Swal.fire({
-        title: await respuesta.text(),
-        icon: "error",
-      });
+      // Swal.fire({
+      //   title: await respuesta.text(),
+      //   icon: "error",
+      // });
     }
   }
 </script>
 
-<EncabezadoPublico />
+<MenuPublico />
 
 <form
   class="col-lg-4 card card-body mx-auto mt-5 row-gap-3"
