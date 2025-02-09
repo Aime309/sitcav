@@ -1,5 +1,5 @@
 <script>
-  // import { Offcanvas } from "@sveltestrap/sveltestrap";
+  import { Offcanvas } from "@sveltestrap/sveltestrap";
   import ListadoDeModulos from "./ListadoDeModulos.svelte";
 
   let abierto = false;
@@ -21,7 +21,7 @@
   </div>
 </nav>
 
-<!-- <Offcanvas
+<Offcanvas
   isOpen={abierto}
   toggle={alternarMostrarOcultarMenu}
   scroll
@@ -30,4 +30,4 @@
 >
   <ListadoDeModulos />
 </Offcanvas>
- -->
+
