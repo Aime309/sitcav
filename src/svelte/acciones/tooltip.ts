@@ -15,12 +15,12 @@ export function tooltip(element: HTMLElement) {
 
     div.style.border = "thin solid #ddd";
     div.style.boxShadow = "1px 1px 1px #ddd";
-    div.style.borderRadius = '4px'
-    div.style.padding = '4px'
-    div.style.position = 'absolute'
-    div.style.top = `${event.pageX + 5}px`
-    div.style.left = `${event.pageY + 5}px`
-    div.style.zIndex = Number.MAX_SAFE_INTEGER.toString()
+    div.style.borderRadius = "4px";
+    div.style.padding = "4px";
+    div.style.position = "absolute";
+    div.style.top = `${event.pageX + 5}px`;
+    div.style.left = `${event.pageY + 5}px`;
+    div.style.zIndex = Number.MAX_SAFE_INTEGER.toString();
 
     tema.subscribe((tema) => {
       div.classList.add(`bg-${tema}`);

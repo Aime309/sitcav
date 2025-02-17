@@ -15,6 +15,10 @@ require CARPETA_RAIZ . '/vendor/autoload.php';
 ////////////////////////////////////////////////////
 // CARGAR VARIABLES DE ENTORNO - ver archivo .env //
 ////////////////////////////////////////////////////
+if (!file_exists(__DIR__ . '/../.env')) {
+  copy(__DIR__ . '/../.env.dist', __DIR__ . '/../.env');
+}
+
 (new Dotenv)->load(CARPETA_RAIZ . '/.env');
 
 ////////////////////////////////////////////////////
