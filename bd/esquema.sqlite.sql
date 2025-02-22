@@ -51,7 +51,8 @@ create table localidades (
   nombre varchar(255) not null,
   id_estado integer not null,
 
-  foreign key (id_estado) references estados(id)
+  foreign key (id_estado) references estados(id),
+  unique (nombre, id_estado)
 );
 
 create table sectores (
@@ -59,7 +60,8 @@ create table sectores (
   nombre varchar(255) not null,
   id_localidad integer not null,
 
-  foreign key (id_localidad) references localidades(id)
+  foreign key (id_localidad) references localidades(id),
+  unique (nombre, id_localidad)
 );
 
 create table negocios (
