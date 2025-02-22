@@ -13,9 +13,9 @@ final readonly class ControladorDeSesion
     $error = '';
 
     if (!$credenciales->cedula) {
-      $error = 'No se envió la cédula';
+      $error = 'La çédula es requerida';
     } elseif (!$credenciales->clave) {
-      $error = 'No se envió la contraseña';
+      $error = 'La contraseña es requerida';
     }
 
     if ($error) {

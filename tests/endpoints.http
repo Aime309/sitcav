@@ -1,7 +1,8 @@
 @url = http://localhost:8080/app
+@api = http://localhost:8080/app/api
 
 ###
-GET {{url}}/api/perfil
+GET {{api}}/perfil
 Cookie: PHPSESSID=e4sf3ch3jrkj0ln17hmd6mdc8e
 
 ###
@@ -14,7 +15,7 @@ Content-type: application/json
 }
 
 ###
-POST {{url}}/api/registrarse
+POST {{api}}/registrarse
 Content-type: application/json
 
 {
@@ -23,3 +24,33 @@ Content-type: application/json
   "secret_question": "Color favorito",
   "secret_answer": "vinotinto"
 }
+
+###
+GET {{api}}/clientes
+
+###
+POST {{api}}/clientes
+Content-type: application/json
+
+{
+  "cedula": 28072391,
+  "nombres": "Franyer",
+  "apellidos": "Sánchez",
+  "telefono": "+58 416-5335826",
+  "id_localidad": 523,
+  "id_sector": 1
+}
+
+###
+PATCH {{api}}/clientes/11
+Content-type: application/json
+
+{
+  "nombres": "Franyer",
+  "apellidos": "Sánchez",
+  "telefono": "+58 416-5335826",
+  "id_sector": 1
+}
+
+###
+DELETE {{api}}/clientes/1

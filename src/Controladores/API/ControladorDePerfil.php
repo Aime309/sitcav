@@ -8,7 +8,7 @@ use Throwable;
 
 final readonly class ControladorDePerfil
 {
-  function obtenerPerfil(): void
+  static function obtenerPerfil(): void
   {
     Flight::json([
       'id' => auth()->id(),
@@ -16,7 +16,7 @@ final readonly class ControladorDePerfil
     ]);
   }
 
-  function procesarRegistro(): void
+  static function procesarRegistro(): void
   {
     $datosDelFormularioDeRegistro = Flight::request()->data;
 
