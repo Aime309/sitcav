@@ -645,11 +645,11 @@ insert into detalles_compras (id, cantidad, precio_unitario_fijo_dolares, id_pro
   (25, 10, 500, 25, 5);
 
 insert into clientes (id, cedula, nombres, apellidos, telefono, id_localidad) values
-  (1, 'V-12345678', 'Juan', 'Pérez', '04121234567', 149),
-  (2, 'V-12345679', 'Pedro', 'Gómez', '04121234567', 149),
-  (3, 'V-12345670', 'María', 'González', '04121234567', 149),
-  (4, 'V-12345671', 'José', 'Hernández', '04121234567', 149),
-  (5, 'V-12345672', 'Ana', 'Martínez', '04121234567', 149);
+  (1, 12345678, 'Juan', 'Pérez', '04121234567', 149),
+  (2, 12345679, 'Pedro', 'Gómez', '04121234567', 149),
+  (3, 12345670, 'María', 'González', '04121234567', 149),
+  (4, 12345671, 'José', 'Hernández', '04121234567', 149),
+  (5, 12345672, 'Ana', 'Martínez', '04121234567', 149);
 
 insert into ventas (id, fecha_hora, id_cliente) values
   (1, '2020-01-01 00:00:00', 1),

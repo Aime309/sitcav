@@ -12,7 +12,8 @@ export const commonOptions = {
     '.module.css': 'local-css',
     '.ttf': 'copy',
     '.woff': 'copy',
-    '.woff2': 'copy'
+    '.woff2': 'copy',
+    '.jpg': 'copy'
   },
   outfile: 'app/build/bundle.js',
   target: ['es2018'],

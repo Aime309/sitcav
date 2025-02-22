@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SITCAV\Controladores\API;
 
 use Flight;
-use flight\util\Collection;
 use SITCAV\Modelos\Cliente;
 use SITCAV\Modelos\Localidad;
 use SITCAV\Modelos\Sector;
@@ -15,7 +14,7 @@ final readonly class ControladorDeClientes
 {
   static function listarClientes(): void
   {
-    $clientes = Cliente::with(['localidad', 'sector'])->get();
+    $clientes = Cliente::with(['localidad', 'sector', 'ventas'])->get();
 
     Flight::json($clientes);
   }
