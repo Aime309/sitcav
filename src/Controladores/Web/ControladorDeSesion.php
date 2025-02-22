@@ -6,19 +6,37 @@ use Flight;
 
 final readonly class ControladorDeSesion
 {
-  function procesarIngreso(): void
+  static function procesarIngreso(): void
   {
-    $credenciales = Flight::request()->data->getData();
-    $fueAutenticadoExitosamente = auth()->login($credenciales);
+    $credenciales = Flight::request()->data;
+
+    $error = '';
+
+    if (!$credenciales->cedula) {
+      $error = 'No se envió la cédula';
+    } elseif (!$credenciales->clave) {
+      $error = 'No se envió la contraseña';
+    }
+
+    if ($error) {
+      Flight::halt(400, $error);
+    }
+
+    $fueAutenticadoExitosamente = auth()->login($credenciales->getData());
 
     if ($fueAutenticadoExitosamente) {
       Flight::redirect('/panel');
     } else {
-      dd(auth()->errors());
+      Flight::halt(
+        code: 401,
+        message: auth()->errors()['auth']
+          ?? auth()->errors()['password']
+          ?? 'Cédula o contraseña incorrecta'
+      );
     }
   }
 
-  function cerrarSesion(): void
+  static function cerrarSesion(): void
   {
     auth()->logout();
     Flight::redirect('/');

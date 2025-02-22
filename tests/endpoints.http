@@ -2,6 +2,16 @@
 
 ###
 GET {{url}}/api/perfil
+Cookie: PHPSESSID=e4sf3ch3jrkj0ln17hmd6mdc8e
+
+###
+POST {{url}}/ingresar
+Content-type: application/json
+
+{
+  "cedula": 12345678,
+  "clave": "Admin.123"
+}
 
 ###
 POST {{url}}/api/registrarse
