@@ -29,6 +29,7 @@
       "composer archive"
     ],
     "ci": [
+      "phpunit",
       "phpstan analyze"
     ]
   },
