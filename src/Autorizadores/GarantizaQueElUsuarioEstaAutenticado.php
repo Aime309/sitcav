@@ -6,7 +6,7 @@ use Flight;
 
 final readonly class GarantizaQueElUsuarioEstaAutenticado
 {
-  function before()
+  static function before()
   {
     if (auth()->id() === null) {
       Flight::redirect('/ingresar');

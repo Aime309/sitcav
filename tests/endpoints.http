@@ -1,9 +1,11 @@
 @url = http://localhost:8080/app
 @api = http://localhost:8080/app/api
+@sesionAdmin = e4sf3ch3jrkj0ln17hmd6mdc8e
+@sesionHacker = 585722f60e632f41061a99f613724d37
 
 ###
 GET {{api}}/perfil
-Cookie: PHPSESSID=e4sf3ch3jrkj0ln17hmd6mdc8e
+Cookie: PHPSESSID={{sesionAdmin}}
 
 ###
 POST {{url}}/ingresar
@@ -26,7 +28,8 @@ Content-type: application/json
 }
 
 ###
-GET {{api}}/clientes/
+GET {{api}}/clientes
+Cookie: PHPSESSID={{sesionHacker}}
 
 ###
 GET {{api}}/clientes/15

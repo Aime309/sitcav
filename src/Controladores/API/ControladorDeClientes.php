@@ -8,13 +8,17 @@ use Flight;
 use SITCAV\Modelos\Cliente;
 use SITCAV\Modelos\Localidad;
 use SITCAV\Modelos\Sector;
+use SITCAV\Modelos\Usuario;
 use Throwable;
 
 final readonly class ControladorDeClientes
 {
-  static function listarClientes(): void
+  function __construct(private Usuario $usuarioAutenticado) {}
+
+  function listarClientes(): void
   {
-    $clientes = Cliente::with(['localidad', 'sector', 'ventas'])->get();
+    $clientes = Cliente::with(['localidad', 'sector', 'ventas', 'localidad.estado.usuario'])->get();
+    $clientes = $clientes->filter(fn(Cliente $cliente): bool => $cliente->usuario->is($this->usuarioAutenticado) || $cliente->usuario->is($this->usuarioAutenticado->administrador));
 
     Flight::json($clientes);
   }
@@ -22,10 +26,20 @@ final readonly class ControladorDeClientes
   static function mostrarDetallesDelCliente(int $id): void
   {
     try {
-      $cliente = Cliente::with(['localidad', 'sector', 'ventas', 'localidad.estado.usuario'])
+      $cliente = Cliente::with([
+        'localidad',
+        'sector',
+        'ventas',
+        'localidad.estado.usuario',
+        'ventas.detalles',
+        'ventas.detalles.producto',
+        'ventas.detalles.pagos',
+        'ventas.detalles.pagos.tipo'
+      ])
         ->findOrFail($id);
 
       $cliente->usuario = $cliente->localidad->estado->usuario;
+      $cliente->deuda_acumulada = $cliente->getDeudaAcumulada();
 
       Flight::json($cliente);
     } catch (Throwable) {

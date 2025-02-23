@@ -46,6 +46,32 @@ final class Cliente extends Model
     return "{$this->nombres} {$this->apellidos}";
   }
 
+  function getUsuarioAttribute(): ?Usuario
+  {
+    return $this->localidad?->estado?->usuario;
+  }
+
+  function getDeudaAcumulada(): ?float {
+    $deudaAcumulada = 0;
+
+    foreach ($this->ventas as $venta) {
+      foreach ($venta->detalles as $detalle) {
+        $subtotal = $detalle->subtotal;
+        $pagosAcumulados = 0;
+
+        foreach ($detalle->pagos as $pago) {
+          $pagosAcumulados += $pago->monto;
+        }
+
+        if ($pagosAcumulados < $subtotal) {
+          $deudaAcumulada += $subtotal - $pagosAcumulados;
+        }
+      }
+    }
+
+    return $deudaAcumulada;
+  }
+
   function __set($key, $value)
   {
     switch ($key) {

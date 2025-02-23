@@ -6,7 +6,7 @@ use Flight;
 
 final readonly class GarantizaQueElUsuarioNoEstaAutenticado
 {
-  function before()
+  static function before()
   {
     if (auth()->id() === null) {
       return true;

@@ -1,5 +1,6 @@
 <?php
 
+use SITCAV\Autorizadores\GarantizaQueElUsuarioEstaAutenticado;
 use SITCAV\Controladores\API\ControladorDeClientes;
 use SITCAV\Controladores\API\ControladorDePerfil;
 
@@ -16,6 +17,5 @@ Flight::group('/api', function (): void {
       Flight::route('DELETE /', [ControladorDeClientes::class, 'eliminarCliente']);
       Flight::route('GET /', [ControladorDeClientes::class, 'mostrarDetallesDelCliente']);
     });
-  });
+  }, [GarantizaQueElUsuarioEstaAutenticado::class]);
 });
-

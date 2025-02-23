@@ -5,6 +5,9 @@ namespace SITCAV\Modelos;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read float $monto
+ */
 final class Pago extends Model
 {
   protected $table = 'pagos';

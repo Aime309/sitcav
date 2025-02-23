@@ -2,6 +2,7 @@
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;
+use SITCAV\Modelos\Usuario;
 use Symfony\Component\Dotenv\Dotenv;
 
 /////////////////////////
@@ -41,6 +42,7 @@ Flight::set('flight.views.path', CARPETA_RAIZ . '/src');
 ///////////////////////////////////////////
 $container = new Container;
 $container->singleton(PDO::class, static fn(): PDO => db()->connection());
+$container->singleton(Usuario::class, static fn(): Usuario => Usuario::query()->findOrFail(auth()->id()));
 
 /////////////////////////
 // CONFIGURAR ELOQUENT //
@@ -57,3 +59,5 @@ $manager->addConnection([
 
 $manager->setAsGlobal();
 $manager->bootEloquent();
+
+Flight::registerContainerHandler($container->get(...));
