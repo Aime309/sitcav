@@ -2,7 +2,6 @@
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;
-use SITCAV\Modelos\Cliente;
 use Symfony\Component\Dotenv\Dotenv;
 
 /////////////////////////

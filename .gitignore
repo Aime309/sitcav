@@ -12,3 +12,4 @@ sitcav-*
 src/env.d.ts
 *.db-journal
 *.sublime-workspace
+.phpunit.cache

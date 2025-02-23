@@ -14,6 +14,7 @@ use Throwable;
 /**
  * @property-read ?Localidad $localidad
  * @property-read ?Collection<int, Venta> $ventas
+ * @property-read string $nombreCompleto
  */
 final class Cliente extends Model
 {
@@ -40,7 +41,13 @@ final class Cliente extends Model
     return $this->hasMany(Venta::class, 'id_cliente');
   }
 
-  function __set($key, $value) {
+  function getNombreCompletoAttribute(): string
+  {
+    return "{$this->nombres} {$this->apellidos}";
+  }
+
+  function __set($key, $value)
+  {
     switch ($key) {
       case 'cedula':
         if ($value < 0) {
@@ -53,6 +60,18 @@ final class Cliente extends Model
         if (!preg_match(self::PATRONES['nombres'], $value)) {
           throw new Exception('Los nombres no son válidos (solo letras y espacios)');
         }
+
+        $value = str_replace('  ', ' ', $value);
+        $value = mb_convert_case($value, MB_CASE_TITLE);
+
+        $preposiciones = ['De' => 'de', 'La' => 'la'];
+        $conjunciones = ['Y' => 'y'];
+
+        $value = str_replace(
+          array_keys($preposiciones + $conjunciones),
+          array_values($preposiciones + $conjunciones),
+          $value
+        );
 
         break;
       case 'telefono':
