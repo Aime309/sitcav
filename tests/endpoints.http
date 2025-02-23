@@ -26,7 +26,10 @@ Content-type: application/json
 }
 
 ###
-GET {{api}}/clientes
+GET {{api}}/clientes/
+
+###
+GET {{api}}/clientes/15
 
 ###
 POST {{api}}/clientes

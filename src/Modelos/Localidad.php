@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property-read int $id
  * @property-read string $nombre
+ * @property-read ?Estado $estado
  */
 final class Localidad extends Model
 {

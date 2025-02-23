@@ -20,7 +20,7 @@ final class Cliente extends Model
   protected $table = 'clientes';
 
   private const PATRONES = [
-    'nombres' => '/^[a-zA-ZáéíóúñÁÉÍÓÚÑ]{2,}\s?[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/',
+    'nombres' => '/^[a-zA-ZáéíóúñÁÉÍÓÚÑ]{1,}\s?[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/',
   ];
 
   public $timestamps = false;

@@ -10,8 +10,12 @@ Flight::group('/api', function (): void {
   Flight::group('/clientes', static function (): void {
     Flight::route('GET /', [ControladorDeClientes::class, 'listarClientes']);
     Flight::route('POST /', [ControladorDeClientes::class, 'registrarCliente']);
-    Flight::route('PATCH /@id:[0-9]+', [ControladorDeClientes::class, 'actualizarCliente']);
-    Flight::route('DELETE /@id:[0-9]+', [ControladorDeClientes::class, 'eliminarCliente']);
+
+    Flight::group('/@id:[0-9]+', static function (): void {
+      Flight::route('PATCH /', [ControladorDeClientes::class, 'actualizarCliente']);
+      Flight::route('DELETE /', [ControladorDeClientes::class, 'eliminarCliente']);
+      Flight::route('GET /', [ControladorDeClientes::class, 'mostrarDetallesDelCliente']);
+    });
   });
 });
 

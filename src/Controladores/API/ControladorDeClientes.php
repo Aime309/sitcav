@@ -19,6 +19,20 @@ final readonly class ControladorDeClientes
     Flight::json($clientes);
   }
 
+  static function mostrarDetallesDelCliente(int $id): void
+  {
+    try {
+      $cliente = Cliente::with(['localidad', 'sector', 'ventas', 'localidad.estado.usuario'])
+        ->findOrFail($id);
+
+      $cliente->usuario = $cliente->localidad->estado->usuario;
+
+      Flight::json($cliente);
+    } catch (Throwable) {
+      Flight::halt(404, 'El cliente no existe');
+    }
+  }
+
   static function registrarCliente(): void
   {
     $datos = Flight::request()->data;
@@ -71,15 +85,15 @@ final readonly class ControladorDeClientes
     }
   }
 
-  static function actualizarCliente(int $id): void {
-    $cliente = Cliente::with('localidad')->find($id);
+  static function actualizarCliente(int $id): void
+  {
     $datos = Flight::request()->data;
     $error = '';
 
-    if (!$cliente) {
+    try {
+      $cliente = Cliente::with('localidad')->findOrFail($id);
+    } catch (Throwable) {
       Flight::halt(404, 'El cliente no existe');
-
-      exit;
     }
 
     if ($datos->id_localidad) {
@@ -137,17 +151,16 @@ final readonly class ControladorDeClientes
     }
   }
 
-  static function eliminarCliente(int $id): void {
-    $cliente = Cliente::with('ventas')->find($id);
-
-    if (!$cliente) {
+  static function eliminarCliente(int $id): void
+  {
+    try {
+      $cliente = Cliente::with('ventas')->findOrFail($id);
+    } catch (Throwable) {
       Flight::halt(404, 'El cliente no existe');
-
-      exit;
     }
 
     if ($cliente->ventas->isNotEmpty()) {
-      Flight::halt(409, 'El cliente tiene ventas asociadas');
+      Flight::halt(409, 'El cliente tiene ventas registradas');
     }
 
     $cliente->delete();
