@@ -42,4 +42,9 @@ final class Usuario extends Model
   {
     return $this->hasMany(TipoPago::class, 'id_usuario');
   }
+
+  function marcas(): HasMany
+  {
+    return $this->hasMany(Marca::class, 'id_usuario');
+  }
 }

@@ -60,3 +60,35 @@ Content-type: application/json
 
 ###
 DELETE {{api}}/clientes/1
+
+###
+GET {{api}}/productos
+
+###
+GET {{api}}/productos/1
+
+###
+POST {{api}}/productos
+Content-type: application/json
+
+{
+  "nombre": "HP 240 G7 Notebook PC",
+  "precio": 270,
+  "cantidad": 1,
+  "dias_apartado": 30,
+  "id_categoria": 7,
+  "id_proveedor": 6,
+  "id_marca": 11
+}
+
+###
+PATCH {{api}}/productos/27
+Content-type: application/json
+
+{
+  "precio": 280,
+  "id_marca": 11
+}
+
+###
+DELETE {{api}}/productos/28

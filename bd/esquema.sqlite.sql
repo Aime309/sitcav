@@ -14,6 +14,7 @@ drop table if exists cotizaciones;
 drop table if exists tipos_pago;
 drop table if exists categorias_producto;
 drop table if exists negocios;
+drop table if exists marcas;
 drop table if exists usuarios;
 
 create table usuarios (
@@ -98,6 +99,14 @@ create table categorias_producto (
   foreign key (id_usuario) references usuarios(id)
 );
 
+create table marcas (
+  id integer primary key autoincrement,
+  nombre varchar(255) not null unique,
+  id_usuario integer not null,
+
+  foreign key (id_usuario) references usuarios(id)
+);
+
 create table productos (
   id integer primary key autoincrement,
   codigo varchar(255) unique,
@@ -110,9 +119,13 @@ create table productos (
   dias_apartado integer not null check (dias_apartado >= 0),
   id_categoria integer not null,
   id_proveedor integer not null,
+  id_marca integer not null,
 
   foreign key (id_categoria) references categorias_producto(id),
-  foreign key (id_proveedor) references proveedores(id)
+  foreign key (id_proveedor) references proveedores(id),
+  foreign key (id_marca) references marcas(id),
+
+  unique (nombre, id_marca)
 );
 
 create table compras (

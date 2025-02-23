@@ -14,12 +14,27 @@ delete from negocios;
 delete from sectores;
 delete from localidades;
 delete from estados;
+delete from marcas;
 delete from usuarios;
 
 insert into usuarios (id, cedula, clave, rol, esta_activo, pregunta_secreta, respuesta_secreta, id_admin) values
   (1, 12345678, /* Admin.123 */ '$2y$10$HoG.Mi9zoKT7MhhELX9aKesjOxyk1o4DGlSdy3307jAxwV3Jnm23e', 'Administrador', true, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null),
   (2, 12345679, /* Vendedor.123 */ '$2y$10$UwZFBCo836pmmP9NRQjC2ufi6lQYWIDmKEi0yZhPmMh4.RqRqGmQW', 'Vendedor', true, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', 1),
   (3, 12345689, /* Hacker.123 */ '$2y$10$qtKkRdQdzZ1gcU2wggVzwelxLPi6FDfC.TTInshPk74ljkTg/nQNa', 'Administrador', true, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null);
+
+insert into marcas (id, nombre, id_usuario) values
+  (0, 'Sin marca', 1),
+  (1, 'Apple', 1),
+  (2, 'Samsung', 1),
+  (3, 'Huawei', 1),
+  (4, 'Xiaomi', 1),
+  (5, 'Motorola', 1),
+  (6, 'Sony', 1),
+  (7, 'LG', 1),
+  (8, 'Alcatel', 1),
+  (9, 'Nokia', 1),
+  (10, 'Otro', 1),
+  (11, 'HP', 1);
 
 insert into cotizaciones (id, fecha_hora, tasa_dolar_bolivares, id_usuario) values
   (1, '2025-02-02 04:30:00', 60, 1),
@@ -574,41 +589,43 @@ insert into proveedores (id, rif, nombre, telefono, id_estado) values
   (2, 'J-12345678-0', 'Ferretería El Constructor', '02121234567', 24),
   (3, 'J-12345678-1', 'Ferretería El Constructor', '02121234567', 24),
   (4, 'J-12345678-2', 'Ferretería El Constructor', '02121234567', 24),
-  (5, 'J-12345678-3', 'Ferretería El Constructor', '02121234567', 24);
+  (5, 'J-12345678-3', 'Ferretería El Constructor', '02121234567', 24),
+  (6, 'J-13435456-4', 'HP', '02123425356', 24);
 
 insert into categorias_producto (id, nombre, id_usuario) values
   (1, 'Routers', 1),
   (2, 'Modems', 1),
   (3, 'Switches', 1),
   (5, 'Accesorios', 1),
-  (6, 'Cables', 1);
+  (6, 'Cables', 1),
+  (7, 'Laptops', 1);
 
-insert into productos (id, codigo, nombre, descripcion, precio_unitario_actual_dolares, cantidad_disponible, dias_garantia, dias_apartado, id_categoria, id_proveedor) values
-  (1, 'RTR-001', 'Router Cisco 1000', 'Router de 4 puertos', 100, 10, 30, 7, 1, 1),
-  (2, 'RTR-002', 'Router Cisco 2000', 'Router de 8 puertos', 200, 10, 30, 30, 1, 1),
-  (3, 'RTR-003', 'Router Cisco 3000', 'Router de 16 puertos', 300, 10, 30, 30, 1, 1),
-  (4, 'RTR-004', 'Router Cisco 4000', 'Router de 32 puertos', 400, 10, 30, 30, 1, 1),
-  (5, 'RTR-005', 'Router Cisco 5000', 'Router de 64 puertos', 500, 10, 30, 30, 1, 1),
-  (6, 'MDM-001', 'Modem Cisco 1000', 'Modem de 4 puertos', 100, 10, 30, 30, 2, 1),
-  (7, 'MDM-002', 'Modem Cisco 2000', 'Modem de 8 puertos', 200, 10, 30, 30, 2, 1),
-  (8, 'MDM-003', 'Modem Cisco 3000', 'Modem de 16 puertos', 300, 10, 30, 30, 2, 1),
-  (9, 'MDM-004', 'Modem Cisco 4000', 'Modem de 32 puertos', 400, 10, 30, 30, 2, 1),
-  (10, 'MDM-005', 'Modem Cisco 5000', 'Modem de 64 puertos', 500, 10, 30, 30, 2, 1),
-  (11, 'SWT-001', 'Switch Cisco 1000', 'Switch de 4 puertos', 100, 10, 30, 30, 3, 1),
-  (12, 'SWT-002', 'Switch Cisco 2000', 'Switch de 8 puertos', 200, 10, 30, 30, 3, 1),
-  (13, 'SWT-003', 'Switch Cisco 3000', 'Switch de 16 puertos', 300, 10, 30, 30, 3, 1),
-  (14, 'SWT-004', 'Switch Cisco 4000', 'Switch de 32 puertos', 400, 10, 30, 30, 3, 1),
-  (15, 'SWT-005', 'Switch Cisco 5000', 'Switch de 64 puertos', 500, 10, 30, 30, 3, 1),
-  (16, 'ACC-001', 'Accesorio Cisco 1000', 'Accesorio de 4 puertos', 100, 10, 30, 30, 5, 1),
-  (17, 'ACC-002', 'Accesorio Cisco 2000', 'Accesorio de 8 puertos', 200, 10, 30, 30, 5, 1),
-  (18, 'ACC-003', 'Accesorio Cisco 3000', 'Accesorio de 16 puertos', 300, 10, 30, 30, 5, 1),
-  (19, 'ACC-004', 'Accesorio Cisco 4000', 'Accesorio de 32 puertos', 400, 10, 30, 30, 5, 1),
-  (20, 'ACC-005', 'Accesorio Cisco 5000', 'Accesorio de 64 puertos', 500, 10, 30, 30, 5, 1),
-  (21, 'CBL-001', 'Cable Cisco 1000', 'Cable de 4 puertos', 100, 10, 30, 30, 6, 1),
-  (22, 'CBL-002', 'Cable Cisco 2000', 'Cable de 8 puertos', 200, 10, 30, 30, 6, 1),
-  (23, 'CBL-003', 'Cable Cisco 3000', 'Cable de 16 puertos', 300, 10, 30, 30, 6, 1),
-  (24, 'CBL-004', 'Cable Cisco 4000', 'Cable de 32 puertos', 400, 10, 30, 30, 6, 1),
-  (25, 'CBL-005', 'Cable Cisco 5000', 'Cable de 64 puertos', 500, 10, 30, 30, 6, 1);
+insert into productos (id_marca, id, codigo, nombre, descripcion, precio_unitario_actual_dolares, cantidad_disponible, dias_garantia, dias_apartado, id_categoria, id_proveedor) values
+  (0, 1, 'RTR-001', 'Router Cisco 1000', 'Router de 4 puertos', 100, 10, 30, 7, 1, 1),
+  (0, 2, 'RTR-002', 'Router Cisco 2000', 'Router de 8 puertos', 200, 10, 30, 30, 1, 1),
+  (0, 3, 'RTR-003', 'Router Cisco 3000', 'Router de 16 puertos', 300, 10, 30, 30, 1, 1),
+  (0, 4, 'RTR-004', 'Router Cisco 4000', 'Router de 32 puertos', 400, 10, 30, 30, 1, 1),
+  (0, 5, 'RTR-005', 'Router Cisco 5000', 'Router de 64 puertos', 500, 10, 30, 30, 1, 1),
+  (0, 6, 'MDM-001', 'Modem Cisco 1000', 'Modem de 4 puertos', 100, 10, 30, 30, 2, 1),
+  (0, 7, 'MDM-002', 'Modem Cisco 2000', 'Modem de 8 puertos', 200, 10, 30, 30, 2, 1),
+  (0, 8, 'MDM-003', 'Modem Cisco 3000', 'Modem de 16 puertos', 300, 10, 30, 30, 2, 1),
+  (0, 9, 'MDM-004', 'Modem Cisco 4000', 'Modem de 32 puertos', 400, 10, 30, 30, 2, 1),
+  (0, 10, 'MDM-005', 'Modem Cisco 5000', 'Modem de 64 puertos', 500, 10, 30, 30, 2, 1),
+  (0, 11, 'SWT-001', 'Switch Cisco 1000', 'Switch de 4 puertos', 100, 10, 30, 30, 3, 1),
+  (0, 12, 'SWT-002', 'Switch Cisco 2000', 'Switch de 8 puertos', 200, 10, 30, 30, 3, 1),
+  (0, 13, 'SWT-003', 'Switch Cisco 3000', 'Switch de 16 puertos', 300, 10, 30, 30, 3, 1),
+  (0, 14, 'SWT-004', 'Switch Cisco 4000', 'Switch de 32 puertos', 400, 10, 30, 30, 3, 1),
+  (0, 15, 'SWT-005', 'Switch Cisco 5000', 'Switch de 64 puertos', 500, 10, 30, 30, 3, 1),
+  (0, 16, 'ACC-001', 'Accesorio Cisco 1000', 'Accesorio de 4 puertos', 100, 10, 30, 30, 5, 1),
+  (0, 17, 'ACC-002', 'Accesorio Cisco 2000', 'Accesorio de 8 puertos', 200, 10, 30, 30, 5, 1),
+  (0, 18, 'ACC-003', 'Accesorio Cisco 3000', 'Accesorio de 16 puertos', 300, 10, 30, 30, 5, 1),
+  (0, 19, 'ACC-004', 'Accesorio Cisco 4000', 'Accesorio de 32 puertos', 400, 10, 30, 30, 5, 1),
+  (0, 20, 'ACC-005', 'Accesorio Cisco 5000', 'Accesorio de 64 puertos', 500, 10, 30, 30, 5, 1),
+  (0, 21, 'CBL-001', 'Cable Cisco 1000', 'Cable de 4 puertos', 100, 10, 30, 30, 6, 1),
+  (0, 22, 'CBL-002', 'Cable Cisco 2000', 'Cable de 8 puertos', 200, 10, 30, 30, 6, 1),
+  (0, 23, 'CBL-003', 'Cable Cisco 3000', 'Cable de 16 puertos', 300, 10, 30, 30, 6, 1),
+  (0, 24, 'CBL-004', 'Cable Cisco 4000', 'Cable de 32 puertos', 400, 10, 30, 30, 6, 1),
+  (0, 25, 'CBL-005', 'Cable Cisco 5000', 'Cable de 64 puertos', 500, 10, 30, 30, 6, 1);
 
 insert into compras (id, fecha_hora, cotizacion_dolar_bolivares, id_proveedor) values
   (1, '2020-01-01 00:00:00', 10000, 1),
