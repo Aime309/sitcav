@@ -10,13 +10,11 @@ final readonly class ControladorDeSesion
   {
     $credenciales = Flight::request()->data;
 
-    $error = '';
-
-    if (!$credenciales->cedula) {
-      $error = 'La çédula es requerida';
-    } elseif (!$credenciales->clave) {
-      $error = 'La contraseña es requerida';
-    }
+    $error = match (true) {
+      !$credenciales->cedula => 'La çédula es requerida',
+      !$credenciales->clave => 'La contraseña es requerida',
+      default => ''
+    };
 
     if ($error) {
       Flight::halt(400, $error);

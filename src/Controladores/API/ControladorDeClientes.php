@@ -22,19 +22,15 @@ final readonly class ControladorDeClientes
   static function registrarCliente(): void
   {
     $datos = Flight::request()->data;
-    $error = '';
 
-    if (!$datos->cedula) {
-      $error = 'La cédula es requerida';
-    } elseif (!$datos->nombres) {
-      $error = 'Los nombres son requeridos';
-    } elseif (!$datos->apellidos) {
-      $error = 'Los apellidos son requeridos';
-    } elseif (!$datos->telefono) {
-      $error = 'El teléfono es requerido';
-    } elseif (!$datos->id_localidad) {
-      $error = 'La localidad es requerida';
-    }
+    $error = match (true) {
+      !$datos->cedula => 'La cédula es requerida',
+      !$datos->nombres => 'Los nombres son requeridos',
+      !$datos->apellidos => 'Los apellidos son requeridos',
+      !$datos->telefono => 'El teléfono es requerido',
+      !$datos->id_localidad => 'La localidad es requerida',
+      default => ''
+    };
 
     try {
       Localidad::query()->findOrFail($datos->id_localidad);

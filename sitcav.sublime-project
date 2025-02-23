@@ -7,13 +7,14 @@
   "settings": {
     "LSP": {
       "formatters": {
-        "source.json.sublime": "LSP-json"
+        "source.json.sublime": "LSP-json",
+        "source.json.composer": "LSP-json",
       },
       "LSP-intelephense": {
         "settings": {
-          "intelephense.environment.phpVersion": "8.2"
-        }
-      }
+          "intelephense.environment.phpVersion": "8.2",
+        },
+      },
     },
     "SublimeLinter.linters.php.disable": true,
     "SublimeLinter.linters.phpmd.disable": true,
@@ -24,7 +25,7 @@
   "connections": {
     "sitcav-sqlite-faslatam": {
       "type": "sqlite",
-      "database": "C:/xampp/htdocs/sitcav/bd/sitcav.db"
-    }
-  }
+      "database": "C:/xampp/htdocs/sitcav/bd/sitcav.db",
+    },
+  },
 }

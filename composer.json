@@ -22,6 +22,9 @@
       "php -r \"if (!is_dir('node_modules')) `npm i`;\"",
       "npm run build",
       "composer archive"
+    ],
+    "ci": [
+      "phpstan analyze"
     ]
   },
   "archive": {
