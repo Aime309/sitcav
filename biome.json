@@ -19,13 +19,13 @@
   },
   "files": {
     "include": [
-      "src/*.js",
-      "src/*.ts",
-      "comandos/*.js"
+      "src",
+      "comandos"
     ],
     "ignore": [
       "vendor",
-      "node_modules"
+      "node_modules",
+      "*.svelte"
     ]
   },
   "json": {

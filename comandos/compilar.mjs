@@ -1,13 +1,13 @@
-import esbuild from 'esbuild'
-import { commonOptions, env } from './configuraciones.mjs'
+import esbuild from "esbuild";
+import { commonOptions, env } from "./configuraciones.mjs";
 
 await esbuild.build({
   ...commonOptions,
   define: {
     ...env,
-    isDevelopment: 'false'
+    isDevelopment: "false",
   },
-  minify: true
-})
+  minify: true,
+});
 
-console.info('Aplicación de Svelte compilada exitósamente')
+console.info("Aplicación de Svelte compilada exitósamente");
