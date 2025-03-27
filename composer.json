@@ -31,6 +31,10 @@
     "ci": [
       "phpunit",
       "phpstan analyze"
+    ],
+    "coverage": [
+      "phpunit --coverage-html .phpunit.cache/coverage",
+      "start .phpunit.cache/coverage/index.html"
     ]
   },
   "archive": {

@@ -28,6 +28,9 @@ final class ClienteTest extends TestCase
     $cliente->nombres = 'eliannys de Las nieves';
     $cliente->apellidos = 'farías rendón';
 
-    self::assertSame('Eliannys de las Nieves Farías Rendón', $cliente->nombreCompleto);
+    self::assertSame(
+      'Eliannys de las Nieves Farías Rendón',
+      $cliente->nombreCompleto
+    );
   }
 }

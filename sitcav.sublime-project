@@ -17,11 +17,13 @@
         },
       },
     },
-    "SublimeLinter.linters.php.disable": true,
+    "SublimeLinter.linters.php.disable": false,
     "SublimeLinter.linters.phpmd.disable": true,
-    "SublimeLinter.linters.phpstan.disable": true,
+    "SublimeLinter.linters.phpstan.disable": false,
     "SublimeLinter.linters.phpcs.disable": true,
     "SublimeLinter.linters.rector.disable": true,
+    "SublimeLinter.linters.ecs.disable": true,
+    "SublimeLinter.linters.phpcsfixer.disable": true
   },
   "connections": {
     "sitcav-sqlite-faslatam": {
