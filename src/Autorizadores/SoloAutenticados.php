@@ -4,7 +4,7 @@ namespace SITCAV\Autorizadores;
 
 use Flight;
 
-final readonly class GarantizaQueElUsuarioEstaAutenticado
+final readonly class SoloAutenticados
 {
   static function before()
   {

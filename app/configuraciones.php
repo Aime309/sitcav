@@ -2,7 +2,7 @@
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;
-use SITCAV\Modelos\Usuario;
+use SITCAV\Modelos\UsuarioAutenticado;
 use Symfony\Component\Dotenv\Dotenv;
 
 /////////////////////////
@@ -16,11 +16,16 @@ require CARPETA_RAIZ . '/vendor/autoload.php';
 ////////////////////////////////////////////////////
 // CARGAR VARIABLES DE ENTORNO - ver archivo .env //
 ////////////////////////////////////////////////////
-if (!file_exists(__DIR__ . '/../.env')) {
-  copy(__DIR__ . '/../.env.dist', __DIR__ . '/../.env');
+$rutaArchivoEnv = [
+  'local' => CARPETA_RAIZ . '/.env',
+  'distribuido' => CARPETA_RAIZ . '/.env.dist'
+];
+
+if (!file_exists($rutaArchivoEnv['local'])) {
+  copy($rutaArchivoEnv['distribuido'], $rutaArchivoEnv['local']);
 }
 
-(new Dotenv)->load(CARPETA_RAIZ . '/.env');
+(new Dotenv)->load($rutaArchivoEnv['local']);
 
 ////////////////////////////////////////////////////
 // CONFIGURAR LEAF AUTH (módulo de autenticación) //
@@ -37,17 +42,10 @@ auth()->config('timestamps', false);
 //////////////////////////////////////////////
 Flight::set('flight.views.path', CARPETA_RAIZ . '/src');
 
-///////////////////////////////////////////
-// CONFIGURAR CONTENEDOR DE DEPENDENCIAS //
-///////////////////////////////////////////
-$container = new Container;
-$container->singleton(PDO::class, static fn(): PDO => db()->connection());
-$container->singleton(Usuario::class, static fn(): Usuario => Usuario::query()->findOrFail(auth()->id()));
-
 /////////////////////////
 // CONFIGURAR ELOQUENT //
 /////////////////////////
-$manager = new Manager;
+$manager = new Manager(Container::getInstance());
 
 $manager->addConnection([
   'driver' => $_ENV['DB_CONNECTION'],
@@ -60,4 +58,26 @@ $manager->addConnection([
 $manager->setAsGlobal();
 $manager->bootEloquent();
 
-Flight::registerContainerHandler($container->get(...));
+///////////////////////////////////////////
+// CONFIGURAR CONTENEDOR DE DEPENDENCIAS //
+///////////////////////////////////////////
+$contenedor = Container::getInstance();
+
+$contenedor->singleton(
+  PDO::class,
+  static fn(): PDO => $manager->connection()->getPdo()
+);
+
+$contenedor->singleton(
+  UsuarioAutenticado::class,
+  static fn(): UsuarioAutenticado => UsuarioAutenticado::query()->findOrFail(auth()->id())
+);
+
+Flight::registerContainerHandler($contenedor->get(...));
+
+////////////////////////////////////////////////
+// CONFIGURAR CONEXIÓN COMPARTIDA (Singleton) //
+////////////////////////////////////////////////
+db()->connection($contenedor->get(PDO::class));
+$refleccionPropiedad = new ReflectionProperty(auth(), 'db');
+$refleccionPropiedad->setValue(auth(), db());

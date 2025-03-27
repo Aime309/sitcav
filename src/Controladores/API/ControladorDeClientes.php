@@ -8,12 +8,12 @@ use Flight;
 use SITCAV\Modelos\Cliente;
 use SITCAV\Modelos\Localidad;
 use SITCAV\Modelos\Sector;
-use SITCAV\Modelos\Usuario;
+use SITCAV\Modelos\UsuarioAutenticado;
 use Throwable;
 
 final readonly class ControladorDeClientes
 {
-  function __construct(private Usuario $usuarioAutenticado) {}
+  function __construct(private UsuarioAutenticado $usuarioAutenticado) {}
 
   function listarClientes(): void
   {

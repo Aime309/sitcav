@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property-read ?self $administrador
  */
-final class Usuario extends Model
+class Usuario extends Model
 {
   protected $table = 'usuarios';
 

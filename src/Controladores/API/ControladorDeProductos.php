@@ -9,12 +9,12 @@ use SITCAV\Modelos\CategoriaProducto;
 use SITCAV\Modelos\Marca;
 use SITCAV\Modelos\Producto;
 use SITCAV\Modelos\Proveedor;
-use SITCAV\Modelos\Usuario;
+use SITCAV\Modelos\UsuarioAutenticado;
 use Throwable;
 
 final readonly class ControladorDeProductos
 {
-  // function __construct(private Usuario $usuarioAutenticado) {}
+  function __construct(private UsuarioAutenticado $usuarioAutenticado) {}
 
   function listarProductos(): void
   {
