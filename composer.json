@@ -1,15 +1,15 @@
 {
   "require": {
-    "flightphp/core": "^3.14",
-    "illuminate/container": "^11.43",
-    "illuminate/database": "^11.43",
-    "leafs/auth": "^3.4",
-    "leafs/db": "^2.4",
-    "leafs/leaf": "^3.12",
     "php": "^8.2",
-    "symfony/dotenv": "^7.2",
+    "flightphp/core": "^3.15",
+    "giggsey/libphonenumber-for-php-lite": "^9.0",
+    "illuminate/container": "^11.44",
+    "illuminate/database": "^11.44",
+    "leafs/auth": "^4.0",
+    "leafs/db": "^4.0",
+    "leafs/leaf": "^4.1",
     "leafs/password": "^1.0",
-    "giggsey/libphonenumber-for-php-lite": "^8.13"
+    "symfony/dotenv": "^7.2"
   },
   "autoload": {
     "psr-4": {
@@ -58,15 +58,16 @@
     ]
   },
   "require-dev": {
-    "symfony/var-dumper": "^7.2",
-    "phpstan/phpstan": "^2.1",
+    "guzzlehttp/guzzle": "^7.9",
     "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan": "^2.1",
     "phpunit/phpunit": "^11.5",
-    "guzzlehttp/guzzle": "^7.9"
+    "symfony/var-dumper": "^7.2"
   },
   "config": {
     "allow-plugins": {
       "phpstan/extension-installer": true
-    }
+    },
+    "sort-packages": true
   }
 }

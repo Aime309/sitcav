@@ -7,15 +7,15 @@
   "devDependencies": {
     "@biomejs/biome": "1.7.2",
     "@fortawesome/fontawesome-free": "^6.7.2",
-    "@sveltestrap/sveltestrap": "^7.0.3",
+    "@sveltestrap/sveltestrap": "^7.1.0",
     "@types/bootstrap": "^5.2.10",
     "bootstrap": "^5.3.3",
     "dotenv": "^16.4.7",
     "esbuild": "0.21.5",
-    "esbuild-svelte": "^0.9.0",
+    "esbuild-svelte": "^0.9.2",
     "svelte": "^4.2.19",
     "svelte-preprocess": "^6.0.3",
     "svelte-routing": "^2.13.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   }
 }
