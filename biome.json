@@ -1,5 +1,5 @@
 {
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
   "organizeImports": {
     "enabled": true
   },
@@ -22,6 +22,15 @@
       "src/*.js",
       "src/*.ts",
       "comandos/*.js"
+    ],
+    "ignore": [
+      "vendor",
+      "node_modules"
     ]
+  },
+  "json": {
+    "formatter": {
+      "enabled": false
+    }
   }
 }

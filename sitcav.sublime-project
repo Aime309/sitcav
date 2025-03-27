@@ -9,6 +9,7 @@
       "formatters": {
         "source.json.sublime": "LSP-json",
         "source.json.composer": "LSP-json",
+        "source.json.biome": "LSP-json",
       },
       "LSP-intelephense": {
         "settings": {

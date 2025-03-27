@@ -2,7 +2,8 @@
   "type": "module",
   "scripts": {
     "dev": "start php -S localhost:8080 & node comandos/desarrollar.mjs",
-    "build": "biome check src --apply && node comandos/compilar.mjs"
+    "build": "biome check src --apply && node comandos/compilar.mjs",
+    "ci": "biome ci ."
   },
   "devDependencies": {
     "@biomejs/biome": "1.7.2",
