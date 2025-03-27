@@ -13,7 +13,7 @@ abstract class TestBase extends TestCase
   protected readonly Client $cliente;
   protected readonly string $url;
 
-  function __construct(string $name)
+  function __construct(string $name) // @phpstan-ignore-line
   {
     parent::__construct($name);
 
