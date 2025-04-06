@@ -5,14 +5,20 @@
   import Registrarse from "./paginas/Registrarse.svelte";
   import Presentacion from "./paginas/Presentacion.svelte";
   import ListadoDeClientes from "./paginas/ListadoDeClientes.svelte";
+  import usuario from "./globales/usuario";
 </script>
 
 <Router basepath={document.baseURI.replace(location.origin, "")}>
-  <Route path="/" component={Presentacion} />
+  <Route path="/">
+    {#if $usuario.estaAutenticado}
+      <Panel />
+    {:else}
+      <Presentacion />
+    {/if}
+  </Route>
   <Route path="/ingresar" component={Ingreso} />
-  <Route path="/clientes" component={ListadoDeClientes} />
   <Route path="/registrarse" component={Registrarse} />
-  <Route path="/panel" component={Panel} />
+  <Route path="/clientes" component={ListadoDeClientes} />
 </Router>
 
 <style>

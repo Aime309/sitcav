@@ -10,6 +10,8 @@
         "source.json.sublime": "LSP-json",
         "source.json.composer": "LSP-json",
         "source.json.biome": "LSP-json",
+        "source.json": "LSP-json",
+        "source.js": "LSP-biome",
       },
       "LSP-intelephense": {
         "settings": {
@@ -23,7 +25,7 @@
     "SublimeLinter.linters.phpcs.disable": true,
     "SublimeLinter.linters.rector.disable": true,
     "SublimeLinter.linters.ecs.disable": true,
-    "SublimeLinter.linters.phpcsfixer.disable": true
+    "SublimeLinter.linters.phpcsfixer.disable": true,
   },
   "connections": {
     "sitcav-sqlite-faslatam": {

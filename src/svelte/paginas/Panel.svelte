@@ -7,7 +7,7 @@
   $titulo = "Panel";
 </script>
 
-<MenuPrivado />
+<!-- <MenuPrivado /> -->
 
 <!--<div class="container">
   <Contadores />

@@ -1,7 +1,6 @@
 <script>
   import titulo from "../globales/titulo";
   import { navigate } from "svelte-routing";
-  // import Swal from "sweetalert2";
   import MenuPublico from "../componentes/MenuPublico.svelte";
 
   const patronDeClave = "(?=.*\\d)(?=.*[A-ZÑ])(?=.*[a-zñ])(?=.*\\W).{8,}";
@@ -9,18 +8,14 @@
 
   async function manejarEnvio({ target: formulario }) {
     const respuesta = await fetch("./api/registrarse", {
-      method: "POST",
+      method: "post",
       body: new FormData(formulario),
     });
 
     if (respuesta.ok) {
       navigate("./panel");
     } else {
-      alert(await respuesta.text())
-      // Swal.fire({
-      //   title: await respuesta.text(),
-      //   icon: "error",
-      // });
+      alert(await respuesta.text());
     }
   }
 </script>

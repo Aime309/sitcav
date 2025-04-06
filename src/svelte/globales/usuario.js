@@ -12,15 +12,16 @@ const estadoInicial = {
   },
 };
 
-const usuario = readable(estadoInicial, (set) => {
-  fetch("./api/perfil")
-    .then((respuesta) => respuesta.json())
-    .then((datosDelUsuario) =>
-      set({
-        ...estadoInicial,
-        ...datosDelUsuario,
-      }),
-    );
+const usuario = readable(estadoInicial, async (_, actualizar) => {
+  const respuesta = await fetch("./api/perfil");
+  const datosDelUsuario = await respuesta.json();
+
+  actualizar((estadoInicial) => {
+    estadoInicial.id = datosDelUsuario.id;
+    estadoInicial.cedula = datosDelUsuario.cedula;
+
+    return estadoInicial;
+  });
 });
 
 export default usuario;
