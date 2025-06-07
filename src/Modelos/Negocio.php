@@ -5,6 +5,14 @@ namespace SITCAV\Modelos;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read int $id
+ * @property-read string $nombre
+ * @property-read string $rif
+ * @property-read string $telefono
+ * @property-read Localidad $localidad
+ * @property-read ?Sector $sector
+ */
 final class Negocio extends Model
 {
   protected $table = 'negocios';

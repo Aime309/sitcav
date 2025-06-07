@@ -70,8 +70,8 @@ create table negocios (
   rif varchar(255) not null unique check (rif like 'J-%' or rif like 'V-%' or rif like 'E-%'),
   nombre varchar(255) not null,
   telefono varchar(255) check (telefono like '0__________' or telefono like '+%'),
-  id_localidad integer not null,
-  id_sector integer,
+  id_localidad integer,
+  id_sector integer not null,
 
   foreign key (id_localidad) references localidades(id),
   foreign key (id_sector) references sectores(id)

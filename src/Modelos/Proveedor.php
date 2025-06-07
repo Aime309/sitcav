@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read Estado $estado
+ * @property-read ?Localidad $localidad
+ * @property-read ?Sector $sector
+ */
 final class Proveedor extends Model
 {
   protected $table = 'proveedores';

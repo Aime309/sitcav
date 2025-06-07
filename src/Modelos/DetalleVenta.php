@@ -2,14 +2,18 @@
 
 namespace SITCAV\Modelos;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read float $subtotal
- * @property-read ?Collection<int, Pago> $pagos
+ * @property-read int $id
+ * @property-read int $cantidad
+ * @property-read bool $estaApartado
+ * @property-read Pago[] $pagos
+ * @property-read float $precioUnitarioFijoDolares
+ * @property-read int $cantidad
+ * @property-read Producto $producto
  */
 final class DetalleVenta extends Model
 {
@@ -30,8 +34,13 @@ final class DetalleVenta extends Model
     return $this->hasMany(Pago::class, 'id_detalle_venta');
   }
 
-  function getSubtotalAttribute(): float
+  function getPrecioUnitarioFijoDolaresAttribute(): float
   {
-    return $this->cantidad * $this->precio_unitario_fijo_dolares;
+    return $this->attributes['precio_unitario_fijo_dolares'];
+  }
+
+  function getEstaApartadoAttribute(): bool
+  {
+    return $this->attributes['esta_apartado'];
   }
 }
