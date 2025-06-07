@@ -2,8 +2,8 @@
 
 namespace SITCAV\Modelos;
 
+use Error;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,13 +12,23 @@ use libphonenumber\PhoneNumberUtil;
 use Throwable;
 
 /**
- * @property-read ?Localidad $localidad
- * @property-read ?Collection<int, Venta> $ventas
+ * @property-read int $id
+ * @property int $cedula
+ * @property string $nombres
+ * @property string $apellidos
+ * @property string $telefono
+ * @property Localidad $localidad
+ * @property Sector $sector
+ * @property-read Usuario $usuario
  * @property-read string $nombreCompleto
+ * @property-read float $deudaAcumuladaDolares
+ * @property-read Venta[] $compras
  */
 final class Cliente extends Model
 {
   protected $table = 'clientes';
+  protected $with = ['localidad', 'sector', 'compras'];
+  protected $hidden = ['id_localidad', 'id_sector'];
 
   private const PATRONES = [
     'nombres' => '/^[a-zA-ZáéíóúñÁÉÍÓÚÑ]{1,}\s?[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/',
@@ -36,7 +46,7 @@ final class Cliente extends Model
     return $this->belongsTo(Sector::class, 'id_sector');
   }
 
-  function ventas(): HasMany
+  function compras(): HasMany
   {
     return $this->hasMany(Venta::class, 'id_cliente');
   }
@@ -46,35 +56,36 @@ final class Cliente extends Model
     return "{$this->nombres} {$this->apellidos}";
   }
 
-  function getUsuarioAttribute(): ?Usuario
+  function getUsuarioAttribute(): Usuario
   {
-    return $this->localidad?->estado?->usuario;
+    return $this->localidad->estado->usuario;
   }
 
-  function getDeudaAcumulada(): ?float {
-    $deudaAcumulada = 0;
+  function getDeudaAcumuladaDolaresAttribute(): float
+  {
+    $deudaAcumuladaDolares = 0;
 
-    foreach ($this->ventas as $venta) {
-      foreach ($venta->detalles as $detalle) {
-        $subtotal = $detalle->subtotal;
+    foreach ($this->compras as $compra) {
+      foreach ($compra->detalles as $detalle) {
+        $subTotalDolares = $detalle->precioUnitarioFijoDolares * $detalle->cantidad;
         $pagosAcumulados = 0;
 
         foreach ($detalle->pagos as $pago) {
           $pagosAcumulados += $pago->monto;
         }
 
-        if ($pagosAcumulados < $subtotal) {
-          $deudaAcumulada += $subtotal - $pagosAcumulados;
-        }
+        $deudaAcumuladaDolares += $subTotalDolares - $pagosAcumulados;
       }
     }
 
-    return $deudaAcumulada;
+    return $deudaAcumuladaDolares;
   }
 
   function __set($key, $value)
   {
     switch ($key) {
+      case 'id':
+        throw new Error('Cannot modify property ' . $this::class . "::$$key");
       case 'cedula':
         if ($value < 0) {
           throw new Exception('La cédula no puede ser negativa');
