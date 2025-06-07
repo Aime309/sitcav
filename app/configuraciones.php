@@ -47,14 +47,15 @@ Flight::set('flight.views.path', CARPETA_RAIZ . '/src');
 /////////////////////////
 $manager = new Manager(Container::getInstance());
 
-$manager->addConnection([
+$configuracion = [
   'driver' => $_ENV['DB_CONNECTION'],
   'host' => $_ENV['DB_HOST'] ?? '127.0.0.1',
   'database' => $_ENV['DB_DATABASE'],
   'username' => $_ENV['DB_USERNAME'] ?? 'root',
   'password' => $_ENV['DB_PASSWORD'] ?? ''
-]);
+];
 
+$manager->addConnection($configuracion);
 $manager->setAsGlobal();
 $manager->bootEloquent();
 
