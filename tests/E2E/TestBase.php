@@ -18,7 +18,15 @@ abstract class TestBase extends TestCase
     parent::__construct($name);
 
     $this->cliente = new Client;
-    (new Dotenv)->load(__DIR__ . '/../../.env');
+    $rutaVariablesEntorno = __DIR__ . '/../../.env';
+    $dotenv = new Dotenv;
+
+    if (file_exists($rutaVariablesEntorno)) {
+      $dotenv->load($rutaVariablesEntorno);
+    } else {
+      $dotenv->load("$rutaVariablesEntorno.dist");
+    }
+
     $this->url = $_ENV['TEST_URL'];
   }
 }
