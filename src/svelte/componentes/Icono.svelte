@@ -6,6 +6,7 @@
 <script lang="ts">
   import "@fortawesome/fontawesome-free/css/all.min.css";
 
+  export let tipo: "solid" | "regular" = "solid";
   export let nombre: Icono;
   export let tamaño:
     | "2xs"
@@ -48,6 +49,8 @@
 </script>
 
 <i
+  class:fas={tipo === "solid"}
+  class:far={tipo === "regular"}
   class:fa-fw={tamañoFijo}
   class="fas fa-{nombre} fa-{tamaño} {rotar
     ? `fa-rotate-${rotar}`

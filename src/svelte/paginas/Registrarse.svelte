@@ -13,7 +13,7 @@
     });
 
     if (respuesta.ok) {
-      navigate("./panel");
+      navigate("./");
     } else {
       alert(await respuesta.text());
     }
