@@ -26,6 +26,12 @@
     "SublimeLinter.linters.rector.disable": true,
     "SublimeLinter.linters.ecs.disable": true,
     "SublimeLinter.linters.phpcsfixer.disable": true,
+    "translate_tabs_to_spaces": true,
+    "tab_size": 2,
+    "default_line_ending": "unix",
+    "default_encoding": "UTF-8",
+    "trim_trailing_white_space_on_save": "not_on_caret",
+    "ensure_newline_at_eof_on_save": true,
   },
   "connections": {
     "sitcav-sqlite-faslatam": {
