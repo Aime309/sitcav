@@ -22,12 +22,6 @@
     }
   },
   "scripts": {
-    "build": [
-      "composer install --no-dev -o",
-      "php -r \"if (!is_dir('node_modules')) `npm i`;\"",
-      "npm run build",
-      "composer archive"
-    ],
     "ci": [
       "phpunit",
       "phpstan analyze"
@@ -35,30 +29,6 @@
     "coverage": [
       "phpunit --coverage-html .phpunit.cache/coverage",
       "start .phpunit.cache/coverage/index.html"
-    ]
-  },
-  "archive": {
-    "name": "sitcav",
-    "exclude": [
-      ".vscode",
-      "node_modules",
-      "scripts",
-      ".editorconfig",
-      ".eslintrc.json",
-      ".gitignore",
-      ".git",
-      "biome.json",
-      "composer.*",
-      "LICENSE",
-      "package-lock.json",
-      "package.json",
-      "README.md",
-      "rollup.config.js",
-      "jsconfig.json",
-      "pnpm-*",
-      "main.js",
-      "*.svelte",
-      "*.map"
     ]
   },
   "require-dev": {
