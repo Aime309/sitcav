@@ -1,10 +1,10 @@
 {
   "require": {
     "php": "^8.2",
-    "flightphp/core": "^3.15",
+    "flightphp/core": "^3.16",
     "giggsey/libphonenumber-for-php-lite": "^9.0",
-    "illuminate/container": "^12.17",
-    "illuminate/database": "^12.17",
+    "illuminate/container": "^12.19",
+    "illuminate/database": "^12.19",
     "leafs/auth": "^4.1",
     "leafs/db": "^4.0",
     "leafs/leaf": "^4.1",
