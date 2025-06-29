@@ -1,15 +1,15 @@
 -- NO CAMBIAR EL ORDEN
 delete from pagos;
-delete from detalles_ventas;
+delete from detalles_venta;
 delete from ventas;
 delete from clientes;
 delete from productos;
-delete from detalles_compras;
+delete from detalles_compra;
 delete from compras;
 delete from proveedores;
 delete from cotizaciones;
 delete from tipos_pago;
-delete from categorias_producto;
+delete from categorias;
 delete from negocios;
 delete from sectores;
 delete from localidades;
@@ -17,12 +17,12 @@ delete from estados;
 delete from marcas;
 delete from usuarios;
 
-insert into usuarios (id, cedula, clave, rol, esta_activo, pregunta_secreta, respuesta_secreta, id_admin) values
-  (1, 12345678, /* Admin.123 */ '$2y$10$HoG.Mi9zoKT7MhhELX9aKesjOxyk1o4DGlSdy3307jAxwV3Jnm23e', 'Administrador', true, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null),
-  (2, 12345679, /* Vendedor.123 */ '$2y$10$UwZFBCo836pmmP9NRQjC2ufi6lQYWIDmKEi0yZhPmMh4.RqRqGmQW', 'Vendedor', true, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', 1),
-  (3, 12345689, /* Hacker.123 */ '$2y$10$qtKkRdQdzZ1gcU2wggVzwelxLPi6FDfC.TTInshPk74ljkTg/nQNa', 'Administrador', true, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null);
+insert into usuarios (id, cedula, clave_encriptada, rol, esta_activado, pregunta_secreta, respuesta_secreta_encriptada, id_encargado) values
+  (1, 12345678, /* Admin.123 */ '$2y$10$HoG.Mi9zoKT7MhhELX9aKesjOxyk1o4DGlSdy3307jAxwV3Jnm23e', 'Encargado', true, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null),
+  (2, 12345679, /* Vendedor.123 */ '$2y$10$UwZFBCo836pmmP9NRQjC2ufi6lQYWIDmKEi0yZhPmMh4.RqRqGmQW', 'Empleado superior', true, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', 1),
+  (3, 12345689, /* Hacker.123 */ '$2y$10$qtKkRdQdzZ1gcU2wggVzwelxLPi6FDfC.TTInshPk74ljkTg/nQNa', 'Encargado', true, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null);
 
-insert into marcas (id, nombre, id_usuario) values
+insert into marcas (id, nombre, id_encargado) values
   (0, 'Sin marca', 1),
   (1, 'Apple', 1),
   (2, 'Samsung', 1),
@@ -36,13 +36,13 @@ insert into marcas (id, nombre, id_usuario) values
   (10, 'Otro', 1),
   (11, 'HP', 1);
 
-insert into cotizaciones (id, fecha_hora, tasa_dolar_bolivares, id_usuario) values
+insert into cotizaciones (id, fecha_hora_creacion, tasa_bcv, id_encargado) values
   (1, '2025-02-02 04:30:00', 60, 1),
-  (2, '2025-02-01 04:30:00', 58, 1),
-  (3, '2025-01-31 04:30:00', 57.6, 1),
-  (4, '2025-02-02 04:30:00', 153.52, 3);
+  (2, '2025-02-01 04:30:01', 58, 1),
+  (3, '2025-01-31 04:30:02', 57.6, 1),
+  (4, '2025-02-02 04:30:03', 153.52, 3);
 
-insert into estados (id, nombre, id_usuario) values
+insert into estados (id, nombre, id_encargado) values
   (1, 'Amazonas', 1),
   (2, 'Anzoátegui', 1),
   (3, 'Apure', 1),
@@ -578,21 +578,21 @@ insert into sectores (id, nombre, id_localidad) values
   (5, 'Los Naranjos', 523);
 
 insert into negocios (id, rif, nombre, telefono, id_localidad, id_sector) values
-  (1, 'J-12345678-9', 'Ferretería El Constructor', '02121234567', 149, 1),
-  (2, 'J-12345678-0', 'Ferretería El Constructor', '02121234567', 149, 2),
-  (3, 'J-12345678-1', 'Ferretería El Constructor', '02121234567', 149, 3),
-  (4, 'J-12345678-2', 'Ferretería El Constructor', '02121234567', 149, 4),
-  (5, 'J-12345678-3', 'Ferretería El Constructor', '02121234567', 149, 5);
+  (1, 'J-12345678-9', 'Ferretería El Constructor', '+582121234567', 149, 1),
+  (2, 'J-12345678-0', 'Ferretería El Constructor', '+582121234567', 149, 2),
+  (3, 'J-12345678-1', 'Ferretería El Constructor', '+582121234567', 149, 3),
+  (4, 'J-12345678-2', 'Ferretería El Constructor', '+582121234567', 149, 4),
+  (5, 'J-12345678-3', 'Ferretería El Constructor', '+582121234567', 149, 5);
 
 insert into proveedores (id, rif, nombre, telefono, id_estado) values
-  (1, 'J-12345678-9', 'Ferretería El Constructor', '02121234567', 24),
-  (2, 'J-12345678-0', 'Ferretería El Constructor', '02121234567', 24),
-  (3, 'J-12345678-1', 'Ferretería El Constructor', '02121234567', 24),
-  (4, 'J-12345678-2', 'Ferretería El Constructor', '02121234567', 24),
-  (5, 'J-12345678-3', 'Ferretería El Constructor', '02121234567', 24),
-  (6, 'J-13435456-4', 'HP', '02123425356', 24);
+  (1, 'J-12345678-9', 'Ferretería El Constructor', '+582121234567', 24),
+  (2, 'J-12345678-0', 'Ferretería El Constructor', '+582121234567', 24),
+  (3, 'J-12345678-1', 'Ferretería El Constructor', '+582121234567', 24),
+  (4, 'J-12345678-2', 'Ferretería El Constructor', '+582121234567', 24),
+  (5, 'J-12345678-3', 'Ferretería El Constructor', '+582121234567', 24),
+  (6, 'J-13435456-4', 'HP', '+582123425356', 24);
 
-insert into categorias_producto (id, nombre, id_usuario) values
+insert into categorias (id, nombre, id_encargado) values
   (1, 'Routers', 1),
   (2, 'Modems', 1),
   (3, 'Switches', 1),
@@ -600,114 +600,114 @@ insert into categorias_producto (id, nombre, id_usuario) values
   (6, 'Cables', 1),
   (7, 'Laptops', 1);
 
-insert into productos (id_marca, id, codigo, nombre, descripcion, precio_unitario_actual_dolares, cantidad_disponible, dias_garantia, dias_apartado, id_categoria, id_proveedor) values
-  (0, 1, 'RTR-001', 'Router Cisco 1000', 'Router de 4 puertos', 100, 10, 30, 7, 1, 1),
-  (0, 2, 'RTR-002', 'Router Cisco 2000', 'Router de 8 puertos', 200, 10, 30, 30, 1, 1),
-  (0, 3, 'RTR-003', 'Router Cisco 3000', 'Router de 16 puertos', 300, 10, 30, 30, 1, 1),
-  (0, 4, 'RTR-004', 'Router Cisco 4000', 'Router de 32 puertos', 400, 10, 30, 30, 1, 1),
-  (0, 5, 'RTR-005', 'Router Cisco 5000', 'Router de 64 puertos', 500, 10, 30, 30, 1, 1),
-  (0, 6, 'MDM-001', 'Modem Cisco 1000', 'Modem de 4 puertos', 100, 10, 30, 30, 2, 1),
-  (0, 7, 'MDM-002', 'Modem Cisco 2000', 'Modem de 8 puertos', 200, 10, 30, 30, 2, 1),
-  (0, 8, 'MDM-003', 'Modem Cisco 3000', 'Modem de 16 puertos', 300, 10, 30, 30, 2, 1),
-  (0, 9, 'MDM-004', 'Modem Cisco 4000', 'Modem de 32 puertos', 400, 10, 30, 30, 2, 1),
-  (0, 10, 'MDM-005', 'Modem Cisco 5000', 'Modem de 64 puertos', 500, 10, 30, 30, 2, 1),
-  (0, 11, 'SWT-001', 'Switch Cisco 1000', 'Switch de 4 puertos', 100, 10, 30, 30, 3, 1),
-  (0, 12, 'SWT-002', 'Switch Cisco 2000', 'Switch de 8 puertos', 200, 10, 30, 30, 3, 1),
-  (0, 13, 'SWT-003', 'Switch Cisco 3000', 'Switch de 16 puertos', 300, 10, 30, 30, 3, 1),
-  (0, 14, 'SWT-004', 'Switch Cisco 4000', 'Switch de 32 puertos', 400, 10, 30, 30, 3, 1),
-  (0, 15, 'SWT-005', 'Switch Cisco 5000', 'Switch de 64 puertos', 500, 10, 30, 30, 3, 1),
-  (0, 16, 'ACC-001', 'Accesorio Cisco 1000', 'Accesorio de 4 puertos', 100, 10, 30, 30, 5, 1),
-  (0, 17, 'ACC-002', 'Accesorio Cisco 2000', 'Accesorio de 8 puertos', 200, 10, 30, 30, 5, 1),
-  (0, 18, 'ACC-003', 'Accesorio Cisco 3000', 'Accesorio de 16 puertos', 300, 10, 30, 30, 5, 1),
-  (0, 19, 'ACC-004', 'Accesorio Cisco 4000', 'Accesorio de 32 puertos', 400, 10, 30, 30, 5, 1),
-  (0, 20, 'ACC-005', 'Accesorio Cisco 5000', 'Accesorio de 64 puertos', 500, 10, 30, 30, 5, 1),
-  (0, 21, 'CBL-001', 'Cable Cisco 1000', 'Cable de 4 puertos', 100, 10, 30, 30, 6, 1),
-  (0, 22, 'CBL-002', 'Cable Cisco 2000', 'Cable de 8 puertos', 200, 10, 30, 30, 6, 1),
-  (0, 23, 'CBL-003', 'Cable Cisco 3000', 'Cable de 16 puertos', 300, 10, 30, 30, 6, 1),
-  (0, 24, 'CBL-004', 'Cable Cisco 4000', 'Cable de 32 puertos', 400, 10, 30, 30, 6, 1),
-  (0, 25, 'CBL-005', 'Cable Cisco 5000', 'Cable de 64 puertos', 500, 10, 30, 30, 6, 1);
+insert into productos (id_marca, id, codigo, nombre, descripcion, precio_unitario_actual_dolares, precio_unitario_actual_bcv, cantidad_disponible, dias_garantia, dias_apartado, id_categoria, id_proveedor) values
+  (0, 1, 'RTR-001', 'Router Cisco 1000', 'Router de 4 puertos', 100, 100, 10, 30, 7, 1, 1),
+  (0, 2, 'RTR-002', 'Router Cisco 2000', 'Router de 8 puertos', 200, 200, 10, 30, 30, 1, 1),
+  (0, 3, 'RTR-003', 'Router Cisco 3000', 'Router de 16 puertos', 300, 300, 10, 30, 30, 1, 1),
+  (0, 4, 'RTR-004', 'Router Cisco 4000', 'Router de 32 puertos', 400, 400, 10, 30, 30, 1, 1),
+  (0, 5, 'RTR-005', 'Router Cisco 5000', 'Router de 64 puertos', 500, 500, 10, 30, 30, 1, 1),
+  (0, 6, 'MDM-001', 'Modem Cisco 1000', 'Modem de 4 puertos', 100, 100, 10, 30, 30, 2, 1),
+  (0, 7, 'MDM-002', 'Modem Cisco 2000', 'Modem de 8 puertos', 200, 200, 10, 30, 30, 2, 1),
+  (0, 8, 'MDM-003', 'Modem Cisco 3000', 'Modem de 16 puertos', 300, 300, 10, 30, 30, 2, 1),
+  (0, 9, 'MDM-004', 'Modem Cisco 4000', 'Modem de 32 puertos', 400, 400, 10, 30, 30, 2, 1),
+  (0, 10, 'MDM-005', 'Modem Cisco 5000', 'Modem de 64 puertos', 500, 500, 10, 30, 30, 2, 1),
+  (0, 11, 'SWT-001', 'Switch Cisco 1000', 'Switch de 4 puertos', 100, 100, 10, 30, 30, 3, 1),
+  (0, 12, 'SWT-002', 'Switch Cisco 2000', 'Switch de 8 puertos', 200, 200, 10, 30, 30, 3, 1),
+  (0, 13, 'SWT-003', 'Switch Cisco 3000', 'Switch de 16 puertos', 300, 300, 10, 30, 30, 3, 1),
+  (0, 14, 'SWT-004', 'Switch Cisco 4000', 'Switch de 32 puertos', 400, 400, 10, 30, 30, 3, 1),
+  (0, 15, 'SWT-005', 'Switch Cisco 5000', 'Switch de 64 puertos', 500, 500, 10, 30, 30, 3, 1),
+  (0, 16, 'ACC-001', 'Accesorio Cisco 1000', 'Accesorio de 4 puertos', 100, 100, 10, 30, 30, 5, 1),
+  (0, 17, 'ACC-002', 'Accesorio Cisco 2000', 'Accesorio de 8 puertos', 200, 200, 10, 30, 30, 5, 1),
+  (0, 18, 'ACC-003', 'Accesorio Cisco 3000', 'Accesorio de 16 puertos', 300, 300, 10, 30, 30, 5, 1),
+  (0, 19, 'ACC-004', 'Accesorio Cisco 4000', 'Accesorio de 32 puertos', 400, 400, 10, 30, 30, 5, 1),
+  (0, 20, 'ACC-005', 'Accesorio Cisco 5000', 'Accesorio de 64 puertos', 500, 500, 10, 30, 30, 5, 1),
+  (0, 21, 'CBL-001', 'Cable Cisco 1000', 'Cable de 4 puertos', 100, 100, 10, 30, 30, 6, 1),
+  (0, 22, 'CBL-002', 'Cable Cisco 2000', 'Cable de 8 puertos', 200, 200, 10, 30, 30, 6, 1),
+  (0, 23, 'CBL-003', 'Cable Cisco 3000', 'Cable de 16 puertos', 300, 300, 10, 30, 30, 6, 1),
+  (0, 24, 'CBL-004', 'Cable Cisco 4000', 'Cable de 32 puertos', 400, 400, 10, 30, 30, 6, 1),
+  (0, 25, 'CBL-005', 'Cable Cisco 5000', 'Cable de 64 puertos', 500, 500, 10, 30, 30, 6, 1);
 
-insert into compras (id, fecha_hora, cotizacion_dolar_bolivares, id_proveedor) values
+insert into compras (id, fecha_hora_creacion, tasa_bcv, id_proveedor) values
   (1, '2020-01-01 00:00:00', 10000, 1),
   (2, '2020-01-02 00:00:00', 10000, 1),
   (3, '2020-01-03 00:00:00', 10000, 1),
   (4, '2020-01-04 00:00:00', 10000, 1),
   (5, '2020-01-05 00:00:00', 10000, 1);
 
-insert into detalles_compras (id, cantidad, precio_unitario_fijo_dolares, id_producto, id_compra) values
-  (1, 10, 100, 1, 1),
-  (2, 10, 200, 2, 1),
-  (3, 10, 300, 3, 1),
-  (4, 10, 400, 4, 1),
-  (5, 10, 500, 5, 1),
-  (6, 10, 100, 6, 2),
-  (7, 10, 200, 7, 2),
-  (8, 10, 300, 8, 2),
-  (9, 10, 400, 9, 2),
-  (10, 10, 500, 10, 2),
-  (11, 10, 100, 11, 3),
-  (12, 10, 200, 12, 3),
-  (13, 10, 300, 13, 3),
-  (14, 10, 400, 14, 3),
-  (15, 10, 500, 15, 3),
-  (16, 10, 100, 16, 4),
-  (17, 10, 200, 17, 4),
-  (18, 10, 300, 18, 4),
-  (19, 10, 400, 19, 4),
-  (20, 10, 500, 20, 4),
-  (21, 10, 100, 21, 5),
-  (22, 10, 200, 22, 5),
-  (23, 10, 300, 23, 5),
-  (24, 10, 400, 24, 5),
-  (25, 10, 500, 25, 5);
+insert into detalles_compra (id, cantidad, precio_unitario_fijo_dolares, precio_unitario_fijo_bcv, id_producto, id_compra) values
+  (1, 10, 100, 100, 1, 1),
+  (2, 10, 200, 200, 2, 1),
+  (3, 10, 300, 300, 3, 1),
+  (4, 10, 400, 400, 4, 1),
+  (5, 10, 500, 500, 5, 1),
+  (6, 10, 100, 100, 6, 2),
+  (7, 10, 200, 200, 7, 2),
+  (8, 10, 300, 300, 8, 2),
+  (9, 10, 400, 400, 9, 2),
+  (10, 10, 500, 500, 10, 2),
+  (11, 10, 100, 100, 11, 3),
+  (12, 10, 200, 200, 12, 3),
+  (13, 10, 300, 300, 13, 3),
+  (14, 10, 400, 400, 14, 3),
+  (15, 10, 500, 500, 15, 3),
+  (16, 10, 100, 100, 16, 4),
+  (17, 10, 200, 200, 17, 4),
+  (18, 10, 300, 300, 18, 4),
+  (19, 10, 400, 400, 19, 4),
+  (20, 10, 500, 500, 20, 4),
+  (21, 10, 100, 100, 21, 5),
+  (22, 10, 200, 200, 22, 5),
+  (23, 10, 300, 300, 23, 5),
+  (24, 10, 400, 400, 24, 5),
+  (25, 10, 500, 500, 25, 5);
 
 insert into clientes (id, cedula, nombres, apellidos, telefono, id_localidad) values
-  (1, 12345678, 'Juan', 'Pérez', '04121234567', 149),
-  (2, 12345679, 'Pedro', 'Gómez', '04121234567', 149),
-  (3, 12345670, 'María', 'González', '04121234567', 149),
-  (4, 12345671, 'José', 'Hernández', '04121234567', 149),
-  (5, 12345672, 'Ana', 'Martínez', '04121234567', 149);
+  (1, 12345678, 'Juan', 'Pérez', '+584121234567', 149),
+  (2, 12345679, 'Pedro', 'Gómez', '+584121234567', 149),
+  (3, 12345670, 'María', 'González', '+584121234567', 149),
+  (4, 12345671, 'José', 'Hernández', '+584121234567', 149),
+  (5, 12345672, 'Ana', 'Martínez', '+584121234567', 149);
 
-insert into ventas (id, fecha_hora, id_cliente) values
+insert into ventas (id, fecha_hora_creacion, id_cliente) values
   (1, '2020-01-01 00:00:00', 1),
   (2, '2020-01-02 00:00:00', 1),
   (3, '2020-01-03 00:00:00', 1),
   (4, '2020-01-04 00:00:00', 1),
   (5, '2020-01-05 00:00:00', 1);
 
-insert into detalles_ventas (id, cantidad, precio_unitario_fijo_dolares, esta_apartado, id_producto, id_venta) values
-  (1, 10, 100, 0, 1, 1),
-  (2, 10, 200, 0, 2, 1),
-  (3, 10, 300, 0, 3, 1),
-  (4, 10, 400, 0, 4, 1),
-  (5, 10, 500, 0, 5, 1),
-  (6, 10, 100, 0, 6, 2),
-  (7, 10, 200, 0, 7, 2),
-  (8, 10, 300, 0, 8, 2),
-  (9, 10, 400, 0, 9, 2),
-  (10, 10, 500, 0, 10, 2),
-  (11, 10, 100, 0, 11, 3),
-  (12, 10, 200, 0, 12, 3),
-  (13, 10, 300, 0, 13, 3),
-  (14, 10, 400, 0, 14, 3),
-  (15, 10, 500, 0, 15, 3),
-  (16, 10, 100, 0, 16, 4),
-  (17, 10, 200, 0, 17, 4),
-  (18, 10, 300, 0, 18, 4),
-  (19, 10, 400, 0, 19, 4),
-  (20, 10, 500, 0, 20, 4),
-  (21, 10, 100, 0, 21, 5),
-  (22, 10, 200, 0, 22, 5),
-  (23, 10, 300, 0, 23, 5),
-  (24, 10, 400, 0, 24, 5),
-  (25, 10, 500, 0, 25, 5);
+insert into detalles_venta (id, cantidad, precio_unitario_fijo_dolares, precio_unitario_fijo_bcv, esta_apartado, id_producto, id_venta) values
+  (1, 10, 100, 100, 0, 1, 1),
+  (2, 10, 200, 200, 0, 2, 1),
+  (3, 10, 300, 300, 0, 3, 1),
+  (4, 10, 400, 400, 0, 4, 1),
+  (5, 10, 500, 500, 0, 5, 1),
+  (6, 10, 100, 100, 0, 6, 2),
+  (7, 10, 200, 200, 0, 7, 2),
+  (8, 10, 300, 300, 0, 8, 2),
+  (9, 10, 400, 400, 0, 9, 2),
+  (10, 10, 500, 500, 0, 10, 2),
+  (11, 10, 100, 100, 0, 11, 3),
+  (12, 10, 200, 200, 0, 12, 3),
+  (13, 10, 300, 300, 0, 13, 3),
+  (14, 10, 400, 400, 0, 14, 3),
+  (15, 10, 500, 500, 0, 15, 3),
+  (16, 10, 100, 100, 0, 16, 4),
+  (17, 10, 200, 200, 0, 17, 4),
+  (18, 10, 300, 300, 0, 18, 4),
+  (19, 10, 400, 400, 0, 19, 4),
+  (20, 10, 500, 500, 0, 20, 4),
+  (21, 10, 100, 100, 0, 21, 5),
+  (22, 10, 200, 200, 0, 22, 5),
+  (23, 10, 300, 300, 0, 23, 5),
+  (24, 10, 400, 400, 0, 24, 5),
+  (25, 10, 500, 500, 0, 25, 5);
 
-insert into tipos_pago (id, nombre, id_usuario) values
+insert into tipos_pago (id, nombre, id_encargado) values
   (1, 'Efectivo', 1),
   (2, 'Transferencia', 1),
   (3, 'Punto de Venta', 1);
 
-insert into pagos (id, fecha_hora, cotizacion_dolar_bolivares, monto, id_tipo_pago, id_detalle_venta) values
+insert into pagos (id, fecha_hora_creacion, tasa_bcv, monto_dolares, id_tipo_pago, id_detalle_venta) values
   (1, '2020-01-01 00:00:00', 10000, 1000, 1, 1),
   (2, '2020-01-02 00:00:00', 10000, 2000, 1, 2),
   (3, '2020-01-03 00:00:00', 10000, 3000, 1, 3),
