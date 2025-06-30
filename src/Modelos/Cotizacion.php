@@ -2,32 +2,32 @@
 
 namespace SITCAV\Modelos;
 
-use DateTimeImmutable;
-use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property-read int $id
- * @property-read DateTimeInterface $fechaHora
- * @property-read float $tasaDolarBolivares
+ * @property-read Carbon $fecha_hora_creacion
+ * @property-read float $tasa_bcv
+ * @property-read Usuario $encargado
  */
 final class Cotizacion extends Model
 {
   protected $table = 'cotizaciones';
+  public $timestamps = false;
 
-  function usuario(): BelongsTo
-  {
-    return $this->belongsTo(Usuario::class, 'id_usuario');
-  }
+  protected $casts = [
+    'fecha_hora_creacion' => 'datetime',
+    'tasa_bcv' => 'float',
+  ];
 
-  function getFechaHoraAttribute(): DateTimeInterface
+  /**
+   * @return BelongsTo<Usuario>
+   * @deprecated Usa `encargado` en su lugar.
+   */
+  function encargado(): BelongsTo
   {
-    return new DateTimeImmutable($this->attributes['fecha_hora']);
-  }
-
-  function getTasaDolarBolivaresAttribute(): float
-  {
-    return $this->attributes['tasa_dolar_bolivares'];
+    return $this->belongsTo(Usuario::class, 'id_encargado');
   }
 }

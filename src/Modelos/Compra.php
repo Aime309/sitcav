@@ -2,23 +2,33 @@
 
 namespace SITCAV\Modelos;
 
-use DateTimeImmutable;
-use DateTimeInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property-read int $id
- * @property-read DateTimeInterface $fechaHora
- * @property-read float $cotizacionDolarBolivares
+ * @property-read Carbon $fecha_hora_creacion
+ * @property float $tasa_bcv
  * @property-read Proveedor $proveedor
- * @property-read DetalleCompra[] $detalles
+ * @property-read Collection<DetalleCompra> $detalles
  */
 final class Compra extends Model
 {
   protected $table = 'compras';
+  public $timestamps = false;
 
+  protected $casts = [
+    'fecha_hora_creacion' => 'datetime',
+    'tasa_bcv' => 'float',
+  ];
+
+  /**
+   * @return BelongsTo<Proveedor>
+   * @deprecated Usa `proveedor` en su lugar.
+   */
   function proveedor(): BelongsTo
   {
     return $this->belongsTo(Proveedor::class, 'id_proveedor');
@@ -26,19 +36,10 @@ final class Compra extends Model
 
   /**
    * @return HasMany<DetalleCompra>
+   * @deprecated Usa `detalles` en su lugar.
    */
   function detalles(): HasMany
   {
     return $this->hasMany(DetalleCompra::class, 'id_compra');
-  }
-
-  function getFechaHoraAttribute(): DateTimeInterface
-  {
-    return new DateTimeImmutable($this->attributes['fecha_hora']);
-  }
-
-  function getCotizacionDolarBolivaresAttribute(): float
-  {
-    return $this->attributes['cotizacion_dolar_bolivares'];
   }
 }

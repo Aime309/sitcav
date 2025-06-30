@@ -2,27 +2,45 @@
 
 namespace SITCAV\Modelos;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read Usuario $usuario
+ * @property-read int $id
+ * @property string $nombre
+ * @property-read Usuario $encargado
+ * @property-read Collection<Localidad> $localidades
+ * @property-read Collection<Proveedor> $proveedores
  */
 final class Estado extends Model
 {
   protected $table = 'estados';
+  public $timestamps = false;
 
+  /**
+   * @return BelongsTo<Usuario>
+   * @deprecated Usa `encargado` en su lugar.
+   */
+  function encargado(): BelongsTo
+  {
+    return $this->belongsTo(Usuario::class, 'id_usuario');
+  }
+
+  /**
+   * @return HasMany<Localidad>
+   * @deprecated Usa `localidades` en su lugar.
+   */
   function localidades(): HasMany
   {
     return $this->hasMany(Localidad::class, 'id_estado');
   }
 
-  function usuario(): BelongsTo
-  {
-    return $this->belongsTo(Usuario::class, 'id_usuario');
-  }
-
+  /**
+   * @return HasMany<Proveedor>
+   * @deprecated Usa `proveedores` en su lugar.
+   */
   function proveedores(): HasMany
   {
     return $this->hasMany(Proveedor::class, 'id_estado');

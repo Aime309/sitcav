@@ -11,11 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int $id
  * @property string $nombre
  * @property-read Usuario $encargado
- * @property-read Collection<Pago> $pagos
+ * @property-read Collection<Producto> $productos
  */
-final class TipoPago extends Model
+final class Categoria extends Model
 {
-  protected $table = 'tipos_pago';
+  protected $table = 'categorias';
   public $timestamps = false;
 
   /**
@@ -28,11 +28,11 @@ final class TipoPago extends Model
   }
 
   /**
-   * @return HasMany<Pago>
-   * @deprecated Usa `pagos` en su lugar.
+   * @return HasMany<Producto>
+   * @deprecated Usa `productos` en su lugar.
    */
-  function pagos(): HasMany
+  function productos(): HasMany
   {
-    return $this->hasMany(Pago::class, 'id_tipo_pago');
+    return $this->hasMany(Producto::class, 'id_categoria');
   }
 }
