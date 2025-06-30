@@ -24443,7 +24443,7 @@
 									"font": "Arial;13;1",
 									"left": 1128,
 									"top": 181,
-									"width": 149.21533203125,
+									"width": 178.12255859375,
 									"height": 13,
 									"text": "pagos"
 								},
@@ -24469,7 +24469,7 @@
 											"font": "Arial;13;0",
 											"left": 1133,
 											"top": 204,
-											"width": 139.21533203125,
+											"width": 168.12255859375,
 											"height": 13
 										},
 										{
@@ -24484,7 +24484,7 @@
 											"font": "Arial;13;0",
 											"left": 1133,
 											"top": 219,
-											"width": 139.21533203125,
+											"width": 168.12255859375,
 											"height": 13
 										},
 										{
@@ -24499,7 +24499,7 @@
 											"font": "Arial;13;0",
 											"left": 1133,
 											"top": 234,
-											"width": 139.21533203125,
+											"width": 168.12255859375,
 											"height": 13
 										},
 										{
@@ -24514,7 +24514,7 @@
 											"font": "Arial;13;0",
 											"left": 1133,
 											"top": 249,
-											"width": 139.21533203125,
+											"width": 168.12255859375,
 											"height": 13
 										},
 										{
@@ -24529,7 +24529,7 @@
 											"font": "Arial;13;0",
 											"left": 1133,
 											"top": 264,
-											"width": 139.21533203125,
+											"width": 168.12255859375,
 											"height": 13
 										},
 										{
@@ -24544,21 +24544,21 @@
 											"font": "Arial;13;0",
 											"left": 1133,
 											"top": 279,
-											"width": 139.21533203125,
+											"width": 168.12255859375,
 											"height": 13
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 1128,
 									"top": 199,
-									"width": 149.21533203125,
+									"width": 178.12255859375,
 									"height": 98
 								}
 							],
 							"font": "Arial;13;0",
 							"left": 1128,
 							"top": 176,
-							"width": 149.21533203125,
+							"width": 178.12255859375,
 							"height": 121,
 							"autoResize": true,
 							"nameLabel": {
@@ -26698,7 +26698,7 @@
 							"_parent": {
 								"$ref": "AAAAAAGXvMWGit1Y9Es="
 							},
-							"name": "apartado",
+							"name": "esta_apartado",
 							"length": 0
 						},
 						{
@@ -27173,7 +27173,7 @@
 							"_parent": {
 								"$ref": "AAAAAAGXvNAkwN9lzs8="
 							},
-							"name": "fecha_hora",
+							"name": "fecha_hora_creacion",
 							"length": 0,
 							"unique": true
 						},

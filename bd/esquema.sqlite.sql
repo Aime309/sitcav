@@ -1,10 +1,10 @@
 -- NO CAMBIAR EL ÓRDEN
 drop table if exists pagos;
-drop table if exists detalles_ventas;
+drop table if exists detalles_venta;
 drop table if exists ventas;
 drop table if exists clientes;
 drop table if exists productos;
-drop table if exists detalles_compras;
+drop table if exists detalles_compra;
 drop table if exists compras;
 drop table if exists proveedores;
 drop table if exists sectores;
@@ -12,7 +12,7 @@ drop table if exists localidades;
 drop table if exists estados;
 drop table if exists cotizaciones;
 drop table if exists tipos_pago;
-drop table if exists categorias_producto;
+drop table if exists categorias;
 drop table if exists negocios;
 drop table if exists marcas;
 drop table if exists usuarios;
@@ -104,7 +104,7 @@ create table categorias (
 create table marcas (
   id integer primary key autoincrement,
   nombre varchar(255) not null,
-  url_logo varchar(255) unique,
+  url_imagen varchar(255) unique,
   id_encargado integer not null,
 
   foreign key (id_encargado) references usuarios(id),
