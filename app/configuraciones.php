@@ -32,7 +32,7 @@ if (!file_exists($rutaArchivoEnv['local'])) {
 ////////////////////////////////////////////////////
 auth()->config('session', true);
 auth()->config('db.table', 'usuarios');
-auth()->config('password.key', 'clave');
+auth()->config('password.key', 'clave_encriptada');
 auth()->config('messages.loginParamsError', 'Cédula o contraseña incorrecta');
 auth()->config('messages.loginPasswordError', auth()->config('messages.loginParamsError'));
 auth()->config('timestamps', false);

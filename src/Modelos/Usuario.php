@@ -13,7 +13,7 @@ use ZxcvbnPhp\Zxcvbn;
  * @property-read int $id
  * @property int $cedula
  * @property 'Encargado'|'Empleado superior'|'Vendedor' $rol
- * @property bool $esta_activado
+ * @property bool $esta_despedido
  * @property string $pregunta_secreta
  * @property-read ?self $encargado
  * @property-read Collection<Usuario> $empleados

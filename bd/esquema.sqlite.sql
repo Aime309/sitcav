@@ -1,4 +1,5 @@
 -- NO CAMBIAR EL ÓRDEN
+drop table if exists eventos;
 drop table if exists pagos;
 drop table if exists detalles_venta;
 drop table if exists ventas;
@@ -22,7 +23,7 @@ create table usuarios (
   cedula integer not null unique check (cedula > 0),
   clave_encriptada varchar(255) not null,
   rol varchar(255) not null check (rol in ('Encargado', 'Empleado superior', 'Vendedor')),
-  esta_activado boolean default true,
+  esta_despedido boolean default false,
   pregunta_secreta varchar(255),
   respuesta_secreta_encriptada varchar(255),
   id_encargado integer,
@@ -207,4 +208,15 @@ create table pagos (
 
   foreign key (id_tipo_pago) references tipos_pago(id),
   foreign key (id_detalle_venta) references detalles_ventas(id)
+);
+
+create table eventos (
+  id integer primary key autoincrement,
+  fecha_hora_creacion datetime default current_timestamp,
+  tipo varchar(255) not null check (tipo in ('Contrato', 'Despido', 'Ascenso')),
+  tabla varchar(255) not null check (tabla in ('usuarios')),
+  id_entidad varchar(255) not null,
+  id_encargado integer not null,
+
+  foreign key (id_encargado) references usuarios(id)
 );

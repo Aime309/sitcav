@@ -1,4 +1,5 @@
 -- NO CAMBIAR EL ORDEN
+delete from eventos;
 delete from pagos;
 delete from detalles_venta;
 delete from ventas;
@@ -17,10 +18,10 @@ delete from estados;
 delete from marcas;
 delete from usuarios;
 
-insert into usuarios (id, cedula, clave_encriptada, rol, esta_activado, pregunta_secreta, respuesta_secreta_encriptada, id_encargado) values
-  (1, 12345678, /* Admin.123 */ '$2y$10$HoG.Mi9zoKT7MhhELX9aKesjOxyk1o4DGlSdy3307jAxwV3Jnm23e', 'Encargado', true, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null),
-  (2, 12345679, /* Vendedor.123 */ '$2y$10$UwZFBCo836pmmP9NRQjC2ufi6lQYWIDmKEi0yZhPmMh4.RqRqGmQW', 'Empleado superior', true, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', 1),
-  (3, 12345689, /* Hacker.123 */ '$2y$10$qtKkRdQdzZ1gcU2wggVzwelxLPi6FDfC.TTInshPk74ljkTg/nQNa', 'Encargado', true, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null);
+insert into usuarios (id, cedula, clave_encriptada, rol, esta_despedido, pregunta_secreta, respuesta_secreta_encriptada, id_encargado) values
+  (1, 12345678, /* Admin.123 */ '$2y$10$HoG.Mi9zoKT7MhhELX9aKesjOxyk1o4DGlSdy3307jAxwV3Jnm23e', 'Encargado', false, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null),
+  (2, 12345679, /* Vendedor.123 */ '$2y$10$UwZFBCo836pmmP9NRQjC2ufi6lQYWIDmKEi0yZhPmMh4.RqRqGmQW', 'Empleado superior', false, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', 1),
+  (3, 12345689, /* Hacker.123 */ '$2y$10$qtKkRdQdzZ1gcU2wggVzwelxLPi6FDfC.TTInshPk74ljkTg/nQNa', 'Encargado', false, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null);
 
 insert into marcas (id, nombre, id_encargado) values
   (0, 'Sin marca', 1),
@@ -713,3 +714,6 @@ insert into pagos (id, fecha_hora_creacion, tasa_bcv, monto_dolares, id_tipo_pag
   (3, '2020-01-03 00:00:00', 10000, 3000, 1, 3),
   (4, '2020-01-04 00:00:00', 10000, 4000, 1, 4),
   (5, '2020-01-05 00:00:00', 10000, 5000, 1, 5);
+
+insert into eventos (id, fecha_hora_creacion, tipo, tabla, id_entidad, id_encargado) values
+  (1, '2025-01-01 00:00:00', 'Contrato', 'usuarios', 2, 1);
