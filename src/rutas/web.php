@@ -67,7 +67,17 @@ Flight::route('POST /restablecer-clave', function (): void {
   $usuario = Usuario::query()->where('cedula', $cedula)->first();
 
   if (!$usuario) {
-    exit('CEDULA INCORRECTA');
+    $intentos = session()->get('recuperar-clave.intentos') ?? 0;
+    ++$intentos;
+
+    if ($intentos >= 3) {
+      session()->remove('recuperar-clave.intentos');
+
+      exit("<script>alert('Has alcanzado el número máximo de intentos. Por favor, inténtalo más tarde.'); location.href = './ingresar'</script>");
+    }
+
+    session()->set('recuperar-clave.intentos', $intentos);
+    exit("<script>alert(`Llevas $intentos intentos`); location.href = './restablecer-clave'</script>");
   }
 
   flash()->set($usuario->id, 'usuarios.id');
