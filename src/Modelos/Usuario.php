@@ -33,6 +33,23 @@ class Usuario extends Model
     'esta_activado' => 'boolean',
   ];
 
+  function restablecerClave(string $nuevaClave): void
+  {
+    $validador = new Zxcvbn;
+    $fuerzaClave = $validador->passwordStrength($nuevaClave);
+    $puntajeFuerzaClave = $fuerzaClave['score'];
+
+    if ($puntajeFuerzaClave < self::PUNTAJE_CLAVE_SEGURA) {
+      throw new Error('La nueva clave no es lo suficientemente segura. Debe tener al menos 8 caracteres y contener letras, números y símbolos.');
+    }
+
+    $this->clave_encriptada = password_hash($nuevaClave, PASSWORD_DEFAULT, [
+      'cost' => 12,
+    ]);
+
+    $this->save();
+  }
+
   function cambiarClave(string $claveAnterior, string $nuevaClave): void
   {
     if (!password_verify($claveAnterior, $this->clave_encriptada)) {
@@ -71,6 +88,13 @@ class Usuario extends Model
     );
 
     $this->save();
+  }
+
+  function asegurarValidezRespuestaSecreta(string $respuesta_secreta): void
+  {
+    if (!password_verify($respuesta_secreta, $this->respuesta_secreta_encriptada)) {
+      throw new Error('La respuesta secreta no es correcta.');
+    }
   }
 
   /**

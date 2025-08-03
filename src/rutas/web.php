@@ -12,11 +12,15 @@ use SITCAV\Modelos\Usuario;
 // }
 
 Flight::route('GET /ingresar', function (): void {
+  $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
+
   echo <<<html
+  <base href="$hrefBase" />
   <h1>Ingresar</h1>
   <form method="post">
     <input type="number" name="cedula" required placeholder="Cédula" />
     <input type="password" name="clave" required placeholder="Contraseña" />
+    <a href="./restablecer-clave">¿Has olvidado tu contraseña?</a>
     <button>Ingresar</button>
   </form>
   html;
@@ -29,7 +33,7 @@ Flight::route('POST /ingresar', function (): void {
     'cedula' => $credenciales->cedula,
     'clave_encriptada' => $credenciales->clave,
   ])) {
-    exit('BIENVENIDO');
+    exit('BIENVENIDO <a href="./salir">Cerrar sesión</a>');
   } else {
     dd(auth()->errors());
   }
@@ -40,70 +44,94 @@ Flight::route('/salir', function (): void {
   Flight::redirect('/ingresar');
 });
 
-Flight::route('GET /registrarse', function (): void {
+Flight::route('GET /registrarse', function (): void {});
 
-});
+Flight::route('POST /registrarse', function (): void {});
 
-Flight::route('POST /registrarse', function (): void {
+Flight::route('GET /restablecer-clave', function (): void {
+  $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
 
-});
-
-Flight::route('GET /recuperar-clave/1', function (): void {
   echo <<<html
-
+  <base href="$hrefBase" />
+  <h1>Restablecer contraseña - Paso 1</h1>
+  <form method="post">
+    <input type="number" name="cedula" required placeholder="Cédula" />
+    <button>Continuar</button>
+  </form>
   html;
 });
 
-Flight::route('POST /recuperar-clave/1', function (): void {
+Flight::route('POST /restablecer-clave', function (): void {
+  $cedula = Flight::request()->data->cedula;
+  $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
+  $usuario = Usuario::query()->where('cedula', $cedula)->first();
 
+  if (!$usuario) {
+    exit('CEDULA INCORRECTA');
+  }
+
+  flash()->set($usuario->id, 'usuarios.id');
+
+  echo <<<html
+  <base href="$hrefBase" />
+  <h1>Restablecer contraseña - Paso 2</h1>
+  <form method="post" action="./restablecer-clave/2">
+    <label>
+      $usuario->pregunta_secreta
+      <input type="password" name="respuesta" required placeholder="Respuesta" />
+    </label>
+    <button>Continuar</button>
+  </form>
+  html;
 });
 
-Flight::route('GET /recuperar-clave/2', function (): void {
+Flight::route('POST /restablecer-clave/2', function (): void {
+  $respuesta = Flight::request()->data->respuesta;
+  $usuario = Usuario::query()->find(flash()->display('usuarios.id'));
+  $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
 
+  try {
+    $usuario->asegurarValidezRespuestaSecreta($respuesta);
+    flash()->set($usuario->id, 'usuarios.id');
+
+    echo <<<html
+    <base href="$hrefBase" />
+    <h1>Restablecer contraseña - Paso 3</h1>
+    <form action="./restablecer-clave/3" method="post">
+      <input type="password" name="nueva_clave" placeholder="Nueva contraseña" />
+      <button>Continuar</button>
+    </form>
+    html;
+  } catch (Throwable) {
+    exit('RESPUESTA SECRETA INCORRECTA');
+  }
 });
 
-Flight::route('POST /recuperar-clave/2', function (): void {
+Flight::route('POST /restablecer-clave/3', function (): void {
+  $nuevaClave = Flight::request()->data->nueva_clave;
+  $usuario = Usuario::query()->find(flash()->display('usuarios.id'));
 
+  $usuario->restablecerClave($nuevaClave);
+  Flight::redirect('/ingresar');
 });
 
-Flight::route('GET /recuperar-clave/3', function (): void {
+Flight::route('GET /', function (): void {});
 
-});
+Flight::route('GET /perfil', function (): void {});
 
-Flight::route('POST /recuperar-clave/3', function (): void {
+Flight::route('GET /perfil/editar', function (): void {});
 
-});
+Flight::route('POST /perfil/editar', function (): void {});
 
-Flight::route('GET /', function (): void {
+Flight::route('GET /empleados', function (): void {});
 
-});
+Flight::route('POST /empleados/@id:\d/restablecer-clave', function (): void {});
 
-Flight::route('GET /perfil', function (): void {
+Flight::route('/empleados/despedir', function (): void {});
 
-});
+Flight::route('/empleados/promover', function (): void {});
 
-Flight::route('GET /perfil/editar', function (): void {
-
-});
-
-Flight::route('POST /perfil/editar', function (): void {
-
-});
-
-Flight::route('GET /empleados', function (): void {
-
-});
-
-Flight::route('/empleados/despedir', function (): void {
-
-});
-
-Flight::route('/empleados/promover', function (): void {
-
-});
-
-Flight::route('GET /eventos', function (): void {
-});
+Flight::route('GET /eventos', function (): void {});
 
 ////////////////////
 // RUTAS PRIVADAS //
