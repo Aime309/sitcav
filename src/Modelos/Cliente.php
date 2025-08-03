@@ -15,12 +15,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $telefono
  * @property-read Localidad $localidad
  * @property-read ?Sector $sector
- * @property-read Collection<Venta> $compras
+ * @property-read Collection<int, Venta> $compras
  */
 final class Cliente extends Model
 {
   protected $table = 'clientes';
   public $timestamps = false;
+
+  private const PATRONES = [
+    'nombres' => '/^[a-zA-ZáéíóúñÁÉÍÓÚÑ]{1,}\s?[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/',
+  ];
 
   /**
    * @return BelongsTo<Localidad>
@@ -47,5 +51,28 @@ final class Cliente extends Model
   function compras(): HasMany
   {
     return $this->hasMany(Venta::class, 'id_cliente');
+  }
+
+  function __get($key)
+  {
+    switch ($key) {
+      case 'deuda_acumulada_dolares':
+        $deudaAcumuladaDolares = 0;
+
+        foreach ($this->compras as $compra) {
+          foreach ($compra->detalles as $detalle) {
+            $subTotalDolares = $detalle->precio_unitario_fijo_dolares * $detalle->cantidad;
+            $pagosAcumulados = 0;
+
+            foreach ($detalle->pagos as $pago) {
+              $pagosAcumulados += $pago->monto_dolares;
+            }
+
+            $deudaAcumuladaDolares += $subTotalDolares - $pagosAcumulados;
+          }
+        }
+
+        return $deudaAcumuladaDolares;
+    }
   }
 }

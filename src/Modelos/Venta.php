@@ -12,7 +12,7 @@ use Illuminate\Support\Carbon;
  * @property-read int $id
  * @property-read Carbon $fecha_hora_creacion
  * @property-read Cliente $cliente
- * @property-read Collection<DetalleVenta> $detalles
+ * @property-read Collection<int, DetalleVenta> $detalles
  */
 final class Venta extends Model
 {

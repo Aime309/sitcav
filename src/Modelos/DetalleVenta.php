@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property float $precio_unitario_fijo_dolares
  * @property float $precio_unitario_fijo_bcv
  * @property bool $esta_apartado
- * @property-read Collection<Pago> $pagos
+ * @property-read Collection<int, Pago> $pagos
  * @property-read Producto $producto
  * @property-read Venta $venta
  */
