@@ -2,6 +2,7 @@
   import Swiper from "swiper/bundle";
   import { onMount } from "svelte";
   import { Autoplay } from "swiper/modules";
+  import "swiper/css/bundle";
   import "swiper/css/autoplay";
 
   let swiper: HTMLElement;

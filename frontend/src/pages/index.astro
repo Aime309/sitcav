@@ -5,7 +5,6 @@ import "@/estilos/vendor.css";
 import "@/estilos/index.css";
 
 import Header from "@/componentes/landing/Header.svelte";
-import Iconos from "@/componentes/landing/Iconos.svelte";
 import LayoutVisitante from "@/layouts/LayoutVisitante.astro";
 import Navbar from "@/componentes/landing/Navbar.svelte";
 ---
@@ -13,7 +12,6 @@ import Navbar from "@/componentes/landing/Navbar.svelte";
 <LayoutVisitante
   titulo="Sistema Integral de Tecnologia, Créditos y Análisis de Ventas"
 >
-  <Iconos />
   <Navbar />
   <Header client:only="svelte" />
 </LayoutVisitante>
