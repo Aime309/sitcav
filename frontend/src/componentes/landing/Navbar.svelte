@@ -49,12 +49,12 @@
             </div>
           </li> -->
           <li class="nav-item">
-            <a href="./ingresar" class="btn btn-outline-light rounded-pill">
+            <a href="./ingresar" class="btn btn-outline-light">
               Ingresar
             </a>
           </li>
           <li class="nav-item">
-            <a href="./crear-cuenta" class="btn btn-outline-light rounded-pill">
+            <a href="./crear-cuenta" class="btn btn-outline-light">
               Crear cuenta
             </a>
           </li>
@@ -64,9 +64,7 @@
     <ul class="navbar-nav flex-row align-items-center gap-2">
       <!-- <li>
         <a href="wishlist.html" aria-label="Lista de deseos">
-          <svg width="24" height="24" viewBox="0 0 24 24">
-            <use xlink:href="#heart"></use>
-          </svg>
+          <i class="bi bi-heart"></i>
         </a>
       </li> -->
       <!-- <li>
@@ -76,16 +74,12 @@
           data-bs-target="#offcanvasCart"
           aria-label="Mi carrito"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24">
-            <use xlink:href="#cart"></use>
-          </svg>
+          <i class="bi bi-cart"></i>
         </a>
       </li> -->
       <!-- <li>
         <a href="#search" class="search-button" aria-label="Buscar">
-          <svg width="24" height="24" viewBox="0 0 24 24">
-            <use xlink:href="#search"></use>
-          </svg>
+          <i class="bi bi-search"></i>
         </a>
       </li> -->
       <button

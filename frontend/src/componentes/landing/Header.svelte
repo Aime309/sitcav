@@ -1,4 +1,27 @@
-<script>
+<script lang="ts">
+  import Swiper from "swiper/bundle";
+  import { onMount } from "svelte";
+  import { Autoplay } from "swiper/modules";
+  import "swiper/css/autoplay";
+
+  let swiper: HTMLElement;
+
+  onMount(() => {
+    new Swiper(swiper, {
+      loop: true,
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+      modules: [Autoplay],
+      autoplay: true,
+    });
+  });
+
   const banners = [
     {
       image: "./images/banner-large-1.jpg",
@@ -18,48 +41,20 @@
   ];
 </script>
 
-<div class="container-fluid">
-  <div class="slideshow slide-in arrow-absolute text-white">
-    <div class="swiper-wrapper">
-      {#each banners as banner}
-        <div class="swiper-slide jarallax">
-          <img src={banner.image} class="jarallax-img" alt="slideshow" />
-          <div class="banner-content w-100">
-            <div class="container">
-              <div class="row">
-                <div class="col-md-10 px-5">
-                  <h2 class="ls-0 mt-5 pt-5 txt-fx slide-up">
-                    {banner.title}
-                  </h2>
-                  <p class="caption">{banner.caption}</p>
-                  <a
-                    href="#"
-                    class="btn btn-outline-light text-uppercase rounded-3 px-4 py-3 mt-3"
-                  >
-                    Shop Now
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      {/each}
-      <div class="swiper-pagination"></div>
-    </div>
-    <div class="pagination-wrapper position-absolute">
-      <div class="container">
-        <div class="slideshow-swiper-pagination"></div>
+<div bind:this={swiper} class="swiper slideshow">
+  <div class="swiper-wrapper">
+    {#each banners as banner}
+      <div
+        class="swiper-slide jarallax d-flex flex-column align-items-center justify-content-center"
+      >
+        <img src={banner.image} class="jarallax-img" alt="slideshow" />
+        <h2 class="txt-fx slide-up">{banner.title}</h2>
+        <p class="caption">{banner.caption}</p>
+        <!-- <a href="#" class="btn btn-outline-light text-uppercase">Shop Now</a> -->
       </div>
-    </div>
-    <div class="icon-arrow icon-arrow-left text-white">
-      <svg width="50" height="50" viewBox="0 0 24 24">
-        <use xlink:href="#arrow-left"></use>
-      </svg>
-    </div>
-    <div class="icon-arrow icon-arrow-right text-white">
-      <svg width="50" height="50" viewBox="0 0 24 24">
-        <use xlink:href="#arrow-right"></use>
-      </svg>
-    </div>
+    {/each}
   </div>
+  <div class="swiper-pagination my-5"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
 </div>

@@ -11,7 +11,7 @@
         "source.json.composer": "LSP-json",
         "source.json.biome": "LSP-json",
         "source.json": "LSP-json",
-        "source.js": "LSP-biome",
+        "source.js": "LSP-typescript",
         "source.css": "LSP-css",
       },
       "LSP-intelephense": {
