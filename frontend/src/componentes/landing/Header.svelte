@@ -49,13 +49,13 @@
         class="swiper-slide jarallax d-flex flex-column align-items-center justify-content-center"
       >
         <img src={banner.image} class="jarallax-img" alt="slideshow" />
-        <h2 class="txt-fx slide-up">{banner.title}</h2>
-        <p class="caption">{banner.caption}</p>
+        <h2 class="px-5">{banner.title}</h2>
+        <p class="px-5">{banner.caption}</p>
         <!-- <a href="#" class="btn btn-outline-light text-uppercase">Shop Now</a> -->
       </div>
     {/each}
   </div>
   <div class="swiper-pagination my-5"></div>
-  <div class="swiper-button-prev"></div>
-  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev d-none d-lg-block"></div>
+  <div class="swiper-button-next d-none d-lg-block"></div>
 </div>
