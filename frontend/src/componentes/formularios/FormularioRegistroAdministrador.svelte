@@ -54,7 +54,7 @@
     minlength={8}
     placeholder="Clave"
     title="Debe tener al menos 8 caracteres, 1 mayúscula, 1 número y 1 símbolo (@, $, !, %, *, ?, &)"
-    pattern={"(?=.*[a-záéíóúñ])(?=.*[A-ZÁÉÍÓÚÑ])(?=.*\\d)(?=.*[@$!%*?&])[A-ZÁÉÍÓÚÑa-záéíóúÑ\\d@$!%*?&.]{8,}"}
+    pattern={"(?=.*[a-záéíóúñ])(?=.*[A-ZÁÉÍÓÚÑ])(?=.*\\d)(?=.*[@$!%*?&.])[A-ZÁÉÍÓÚÑa-záéíóúÑ\\d@$!%*?&.]{8,}"}
     conBarraFuerza
     conMostradorClave
   />
