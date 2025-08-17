@@ -49,9 +49,7 @@
             </div>
           </li> -->
           <li class="nav-item">
-            <a href="./ingresar" class="btn btn-outline-light">
-              Ingresar
-            </a>
+            <a href="./ingresar" class="btn btn-outline-light"> Ingresar </a>
           </li>
           <li class="nav-item">
             <a href="./crear-cuenta" class="btn btn-outline-light">
