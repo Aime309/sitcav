@@ -3,9 +3,10 @@ import { ViewTransitions } from "astro:transitions";
 
 export interface Props {
   titulo?: string;
+  tema?: "dark" | "light";
 }
 
-const { titulo } = Astro.props;
+const { titulo, tema = "light" } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,7 +19,7 @@ const { titulo } = Astro.props;
     <title>{(titulo && `${titulo} - SITCAV`) || "SITCAV"}</title>
     <ViewTransitions />
   </head>
-  <body data-bs-theme="dark" class="overflow-y-scroll">
+  <body data-bs-theme={tema} class="overflow-y-scroll">
     <slot />
   </body>
 </html>
