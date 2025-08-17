@@ -1,0 +1,56 @@
+---
+import LayoutVisitante from "@/layouts/LayoutVisitante.astro";
+import FormularioIngreso from "@/componentes/formularios/FormularioIngreso.svelte";
+import { Image } from "astro:assets";
+import favicon from "@/recursos/favicon.png";
+---
+
+<LayoutVisitante titulo="Ingresar">
+  <div class="container-fluid">
+    <div class="row min-vh-100">
+      <section
+        class="col-lg position-relative overflow-hidden text-bg-dark d-none d-lg-block z-n1"
+      >
+        <div
+          class="z-n1 position-absolute w-100 h-100 rounded-circle"
+          style="top: -33%; left: -14%; border: 120px solid #0b2947"
+        >
+        </div>
+        <Image
+          src={favicon}
+          width="300"
+          class="z-n1 position-absolute opacity-25 bottom-0 end-0 m-3"
+          alt="Logo de SITCAV"
+          loading="eager"
+        />
+        <div class="min-vh-100 d-flex flex-column justify-content-center mx-5">
+          <h1>Bienvenido a SITCAV</h1>
+          <p class="opacity-75 fs-4">
+            SITCAV es un sistema de gestión para cooperativas de ahorro y
+            crédito que busca facilitar la administración de los servicios
+            financieros y mejorar la experiencia de los usuarios.
+          </p>
+        </div>
+      </section>
+      <section class="col-lg">
+        <div class="p-5 mt-xl-5">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h2>Ingreso</h2>
+              <p class="mb-0">Tu pánel administrativo</p>
+            </div>
+            <a href="./">
+              <Image
+                src={favicon}
+                width="50"
+                alt="Logo de SITCAV"
+                loading="eager"
+              />
+            </a>
+          </div>
+          <FormularioIngreso client:only="svelte" />
+        </div>
+      </section>
+    </div>
+  </div>
+</LayoutVisitante>

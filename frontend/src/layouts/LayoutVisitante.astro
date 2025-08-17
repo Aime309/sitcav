@@ -1,0 +1,10 @@
+---
+import "bootstrap/dist/css/bootstrap.min.css";
+import Layout, { type Props as LayoutProps } from "@/layouts/Layout.astro";
+
+export interface Props extends LayoutProps {}
+---
+
+<Layout {...Astro.props}>
+  <slot />
+</Layout>
