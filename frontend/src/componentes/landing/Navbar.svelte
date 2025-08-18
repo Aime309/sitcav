@@ -1,5 +1,6 @@
 <script>
   import logo from "@/recursos/logo-texto.png";
+  import "bootstrap/js/dist/offcanvas";
 </script>
 
 <div class="container-fluid">

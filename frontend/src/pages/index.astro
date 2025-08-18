@@ -13,6 +13,6 @@ import Navbar from "@/componentes/landing/Navbar.svelte";
   titulo="Sistema Integral de Tecnologia, Créditos y Análisis de Ventas"
   tema="dark"
 >
-  <Navbar />
+  <Navbar client:only="svelte" />
   <Header client:only="svelte" />
 </LayoutVisitante>
