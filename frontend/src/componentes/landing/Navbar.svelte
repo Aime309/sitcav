@@ -1,16 +1,17 @@
 <script>
   import logo from "@/recursos/logo-texto.png";
   import "bootstrap/js/dist/offcanvas";
+
+  const offcanvasId = crypto.randomUUID();
 </script>
 
-<div class="container-fluid">
-  <nav class="navbar navbar-expand-xl text-uppercase py-5">
-    <a href="./">
-      <img src={logo.src} height="46" alt="logo" style:filter="invert(1)" />
+<nav class="navbar navbar-expand-xl text-uppercase py-5">
+  <div class="container">
+    <a href="./" class="navbar-brand">
+      <img src={logo.src} height="46" alt="Logo" style:filter="invert(1)" />
     </a>
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title">Menu</h5>
+    <section class="offcanvas offcanvas-end" tabindex="-1" id={offcanvasId}>
+      <header class="offcanvas-header">
         <button
           type="button"
           class="btn-close"
@@ -18,7 +19,7 @@
           aria-label="Close"
         >
         </button>
-      </div>
+      </header>
 
       <div class="offcanvas-body">
         <ul
@@ -59,14 +60,14 @@
           </li>
         </ul>
       </div>
-    </div>
-    <ul class="navbar-nav flex-row align-items-center gap-2">
-      <!-- <li>
+    </section>
+    <ul class="navbar-nav flex-row align-items-center gap-3">
+      <!-- <li class="nav-item">
         <a href="wishlist.html" aria-label="Lista de deseos">
           <i class="bi bi-heart"></i>
         </a>
       </li> -->
-      <!-- <li>
+      <!-- <li class="nav-item">
         <a
           href="#cart"
           data-bs-toggle="offcanvas"
@@ -76,20 +77,22 @@
           <i class="bi bi-cart"></i>
         </a>
       </li> -->
-      <!-- <li>
+      <!-- <li class="nav-item">
         <a href="#search" class="search-button" aria-label="Buscar">
           <i class="bi bi-search"></i>
         </a>
       </li> -->
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#offcanvasNavbar"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
+      <li class="nav-item">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#{offcanvasId}"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </li>
     </ul>
-  </nav>
-</div>
+  </div>
+</nav>
