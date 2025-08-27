@@ -42,13 +42,19 @@
   ];
 </script>
 
-<div bind:this={swiper} class="swiper slideshow">
+<div bind:this={swiper} class="swiper">
   <div class="swiper-wrapper">
     {#each banners as banner}
       <div
         class="swiper-slide jarallax d-flex flex-column align-items-center justify-content-center"
+        style:min-height="420px"
       >
-        <img src={banner.image} class="jarallax-img" alt="slideshow" />
+        <img
+          src={banner.image}
+          class="position-absolute object-fit-cover z-n1"
+          width="100%"
+          alt={banner.title}
+        />
         <h2 class="px-5">{banner.title}</h2>
         <p class="px-5">{banner.caption}</p>
         <!-- <a href="#" class="btn btn-outline-light text-uppercase">Shop Now</a> -->
@@ -56,6 +62,6 @@
     {/each}
   </div>
   <div class="swiper-pagination my-5"></div>
-  <div class="swiper-button-prev d-none d-lg-block"></div>
-  <div class="swiper-button-next d-none d-lg-block"></div>
+  <div class="swiper-button-prev d-none d-xl-block"></div>
+  <div class="swiper-button-next d-none d-xl-block"></div>
 </div>
