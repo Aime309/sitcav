@@ -1,9 +1,5 @@
 <?php
 
-use SITCAV\Autorizadores\SoloAutenticados;
-use SITCAV\Autorizadores\SoloVisitantes;
-use SITCAV\Controladores\Web\ControladorDeSesion;
-use SITCAV\Modelos\Evento;
 use SITCAV\Modelos\Usuario;
 
 // function renderizarSvelte(): void

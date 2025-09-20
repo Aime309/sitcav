@@ -11,6 +11,7 @@
     "@fortawesome/fontawesome-free": "^7.0.1",
     "@sveltestrap/sveltestrap": "^7.1.0",
     "@types/bootstrap": "^5.2.10",
+    "@types/node": "^24.5.2",
     "bootstrap": "^5.3.8",
     "dotenv": "^17.2.2",
     "esbuild": "0.21.5",

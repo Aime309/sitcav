@@ -1,0 +1,68 @@
+on: push
+name: 🚀 Deploy website on push
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Use Node.js 18
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+
+    - name: Install dependencies
+      run: composer install --no-dev --prefer-dist --no-progress
+
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.ftp_server }}
+        username: ${{ secrets.ftp_username }}
+        password: ${{ secrets.ftp_password }}
+        port: ${{ secrets.ftp_port }}
+        server-dir: ${{ secrets.ftp_server_dir }}
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/.phpunit.cache*
+          **/.phpunit.cache*/**
+          **/comandos*
+          **/comandos*/**
+          **/docs*
+          **/docs*/**
+          **/node_modules*
+          **/node_modules*/**
+          **/src/svelte*
+          **/src/svelte*/**
+          src/env.d.ts
+          src/index.ts
+          **/tests*
+          **/tests*/**
+          .editorconfig
+          .gitignore
+          biome.json
+          composer.json
+          composer.lock
+          package-lock.json
+          package.json
+          phpstan.dist.neon
+          phpunit.xml.dist
+          README.md
+          sitcav.sublime-project
+          sitcav-sublime-workspace
+          tsconfig.json
