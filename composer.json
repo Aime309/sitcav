@@ -2,13 +2,13 @@
   "require": {
     "php": "^8.2",
     "bjeavons/zxcvbn-php": "^1.4",
-    "flightphp/core": "^3.16",
+    "flightphp/core": "^3.17",
     "giggsey/libphonenumber-for-php-lite": "^9.0",
-    "illuminate/container": "^12.19",
-    "illuminate/database": "^12.19",
-    "leafs/auth": "^4.1",
+    "illuminate/container": "^12.30",
+    "illuminate/database": "^12.30",
+    "leafs/auth": "^4.2",
     "leafs/db": "^4.0",
-    "leafs/leaf": "^4.1",
+    "leafs/leaf": "^4.4",
     "leafs/password": "^1.0",
     "symfony/dotenv": "^7.3"
   },
@@ -33,7 +33,7 @@
     ]
   },
   "require-dev": {
-    "guzzlehttp/guzzle": "^7.9",
+    "guzzlehttp/guzzle": "^7.10",
     "phpstan/extension-installer": "^1.4",
     "phpstan/phpstan": "^2.1",
     "phpunit/phpunit": "^11.5",
