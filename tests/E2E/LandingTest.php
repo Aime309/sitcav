@@ -18,6 +18,6 @@ final class LandingTest extends TestBase
     $titulo = $html->getElementsByTagName('title')->item(0)->textContent;
 
     self::assertSame(200, $respuesta->getStatusCode());
-    self::assertSame($_ENV['APP_NAME'], $titulo);
+    self::assertSame('SITCAV', $titulo);
   }
 }

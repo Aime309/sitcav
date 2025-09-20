@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="./global.css" />
   <link rel="stylesheet" href="./build/bundle.css" />
   <script defer src="./build/bundle.js"></script>
-  <title><?= mb_strtoupper($_ENV['APP_NAME'] ?? 'SITCAV') ?></title>
+  <title>SITCAV</title>
 </head>
 
 <body>
