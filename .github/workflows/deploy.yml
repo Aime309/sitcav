@@ -52,6 +52,9 @@ jobs:
           **/.git*/**
           **/.phpunit.cache*
           **/.phpunit.cache*/**
+          **/bd/datos-de-prueba.sql*
+          **/bd/esquema.sqlite.sql*
+          **/bd/venezuela.sql*
           **/comandos*
           **/comandos*/**
           **/docs*
