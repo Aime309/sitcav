@@ -1,7 +1,41 @@
 on: push
 name: 🚀 Deploy website on push
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Use Node.js 18
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'npm'
+
+    - run: npm ci
+    - run: npm run ci --if-present
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Start PHP Development Server
+      run: php -S localhost:8080 &
+
+    # - name: Run ci suite
+    #   run: composer run-script ci
+
   web-deploy:
+    needs: build
     name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
@@ -22,6 +56,7 @@ jobs:
       with:
         node-version: 18
         cache: 'npm'
+
     - run: npm ci
     - run: npm run build --if-present
 
