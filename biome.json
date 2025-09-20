@@ -18,19 +18,12 @@
     }
   },
   "files": {
-    "include": [
-      "src",
-      "comandos"
-    ],
-    "ignore": [
-      "vendor",
-      "node_modules",
-      "*.svelte"
-    ]
+    "include": ["src", "comandos"],
+    "ignore": ["vendor", "node_modules", "*.svelte"]
   },
   "json": {
     "formatter": {
-      "enabled": false
+      "enabled": true
     }
   }
 }
