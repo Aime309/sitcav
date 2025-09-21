@@ -66,12 +66,12 @@ $contenedor = Container::getInstance();
 
 $contenedor->singleton(
   PDO::class,
-  static fn(): PDO => $manager->connection()->getPdo()
+  static fn(): PDO => $manager->connection()->getPdo(),
 );
 
 $contenedor->singleton(
   UsuarioAutenticado::class,
-  static fn(): UsuarioAutenticado => UsuarioAutenticado::query()->findOrFail(auth()->id())
+  static fn(): UsuarioAutenticado => UsuarioAutenticado::query()->findOrFail(auth()->id()),
 );
 
 Flight::registerContainerHandler($contenedor->get(...));
