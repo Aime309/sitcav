@@ -82,3 +82,15 @@ Flight::registerContainerHandler($contenedor->get(...));
 db()->connection($contenedor->get(PDO::class));
 $refleccionPropiedad = new ReflectionProperty(auth(), 'db');
 $refleccionPropiedad->setValue(auth(), db());
+
+///////////////////////////////////
+// CONFIGURAR CONTROL DE ERRORES //
+///////////////////////////////////
+Flight::map('error', static function (Throwable $error): void {
+  if (str_contains($error->getPrevious()?->getMessage() ?? '', UsuarioAutenticado::class)) {
+    http_response_code(401);
+    exit;
+  }
+
+  throw $error;
+});
