@@ -21,6 +21,10 @@ final class Localidad extends Model
   protected $table = 'localidades';
   public $timestamps = false;
 
+  protected $hidden = [
+    'id_estado',
+  ];
+
   /**
    * @return BelongsTo<Estado>
    * @deprecated Usa `estado` en su lugar.

@@ -16,8 +16,10 @@ use Illuminate\Support\Carbon;
  */
 final class Venta extends Model
 {
+  const CREATED_AT = 'fecha_hora_creacion';
+  const UPDATED_AT = null;
+
   protected $table = 'ventas';
-  public $timestamps = false;
 
   protected $casts = [
     'fecha_hora_creacion' => 'datetime',

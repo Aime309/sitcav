@@ -34,6 +34,12 @@ final class Producto extends Model
     'precio_unitario_actual_bcv' => 'float',
   ];
 
+  protected $hidden = [
+    'id_categoria',
+    'id_proveedor',
+    'id_marca',
+  ];
+
   /**
    * @return BelongsTo<Categoria>
    * @deprecated Usa `categoria` en su lugar.

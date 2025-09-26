@@ -4,16 +4,19 @@ namespace SITCAV\Controladores\API;
 
 use Flight;
 use Leaf\Helpers\Password;
+use SITCAV\Modelos\UsuarioAutenticado;
 use Throwable;
 
 final readonly class ControladorDePerfil
 {
-  static function obtenerPerfil(): void
+  function __construct(private UsuarioAutenticado $usuarioAutenticado)
   {
-    Flight::json([
-      'id' => auth()->id(),
-      'cedula' => auth()->user()?->cedula
-    ]);
+    // ...
+  }
+
+  function obtenerPerfil(): void
+  {
+    Flight::json($this->usuarioAutenticado);
   }
 
   static function procesarRegistro(): void

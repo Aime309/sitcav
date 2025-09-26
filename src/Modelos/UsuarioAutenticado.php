@@ -2,4 +2,7 @@
 
 namespace SITCAV\Modelos;
 
-final class UsuarioAutenticado extends Usuario {}
+final class UsuarioAutenticado extends Usuario
+{
+  // ...
+}

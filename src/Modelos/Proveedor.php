@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read ?Localidad $localidad
  * @property-read ?Sector $sector
  * @property-read Collection<Producto> $productos
- * @property-read Collection<Compra> $compras
+ * @property-read Collection<Compra> $ventas
  */
 final class Proveedor extends Model
 {
@@ -25,7 +25,6 @@ final class Proveedor extends Model
 
   /**
    * @return BelongsTo<Estado>
-   * @deprecated Usa `estado` en su lugar.
    */
   function estado(): BelongsTo
   {
@@ -34,7 +33,6 @@ final class Proveedor extends Model
 
   /**
    * @return BelongsTo<Localidad>
-   * @deprecated Usa `localidad` en su lugar.
    */
   function localidad(): BelongsTo
   {
@@ -43,7 +41,6 @@ final class Proveedor extends Model
 
   /**
    * @return BelongsTo<Sector>
-   * @deprecated Usa `sector` en su lugar.
    */
   function sector(): BelongsTo
   {
@@ -52,7 +49,6 @@ final class Proveedor extends Model
 
   /**
    * @return HasMany<Producto>
-   * @deprecated Usa `productos` en su lugar.
    */
   function productos(): HasMany
   {
@@ -61,9 +57,8 @@ final class Proveedor extends Model
 
   /**
    * @return HasMany<Compra>
-   * @deprecated Usa `compras` en su lugar.
    */
-  function compras(): HasMany
+  function ventas(): HasMany
   {
     return $this->hasMany(Compra::class, 'id_proveedor');
   }

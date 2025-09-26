@@ -30,7 +30,13 @@ class Usuario extends Model
   private const PUNTAJE_CLAVE_SEGURA = 4;
 
   protected $casts = [
-    'esta_activado' => 'boolean',
+    'esta_despedido' => 'boolean',
+  ];
+
+  protected $hidden = [
+    'id_encargado',
+    'clave_encriptada',
+    'respuesta_secreta_encriptada',
   ];
 
   function restablecerClave(string $nuevaClave): void

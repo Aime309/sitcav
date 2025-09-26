@@ -22,10 +22,6 @@ final class Cliente extends Model
   protected $table = 'clientes';
   public $timestamps = false;
 
-  private const PATRONES = [
-    'nombres' => '/^[a-zA-ZáéíóúñÁÉÍÓÚÑ]{1,}\s?[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/',
-  ];
-
   /**
    * @return BelongsTo<Localidad>
    * @deprecated Usa `localidad` en su lugar.
@@ -73,6 +69,8 @@ final class Cliente extends Model
         }
 
         return $deudaAcumuladaDolares;
+      default:
+        return parent::__get($key);
     }
   }
 }

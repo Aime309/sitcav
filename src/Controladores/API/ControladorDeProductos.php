@@ -5,33 +5,28 @@ declare(strict_types=1);
 namespace SITCAV\Controladores\API;
 
 use Flight;
-use SITCAV\Modelos\CategoriaProducto;
+use SITCAV\Modelos\Categoria;
 use SITCAV\Modelos\Marca;
 use SITCAV\Modelos\Producto;
 use SITCAV\Modelos\Proveedor;
-use SITCAV\Modelos\UsuarioAutenticado;
 use Throwable;
 
 final readonly class ControladorDeProductos
 {
-  function __construct(private UsuarioAutenticado $usuarioAutenticado) {}
-
   function listarProductos(): void
   {
-    $productos = Producto::with(['categoria', 'marca'])->get();
-
-    Flight::json($productos);
+    Flight::json(Producto::all());
   }
 
-  function mostrarDetallesDelProducto(int $id): void
+  function mostrarDetallesDelProducto(int $id)
   {
-    try {
-      $producto = Producto::with(['categoria', 'marca', 'ventas'])->findOrFail($id);
+    $producto = Producto::query()->find($id);
 
-      Flight::json($producto);
-    } catch (Throwable) {
-      Flight::halt(404, 'Producto no encontrado');
+    if (!$producto) {
+      return true;
     }
+
+    Flight::json($producto);
   }
 
   static function registrarProducto(): void
@@ -53,7 +48,7 @@ final readonly class ControladorDeProductos
     }
 
     try {
-      CategoriaProducto::query()->findOrFail($datos->id_categoria);
+      Categoria::query()->findOrFail($datos->id_categoria);
     } catch (Throwable) {
       Flight::halt(400, 'La categoría no existe');
     }
@@ -131,7 +126,7 @@ final readonly class ControladorDeProductos
 
     if ($datos->id_categoria) {
       try {
-        CategoriaProducto::query()->findOrFail($datos->id_categoria);
+        Categoria::query()->findOrFail($datos->id_categoria);
       } catch (Throwable) {
         Flight::halt(400, 'La categoría no existe');
       }

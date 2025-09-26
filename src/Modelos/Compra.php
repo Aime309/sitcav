@@ -17,13 +17,17 @@ use Illuminate\Support\Carbon;
  */
 final class Compra extends Model
 {
+  const CREATED_AT = 'fecha_hora_creacion';
+  const UPDATED_AT = null;
+
   protected $table = 'compras';
-  public $timestamps = false;
 
   protected $casts = [
     'fecha_hora_creacion' => 'datetime',
     'tasa_bcv' => 'float',
   ];
+
+  protected $fillable = ['tasa_bcv'];
 
   /**
    * @return BelongsTo<Proveedor>
