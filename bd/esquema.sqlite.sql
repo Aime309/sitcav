@@ -42,7 +42,7 @@ create table cotizaciones (
 
 create table estados (
   id integer primary key autoincrement,
-  nombre varchar(255) not null unique,
+  nombre varchar(255) not null,
   id_encargado integer not null,
 
   foreign key (id_encargado) references usuarios(id),
