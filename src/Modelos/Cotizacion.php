@@ -24,6 +24,10 @@ final class Cotizacion extends Model
     'tasa_bcv' => 'float',
   ];
 
+  protected $fillable = [
+    'tasa_bcv',
+  ];
+
   /**
    * @return BelongsTo<Usuario>
    * @deprecated Usa `encargado` en su lugar.
