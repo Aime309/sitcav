@@ -13,6 +13,7 @@
         "source.json": "LSP-biome",
         "source.js": "LSP-biome",
         "source.css": "LSP-biome",
+        "source.ts": "LSP-biome",
       },
       "LSP-intelephense": {
         "settings": {
