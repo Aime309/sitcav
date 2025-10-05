@@ -8,17 +8,17 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.7.2",
-    "@fortawesome/fontawesome-free": "^7.0.1",
-    "@sveltestrap/sveltestrap": "^7.1.0",
+    "@fortawesome/fontawesome-free": "^7.1.0",
     "@types/bootstrap": "^5.2.10",
-    "@types/node": "^24.5.2",
+    "@types/node": "^24.6.2",
     "bootstrap": "^5.3.8",
-    "dotenv": "^17.2.2",
+    "dotenv": "^17.2.3",
     "esbuild": "0.21.5",
     "esbuild-svelte": "^0.9.3",
     "svelte": "^4.2.20",
     "svelte-preprocess": "^6.0.3",
     "svelte-routing": "^2.13.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3",
+    "uuid": "^13.0.0"
   }
 }
