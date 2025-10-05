@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Leaf\Helpers\Password;
 use ZxcvbnPhp\Zxcvbn;
 
 /**
@@ -49,7 +50,7 @@ class Usuario extends Model
       throw new Error('La nueva clave no es lo suficientemente segura. Debe tener al menos 8 caracteres y contener letras, números y símbolos.');
     }
 
-    $this->clave_encriptada = password_hash($nuevaClave, PASSWORD_DEFAULT, [
+    $this->clave_encriptada = Password::hash($nuevaClave, PASSWORD_DEFAULT, [
       'cost' => 12,
     ]);
 
@@ -96,9 +97,9 @@ class Usuario extends Model
     $this->save();
   }
 
-  function asegurarValidezRespuestaSecreta(string $respuesta_secreta): void
+  function asegurarValidezRespuestaSecreta(string $respuestaSecreta): void
   {
-    if (!password_verify($respuesta_secreta, $this->respuesta_secreta_encriptada)) {
+    if (!Password::verify($respuestaSecreta, $this->respuesta_secreta_encriptada)) {
       throw new Error('La respuesta secreta no es correcta.');
     }
   }
@@ -123,7 +124,6 @@ class Usuario extends Model
 
   /**
    * @return HasMany<Cotizacion>
-   * @deprecated Usa `encargado` en su lugar.
    */
   function cotizaciones(): HasMany
   {
