@@ -4,12 +4,13 @@
     "bjeavons/zxcvbn-php": "^1.4",
     "flightphp/core": "^3.17",
     "giggsey/libphonenumber-for-php-lite": "^9.0",
-    "illuminate/container": "^12.30",
-    "illuminate/database": "^12.30",
+    "illuminate/container": "^12.32",
+    "illuminate/database": "^12.32",
     "leafs/auth": "^4.2",
     "leafs/db": "^4.0",
     "leafs/leaf": "^4.4",
     "leafs/password": "^1.0",
+    "leafs/session": "^4.0",
     "symfony/dotenv": "^7.3"
   },
   "autoload": {
