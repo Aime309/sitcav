@@ -49,7 +49,7 @@ $manager = new Manager(Container::getInstance());
 
 $configuracion = [
   'driver' => $_ENV['DB_CONNECTION'],
-  'host' => $_ENV['DB_HOST'] ?? '127.0.0.1',
+  'host' => $_ENV['DB_HOST'] ?? 'localhost',
   'database' => $_ENV['DB_DATABASE'],
   'username' => $_ENV['DB_USERNAME'] ?? 'root',
   'password' => $_ENV['DB_PASSWORD'] ?? ''
@@ -94,3 +94,8 @@ Flight::map('error', static function (Throwable $error): void {
 
   throw $error;
 });
+
+/////////////////////////////////////
+// CONFIGURAR GENERACIÓN DE FECHAS //
+/////////////////////////////////////
+date_default_timezone_set($_ENV['TIMEZONE'] ?? 'America/Caracas');
