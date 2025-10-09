@@ -10,8 +10,8 @@ final readonly class SoloVisitantes
   {
     if (auth()->id() === null) {
       return true;
+    } else {
+      Flight::redirect('/');
     }
-
-    Flight::redirect('/panel');
   }
 }

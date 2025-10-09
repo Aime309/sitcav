@@ -1,29 +1,9 @@
 {
   "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true
-    }
-  },
   "formatter": {
     "indentStyle": "space"
   },
-  "javascript": {
-    "formatter": {
-      "indentStyle": "space"
-    }
-  },
   "files": {
-    "include": ["src", "comandos"],
-    "ignore": ["vendor", "node_modules", "*.svelte"]
-  },
-  "json": {
-    "formatter": {
-      "enabled": true
-    }
+    "ignore": ["*.sublime-*", "vendor", "libs", "*.min.*"]
   }
 }

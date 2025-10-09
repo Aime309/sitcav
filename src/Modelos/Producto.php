@@ -40,6 +40,21 @@ final class Producto extends Model
     'id_marca',
   ];
 
+  protected $fillable = [
+    'codigo',
+    'nombre',
+    'descripcion',
+    'url_imagen',
+    'precio_unitario_actual_dolares',
+    'precio_unitario_actual_bcv',
+    'cantidad_disponible',
+    'dias_garantia',
+    'dias_apartado',
+    'id_categoria',
+    'id_proveedor',
+    'id_marca',
+  ];
+
   /**
    * @return BelongsTo<Categoria>
    * @deprecated Usa `categoria` en su lugar.

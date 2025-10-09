@@ -28,7 +28,7 @@ class Usuario extends Model
 {
   protected $table = 'usuarios';
   public $timestamps = false;
-  private const PUNTAJE_CLAVE_SEGURA = 4;
+  private const PUNTAJE_CLAVE_SEGURA = 3;
 
   protected $casts = [
     'esta_despedido' => 'boolean',

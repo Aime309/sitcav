@@ -1,0 +1,27 @@
+@import "./variables/variables";
+
+// Import Bootstrap source files (Required file)
+@import "bootstrap/scss/bootstrap.scss";
+
+@import "./variables/theme-variables";
+
+// Scrollbar style (Required file)
+@import "simplebar/dist/simplebar.min.css";
+
+// Tabler Icons style
+@import "tabler-icons/iconfont/tabler-icons.min.css";
+
+// Theme Layouts style (Required file)
+@import "./layouts/sidebar";
+@import "./layouts/header";
+@import "./layouts/layouts";
+ 
+// Component style (Required file)
+@import "./component/reboot";
+@import "./component/card";
+
+// Utilities style (Required file)
+@import "./utilities/icon-size"; 
+
+// Pages style (Required file) 
+@import "./pages/dashboard1";  

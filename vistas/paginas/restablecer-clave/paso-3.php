@@ -1,0 +1,28 @@
+<div class="min-vh-100 d-flex align-items-center justify-content-center p-3">
+  <div class="col-md-8 col-lg-6 col-xxl-3">
+    <div class="card m-0">
+      <header class="card-header text-center">
+        <a href="./" class="d-block pb-3" title="Ir a la página de inicio">
+          <img
+            src="./recursos/imagenes/logo-horizontal.png"
+            class="w-50"
+            alt="Logo horizontal de SITCAV" />
+        </a>
+        <p class="card-text">Menos tiempo, más dinero</p>
+      </header>
+      <form action="./restablecer-clave/3" method="post" class="card-body">
+        <div class="mb-4">
+          <label for="input-nueva-clave" class="form-label">Nueva contraseña</label>
+          <input type="password" name="nueva_clave" required class="form-control" id="input-nueva-clave" />
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">
+          Restablecer
+        </button>
+        <div class="text-center">
+          <span class="fs-4 fw-bold">¿Recordaste tu contraseña?</span>
+          <a class="link-primary fw-bold ms-2" href="./ingresar">Ingresar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

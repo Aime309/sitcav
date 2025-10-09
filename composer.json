@@ -8,10 +8,10 @@
     "illuminate/database": "^12.32",
     "leafs/auth": "^4.2",
     "leafs/db": "^4.0",
+    "leafs/form": "^3.2",
     "leafs/leaf": "^4.4",
     "leafs/password": "^1.0",
-    "leafs/session": "^4.0",
-    "symfony/dotenv": "^7.3"
+    "leafs/session": "^4.0"
   },
   "autoload": {
     "psr-4": {
@@ -24,10 +24,7 @@
     }
   },
   "scripts": {
-    "ci": [
-      "phpunit",
-      "phpstan analyze"
-    ],
+    "ci": ["phpunit"],
     "coverage": [
       "phpunit --coverage-html .phpunit.cache/coverage",
       "start .phpunit.cache/coverage/index.html"
@@ -35,15 +32,10 @@
   },
   "require-dev": {
     "guzzlehttp/guzzle": "^7.10",
-    "phpstan/extension-installer": "^1.4",
-    "phpstan/phpstan": "^2.1",
     "phpunit/phpunit": "^11.5",
     "symfony/var-dumper": "^7.3"
   },
   "config": {
-    "allow-plugins": {
-      "phpstan/extension-installer": true
-    },
     "sort-packages": true
   }
 }

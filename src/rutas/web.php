@@ -1,143 +1,401 @@
 <?php
 
+use Illuminate\Container\Container;
+use Leaf\Helpers\Password;
+use SITCAV\Autorizadores\SoloAutenticados;
+use SITCAV\Autorizadores\SoloTasaActualizada;
+use SITCAV\Autorizadores\SoloVisitantes;
+use SITCAV\Modelos\Categoria;
+use SITCAV\Modelos\Cliente;
+use SITCAV\Modelos\Cotizacion;
+use SITCAV\Modelos\Marca;
+use SITCAV\Modelos\Producto;
+use SITCAV\Modelos\Proveedor;
 use SITCAV\Modelos\Usuario;
+use SITCAV\Modelos\UsuarioAutenticado;
 
-// function renderizarSvelte(): void
-// {
-//   Flight::render('estructuras/base');
-// }
+Flight::group('', static function (): void {
+  Flight::route('GET /ingresar', static function (): void {
+    Flight::render('paginas/ingresar', [], 'pagina');
+    Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Ingresar']);
+  });
 
-Flight::route('GET /ingresar', function (): void {
-  $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
+  Flight::route('POST /ingresar', static function (): void {
+    $credenciales = Flight::request()->data;
 
-  echo <<<html
-  <base href="$hrefBase" />
-  <h1>Ingresar</h1>
-  <form method="post">
-    <input type="number" name="cedula" required placeholder="Cédula" />
-    <input type="password" name="clave" required placeholder="Contraseña" />
-    <a href="./restablecer-clave">¿Has olvidado tu contraseña?</a>
-    <button>Ingresar</button>
-  </form>
-  html;
-});
+    if (auth()->login([
+      'cedula' => $credenciales->cedula,
+      'clave_encriptada' => $credenciales->clave,
+    ])) {
+      Flight::redirect('/');
+    } else {
+      flash()->set(auth()->errors(), 'errores');
+      Flight::redirect('/ingresar');
+    }
+  });
 
-Flight::route('POST /ingresar', function (): void {
-  $credenciales = Flight::request()->data;
+  Flight::route('GET /registrarse', static function (): void {
+    Flight::render('paginas/registrarse', [], 'pagina');
+    Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Registrarse']);
+  });
 
-  if (auth()->login([
-    'cedula' => $credenciales->cedula,
-    'clave_encriptada' => $credenciales->clave,
-  ])) {
-    exit('BIENVENIDO <a href="./salir">Cerrar sesión</a>');
-  } else {
-    dd(auth()->errors());
-  }
-});
+  Flight::route('POST /registrarse', static function (): void {
+    $datos = Flight::request()->data;
 
-Flight::route('/salir', function (): void {
-  auth()->logout();
-  Flight::redirect('/ingresar');
-});
+    if (auth()->register([
+      'cedula' => $datos->cedula ?: null,
+      'clave_encriptada' => $datos->clave,
+      'pregunta_secreta' => $datos->pregunta_secreta ?: null,
+      'respuesta_secreta_encriptada' => Password::hash($datos->respuesta_secreta, options: [
+        'cost' => 10,
+      ]),
+      'rol' => 'Encargado',
+    ])) {
+      auth()->login([
+        'cedula' => $datos->cedula,
+        'clave_encriptada' => $datos->clave,
+      ]);
 
-Flight::route('GET /registrarse', function (): void {});
+      flash()->set(['El registro se ha realizado correctamente.'], 'exitos');
+      Flight::redirect('/');
+    } else {
+      flash()->set(auth()->errors(), 'errores');
+      Flight::redirect('/registrarse');
+    }
+  });
 
-Flight::route('POST /registrarse', function (): void {});
+  Flight::route('GET /restablecer-clave', static function (): void {
+    Flight::render('paginas/restablecer-clave/paso-1', [], 'pagina');
+    Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+  });
 
-Flight::route('GET /restablecer-clave', function (): void {
-  $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
+  Flight::route('POST /restablecer-clave', static function (): void {
+    $cedula = Flight::request()->data->cedula;
+    $usuario = Usuario::query()->where('cedula', $cedula)->first();
 
-  echo <<<html
-  <base href="$hrefBase" />
-  <h1>Restablecer contraseña - Paso 1</h1>
-  <form method="post">
-    <input type="number" name="cedula" required placeholder="Cédula" />
-    <button>Continuar</button>
-  </form>
-  html;
-});
+    if (!$usuario) {
+      $intentos = session()->get('restablecer-clave.intentos') ?? 0;
+      ++$intentos;
 
-Flight::route('POST /restablecer-clave', function (): void {
-  $cedula = Flight::request()->data->cedula;
-  $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
-  $usuario = Usuario::query()->where('cedula', $cedula)->first();
+      if ($intentos >= 3) {
+        session()->remove('restablecer-clave.intentos');
+        flash()->set(['Has alcanzado el número máximo de intentos. Por favor, inténtalo más tarde.'], 'errores');
+        Flight::redirect('/ingresar');
 
-  if (!$usuario) {
-    $intentos = session()->get('recuperar-clave.intentos') ?? 0;
-    ++$intentos;
+        return;
+      }
 
-    if ($intentos >= 3) {
-      session()->remove('recuperar-clave.intentos');
+      session()->set('restablecer-clave.intentos', $intentos);
+      flash()->set(["Llevas $intentos intentos."], 'errores');
+      Flight::render('paginas/restablecer-clave/paso-1', [], 'pagina');
+      Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
-      exit("<script>alert('Has alcanzado el número máximo de intentos. Por favor, inténtalo más tarde.'); location.href = './ingresar'</script>");
+      return;
     }
 
-    session()->set('recuperar-clave.intentos', $intentos);
-    exit("<script>alert(`Llevas $intentos intentos`); location.href = './restablecer-clave'</script>");
-  }
+    session()->set('usuarios.id', $usuario->id);
+    Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
+    Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+  });
 
-  flash()->set($usuario->id, 'usuarios.id');
+  Flight::route('POST /restablecer-clave/2', static function (): void {
+    $respuestaSecreta = Flight::request()->data->respuesta_secreta;
+    $usuario = Usuario::query()->find(session()->get('usuarios.id'));
 
-  echo <<<html
-  <base href="$hrefBase" />
-  <h1>Restablecer contraseña - Paso 2</h1>
-  <form method="post" action="./restablecer-clave/2">
-    <label>
-      $usuario->pregunta_secreta
-      <input type="password" name="respuesta" required placeholder="Respuesta" />
-    </label>
-    <button>Continuar</button>
-  </form>
-  html;
-});
+    if (!$respuestaSecreta) {
+      Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
+      Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
-Flight::route('POST /restablecer-clave/2', function (): void {
-  $respuesta = Flight::request()->data->respuesta;
-  $usuario = Usuario::query()->find(flash()->display('usuarios.id'));
-  $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
+      return;
+    }
 
-  try {
-    $usuario->asegurarValidezRespuestaSecreta($respuesta);
-    flash()->set($usuario->id, 'usuarios.id');
+    try {
+      $usuario->asegurarValidezRespuestaSecreta($respuestaSecreta);
+      Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
+      Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+    } catch (Throwable) {
+      flash()->set(['La respuesta secreta es incorrecta.'], 'errores');
+      Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
+      Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+    }
+  });
 
-    echo <<<html
-    <base href="$hrefBase" />
-    <h1>Restablecer contraseña - Paso 3</h1>
-    <form action="./restablecer-clave/3" method="post">
-      <input type="password" name="nueva_clave" placeholder="Nueva contraseña" />
-      <button>Continuar</button>
-    </form>
-    html;
-  } catch (Throwable) {
-    exit('RESPUESTA SECRETA INCORRECTA');
-  }
-});
+  Flight::route('POST /restablecer-clave/3', static function (): void {
+    $nuevaClave = Flight::request()->data->nueva_clave;
+    $usuario = Usuario::query()->find(session()->get('usuarios.id'));
 
-Flight::route('POST /restablecer-clave/3', function (): void {
-  $nuevaClave = Flight::request()->data->nueva_clave;
-  $usuario = Usuario::query()->find(flash()->display('usuarios.id'));
+    $usuario->restablecerClave($nuevaClave);
 
-  $usuario->restablecerClave($nuevaClave);
-  Flight::redirect('/ingresar');
-});
+    auth()->login([
+      'cedula' => $usuario->cedula,
+      'clave_encriptada' => $nuevaClave,
+    ]);
 
-Flight::route('GET /', function (): void {});
+    session()->remove('usuarios.id');
+    flash()->set(['La contraseña se ha restablecido correctamente.'], 'exitos');
+    Flight::redirect('/');
+  });
+}, [SoloVisitantes::class]);
 
-Flight::route('GET /perfil', function (): void {});
+Flight::group('', static function (): void {
+  Flight::route('GET /', static function (): void {
+    Flight::render('paginas/inicio', [], 'pagina');
+    Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Sistema Integral de Tecnologia, Créditos y Análisis de Ventas']);
+  });
 
-Flight::route('GET /perfil/editar', function (): void {});
+  Flight::route('/salir', static function (): void {
+    auth()->logout();
+    Flight::redirect('/ingresar');
+  });
 
-Flight::route('POST /perfil/editar', function (): void {});
+  Flight::group('', static function (): void {
+    Flight::route('GET /panel', static function (): void {
+      $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
+      $fechaActual = date('d/m/Y');
+      $ultimaCotizacion = Cotizacion::query()->latest()->get()[0];
+      $tasaDePagina = json_decode(file_get_contents('https://ve.dolarapi.com/v1/dolares'))[0]->promedio;
 
-Flight::route('GET /empleados', function (): void {});
+      echo <<<html
+      <base href="$hrefBase" />
+      <time>$fechaActual</time>
+      <form action="./cotizaciones" method="post">
+        Tasa según <a href="https://www.bcv.org.ve/">bcv.org.ve</a> <output>$tasaDePagina</output>
+        <label>
+          Tasa BCV
+          <input
+            type="number"
+            step=".01"
+            name="nueva_tasa"
+            required
+            placeholder="Tasa BCV"
+            value="$ultimaCotizacion->tasa_bcv" />
+        </label>
+        <button>Actualizar</button>
+      </form>
+      html;
+    });
 
-Flight::route('POST /empleados/@id:\d/restablecer-clave', function (): void {});
+    Flight::group('/inventario', static function (): void {
+      Flight::route('GET /', static function (): void {
+        $productos = Producto::query()->get();
+        $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
 
-Flight::route('/empleados/despedir', function (): void {});
+        echo <<<html
+        <base href="$hrefBase" />
+        <a href="./inventario/añadir">Añadir producto</a>
+        <ul>
+        html;
 
-Flight::route('/empleados/promover', function (): void {});
+        foreach ($productos as $producto) {
+          echo <<<html
+          <li>
+            <article>
+              <figure>
+                <img src="$producto->url_imagen" width="200" />
+                <figcaption>$producto->nombre</figcaption>
+              </figure>
+              <small>$producto->codigo</small>
+            </article>
+          </li>
+          html;
+        }
 
-Flight::route('GET /eventos', function (): void {});
+        echo <<<html
+        </ul>
+        html;
+      });
+
+      Flight::route('GET /añadir', static function (): void {
+        $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
+
+        echo <<<html
+        <base href="$hrefBase" />
+        <form method="post" action="./inventario">
+          <input name="codigo" placeholder="Código" />
+          <input name="nombre" required placeholder="Nombre" />
+          <textarea name="descripcion" placeholder="Descripción"></textarea>
+          <input name="precio_dolares" type="number" step=".01" required placeholder="Precio (Dólares)" />
+          <input name="precio_bcv" type="number" step=".01" required placeholder="Precio (Bolívares)" />
+          <input name="cantidad_disponible" type="number" required placeholder="Cantidad disponible" />
+          <input name="dias_garantia" type="number" required placeholder="Días de garantía" />
+          <input name="dias_apartado" type="number" required placeholder="Días de apartado" />
+          <input name="url_imagen" type="url" required placeholder="URL de la imagen" />
+          <select name="id_categoria" required>
+            <option value="">Categoría</option>
+        html;
+
+        foreach (Categoria::all() as $categoria) {
+          echo <<<html
+          <option value="$categoria->id">$categoria->nombre</option>
+          html;
+        }
+
+        echo <<<html
+        </select>
+        <select name="id_marca" required>
+          <option value="">Marca</option>
+        html;
+
+        foreach (Marca::all() as $marca) {
+          echo <<<html
+          <option value="$marca->id">$marca->nombre</option>
+          html;
+        }
+
+        echo <<<html
+        </select>
+        <select name="id_proveedor">
+          <option value="">Proveedor</option>
+        html;
+
+        foreach (Proveedor::all() as $proveedor) {
+          echo <<<html
+          <option value="$proveedor->id">$proveedor->nombre</option>
+          html;
+        }
+
+        echo <<<html
+          </select>
+          <button>Añadir</button>
+        </form>
+        html;
+      });
+
+      Flight::route('POST /', static function (): void {
+        $datos = Flight::request()->data;
+
+        Producto::query()->create([
+          'codigo' => $datos->codigo,
+          'nombre' => $datos->nombre,
+          'descripcion' => $datos->descripcion,
+          'url_imagen' => $datos->url_imagen,
+          'precio_unitario_actual_dolares' => $datos->precio_dolares,
+          'precio_unitario_actual_bcv' => $datos->precio_bcv,
+          'cantidad_disponible' => $datos->cantidad_disponible,
+          'dias_garantia' => $datos->dias_garantia,
+          'dias_apartado' => $datos->dias_apartado,
+          'id_categoria' => $datos->id_categoria,
+          'id_marca' => $datos->id_marca,
+          'id_proveedor' => $datos->id_proveedor,
+        ]);
+
+        Flight::redirect('/inventario');
+      });
+
+      Flight::route('POST /', static function (): void {});
+
+      Flight::group('/@id:[0-9]+', static function (): void {
+        Flight::route('GET /', static function (int $id): void {});
+
+        Flight::route('GET /editar', static function (int $id): void {});
+
+        Flight::route('POST /editar', static function (int $id): void {});
+      });
+    });
+
+    Flight::route('GET /perfil', static function (): void {});
+    Flight::route('GET /perfil/editar', static function (): void {});
+    Flight::route('POST /perfil/editar', static function (): void {});
+
+    // Flight::route('GET /empleados', function (): void {});
+    // Flight::route('POST /empleados/@id:\d/restablecer-clave', function (): void {});
+    // Flight::route('/empleados/despedir', function (): void {});
+    // Flight::route('/empleados/promover', function (): void {});
+
+    // Flight::route('GET /eventos', function (): void {});
+
+    Flight::route('GET /vender', static function (): void {
+      $productos = Producto::all();
+      $clientes = Cliente::all();
+      $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
+      $productosJson = json_encode($productos);
+
+      echo <<<html
+      <base href="$hrefBase" />
+      <script src="https://unpkg.com/alpinejs" defer></script>
+      <form
+        method="post"
+        action="./ventas"
+        x-data='{
+          productos: JSON.parse(`$productosJson`),
+          productoSeleccionado: {
+            id: undefined,
+          },
+        }'>
+        <select name="cedula_cliente">
+          <option value="">Cédula cliente</option>
+      html;
+
+      foreach ($clientes as $cliente) {
+        echo <<<html
+        <option value="$cliente->cedula">$cliente->nombres $cliente->apellidos ($cliente->cedula)</option>
+        html;
+      }
+
+      echo <<<html
+      </select>
+      <select name="id_producto" x-model="productoSeleccionado.id">
+        <option value="">Productos</option>
+      html;
+
+      foreach ($productos as $producto) {
+        echo <<<html
+        <option value="$producto->id">
+          $producto->nombre
+        </option>
+        html;
+      }
+
+      echo <<<html
+      </select>
+      <template x-show="productoSeleccionado.id">
+        <div x-data="{
+
+        }">
+          <p x-text="productos.find(p => p.id == producto.id).descripcion"></p>
+          <p>
+            Precio (Dólares):
+            <output x-text="productos.find(p => p.id == producto.id).precio_unitario_actual_dolares"></output>
+          </p>
+          <p>
+            Precio (Bolívares):
+            <output x-text="productos.find(p => p.id == producto.id).precio_unitario_actual_bcv"></output>
+          </p>
+          <p>
+            Cantidad disponible:
+            <output x-text="productos.find(p => p.id == producto.id).cantidad_disponible"></output>
+          </p>
+          <label>
+            Cantidad a vender
+            <input
+              type="number"
+              name="cantidad"
+              min="1"
+              :max="productos.find(p => p.id == producto.id).cantidad_disponible"
+              required
+              placeholder="Cantidad a vender" />
+          </label>
+        </div>
+      </template>
+      html;
+
+      echo <<<html
+      </form>
+      html;
+    });
+  }, [SoloTasaActualizada::class]);
+
+  Flight::route('POST /cotizaciones', static function (): void {
+    $usuarioAutenticado = Container::getInstance()->get(UsuarioAutenticado::class);
+    $nuevaTasa = Flight::request()->data->nueva_tasa;
+
+    $usuarioAutenticado->cotizaciones()->create([
+      'tasa_bcv' => $nuevaTasa,
+    ]);
+
+    Flight::redirect('/panel');
+  });
+}, [SoloAutenticados::class]);
 
 ////////////////////
 // RUTAS PRIVADAS //
@@ -153,4 +411,4 @@ Flight::route('GET /eventos', function (): void {});
 ////////////////////
 // Flight::route('POST /ingresar', [ControladorDeSesion::class, 'procesarIngreso']);
 // Flight::route('/salir', [ControladorDeSesion::class, 'cerrarSesion']);
-// Flight::route('*', 'renderizarSvelte')->addMiddleware(SoloVisitantes::class);
+// Flight::route('*', 'renderizarSvelte');
