@@ -26512,6 +26512,7 @@
 							},
 							"name": "cedula",
 							"length": 0,
+							"nullable": true,
 							"unique": true
 						},
 						{
@@ -26521,7 +26522,8 @@
 								"$ref": "AAAAAAGXvK6B89RwZK0="
 							},
 							"name": "clave_encriptada",
-							"length": 0
+							"length": 0,
+							"nullable": true
 						},
 						{
 							"_type": "ERDColumn",

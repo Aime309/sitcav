@@ -10,7 +10,7 @@
         "source.json.sublime": "LSP-biome",
         "source.json.composer": "LSP-biome",
         "source.json.biome": "LSP-biome",
-        "source.json": "LSP-biome",
+        "source.json": "LSP-json",
         "source.js": "LSP-biome",
         "source.css": "LSP-biome",
         "source.ts": "LSP-biome",

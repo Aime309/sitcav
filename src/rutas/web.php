@@ -2,6 +2,7 @@
 
 use Illuminate\Container\Container;
 use Leaf\Helpers\Password;
+use League\OAuth2\Client\Provider\Google;
 use SITCAV\Autorizadores\SoloAutenticados;
 use SITCAV\Autorizadores\SoloTasaActualizada;
 use SITCAV\Autorizadores\SoloVisitantes;
@@ -15,6 +16,59 @@ use SITCAV\Modelos\Usuario;
 use SITCAV\Modelos\UsuarioAutenticado;
 
 Flight::group('', static function (): void {
+  Flight::route('GET /oauth2/google', static function (): void {
+    $error = Flight::request()->query->error;
+    $codigo = Flight::request()->query->code;
+    $estado = Flight::request()->query->state;
+
+    if ($error) {
+      flash()->set(['No se pudo iniciar sesión con Google. ' . $error], 'errores');
+      Flight::redirect('/ingresar');
+
+      return;
+    }
+
+    if (!$codigo) {
+      $urlDeGoogle = auth()->client('google')->getAuthorizationUrl();
+      $estadoDeGoogle = auth()->client('google')->getState();
+      session()->set('oauth2state', $estadoDeGoogle);
+      Flight::redirect($urlDeGoogle);
+
+      return;
+    }
+
+    if (!$estado || ($estado !== session()->get('oauth2state'))) {
+      session()->remove('oauth2state');
+      flash()->set(['No se pudo iniciar sesión con Google.' . ' El estado es inválido'], 'errores');
+      Flight::redirect('/ingresar');
+
+      return;
+    }
+
+    try {
+      $token = auth()->client('google')->getAccessToken('authorization_code', [
+        'code' => $codigo,
+      ]);
+
+      $usuarioDeGoogle = auth()->client('google')->getResourceOwner($token);
+
+      auth()->fromOAuth([
+        'token' => $token,
+        'user' => [
+          'rol' => 'Encargado',
+          'email' => $usuarioDeGoogle->toArray()['email'],
+        ],
+      ]);
+
+      Flight::redirect('/');
+    } catch (Throwable $error) {
+      flash()->set(['No se pudo iniciar sesión con Google. ' . $error->getMessage()], 'errores');
+      Flight::redirect('/ingresar');
+
+      return;
+    }
+  });
+
   Flight::route('GET /ingresar', static function (): void {
     Flight::render('paginas/ingresar', [], 'pagina');
     Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Ingresar']);
@@ -51,11 +105,6 @@ Flight::group('', static function (): void {
       ]),
       'rol' => 'Encargado',
     ])) {
-      auth()->login([
-        'cedula' => $datos->cedula,
-        'clave_encriptada' => $datos->clave,
-      ]);
-
       flash()->set(['El registro se ha realizado correctamente.'], 'exitos');
       Flight::redirect('/');
     } else {
@@ -145,6 +194,8 @@ Flight::group('', static function (): void {
 
   Flight::route('/salir', static function (): void {
     auth()->logout();
+    session()->remove('oauth-token');
+    session()->remove('oauth2state');
     Flight::redirect('/ingresar');
   });
 

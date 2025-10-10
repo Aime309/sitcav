@@ -11,7 +11,8 @@
     "leafs/form": "^3.2",
     "leafs/leaf": "^4.4",
     "leafs/password": "^1.0",
-    "leafs/session": "^4.0"
+    "leafs/session": "^4.0",
+    "league/oauth2-google": "*"
   },
   "autoload": {
     "psr-4": {

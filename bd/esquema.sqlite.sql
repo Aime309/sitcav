@@ -20,8 +20,9 @@ drop table if exists usuarios;
 
 create table usuarios (
   id integer primary key autoincrement,
-  cedula integer not null unique check (cedula > 0),
-  clave_encriptada varchar(255) not null,
+  email varchar(255) unique check (email like '%@%'),
+  cedula integer unique check (cedula > 0),
+  clave_encriptada varchar(255),
   rol varchar(255) not null check (rol in ('Encargado', 'Empleado superior', 'Vendedor')),
   esta_despedido boolean default false,
   pregunta_secreta varchar(255),
