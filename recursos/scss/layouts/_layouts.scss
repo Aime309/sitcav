@@ -1,7 +1,6 @@
 // ----------------------------------------------
 // Layout Style
 // ----------------------------------------------
-
 .page-wrapper {
   position: relative;
 }
@@ -10,7 +9,7 @@
   position: relative;
   border-radius: 20px;
 
-  .body-wrapper-inner{
+  .body-wrapper-inner {
     min-height: calc(100vh - 110px);
   }
 
@@ -19,15 +18,7 @@
     margin: 0 auto;
     padding: $grid-gutter-width;
     transition: 0.2s ease-in;
-    padding-top: 180px;
-
-    @include media-breakpoint-down(lg){
-      padding-top: 250px;
-    }
-
-    @include media-breakpoint-down(sm){
-      padding-top: 260px;
-    }
+    padding-top: 90px;
   }
 }
 
@@ -49,7 +40,6 @@
   &[data-sidebar-position="fixed"] {
     .left-sidebar {
       position: fixed;
-      top: 72px;
     }
   }
 
@@ -112,12 +102,13 @@
       &.show-sidebar {
         .left-sidebar {
           left: 0;
-          box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+          box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
       }
     }
 
   }
+
   .left-sidebar {
     .scroll-sidebar {
       padding: $sidebar-spacing-x;

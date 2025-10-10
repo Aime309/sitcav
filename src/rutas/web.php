@@ -140,7 +140,7 @@ Flight::group('', static function (): void {
 Flight::group('', static function (): void {
   Flight::route('GET /', static function (): void {
     Flight::render('paginas/inicio', [], 'pagina');
-    Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Sistema Integral de Tecnologia, Créditos y Análisis de Ventas']);
+    Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inicio']);
   });
 
   Flight::route('/salir', static function (): void {

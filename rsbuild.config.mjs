@@ -9,7 +9,8 @@ export default defineConfig({
   },
   source: {
     entry: {
-      index: "./recursos/index.ts",
+      visitantes: "./recursos/visitantes.ts",
+      autenticados: "./recursos/autenticados.ts",
     },
   },
   dev: {

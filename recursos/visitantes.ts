@@ -1,6 +1,8 @@
-import "@fontsource/inter/latin.css";
 import "./scss/styles.scss";
-import "jquery/dist/jquery.min";
+import "@fontsource/inter/latin.css";
+import "simplebar/dist/simplebar.min.css";
+import "tabler-icons/iconfont/tabler-icons.min.css";
+
 import "iconify-icon/dist/iconify-icon.min";
 import Toast from "bootstrap/js/dist/toast";
 

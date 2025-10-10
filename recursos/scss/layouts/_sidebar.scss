@@ -1,7 +1,6 @@
 // ----------------------------------------------
 // SideBar Style
 // ----------------------------------------------
-
 .left-sidebar {
   width: $sidebar-width-full;
   background-color: $white;
@@ -151,7 +150,7 @@
             }
           }
 
-          & > .sidebar-link {
+          &>.sidebar-link {
             padding: 8px 21px;
             font-size: 14px;
             gap: 21px;
@@ -202,9 +201,9 @@
         }
       }
 
-      &.selected > .sidebar-link.active,
-      &.selected > .sidebar-link,
-      > .sidebar-link.active {
+      &.selected>.sidebar-link.active,
+      &.selected>.sidebar-link,
+      >.sidebar-link.active {
         background-color: var(--bs-primary-bg-subtle);
         color: var(--bs-primary);
       }
@@ -224,10 +223,9 @@
   display: block;
 }
 
-
-
-// Down arrow
-
+////////////////
+// Down arrow //
+////////////////
 .sidebar-nav .has-arrow {
   position: relative;
 
@@ -240,13 +238,10 @@
     border-style: solid;
     border-color: var(--bs-dark-text-emphasis);
     margin-left: 10px;
-    -webkit-transform: rotate(-135deg) translate(0, -50%);
     transform: rotate(-135deg) translate(0, -50%);
-    -webkit-transform-origin: top;
     transform-origin: top;
     top: 20px;
     right: 17px;
-    -webkit-transition: all 0.3s ease-out;
     transition: all 0.3s ease-out;
   }
 }
