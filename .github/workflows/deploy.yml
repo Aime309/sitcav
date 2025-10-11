@@ -50,33 +50,31 @@ jobs:
           exclude: |
             **/.git*
             **/.git*/**
+            **/.github*
+            **/.github*/**
             **/.phpunit.cache*
             **/.phpunit.cache*/**
-            **/bd/datos-de-prueba.sql*
-            **/bd/esquema.sqlite.sql*
-            **/bd/venezuela.sql*
-            **/comandos*
-            **/comandos*/**
+            **/bd/*.sql*
             **/docs*
             **/docs*/**
             **/node_modules*
             **/node_modules*/**
-            **/src/svelte*
-            **/src/svelte*/**
-            src/env.d.ts
-            src/index.ts
+            **/recursos/scss*
+            **/recursos/scss*/**
+            **/recursos/*.ts*
+            **/src/html*
+            **/src/html*/**
             **/tests*
             **/tests*/**
             .editorconfig
             .gitignore
             biome.json
-            composer.json
-            composer.lock
+            composer.*
             package-lock.json
             package.json
-            phpstan.dist.neon
             phpunit.xml.dist
             README.md
+            rsbuild.config.mjs
             sitcav.sublime-project
             sitcav-sublime-workspace
             tsconfig.json
