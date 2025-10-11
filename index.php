@@ -29,6 +29,13 @@ auth()->config('messages.loginPasswordError', auth()->config('messages.loginPara
 auth()->config('timestamps', false);
 auth()->config('unique', ['cedula']);
 
+// DESACTIVAR LA VERIFICACIÓN SSL DE GUZZLE (CLIENTE HTTP)
+$guzzle = auth()->client('google')->getHttpClient();
+$refleccionPropiedad = new ReflectionProperty($guzzle, 'config');
+$refleccionPropiedad->setAccessible(true);
+$config = $refleccionPropiedad->getValue($guzzle);
+$refleccionPropiedad->setValue($guzzle, ['verify' => false] + $config);
+
 //////////////////////////////////////////////
 // CONFIGURAR MOTOR DE PLANTILLAS DE FLIGHT //
 //////////////////////////////////////////////
