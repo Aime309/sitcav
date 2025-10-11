@@ -31,6 +31,9 @@
       </div>
     </div>
   </div>
+
+  <?php Flight::render('componentes/notificaciones') ?>
+
   <script defer src="./recursos/compilados/autenticados.js"></script>
   <script defer src="./recursos/js/sidebarmenu.js"></script>
   <script defer src="./recursos/js/app.min.js"></script>
