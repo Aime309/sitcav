@@ -4,6 +4,7 @@
     "bjeavons/zxcvbn-php": "^1.4",
     "flightphp/core": "^3.17",
     "giggsey/libphonenumber-for-php-lite": "^9.0",
+    "google-gemini-php/client": "^2.6",
     "illuminate/container": "^12.32",
     "illuminate/database": "^12.32",
     "leafs/auth": "^4.2",
@@ -37,6 +38,9 @@
     "symfony/var-dumper": "^7.3"
   },
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
   }
 }
