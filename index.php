@@ -73,6 +73,7 @@ $contenedor->singleton(
   static fn(): UsuarioAutenticado => UsuarioAutenticado::query()->findOrFail(auth()->id()),
 );
 
+Flight::set('flight.base_url', str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']));
 Flight::registerContainerHandler($contenedor->get(...));
 
 ////////////////////////////////////////////////
