@@ -6,7 +6,6 @@ namespace SITCAV\Tests\E2E;
 
 use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Dotenv\Dotenv;
 
 abstract class TestBase extends TestCase
 {
@@ -16,16 +15,11 @@ abstract class TestBase extends TestCase
   function __construct(string $name) // @phpstan-ignore-line
   {
     parent::__construct($name);
+    $carpetaRaiz = __DIR__ . '/../../';
 
     $this->cliente = new Client;
-    $rutaVariablesEntorno = __DIR__ . '/../../.env';
-    $dotenv = new Dotenv;
-
-    if (file_exists($rutaVariablesEntorno)) {
-      $dotenv->load($rutaVariablesEntorno);
-    } else {
-      $dotenv->load("$rutaVariablesEntorno.dist");
-    }
+    $_ENV += file_exists("$carpetaRaiz/.env.php") ? require "$carpetaRaiz/.env.php" : [];
+    $_ENV += require "$carpetaRaiz/.env.dist.php";
 
     $this->url = $_ENV['TEST_URL'];
   }
