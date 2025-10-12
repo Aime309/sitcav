@@ -1,4 +1,3 @@
-import "./scss/styles.scss";
 import "@fontsource/inter/latin.css";
 import "simplebar/dist/simplebar.min.css";
 import "tabler-icons/iconfont/tabler-icons.min.css";

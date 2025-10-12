@@ -1,5 +1,4 @@
 import { defineConfig } from "@rsbuild/core";
-import { pluginSass } from "@rsbuild/plugin-sass";
 
 export default defineConfig({
   performance: {
@@ -30,10 +29,5 @@ export default defineConfig({
     filenameHash: false,
   },
   plugins: [
-    pluginSass({
-      sassLoaderOptions: {
-        warnRuleAsWarning: false,
-      },
-    }),
   ],
 });

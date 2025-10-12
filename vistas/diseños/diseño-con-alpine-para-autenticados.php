@@ -7,6 +7,7 @@
   <title><?= $titulo ?> | SITCAV</title>
   <base href="<?= str_replace('index.php', '', $_SERVER['SCRIPT_NAME']) ?>" />
   <link rel="icon" href="./recursos/imagenes/favicon.png" />
+  <link rel="stylesheet" href="./recursos/css/materialm.min.css" />
   <link rel="stylesheet" href="./recursos/compilados/visitantes.css" />
 </head>
 
