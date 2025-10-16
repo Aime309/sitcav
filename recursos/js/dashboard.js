@@ -1,6 +1,4 @@
-$(function () {
-
-
+document.addEventListener("DOMContentLoaded", function () {
   // =====================================
   // Sales Profit Start
   // =====================================
@@ -168,7 +166,6 @@ $(function () {
   var chart = new ApexCharts(document.querySelector("#sales-profit"), options);
   chart.render();
 
-
   // =====================================
   // total-followers chart
   // =====================================
@@ -259,7 +256,7 @@ $(function () {
 
   var chart_column_stacked = new ApexCharts(
     document.querySelector("#total-followers"),
-    totalfollowers
+    totalfollowers,
   );
   chart_column_stacked.render();
 
@@ -315,6 +312,4 @@ $(function () {
     },
   };
   new ApexCharts(document.querySelector("#total-income"), options).render();
-
-
-})
+});

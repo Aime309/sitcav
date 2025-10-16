@@ -2,13 +2,11 @@
 
 use Illuminate\Container\Container;
 use Leaf\Helpers\Password;
-use League\OAuth2\Client\Provider\Google;
 use SITCAV\Autorizadores\SoloAutenticados;
 use SITCAV\Autorizadores\SoloTasaActualizada;
 use SITCAV\Autorizadores\SoloVisitantes;
 use SITCAV\Modelos\Categoria;
 use SITCAV\Modelos\Cliente;
-use SITCAV\Modelos\Cotizacion;
 use SITCAV\Modelos\Marca;
 use SITCAV\Modelos\Producto;
 use SITCAV\Modelos\Proveedor;
@@ -186,44 +184,30 @@ Flight::group('', static function (): void {
   });
 }, [SoloVisitantes::class]);
 
-Flight::group('', static function (): void {
-  Flight::route('GET /', static function (): void {
-    Flight::render('paginas/inicio', [], 'pagina');
-    Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inicio']);
-  });
+Flight::route('/salir', static function (): void {
+  auth()->logout();
+  session()->remove('oauth-token');
+  session()->remove('oauth2state');
+  Flight::redirect('/ingresar');
+});
 
-  Flight::route('/salir', static function (): void {
-    auth()->logout();
-    session()->remove('oauth-token');
-    session()->remove('oauth2state');
-    Flight::redirect('/ingresar');
+Flight::group('', static function (): void {
+  Flight::route('POST /cotizaciones', static function (): void {
+    $usuarioAutenticado = Container::getInstance()->get(UsuarioAutenticado::class);
+    $nuevaTasa = Flight::request()->data->nueva_tasa;
+
+    $usuarioAutenticado->cotizaciones()->create([
+      'tasa_bcv' => $nuevaTasa,
+    ]);
+
+    flash()->set("Tasa BCV establecida satisfactoriamente en Bs. $nuevaTasa", 'exitos');
+    Flight::redirect(Flight::request()->referrer);
   });
 
   Flight::group('', static function (): void {
-    Flight::route('GET /panel', static function (): void {
-      $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
-      $fechaActual = date('d/m/Y');
-      $ultimaCotizacion = Cotizacion::query()->latest()->get()[0];
-      $tasaDePagina = json_decode(file_get_contents('https://ve.dolarapi.com/v1/dolares'))[0]->promedio;
-
-      echo <<<html
-      <base href="$hrefBase" />
-      <time>$fechaActual</time>
-      <form action="./cotizaciones" method="post">
-        Tasa según <a href="https://www.bcv.org.ve/">bcv.org.ve</a> <output>$tasaDePagina</output>
-        <label>
-          Tasa BCV
-          <input
-            type="number"
-            step=".01"
-            name="nueva_tasa"
-            required
-            placeholder="Tasa BCV"
-            value="$ultimaCotizacion->tasa_bcv" />
-        </label>
-        <button>Actualizar</button>
-      </form>
-      html;
+    Flight::route('GET /', static function (): void {
+      Flight::render('paginas/inicio', [], 'pagina');
+      Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inicio']);
     });
 
     Flight::group('/inventario', static function (): void {
@@ -435,31 +419,4 @@ Flight::group('', static function (): void {
       html;
     });
   }, [SoloTasaActualizada::class]);
-
-  Flight::route('POST /cotizaciones', static function (): void {
-    $usuarioAutenticado = Container::getInstance()->get(UsuarioAutenticado::class);
-    $nuevaTasa = Flight::request()->data->nueva_tasa;
-
-    $usuarioAutenticado->cotizaciones()->create([
-      'tasa_bcv' => $nuevaTasa,
-    ]);
-
-    Flight::redirect('/panel');
-  });
 }, [SoloAutenticados::class]);
-
-////////////////////
-// RUTAS PRIVADAS //
-////////////////////
-// Flight::group(
-//   '/@rutaPrivada:(panel|clientes|perfil|productos)/',
-//   static fn() => Flight::route('*', 'renderizarSvelte'),
-//   [SoloAutenticados::class]
-// );
-
-////////////////////
-// RUTAS PÚBLICAS //
-////////////////////
-// Flight::route('POST /ingresar', [ControladorDeSesion::class, 'procesarIngreso']);
-// Flight::route('/salir', [ControladorDeSesion::class, 'cerrarSesion']);
-// Flight::route('*', 'renderizarSvelte');

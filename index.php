@@ -95,12 +95,13 @@ $refleccionPropiedad->setValue(auth(), db());
 ///////////////////////////////////
 Flight::map('error', static function (Throwable $error): void {
   if (str_contains($error->getPrevious()?->getMessage() ?? '', UsuarioAutenticado::class)) {
-    http_response_code(401);
+    flash()->set(['Ha ocurrido un error, por favor ingrese nuevamente'], 'errores');
+    Flight::redirect('/salir');
 
     exit;
   }
 
-  throw $error;
+  exit($error->getMessage());
 });
 
 /////////////////////////////////////

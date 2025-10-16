@@ -8,7 +8,7 @@ final readonly class SoloAutenticados
 {
   static function before()
   {
-    if (auth()->id() === null) {
+    if (auth()->user() === null) {
       Flight::redirect('/ingresar');
     } else {
       return true;

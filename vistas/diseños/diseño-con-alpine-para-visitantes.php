@@ -12,6 +12,7 @@
 </head>
 
 <body class="text-bg-light">
+  <?php Flight::render('componentes/indicador-cargando-pagina') ?>
   <?= $pagina ?>
 
   <?php Flight::render('componentes/notificaciones') ?>

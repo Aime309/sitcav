@@ -10,6 +10,7 @@ export default defineConfig({
     entry: {
       visitantes: "./recursos/visitantes.ts",
       autenticados: "./recursos/autenticados.ts",
+      "registrar-tasa-bcv": "./recursos/registrar-tasa-bcv.ts",
     },
   },
   dev: {
@@ -28,6 +29,5 @@ export default defineConfig({
     },
     filenameHash: false,
   },
-  plugins: [
-  ],
+  plugins: [],
 });

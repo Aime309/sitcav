@@ -8,7 +8,7 @@ final readonly class SoloVisitantes
 {
   static function before()
   {
-    if (auth()->id() === null) {
+    if (auth()->user() === null) {
       return true;
     } else {
       Flight::redirect('/');

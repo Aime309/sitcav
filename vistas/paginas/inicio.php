@@ -23,3 +23,5 @@
   </div>
 </div>
 <?php Flight::render('componentes/blog-posts') ?>
+
+<script defer src="./recursos/js/dashboard.js"></script>
