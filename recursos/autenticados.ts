@@ -20,32 +20,25 @@ for (const element of document.querySelectorAll("[data-bs-toggle='tooltip']")) {
   new Tooltip(element);
 }
 
-Alpine.data("notificaciones", () => ({
-  errores: [],
-  exitos: [],
+const NOTIFICACIONES_INICIALES: string[] = [];
 
-  init() {
-    window.addEventListener("offline", () => {
-      this.errores.push("Has perdido la conexión a la red");
-    });
-
-    window.addEventListener("online", () => {
-      this.exitos.push("Conexión a la red restablecida");
-    });
-  },
-}));
-
-Alpine.data("tasas", () => ({
+Alpine.data("SITCAV", () => ({
+  errores: [...NOTIFICACIONES_INICIALES],
+  exitos: [...NOTIFICACIONES_INICIALES],
+  cargandoPagina: true,
   tasaDePagina: "Cargando",
 
   init() {
+    this.cargandoPagina = false;
     this.cargarTasaDePagina();
 
     window.addEventListener("offline", () => {
+      this.errores.push("Has perdido la conexión a la red");
       this.tasaDePagina = "Error de conexión";
     });
 
     window.addEventListener("online", () => {
+      this.exitos.push("Conexión a la red restablecida");
       this.cargarTasaDePagina();
     });
   },

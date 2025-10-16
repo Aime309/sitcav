@@ -48,7 +48,7 @@ $ultimaCotizacion = Cotizacion::query()->latest()->get()[0] ?? new Cotizacion;
         <form action="./cotizaciones" method="post" class="d-flex align-items-center gap-2 text-nowrap">
           Tasa según
           <a href="https://www.bcv.org.ve/">bcv.org.ve</a>
-          <output x-data="tasas" class="badge" :class="(tasaDePagina === 'Error de conexión' || tasaDePagina === 'Cargando') ? 'text-bg-danger' : 'text-bg-info'" x-text="tasaDePagina"></output>
+          <output class="badge" :class="(tasaDePagina === 'Error de conexión' || tasaDePagina === 'Cargando') ? 'text-bg-danger' : 'text-bg-info'" x-text="tasaDePagina"></output>
           <div class="input-group">
             <div class="form-floating">
               <input

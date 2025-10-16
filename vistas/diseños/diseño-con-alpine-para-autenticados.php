@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" x-data="SITCAV">
 
 <head>
   <meta charset="utf-8" />

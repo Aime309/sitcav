@@ -5,7 +5,7 @@ $exitos = (array) flash()->display('exitos');
 
 ?>
 
-<div class="toast-container position-fixed top-0 end-0 p-3" x-data="notificaciones">
+<div class="toast-container position-fixed top-0 end-0 p-3">
   <template x-for="error in errores" :key="error">
     <div class="toast" x-init="new Toast($el).show()">
       <div class="toast-header text-danger">
