@@ -213,87 +213,9 @@ Flight::group('', static function (): void {
     Flight::group('/inventario', static function (): void {
       Flight::route('GET /', static function (): void {
         $productos = Producto::query()->get();
-        $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
 
-        echo <<<html
-        <base href="$hrefBase" />
-        <a href="./inventario/añadir">Añadir producto</a>
-        <ul>
-        html;
-
-        foreach ($productos as $producto) {
-          echo <<<html
-          <li>
-            <article>
-              <figure>
-                <img src="$producto->url_imagen" width="200" />
-                <figcaption>$producto->nombre</figcaption>
-              </figure>
-              <small>$producto->codigo</small>
-            </article>
-          </li>
-          html;
-        }
-
-        echo <<<html
-        </ul>
-        html;
-      });
-
-      Flight::route('GET /añadir', static function (): void {
-        $hrefBase = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
-
-        echo <<<html
-        <base href="$hrefBase" />
-        <form method="post" action="./inventario">
-          <input name="codigo" placeholder="Código" />
-          <input name="nombre" required placeholder="Nombre" />
-          <textarea name="descripcion" placeholder="Descripción"></textarea>
-          <input name="precio_dolares" type="number" step=".01" required placeholder="Precio (Dólares)" />
-          <input name="precio_bcv" type="number" step=".01" required placeholder="Precio (Bolívares)" />
-          <input name="cantidad_disponible" type="number" required placeholder="Cantidad disponible" />
-          <input name="dias_garantia" type="number" required placeholder="Días de garantía" />
-          <input name="dias_apartado" type="number" required placeholder="Días de apartado" />
-          <input name="url_imagen" type="url" required placeholder="URL de la imagen" />
-          <select name="id_categoria" required>
-            <option value="">Categoría</option>
-        html;
-
-        foreach (Categoria::all() as $categoria) {
-          echo <<<html
-          <option value="$categoria->id">$categoria->nombre</option>
-          html;
-        }
-
-        echo <<<html
-        </select>
-        <select name="id_marca" required>
-          <option value="">Marca</option>
-        html;
-
-        foreach (Marca::all() as $marca) {
-          echo <<<html
-          <option value="$marca->id">$marca->nombre</option>
-          html;
-        }
-
-        echo <<<html
-        </select>
-        <select name="id_proveedor">
-          <option value="">Proveedor</option>
-        html;
-
-        foreach (Proveedor::all() as $proveedor) {
-          echo <<<html
-          <option value="$proveedor->id">$proveedor->nombre</option>
-          html;
-        }
-
-        echo <<<html
-          </select>
-          <button>Añadir</button>
-        </form>
-        html;
+        Flight::render('paginas/inventario', ['productos' => $productos], 'pagina');
+        Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inventario']);
       });
 
       Flight::route('POST /', static function (): void {
@@ -314,6 +236,7 @@ Flight::group('', static function (): void {
           'id_proveedor' => $datos->id_proveedor,
         ]);
 
+        flash()->set(['Producto agregado exitosamente.'], 'exitos');
         Flight::redirect('/inventario');
       });
 

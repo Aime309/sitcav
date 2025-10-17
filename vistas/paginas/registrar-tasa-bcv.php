@@ -15,7 +15,7 @@ $ultimaCotizacion = Cotizacion::query()->latest()->get()[0] ?? new Cotizacion;
         <h1 class="modal-title h4">
           Tasa según
           <a href="https://www.bcv.org.ve/">bcv.org.ve</a>
-          <output :class="(tasaDePagina === 'Cargando' || tasaDePagina === 'Error de conexión') ? 'text-bg-danger' : 'text-bg-info'" x-text="tasaDePagina"></output>
+          <output class="badge" :class="(tasaDePagina === 'Cargando' || tasaDePagina === 'Error de conexión') ? 'text-bg-danger' : 'text-bg-info'" x-text="tasaDePagina"></output>
         </h1>
       </header>
       <div class="modal-body">

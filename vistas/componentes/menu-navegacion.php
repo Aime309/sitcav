@@ -2,24 +2,29 @@
 
 $secciones = [
   [
-    'nombre' => 'Home',
+    'nombre' => '',
     'icono' => 'solar:menu-dots-linear',
     'enlaces' => [
       [
-        'nombre' => 'Dashboard',
+        'nombre' => 'Inicio',
         'icono' => 'solar:atom-line-duotone',
-        'url' => './index.html',
+        'url' => './',
       ],
       [
-        'nombre' => 'Front Pages',
-        'icono' => 'solar:home-angle-line-duotone',
-        'subenlaces' => [
-          [
-            'nombre' => 'Homepage',
-            'url' => 'https://bootstrapdemos.wrappixel.com/materialM/dist/main/frontend-landingpage.html',
-          ],
-        ],
+        'nombre' => 'Inventorio',
+        'icono' => 'solar:bill-list-broken',
+        'url' => './inventario',
       ],
+      // [
+      //   'nombre' => 'Front Pages',
+      //   'icono' => 'solar:home-angle-line-duotone',
+      //   'subenlaces' => [
+      //     [
+      //       'nombre' => 'Homepage',
+      //       'url' => 'https://bootstrapdemos.wrappixel.com/materialM/dist/main/frontend-landingpage.html',
+      //     ],
+      //   ],
+      // ],
     ],
   ],
 ];

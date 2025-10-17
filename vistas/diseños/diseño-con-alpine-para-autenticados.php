@@ -28,6 +28,9 @@
       <?php Flight::render('componentes/menu-superior') ?>
       <div class="body-wrapper-inner">
         <div class="container-fluid">
+          <?php if (Flight::request()->url !== '/'): ?>
+            <?php Flight::render('componentes/breadcrumbs', ['tituloPagina' => $titulo]) ?>
+          <?php endif ?>
           <?= $pagina ?>
           <?php Flight::render('componentes/pie-de-pagina') ?>
         </div>

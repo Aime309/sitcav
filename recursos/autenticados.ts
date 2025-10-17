@@ -4,6 +4,7 @@ import $ from "jquery";
 import Toast from "bootstrap/js/dist/toast";
 import Dropdown from "bootstrap/js/dist/dropdown";
 import Tooltip from "bootstrap/js/dist/tooltip";
+import Modal from "bootstrap/js/dist/modal";
 import ApexCharts from "apexcharts";
 import Alpine from "alpinejs";
 
@@ -11,6 +12,7 @@ window.$ = $;
 window.ApexCharts = ApexCharts;
 window.Toast = Toast;
 window.Alpine = Alpine;
+window.Tooltip = Tooltip;
 
 for (const element of document.querySelectorAll(".dropdown-toggle")) {
   new Dropdown(element);
@@ -18,6 +20,10 @@ for (const element of document.querySelectorAll(".dropdown-toggle")) {
 
 for (const element of document.querySelectorAll("[data-bs-toggle='tooltip']")) {
   new Tooltip(element);
+}
+
+for (const element of document.querySelectorAll(".modal")) {
+  new Modal(element);
 }
 
 const NOTIFICACIONES_INICIALES: string[] = [];
