@@ -1,12 +1,12 @@
 import "../node_modules/simplebar/dist/simplebar.min";
 import "iconify-icon/dist/iconify-icon.min";
-import $ from "jquery";
-import Toast from "bootstrap/js/dist/toast";
-import Dropdown from "bootstrap/js/dist/dropdown";
-import Tooltip from "bootstrap/js/dist/tooltip";
-import Modal from "bootstrap/js/dist/modal";
-import ApexCharts from "apexcharts";
 import Alpine from "alpinejs";
+import ApexCharts from "apexcharts";
+import Dropdown from "bootstrap/js/dist/dropdown";
+import Modal from "bootstrap/js/dist/modal";
+import Toast from "bootstrap/js/dist/toast";
+import Tooltip from "bootstrap/js/dist/tooltip";
+import $ from "jquery";
 
 window.$ = $;
 window.ApexCharts = ApexCharts;

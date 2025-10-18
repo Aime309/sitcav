@@ -1,9 +1,14 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
   // =====================================
   // Sales Profit Start
   // =====================================
+  const $salesProfit = document.getElementById("sales-profit");
 
-  var options = {
+  if ($salesProfit) {
+    $salesProfit.innerHTML = "";
+  }
+
+  const chart = new ApexCharts($salesProfit, {
     series: [
       {
         type: "area",
@@ -161,16 +166,14 @@ document.addEventListener("DOMContentLoaded", function () {
     tooltip: {
       theme: "dark",
     },
-  };
-  document.getElementById("sales-profit").innerHTML = "";
-  var chart = new ApexCharts(document.querySelector("#sales-profit"), options);
+  });
+
   chart.render();
 
   // =====================================
   // total-followers chart
   // =====================================
-
-  var totalfollowers = {
+  const totalfollowers = {
     series: [
       {
         name: "",
@@ -254,16 +257,17 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   };
 
-  var chart_column_stacked = new ApexCharts(
+  const chart_column_stacked = new ApexCharts(
     document.querySelector("#total-followers"),
     totalfollowers,
   );
+
   chart_column_stacked.render();
 
   // =====================================
   // total-income
   // =====================================
-  var options = {
+  new ApexCharts(document.querySelector("#total-income"), {
     chart: {
       id: "total-income",
       type: "area",
@@ -310,6 +314,5 @@ document.addEventListener("DOMContentLoaded", function () {
         show: false,
       },
     },
-  };
-  new ApexCharts(document.querySelector("#total-income"), options).render();
+  }).render();
 });
