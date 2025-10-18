@@ -4,6 +4,6 @@
     "indentStyle": "space"
   },
   "files": {
-    "ignore": ["*.sublime-*", "vendor", "libs", "*.min.*"]
+    "ignore": ["*.sublime-*", "vendor", "libs", "*.min.*", "compilados"]
   }
 }

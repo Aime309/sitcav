@@ -12,7 +12,7 @@ $(function () {
   var url = window.location + "";
   var path = url.replace(
     window.location.protocol + "//" + window.location.host + "/",
-    ""
+    "",
   );
   var element = $("ul#sidebarnav a").filter(function () {
     return this.href === url || this.href === path; // || url.href.indexOf(this.href) === 0;
@@ -32,7 +32,7 @@ $(function () {
   var elements = findMatchingElement();
 
   // Do something with the matching element
-  if(elements){
+  if (elements) {
     elements.classList.add("active");
   }
 
@@ -83,5 +83,4 @@ $(function () {
       }
     });
   });
-
 });
