@@ -3,17 +3,20 @@
 namespace SITCAV\Autorizadores;
 
 use Flight;
-use SITCAV\Modelos\Cotizacion;
+use Illuminate\Container\Container;
+use SITCAV\Modelos\UsuarioAutenticado;
 
 final readonly class SoloTasaActualizada
 {
   static function before()
   {
-    $cotizacionDeHoy = Cotizacion::hoy();
+    $cotizacionDeHoy = Container::getInstance()->get(UsuarioAutenticado::class)->cotizacionDeHoy;
 
     if (!$cotizacionDeHoy) {
       if (auth()->user()->can('registrar cotizacion')) {
-        Flight::render('paginas/registrar-tasa-bcv', [], 'pagina');
+        $ultimaCotizacion = Container::getInstance()->get(UsuarioAutenticado::class)->ultimaCotizacion;
+
+        Flight::render('paginas/registrar-tasa-bcv', compact('ultimaCotizacion'), 'pagina');
         Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inicio']);
 
         exit;

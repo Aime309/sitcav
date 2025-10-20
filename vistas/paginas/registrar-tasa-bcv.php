@@ -1,10 +1,7 @@
 <?php
 
-use SITCAV\Modelos\Cotizacion;
-
 $dolaresDeLaApi = @file_get_contents('https://ve.dolarapi.com/v1/dolares') ?: '[{"promedio":"Error de conexión"}]';
 $tasaDePagina = json_decode($dolaresDeLaApi)[0]->promedio;
-$ultimaCotizacion = Cotizacion::query()->latest()->get()[0] ?? new Cotizacion;
 
 ?>
 
