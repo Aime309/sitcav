@@ -36,4 +36,9 @@ final class Cotizacion extends Model
   {
     return $this->belongsTo(Usuario::class, 'id_encargado');
   }
+
+  static function hoy(): ?self
+  {
+    return self::query()->where('fecha_hora_creacion', 'LIKE', date('Y-m-d') . '%')->first();
+  }
 }

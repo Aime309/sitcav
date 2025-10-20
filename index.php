@@ -35,6 +35,13 @@ auth()->config('messages.loginParamsError', 'Cédula o contraseña incorrecta');
 auth()->config('messages.loginPasswordError', auth()->config('messages.loginParamsError'));
 auth()->config('timestamps', false);
 auth()->config('unique', ['cedula']);
+auth()->config('roles.key', 'roles');
+
+auth()->createRoles([
+  'Vendedor' => ['editar perfil', 'ver productos', 'registrar pago', 'realizar pago', 'generar factura'],
+  'Empleado superior' => ['registrar cliente', 'registrar categoria', 'registrar producto', 'registrar cotizacion', 'registrar compra'],
+  'Encargado' => ['editar datos del negocio', 'registrar proveedor', 'registrar empleado', 'respaldar la base de datos', 'restaurar la base de datos', 'despedir vendedor', 'promover vendedor'],
+]);
 
 // DESACTIVAR LA VERIFICACIÓN SSL DE GUZZLE (CLIENTE HTTP)
 $guzzle = auth()->client('google')->getHttpClient();
@@ -87,8 +94,6 @@ Flight::registerContainerHandler($contenedor->get(...));
 // CONFIGURAR CONEXIÓN COMPARTIDA (Singleton) //
 ////////////////////////////////////////////////
 db()->connection($contenedor->get(PDO::class));
-$refleccionPropiedad = new ReflectionProperty(auth(), 'db');
-$refleccionPropiedad->setValue(auth(), db());
 
 ///////////////////////////////////
 // CONFIGURAR CONTROL DE ERRORES //
@@ -101,7 +106,8 @@ Flight::map('error', static function (Throwable $error): void {
     exit;
   }
 
-  exit($error->getMessage());
+  var_dump($error);
+  exit;
 });
 
 /////////////////////////////////////

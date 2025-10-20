@@ -13,7 +13,6 @@ use ZxcvbnPhp\Zxcvbn;
 /**
  * @property-read int $id
  * @property int $cedula
- * @property 'Encargado'|'Empleado superior'|'Vendedor' $rol
  * @property bool $esta_despedido
  * @property string $pregunta_secreta
  * @property-read ?self $encargado
@@ -127,7 +126,7 @@ class Usuario extends Model
    */
   function cotizaciones(): HasMany
   {
-    if ($this->rol === 'Encargado') {
+    if (str_contains($this->roles, 'Encargado')) {
       return $this->hasMany(Cotizacion::class, 'id_encargado');
     }
 

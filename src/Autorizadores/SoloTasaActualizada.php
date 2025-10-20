@@ -7,23 +7,22 @@ use SITCAV\Modelos\Cotizacion;
 
 final readonly class SoloTasaActualizada
 {
-  function before()
+  static function before()
   {
-    $cotizacionDeHoy = Cotizacion::query()->where('fecha_hora_creacion', 'LIKE', date('Y-m-d') . '%')->first();
+    $cotizacionDeHoy = Cotizacion::hoy();
 
-    if (
-      !$cotizacionDeHoy
-      && in_array(auth()->user()?->rol, ['Encargado', 'Empleado superior'])
-    ) {
-      Flight::render('paginas/registrar-tasa-bcv', [], 'pagina');
-      Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inicio']);
+    if (!$cotizacionDeHoy) {
+      if (auth()->user()->can('registrar cotizacion')) {
+        Flight::render('paginas/registrar-tasa-bcv', [], 'pagina');
+        Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inicio']);
 
-      exit;
-    } elseif (!$cotizacionDeHoy && auth()->user()?->rol === 'Vendedor') {
-      flash()->set(['LA TASA BCV NO HA SIDO ACTUALIZADA. CONTACTE A SU ENCARGADO. ❌'], 'errores');
-      Flight::redirect('/salir');
+        exit;
+      } else {
+        flash()->set(['LA TASA BCV NO HA SIDO ACTUALIZADA. CONTACTE A SU ENCARGADO. ❌'], 'errores');
+        Flight::redirect('/salir');
 
-      exit;
+        exit;
+      }
     }
   }
 }

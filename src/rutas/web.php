@@ -5,11 +5,8 @@ use Leaf\Helpers\Password;
 use SITCAV\Autorizadores\SoloAutenticados;
 use SITCAV\Autorizadores\SoloTasaActualizada;
 use SITCAV\Autorizadores\SoloVisitantes;
-use SITCAV\Modelos\Categoria;
 use SITCAV\Modelos\Cliente;
-use SITCAV\Modelos\Marca;
 use SITCAV\Modelos\Producto;
-use SITCAV\Modelos\Proveedor;
 use SITCAV\Modelos\Usuario;
 use SITCAV\Modelos\UsuarioAutenticado;
 
@@ -20,7 +17,7 @@ Flight::group('', static function (): void {
     $estado = Flight::request()->query->state;
 
     if ($error) {
-      flash()->set(['No se pudo iniciar sesión con Google. ' . $error], 'errores');
+      flash()->set(["No se pudo iniciar sesión con Google. $error"], 'errores');
       Flight::redirect('/ingresar');
 
       return;
@@ -37,7 +34,7 @@ Flight::group('', static function (): void {
 
     if (!$estado || ($estado !== session()->get('oauth2state'))) {
       session()->remove('oauth2state');
-      flash()->set(['No se pudo iniciar sesión con Google.' . ' El estado es inválido'], 'errores');
+      flash()->set(['No se pudo iniciar sesión con Google. El estado es inválido'], 'errores');
       Flight::redirect('/ingresar');
 
       return;
@@ -53,14 +50,14 @@ Flight::group('', static function (): void {
       auth()->fromOAuth([
         'token' => $token,
         'user' => [
-          'rol' => 'Encargado',
+          'roles' => json_encode(['Encargado', 'Empleado superior', 'Vendedor']),
           'email' => $usuarioDeGoogle->toArray()['email'],
         ],
       ]);
 
       Flight::redirect('/');
     } catch (Throwable $error) {
-      flash()->set(['No se pudo iniciar sesión con Google. ' . $error->getMessage()], 'errores');
+      flash()->set(["No se pudo iniciar sesión con Google. {$error->getMessage()}"], 'errores');
       Flight::redirect('/ingresar');
 
       return;
@@ -101,7 +98,7 @@ Flight::group('', static function (): void {
       'respuesta_secreta_encriptada' => Password::hash($datos->respuesta_secreta, options: [
         'cost' => 10,
       ]),
-      'rol' => 'Encargado',
+      'rol' => json_encode(['Encargado', 'Empleado superior', 'Vendedor']),
     ])) {
       flash()->set(['El registro se ha realizado correctamente.'], 'exitos');
       Flight::redirect('/');

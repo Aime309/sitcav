@@ -23,7 +23,7 @@ create table usuarios (
   email varchar(255) unique check (email like '%@%'),
   cedula integer unique check (cedula > 0),
   clave_encriptada varchar(255),
-  rol varchar(255) not null check (rol in ('Encargado', 'Empleado superior', 'Vendedor')),
+  roles varchar(255) not null check (roles like '["%"]'),
   esta_despedido boolean default false,
   pregunta_secreta varchar(255),
   respuesta_secreta_encriptada varchar(255),
