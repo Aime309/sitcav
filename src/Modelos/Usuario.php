@@ -22,6 +22,7 @@ use ZxcvbnPhp\Zxcvbn;
  * @property-read Collection<Categoria> $categorias
  * @property-read Collection<Marca> $marcas
  * @property-read Collection<TipoPago> $tipos_pago
+ * @property-read bool $esEncargado
  */
 class Usuario extends Model
 {
@@ -126,7 +127,7 @@ class Usuario extends Model
    */
   function cotizaciones(): HasMany
   {
-    if (str_contains($this->roles, 'Encargado')) {
+    if ($this->esEncargado) {
       return $this->hasMany(Cotizacion::class, 'id_encargado');
     }
 
@@ -139,7 +140,7 @@ class Usuario extends Model
    */
   function estados(): HasMany
   {
-    if ($this->rol === 'Encargado') {
+    if ($this->esEncargado) {
       return $this->hasMany(Estado::class, 'id_encargado');
     }
 
@@ -148,11 +149,10 @@ class Usuario extends Model
 
   /**
    * @return HasMany<Categoria>
-   * @deprecated Usa `categorias` en su lugar.
    */
   function categorias(): HasMany
   {
-    if ($this->rol === 'Encargado') {
+    if ($this->esEncargado) {
       return $this->hasMany(Categoria::class, 'id_encargado');
     }
 
@@ -161,11 +161,10 @@ class Usuario extends Model
 
   /**
    * @return HasMany<Marca>
-   * @deprecated Usa `marcas` en su lugar.
    */
   function marcas(): HasMany
   {
-    if ($this->rol === 'Encargado') {
+    if ($this->esEncargado) {
       return $this->hasMany(Marca::class, 'id_encargado');
     }
 
@@ -178,10 +177,15 @@ class Usuario extends Model
    */
   function tipos_pago(): HasMany
   {
-    if ($this->rol === 'Encargado') {
+    if ($this->esEncargado) {
       return $this->hasMany(TipoPago::class, 'id_encargado');
     }
 
     return $this->hasMany(TipoPago::class, 'id_encargado', 'id_encargado');
+  }
+
+  function getEsEncargadoAttribute(): bool
+  {
+    return str_contains($this->roles, 'Encargado');
   }
 }

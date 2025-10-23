@@ -209,7 +209,7 @@ Flight::group('', static function (): void {
 
     Flight::group('/inventario', static function (): void {
       Flight::route('GET /', static function (): void {
-        $productos = Producto::query()->get();
+        $productos = Container::getInstance()->get(UsuarioAutenticado::class)->productos;
 
         Flight::render('paginas/inventario', ['productos' => $productos], 'pagina');
         Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inventario']);
