@@ -7,6 +7,12 @@ $notificaciones = [
   ["mensaje" => "Item 2", "enlace" => "javascript:void(0)"],
 ];
 
+$enlacesDropdownAvatar = [
+  ["icono" => "ti ti-user", "texto" => "Mi Perfil", "enlace" => "./perfil"],
+  // ["icono" => "ti ti-mail", "texto" => "Mi Cuenta", "enlace" => "javascript:void(0)"],
+  // ["icono" => "ti ti-list-check", "texto" => "My Task", "enlace" => "javascript:void(0)"],
+];
+
 $token = auth()->oauthToken();
 
 if ($token) {
@@ -83,18 +89,12 @@ $ultimaCotizacion = Cotizacion::query()->latest()->get()[0] ?? new Cotizacion;
           </a>
           <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
             <div class="message-body">
-              <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                <i class="ti ti-user fs-6"></i>
-                <p class="mb-0 fs-3">My Profile</p>
-              </a>
-              <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                <i class="ti ti-mail fs-6"></i>
-                <p class="mb-0 fs-3">My Account</p>
-              </a>
-              <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                <i class="ti ti-list-check fs-6"></i>
-                <p class="mb-0 fs-3">My Task</p>
-              </a>
+              <?php foreach ($enlacesDropdownAvatar as $enlace): ?>
+                <a href="<?= $enlace['enlace'] ?>" class="d-flex align-items-center gap-2 dropdown-item">
+                  <i class="<?= $enlace['icono'] ?> fs-6"></i>
+                  <p class="mb-0 fs-3"><?= $enlace['texto'] ?></p>
+                </a>
+              <?php endforeach ?>
               <a href="./salir" class="btn btn-outline-primary mx-3 mt-2 d-block">Cerrar sesión</a>
             </div>
           </div>
@@ -103,3 +103,4 @@ $ultimaCotizacion = Cotizacion::query()->latest()->get()[0] ?? new Cotizacion;
     </div>
   </nav>
 </header>
+
