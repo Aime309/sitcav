@@ -17,7 +17,8 @@ Flight::group('', static function (): void {
     $estado = Flight::request()->query->state;
 
     if ($error) {
-      flash()->set(["No se pudo iniciar sesión con Google. $error"], 'errores');
+      flash()->set(['No se pudo iniciar sesión con Google'], 'errores');
+      error_log("Error de OAuth2 de Google: $error");
       Flight::redirect('/ingresar');
 
       return;
@@ -45,19 +46,20 @@ Flight::group('', static function (): void {
         'code' => $codigo,
       ]);
 
-      $usuarioDeGoogle = auth()->client('google')->getResourceOwner($token);
+      $usuarioDeGoogle = auth()->client('google')->getResourceOwner($token)->toArray();
 
       auth()->fromOAuth([
         'token' => $token,
         'user' => [
           'roles' => json_encode(['Encargado', 'Empleado superior', 'Vendedor']),
-          'email' => $usuarioDeGoogle->toArray()['email'],
+          'email' => $usuarioDeGoogle['email'],
         ],
       ]);
 
       Flight::redirect('/');
     } catch (Throwable $error) {
-      flash()->set(["No se pudo iniciar sesión con Google. {$error->getMessage()}"], 'errores');
+      flash()->set(["No se pudo iniciar sesión con Google."], 'errores');
+      error_log("Error al autenticar con OAuth2 de Google: {$error->getMessage()}");
       Flight::redirect('/ingresar');
 
       return;
