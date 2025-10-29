@@ -2,6 +2,7 @@
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;
+use Leaf\Helpers\Password;
 use SITCAV\Modelos\UsuarioAutenticado;
 
 /////////////////////////
@@ -31,15 +32,36 @@ $_ENV['APP_URL'] ??= URL_BASE_COMPLETA;
 ////////////////////////////////////////////////////
 // CONFIGURAR LEAF AUTH (módulo de autenticación) //
 ////////////////////////////////////////////////////
-auth()->config('session', true);
+auth()->config('id.key', 'id');
 auth()->config('db.table', 'usuarios');
+auth()->config('roles.key', 'roles');
+auth()->config('timestamps', false);
+auth()->config('timestamps.format', 'YYYY-MM-DD HH:mm:ss');
+
+auth()->config('password.encode', static function (string $password): string {
+  return Password::hash($password, Password::BCRYPT, [
+    'cost' => 10,
+  ]);
+});
+
+auth()->config('password.verify', Password::verify(...));
 auth()->config('password.key', 'clave_encriptada');
+auth()->config('unique', ['email', 'cedula']);
+auth()->config('hidden', []);
+auth()->config('session', true);
+auth()->config('session.lifetime', 0);
+
+auth()->config('session.cookie', [
+  'secure' => true,
+  'httponly' => true,
+  'samesite' => 'lax',
+]);
+
+auth()->config('token.lifetime', null);
 auth()->config('token.secret', $_ENV['TOKEN_SECRET']);
+
 auth()->config('messages.loginParamsError', 'Cédula o contraseña incorrecta');
 auth()->config('messages.loginPasswordError', auth()->config('messages.loginParamsError'));
-auth()->config('timestamps', false);
-auth()->config('unique', ['cedula']);
-auth()->config('roles.key', 'roles');
 
 auth()->createRoles([
   'Vendedor' => ['editar perfil', 'ver productos', 'registrar pago', 'realizar pago', 'generar factura'],
