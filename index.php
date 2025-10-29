@@ -131,15 +131,32 @@ db()->connection($contenedor->get(PDO::class));
 ///////////////////////////////////
 // CONFIGURAR CONTROL DE ERRORES //
 ///////////////////////////////////
-Flight::map('error', static function (Throwable $error): void {
+error_reporting(
+  $_ENV['ENVIRONMENT'] === 'development'
+    ? E_ALL
+    : E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED & ~E_STRICT
+);
+
+ini_set('display_errors', $_ENV['ENVIRONMENT'] === 'development');
+ini_set('display_startup_errors', $_ENV['ENVIRONMENT'] === 'development');
+ini_set('log_errors', true);
+ini_set('ignore_repeated_source', true);
+ini_set('error_log', CARPETA_RAIZ . '/logs/php_errors.log');
+
+Flight::map('error', static function (Throwable $error): never {
   if (str_contains($error->getPrevious()?->getMessage() ?? '', UsuarioAutenticado::class)) {
     flash()->set(['Ha ocurrido un error, por favor ingrese nuevamente'], 'errores');
+    error_log($error->getPrevious()?->getMessage() ?? $error->getMessage());
     Flight::redirect('/salir');
 
     exit;
   }
 
-  var_dump($error);
+  http_response_code(500);
+  flash()->set(['Ha ocurrido un error inesperado. Por favor intente nuevamente más tarde. ❌'], 'errores');
+  error_log($error->getMessage());
+  Flight::redirect('/salir');
+
   exit;
 });
 

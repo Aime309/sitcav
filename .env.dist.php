@@ -13,6 +13,7 @@ return [
 
   'TEST_URL' => 'http://localhost:8080',
   'TOKEN_SECRET' => '{token-secret}',
+  'ENVIRONMENT' => 'development',
 
   # ======================================================================================
   # =           Credenciales de Google (https://console.cloud.google.com/auth)           =
