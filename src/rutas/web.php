@@ -98,14 +98,16 @@ Flight::group('', static function (): void {
       'respuesta_secreta_encriptada' => Password::hash($datos->respuesta_secreta, options: [
         'cost' => 10,
       ]),
-      'rol' => json_encode(['Encargado', 'Empleado superior', 'Vendedor']),
+      'roles' => json_encode(['Encargado', 'Empleado superior', 'Vendedor']),
     ])) {
       flash()->set(['El registro se ha realizado correctamente.'], 'exitos');
       Flight::redirect('/');
-    } else {
-      flash()->set(auth()->errors(), 'errores');
-      Flight::redirect('/registrarse');
+
+      return;
     }
+
+    flash()->set(auth()->errors(), 'errores');
+    Flight::redirect('/registrarse');
   });
 
   Flight::route('GET /restablecer-clave', static function (): void {
