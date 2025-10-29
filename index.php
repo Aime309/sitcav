@@ -34,6 +34,7 @@ $_ENV['APP_URL'] ??= URL_BASE_COMPLETA;
 auth()->config('session', true);
 auth()->config('db.table', 'usuarios');
 auth()->config('password.key', 'clave_encriptada');
+auth()->config('token.secret', $_ENV['TOKEN_SECRET']);
 auth()->config('messages.loginParamsError', 'Cédula o contraseña incorrecta');
 auth()->config('messages.loginPasswordError', auth()->config('messages.loginParamsError'));
 auth()->config('timestamps', false);

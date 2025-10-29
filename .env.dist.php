@@ -12,6 +12,7 @@ return [
   'DB_DATABASE' => __DIR__ . '/bd/sitcav.db',
 
   'TEST_URL' => 'http://localhost:8080',
+  'TOKEN_SECRET' => '{token-secret}',
 
   # ======================================================================================
   # =           Credenciales de Google (https://console.cloud.google.com/auth)           =
