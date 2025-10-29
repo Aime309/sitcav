@@ -75,10 +75,18 @@ $refleccionPropiedad->setAccessible(true);
 $config = $refleccionPropiedad->getValue($guzzle);
 $refleccionPropiedad->setValue($guzzle, ['verify' => false] + $config);
 
-//////////////////////////////////////////////
-// CONFIGURAR MOTOR DE PLANTILLAS DE FLIGHT //
-//////////////////////////////////////////////
+///////////////////////
+// CONFIGURAR FLIGHT //
+///////////////////////
+Flight::set('flight.base_url', str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']));
+Flight::set('flight.case_sensitive', false);
+Flight::set('flight.handle_errors', true);
+Flight::set('flight.log_errors', false);
 Flight::set('flight.views.path', CARPETA_RAIZ . '/vistas');
+Flight::set('flight.views.extension', '.php');
+Flight::set('flight.content_length', true);
+Flight::set('flight.v2.output_buffering', false);
+Flight::view()->preserveVars = false;
 
 /////////////////////////
 // CONFIGURAR ELOQUENT //
@@ -112,7 +120,6 @@ $contenedor->singleton(
   static fn(): UsuarioAutenticado => UsuarioAutenticado::query()->findOrFail(auth()->id()),
 );
 
-Flight::set('flight.base_url', str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']));
 Flight::registerContainerHandler($contenedor->get(...));
 
 ////////////////////////////////////////////////
