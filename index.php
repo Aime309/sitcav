@@ -120,7 +120,7 @@ $contenedor->singleton(
   static fn(): UsuarioAutenticado => UsuarioAutenticado::query()->findOrFail(auth()->id()),
 );
 
-Flight::registerContainerHandler($contenedor->get(...));
+Flight::registerContainerHandler($contenedor);
 
 ////////////////////////////////////////////////
 // CONFIGURAR CONEXIÓN COMPARTIDA (Singleton) //
