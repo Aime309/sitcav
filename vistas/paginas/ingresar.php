@@ -8,7 +8,9 @@
             class="w-50"
             alt="Logo horizontal de SITCAV" />
         </a>
-        <p class="card-text">Menos tiempo, más dinero</p>
+        <p class="card-text">
+          Ingrese a su cuenta para continuar
+        </p>
       </header>
       <form method="post" class="card-body">
         <div class="row">

@@ -170,14 +170,105 @@ Flight::group('', static function (): void {
       return;
     }
 
-    auth()->login([
-      'cedula' => $usuario->cedula,
-      'clave_encriptada' => $nuevaClave,
-    ]);
+    if (session()->has('user.email')) {
+      auth()->login([
+        'email' => session()->get('user.email'),
+        'clave_encriptada' => $nuevaClave,
+      ]);
+    } else {
+      auth()->login([
+        'cedula' => $usuario->cedula,
+        'clave_encriptada' => $nuevaClave,
+      ]);
+    }
+
 
     session()->remove('usuarios.id');
+    session()->remove('user.email');
     flash()->set(['La contraseña se ha restablecido correctamente.'], 'exitos');
     Flight::redirect('/');
+  });
+
+  Flight::route('POST /restablecer-clave/solicitar-codigo', static function (): void {
+    $correo = session()->get('user.email', Flight::request()->data->correo);
+    $usuario = Usuario::query()->where('email', $correo)->first();
+
+    if (!$usuario) {
+      flash()->set(['No existe ningún usuario con ese correo.'], 'errores');
+      Flight::redirect('/restablecer-clave');
+
+      return;
+    }
+
+    $clienteCorreo = Resend::client($_ENV['RESEND_API_KEY']);
+    $codigoVerificacion = rand(100000, 999999);
+
+    session()->set('verification_code', $codigoVerificacion);
+    session()->set('verification_code_expiration_timestamp', time() + 60); // 1 minuto
+    session()->set('user.email', $usuario->email);
+    session()->set('usuarios.id', $usuario->id);
+
+    $clienteCorreo->emails->send([
+      'from' => 'SITCAV <onboarding@resend.dev>',
+      'to' => [$correo],
+      'subject' => 'Tu código de verificación',
+      'html' => Flight::view()->fetch('paginas/correo', ['codigo' => $codigoVerificacion]),
+    ]);
+
+    Flight::render(
+      'paginas/restablecer-clave/codigo-verificacion',
+      [],
+      'pagina'
+    );
+
+    Flight::render(
+      'diseños/diseño-con-alpine-para-visitantes',
+      ['titulo' => 'Restablecer contraseña']
+    );
+  });
+
+  Flight::route('POST /restablecer-clave/verificar-codigo', static function (): void {
+    $codigoIngresado = implode('', Flight::request()->data->codigo);
+    $codigoAlmacenado = session()->get('verification_code');
+    $expiracionCodigo = session()->get('verification_code_expiration_timestamp');
+
+    if (time() > $expiracionCodigo) {
+      flash()->set(['El código de verificación ha expirado. Por favor, solicita uno nuevo.'], 'errores');
+      Flight::redirect('/restablecer-clave');
+
+      return;
+    }
+
+    if ($codigoIngresado !== (string) $codigoAlmacenado) {
+      flash()->set(['El código de verificación es incorrecto.'], 'errores');
+
+      Flight::render(
+        'paginas/restablecer-clave/codigo-verificacion',
+        [],
+        'pagina'
+      );
+
+      Flight::render(
+        'diseños/diseño-con-alpine-para-visitantes',
+        ['titulo' => 'Restablecer contraseña']
+      );
+
+      return;
+    }
+
+    session()->remove('verification_code');
+    session()->remove('verification_code_expiration_timestamp');
+
+    Flight::render(
+      'paginas/restablecer-clave/paso-3',
+      [],
+      'pagina'
+    );
+
+    Flight::render(
+      'diseños/diseño-con-alpine-para-visitantes',
+      ['titulo' => 'Restablecer contraseña']
+    );
   });
 }, [SoloVisitantes::class]);
 

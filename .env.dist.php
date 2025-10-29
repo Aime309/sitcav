@@ -22,4 +22,5 @@ return [
   'GOOGLE_AUTH_CLIENT_SECRET' => '{google-client-secret}',
 
   'GEMINI_API_KEY' => 'YOUR_API_KEY',
+  'RESEND_API_KEY' => 'YOUR_API_KEY',
 ];

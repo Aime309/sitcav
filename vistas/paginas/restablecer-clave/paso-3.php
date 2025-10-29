@@ -8,7 +8,9 @@
             class="w-50"
             alt="Logo horizontal de SITCAV" />
         </a>
-        <p class="card-text">Menos tiempo, más dinero</p>
+        <p class="card-text">
+          Ingresa tu nueva contraseña a continuación:
+        </p>
       </header>
       <form action="./restablecer-clave/3" method="post" class="card-body">
         <div class="mb-4">
@@ -21,11 +23,11 @@
         <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">
           Restablecer
         </button>
-        <div class="text-center">
-          <span class="fs-4 fw-bold">¿Recordaste tu contraseña?</span>
-          <a class="link-primary fw-bold ms-2" href="./ingresar">Ingresar</a>
-        </div>
       </form>
+      <footer class="card-footer text-center">
+        <span class="fs-4 fw-bold">¿Recordaste tu contraseña?</span>
+        <a class="link-primary fw-bold ms-2" href="./ingresar">Ingresar</a>
+      </footer>
     </div>
   </div>
 </div>
