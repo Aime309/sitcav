@@ -21,8 +21,10 @@ define(
 ////////////////////////////////////////////////////////
 // CARGAR VARIABLES DE ENTORNO - ver archivo .env.php //
 ////////////////////////////////////////////////////////
-$_ENV += file_exists(CARPETA_RAIZ . '/.env.php') ? require CARPETA_RAIZ . '/.env.php' : [];
-$_ENV += require CARPETA_RAIZ . '/.env.dist.php';
+$_ENV += file_exists(CARPETA_RAIZ . '/.env.php')
+  ? require CARPETA_RAIZ . '/.env.php'
+  : require CARPETA_RAIZ . '/.env.dist.php';
+
 $_ENV['GOOGLE_AUTH_REDIRECT_URI'] ??= URL_BASE_COMPLETA . '/oauth2/google';
 
 ////////////////////////////////////////////////////
