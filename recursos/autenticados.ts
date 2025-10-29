@@ -7,12 +7,25 @@ import Modal from "bootstrap/js/dist/modal";
 import Toast from "bootstrap/js/dist/toast";
 import Tooltip from "bootstrap/js/dist/tooltip";
 import $ from "jquery";
+import zxcvbn from "zxcvbn";
 
+// @ts-ignore
 window.$ = $;
+
+// @ts-ignore
 window.ApexCharts = ApexCharts;
-window.Toast = Toast;
+
+// @ts-ignore
 window.Alpine = Alpine;
-window.Tooltip = Tooltip;
+
+// @ts-ignore
+window.zxcvbn = zxcvbn;
+
+window.bootstrap = {
+  ...(window.bootstrap || {}),
+  Toast: Toast,
+  Modal: Modal,
+};
 
 for (const element of document.querySelectorAll(".dropdown-toggle")) {
   new Dropdown(element);

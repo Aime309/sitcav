@@ -4,10 +4,20 @@ import "tabler-icons/iconfont/tabler-icons.min.css";
 import "pure-css-loader/dist/loader-bouncing.css";
 
 import "iconify-icon/dist/iconify-icon.min";
+import "alpinejs/dist/cdn.min";
 import Toast from "bootstrap/js/dist/toast";
+import zxcvbn from "zxcvbn";
 
 for (const element of document.querySelectorAll(".toast")) {
   const toast = new Toast(element);
 
   toast.show();
 }
+
+// @ts-ignore
+window.zxcvbn = zxcvbn;
+
+window.bootstrap = {
+  ...(window.bootstrap || {}),
+  Toast: Toast,
+};

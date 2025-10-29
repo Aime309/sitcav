@@ -37,16 +37,23 @@
           <input type="number" name="cedula" required class="form-control" id="input-cedula" />
         </div>
         <div class="mb-3">
-          <label for="input-clave" class="form-label">Contraseña</label>
-          <input type="password" name="clave" required class="form-control" id="input-clave" />
+          <?php Flight::render('componentes/input-clave', [
+            'label' => 'Contraseña',
+            'name' => 'clave',
+            'required' => true,
+          ]) ?>
         </div>
         <div class="mb-3">
           <label for="input-pregunta-secreta" class="form-label">Pregunta secreta</label>
           <input name="pregunta_secreta" required class="form-control" id="input-pregunta-secreta" />
         </div>
         <div class="mb-4">
-          <label for="input-respuesta-secreta" class="form-label">Respuesta secreta</label>
-          <input type="password" name="respuesta_secreta" required class="form-control" id="input-respuesta-secreta" />
+          <?php Flight::render('componentes/input-clave', [
+            'label' => 'Respuesta secreta',
+            'name' => 'respuesta_secreta',
+            'required' => true,
+            'mostrarAdvertencias' => false,
+          ]) ?>
         </div>
         <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">
           Registrarse

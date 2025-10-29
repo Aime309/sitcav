@@ -28,7 +28,7 @@ class Usuario extends Model
 {
   protected $table = 'usuarios';
   public $timestamps = false;
-  private const PUNTAJE_CLAVE_SEGURA = 3;
+  private const PUNTAJE_CLAVE_SEGURA = 2;
 
   protected $casts = [
     'esta_despedido' => 'boolean',
@@ -51,7 +51,7 @@ class Usuario extends Model
     }
 
     $this->clave_encriptada = Password::hash($nuevaClave, PASSWORD_DEFAULT, [
-      'cost' => 12,
+      'cost' => 10,
     ]);
 
     $this->save();

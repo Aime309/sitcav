@@ -12,8 +12,11 @@
       </header>
       <form action="./restablecer-clave/3" method="post" class="card-body">
         <div class="mb-4">
-          <label for="input-nueva-clave" class="form-label">Nueva contraseña</label>
-          <input type="password" name="nueva_clave" required class="form-control" id="input-nueva-clave" />
+          <?php Flight::render('componentes/input-clave', [
+            'label' => 'Nueva contraseña',
+            'name' => 'nueva_clave',
+            'required' => true,
+          ]) ?>
         </div>
         <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">
           Restablecer

@@ -122,19 +122,7 @@ Flight::group('', static function (): void {
     $usuario = Usuario::query()->where('cedula', $cedula)->first();
 
     if (!$usuario) {
-      $intentos = session()->get('restablecer-clave.intentos') ?? 0;
-      ++$intentos;
-
-      if ($intentos >= 3) {
-        session()->remove('restablecer-clave.intentos');
-        flash()->set(['Has alcanzado el número máximo de intentos. Por favor, inténtalo más tarde.'], 'errores');
-        Flight::redirect('/ingresar');
-
-        return;
-      }
-
-      session()->set('restablecer-clave.intentos', $intentos);
-      flash()->set(["Llevas $intentos intentos."], 'errores');
+      flash()->set(['No existe ningún usuario con esa cédula.'], 'errores');
       Flight::render('paginas/restablecer-clave/paso-1', [], 'pagina');
       Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
@@ -172,7 +160,15 @@ Flight::group('', static function (): void {
     $nuevaClave = Flight::request()->data->nueva_clave;
     $usuario = Usuario::query()->find(session()->get('usuarios.id'));
 
-    $usuario->restablecerClave($nuevaClave);
+    try {
+      $usuario->restablecerClave($nuevaClave);
+    } catch (Error $error) {
+      flash()->set([$error->getMessage()], 'errores');
+      Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
+      Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+
+      return;
+    }
 
     auth()->login([
       'cedula' => $usuario->cedula,
