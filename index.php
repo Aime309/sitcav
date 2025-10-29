@@ -126,6 +126,7 @@ Flight::registerContainerHandler($contenedor);
 // CONFIGURAR CONEXIÓN COMPARTIDA (Singleton) //
 ////////////////////////////////////////////////
 db()->connection($contenedor->get(PDO::class));
+(new ReflectionProperty(auth(), 'db'))->setValue(auth(), db());
 
 ///////////////////////////////////
 // CONFIGURAR CONTROL DE ERRORES //
