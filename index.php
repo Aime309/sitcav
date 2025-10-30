@@ -144,9 +144,7 @@ ini_set('ignore_repeated_source', true);
 ini_set('error_log', CARPETA_RAIZ . '/logs/php_errors.log');
 
 Flight::map('error', static function (Throwable $error): never {
-  if (str_contains($error->getPrevious()?->getMessage() ?? '', UsuarioAutenticado::class)) {
-    flash()->set(['Ha ocurrido un error, por favor ingrese nuevamente'], 'errores');
-    error_log($error->getPrevious()?->getMessage() ?? $error->getMessage());
+  if (str_contains($error->getPrevious()?->getMessage() ?: $error->getMessage(), UsuarioAutenticado::class)) {
     Flight::redirect('/salir');
 
     exit;
