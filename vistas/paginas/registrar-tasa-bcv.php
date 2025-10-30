@@ -19,7 +19,7 @@ $tasaDePagina = json_decode($dolaresDeLaApi)[0]->promedio;
             name="nueva_tasa"
             required
             placeholder="Tasa BCV"
-            value="<?= $ultimaCotizacion->tasa_bcv ?>"
+            value="<?= $ultimaCotizacion->tasa_bcv ?: $tasaDePagina ?>"
             class="form-control" />
           <label>Tasa BCV</label>
         </div>

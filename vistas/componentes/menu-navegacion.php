@@ -11,7 +11,7 @@ $secciones = [
         'url' => './',
       ],
       [
-        'nombre' => 'Inventorio',
+        'nombre' => 'Inventario',
         'icono' => 'solar:bill-list-broken',
         'url' => './inventario',
       ],

@@ -187,7 +187,7 @@ use SITCAV\Modelos\Proveedor;
           <i class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
         </form>
       </div>
-      <div class="row row-gap-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-6">
+      <div class="row row-gap-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-6 pb-5">
         <div class="col">
           <a
             href="#registrar-producto"
