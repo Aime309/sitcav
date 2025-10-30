@@ -158,6 +158,11 @@ Flight::map('error', static function (Throwable $error): never {
   exit;
 });
 
+Flight::map('notFound', static function (): void {
+  http_response_code(404);
+  Flight::render('paginas/404');
+});
+
 /////////////////////////////////////
 // CONFIGURAR GENERACIÓN DE FECHAS //
 /////////////////////////////////////

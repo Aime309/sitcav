@@ -2,6 +2,7 @@
 
 use Illuminate\Container\Container;
 use Leaf\Helpers\Password;
+use SITCAV\Autorizadores\ModoMantenimiento;
 use SITCAV\Autorizadores\SoloAutenticados;
 use SITCAV\Autorizadores\SoloTasaActualizada;
 use SITCAV\Autorizadores\SoloVisitantes;
@@ -112,163 +113,167 @@ Flight::group('', static function (): void {
     Flight::redirect('/registrarse');
   });
 
-  Flight::route('GET /restablecer-clave', static function (): void {
-    Flight::render('paginas/restablecer-clave/paso-1', [], 'pagina');
-    Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
-  });
-
-  Flight::route('POST /restablecer-clave', static function (): void {
-    $cedula = Flight::request()->data->cedula;
-    $usuario = Usuario::query()->where('cedula', $cedula)->first();
-
-    if (!$usuario) {
-      flash()->set(['No existe ningún usuario con esa cédula.'], 'errores');
+  Flight::group('/restablecer-clave', static function (): void {
+    Flight::route('GET /', static function (): void {
       Flight::render('paginas/restablecer-clave/paso-1', [], 'pagina');
       Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+    });
 
-      return;
-    }
+    Flight::route('POST /', static function (): void {
+      $cedula = Flight::request()->data->cedula;
+      $usuario = Usuario::query()->where('cedula', $cedula)->first();
 
-    session()->set('usuarios.id', $usuario->id);
-    Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
-    Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
-  });
+      if (!$usuario) {
+        flash()->set(['No existe ningún usuario con esa cédula.'], 'errores');
+        Flight::render('paginas/restablecer-clave/paso-1', [], 'pagina');
+        Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
-  Flight::route('POST /restablecer-clave/2', static function (): void {
-    $respuestaSecreta = Flight::request()->data->respuesta_secreta;
-    $usuario = Usuario::query()->find(session()->get('usuarios.id'));
+        return;
+      }
 
-    if (!$respuestaSecreta) {
+      session()->set('usuarios.id', $usuario->id);
       Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
       Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+    });
 
-      return;
-    }
+    Flight::route('POST /2', static function (): void {
+      $respuestaSecreta = Flight::request()->data->respuesta_secreta;
+      $usuario = Usuario::query()->find(session()->get('usuarios.id'));
 
-    try {
-      $usuario->asegurarValidezRespuestaSecreta($respuestaSecreta);
-      Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
-      Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
-    } catch (Throwable) {
-      flash()->set(['La respuesta secreta es incorrecta.'], 'errores');
-      Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
-      Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
-    }
-  });
+      if (!$respuestaSecreta) {
+        Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
+        Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
-  Flight::route('POST /restablecer-clave/3', static function (): void {
-    $nuevaClave = Flight::request()->data->nueva_clave;
-    $usuario = Usuario::query()->find(session()->get('usuarios.id'));
+        return;
+      }
 
-    try {
-      $usuario->restablecerClave($nuevaClave);
-    } catch (Error $error) {
-      flash()->set([$error->getMessage()], 'errores');
-      Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
-      Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+      try {
+        $usuario->asegurarValidezRespuestaSecreta($respuestaSecreta);
+        Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
+        Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+      } catch (Throwable) {
+        flash()->set(['La respuesta secreta es incorrecta.'], 'errores');
+        Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
+        Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+      }
+    });
 
-      return;
-    }
+    Flight::route('POST /3', static function (): void {
+      $nuevaClave = Flight::request()->data->nueva_clave;
+      $usuario = Usuario::query()->find(session()->get('usuarios.id'));
 
-    if (session()->has('user.email')) {
-      auth()->login([
-        'email' => session()->get('user.email'),
-        'clave_encriptada' => $nuevaClave,
-      ]);
-    } else {
-      auth()->login([
-        'cedula' => $usuario->cedula,
-        'clave_encriptada' => $nuevaClave,
-      ]);
-    }
+      try {
+        $usuario->restablecerClave($nuevaClave);
+      } catch (Error $error) {
+        flash()->set([$error->getMessage()], 'errores');
+        Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
+        Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+
+        return;
+      }
+
+      if (session()->has('user.email')) {
+        auth()->login([
+          'email' => session()->get('user.email'),
+          'clave_encriptada' => $nuevaClave,
+        ]);
+      } else {
+        auth()->login([
+          'cedula' => $usuario->cedula,
+          'clave_encriptada' => $nuevaClave,
+        ]);
+      }
 
 
-    session()->remove('usuarios.id');
-    session()->remove('user.email');
-    flash()->set(['La contraseña se ha restablecido correctamente.'], 'exitos');
-    Flight::redirect('/');
-  });
+      session()->remove('usuarios.id');
+      session()->remove('user.email');
+      flash()->set(['La contraseña se ha restablecido correctamente.'], 'exitos');
+      Flight::redirect('/');
+    });
 
-  Flight::route('POST /restablecer-clave/solicitar-codigo', static function (): void {
-    $correo = session()->get('user.email', Flight::request()->data->correo);
-    $usuario = Usuario::query()->where('email', $correo)->first();
+    Flight::group('', static function (): void {
+      Flight::route('POST /solicitar-codigo', static function (): void {
+        $correo = session()->get('user.email', Flight::request()->data->correo);
+        $usuario = Usuario::query()->where('email', $correo)->first();
 
-    if (!$usuario) {
-      flash()->set(['No existe ningún usuario con ese correo.'], 'errores');
-      Flight::redirect('/restablecer-clave');
+        if (!$usuario) {
+          flash()->set(['No existe ningún usuario con ese correo.'], 'errores');
+          Flight::redirect('/restablecer-clave');
 
-      return;
-    }
+          return;
+        }
 
-    $clienteCorreo = Resend::client($_ENV['RESEND_API_KEY']);
-    $codigoVerificacion = rand(100000, 999999);
+        $clienteCorreo = Resend::client($_ENV['RESEND_API_KEY']);
+        $codigoVerificacion = rand(100000, 999999);
 
-    session()->set('verification_code', $codigoVerificacion);
-    session()->set('verification_code_expiration_timestamp', time() + 60); // 1 minuto
-    session()->set('user.email', $usuario->email);
-    session()->set('usuarios.id', $usuario->id);
+        session()->set('verification_code', $codigoVerificacion);
+        session()->set('verification_code_expiration_timestamp', time() + 60); // 1 minuto
+        session()->set('user.email', $usuario->email);
+        session()->set('usuarios.id', $usuario->id);
 
-    $clienteCorreo->emails->send([
-      'from' => 'SITCAV <onboarding@resend.dev>',
-      'to' => [$correo],
-      'subject' => 'Tu código de verificación',
-      'html' => Flight::view()->fetch('paginas/correo', ['codigo' => $codigoVerificacion]),
-    ]);
+        $clienteCorreo->emails->send([
+          'from' => 'SITCAV <onboarding@resend.dev>',
+          'to' => [$correo],
+          'subject' => 'Tu código de verificación',
+          'html' => Flight::view()->fetch('paginas/correo', ['codigo' => $codigoVerificacion]),
+        ]);
 
-    Flight::render(
-      'paginas/restablecer-clave/codigo-verificacion',
-      [],
-      'pagina'
-    );
+        Flight::render(
+          'paginas/restablecer-clave/codigo-verificacion',
+          [],
+          'pagina'
+        );
 
-    Flight::render(
-      'diseños/diseño-con-alpine-para-visitantes',
-      ['titulo' => 'Restablecer contraseña']
-    );
-  });
+        Flight::render(
+          'diseños/diseño-con-alpine-para-visitantes',
+          ['titulo' => 'Restablecer contraseña']
+        );
+      });
 
-  Flight::route('POST /restablecer-clave/verificar-codigo', static function (): void {
-    $codigoIngresado = implode('', Flight::request()->data->codigo);
-    $codigoAlmacenado = session()->get('verification_code');
-    $expiracionCodigo = session()->get('verification_code_expiration_timestamp');
+      Flight::route('POST /verificar-codigo', static function (): void {
+        $codigoIngresado = implode('', Flight::request()->data->codigo);
+        $codigoAlmacenado = session()->get('verification_code');
+        $expiracionCodigo = session()->get('verification_code_expiration_timestamp');
 
-    if (time() > $expiracionCodigo) {
-      flash()->set(['El código de verificación ha expirado. Por favor, solicita uno nuevo.'], 'errores');
-      Flight::redirect('/restablecer-clave');
+        if (time() > $expiracionCodigo) {
+          flash()->set(['El código de verificación ha expirado. Por favor, solicita uno nuevo.'], 'errores');
+          Flight::redirect('/restablecer-clave');
 
-      return;
-    }
+          return;
+        }
 
-    if ($codigoIngresado !== (string) $codigoAlmacenado) {
-      flash()->set(['El código de verificación es incorrecto.'], 'errores');
+        if ($codigoIngresado !== (string) $codigoAlmacenado) {
+          flash()->set(['El código de verificación es incorrecto.'], 'errores');
 
-      Flight::render(
-        'paginas/restablecer-clave/codigo-verificacion',
-        [],
-        'pagina'
-      );
+          Flight::render(
+            'paginas/restablecer-clave/codigo-verificacion',
+            [],
+            'pagina'
+          );
 
-      Flight::render(
-        'diseños/diseño-con-alpine-para-visitantes',
-        ['titulo' => 'Restablecer contraseña']
-      );
+          Flight::render(
+            'diseños/diseño-con-alpine-para-visitantes',
+            ['titulo' => 'Restablecer contraseña']
+          );
 
-      return;
-    }
+          return;
+        }
 
-    session()->remove('verification_code');
-    session()->remove('verification_code_expiration_timestamp');
+        session()->remove('verification_code');
+        session()->remove('verification_code_expiration_timestamp');
 
-    Flight::render(
-      'paginas/restablecer-clave/paso-3',
-      [],
-      'pagina'
-    );
+        Flight::render(
+          'paginas/restablecer-clave/paso-3',
+          [],
+          'pagina'
+        );
 
-    Flight::render(
-      'diseños/diseño-con-alpine-para-visitantes',
-      ['titulo' => 'Restablecer contraseña']
-    );
+        Flight::render(
+          'diseños/diseño-con-alpine-para-visitantes',
+          ['titulo' => 'Restablecer contraseña']
+        );
+      });
+    }, [ModoMantenimiento::class]);
   });
 }, [SoloVisitantes::class]);
 
