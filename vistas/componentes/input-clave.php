@@ -75,7 +75,7 @@ $mostrarAdvertencias ??= true;
       x-text="obtenerAdvertenciaTraducida(validacionClave.feedback.warning)">
     </div>
   <?php endif ?>
-  <div class="progress mt-2">
+  <div class="progress mt-2" style="height: 1rem">
     <div
       class="progress-bar progress-bar-striped progress-bar-animated"
       :class="{
