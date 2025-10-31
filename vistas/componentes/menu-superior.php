@@ -18,11 +18,17 @@ $token = auth()->oauthToken();
 if ($token) {
   try {
     $usuario = auth()->client('google')->getResourceOwner($token)->toArray();
+
+    if (@file_get_contents($usuario['picture']) === false) {
+      $usuario['picture'] = null;
+    } else {
+      auth()->update(['url_perfil' => $usuario['picture']]);
+    }
   } catch (Throwable) {
   }
 }
 
-$avatar = $usuario['picture'] ?? './recursos/imagenes/profile/user-1.jpg';
+$avatar = $usuario['picture'] ?? auth()->user()->url_perfil ?? './recursos/imagenes/profile/user-1.jpg';
 $ultimaCotizacion = Cotizacion::query()->latest()->get()[0] ?? new Cotizacion;
 
 ?>

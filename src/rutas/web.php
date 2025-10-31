@@ -54,6 +54,7 @@ Flight::group('', static function (): void {
         'user' => [
           'roles' => json_encode(['Encargado', 'Empleado superior', 'Vendedor']),
           'email' => $usuarioDeGoogle['email'],
+          'url_imagen' => $usuarioDeGoogle['picture'],
         ],
       ]);
 

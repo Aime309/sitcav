@@ -27,6 +27,7 @@ create table usuarios (
   esta_despedido boolean default false,
   pregunta_secreta varchar(255),
   respuesta_secreta_encriptada varchar(255),
+  url_imagen varchar(255),
   id_encargado integer,
 
   foreign key (id_encargado) references usuarios(id)
