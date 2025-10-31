@@ -200,7 +200,7 @@ use SITCAV\Modelos\Proveedor;
           <div
             class="col"
             :class="producto.cantidad_disponible === 0 && 'opacity-50'"
-            x-init="producto.cantidad_disponible === 0 && new Tooltip($el, {
+            x-init="producto.cantidad_disponible === 0 && new bootstrap.Tooltip($el, {
               title: 'Producto no disponible',
             })">
             <div class="card overflow-hidden rounded-2 border h-100">

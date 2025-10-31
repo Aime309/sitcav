@@ -23,8 +23,9 @@ window.zxcvbn = zxcvbn;
 
 window.bootstrap = {
   ...(window.bootstrap || {}),
-  Toast: Toast,
-  Modal: Modal,
+  Toast,
+  Modal,
+  Tooltip,
 };
 
 for (const element of document.querySelectorAll(".dropdown-toggle")) {
