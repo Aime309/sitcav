@@ -22,5 +22,11 @@ return [
   'GOOGLE_AUTH_CLIENT_SECRET' => '{google-client-secret}',
 
   'GEMINI_API_KEY' => 'YOUR_API_KEY',
-  'RESEND_API_KEY' => 'YOUR_API_KEY',
+  'PHPMAILER_HOST' => 'smtp.gmail.com',
+  'PHPMAILER_USERNAME' => '<usuario>@gmail.com',
+
+  # ============================================================================================================
+  # =           Contraseña para PHPMailer, se obtiene de (https://myaccount.google.com/apppasswords)           =
+  # ============================================================================================================
+  'PHPMAILER_PASSWORD' => '{google-app-password}',
 ];
