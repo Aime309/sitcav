@@ -2,10 +2,13 @@
 <html
   lang="es"
   x-data="{
-    tema: `<?= session()->get('tema', '${matchMedia(`(prefers-color-scheme: dark)`).matches ? `dark` : `light`}') ?>`,
+    tema: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
   }"
-  data-bs-theme="<?= session()->get('tema', 'light') ?>"
-  :data-bs-theme="tema"
+  x-init="
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (evento) => {
+      tema = evento.matches ? 'dark' : 'light';
+    });
+  "
   x-effect="
     fetch('./api/ajustes/tema', {
       method: 'post',
@@ -14,7 +17,9 @@
       },
       body: JSON.stringify({ tema })
     });
-  ">
+  "
+  data-bs-theme="<?= session()->get('tema', 'light') ?>"
+  :data-bs-theme="tema">
 
 <head>
   <meta charset="utf-8" />
@@ -26,7 +31,7 @@
   <link rel="stylesheet" href="./recursos/compilados/visitantes.css" />
 
   <style>
-    html[data-bs-theme="light"] body {
+    body {
       background: url('./recursos/imagenes/Imagen de WhatsApp 2025-10-30 a las 21.55.54_e571a147.jpg');
       background-repeat: no-repeat;
       background-size: cover;

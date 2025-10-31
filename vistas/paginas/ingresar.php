@@ -2,12 +2,7 @@
   <div class="col-md-8 col-lg-6 col-xxl-3">
     <div class="card m-0">
       <header class="card-header text-center">
-        <a href="./" class="d-block pb-3" title="Ir a la página de inicio">
-          <img
-            src="./recursos/imagenes/logo-horizontal.png"
-            class="w-50"
-            alt="Logo horizontal de SITCAV" />
-        </a>
+        <?php Flight::render('componentes/enlace-logo') ?>
         <p class="card-text">
           Ingrese a su cuenta para continuar
         </p>
