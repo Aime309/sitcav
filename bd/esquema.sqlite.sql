@@ -1,3 +1,5 @@
+pragma foreign_keys = off;
+
 -- NO CAMBIAR EL ÓRDEN
 drop table if exists eventos;
 drop table if exists pagos;
@@ -129,7 +131,7 @@ create table productos (
   id_proveedor integer not null,
   id_marca integer not null,
 
-  foreign key (id_categoria) references categorias_producto(id),
+  foreign key (id_categoria) references categorias(id),
   foreign key (id_proveedor) references proveedores(id),
   foreign key (id_marca) references marcas(id)
 );
@@ -209,7 +211,7 @@ create table pagos (
   id_detalle_venta integer not null,
 
   foreign key (id_tipo_pago) references tipos_pago(id),
-  foreign key (id_detalle_venta) references detalles_ventas(id)
+  foreign key (id_detalle_venta) references detalles_venta(id)
 );
 
 create table eventos (
