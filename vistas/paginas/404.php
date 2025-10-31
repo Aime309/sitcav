@@ -13,7 +13,9 @@
 
   <!-- Core Css -->
   <link rel="stylesheet" href="./recursos/css/styles.css" />
-  <title>MaterialM Bootstrap Admin</title>
+  <title>
+    404 - Página no encontrada | SITCAV
+  </title>
 </head>
 
 <body>
