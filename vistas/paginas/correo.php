@@ -1,7 +1,7 @@
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
   <div style="text-align: center; margin-bottom: 20px;">
     <a href="<?= URL_BASE_COMPLETA ?>">
-      <img src="https://aimee.42web.io/sitcav/recursos/imagenes/logo-para-correos.jpg" alt="SITCAV Logo" style="max-width: 200px;" />
+      <img src="https://aimee.42web.io/sitcav/recursos/imagenes/favicon.png" alt="SITCAV Logo" style="max-width: 200px;" />
     </a>
   </div>
   <h2 style="color: #333;">Tu código de verificación es:</h2>
