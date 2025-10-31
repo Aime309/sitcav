@@ -1,3 +1,5 @@
+pragma foreign_keys = off;
+
 -- NO CAMBIAR EL ORDEN
 delete from eventos;
 delete from pagos;
@@ -626,7 +628,8 @@ insert into productos (url_imagen, id_marca, id, codigo, nombre, descripcion, pr
   ('https://http2.mlstatic.com/D_NQ_NP_852781-MLV75612306981_042024-O.webp', 0, 22, 'CBL-002', 'Cable Cisco 2000', 'Cable de 8 puertos', 200, 200, 10, 30, 30, 6, 1),
   ('https://img.genuinemodules.com/cache/catalog/products/QSFP-H40G-CU3M/QSFP-H40G-CU3M-1-800x800.jpg', 0, 23, 'CBL-003', 'Cable Cisco 3000', 'Cable de 16 puertos', 300, 300, 10, 30, 30, 6, 1),
   ('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrnpOtOeU55qDF15hNQbVy9gD6ueBip3PQCw&s', 0, 24, 'CBL-004', 'Cable Cisco 4000', 'Cable de 32 puertos', 400, 400, 10, 30, 30, 6, 1),
-  ('https://img.genuinemodules.com/cache/catalog/products/QSFP-4SFP25G-CU5M/QSFP-4SFP25G-CU5M-1-800x800.jpg', 0, 25, 'CBL-005', 'Cable Cisco 5000', 'Cable de 64 puertos', 500, 500, 10, 30, 30, 6, 1);
+  ('https://img.genuinemodules.com/cache/catalog/products/QSFP-4SFP25G-CU5M/QSFP-4SFP25G-CU5M-1-800x800.jpg', 0, 25, 'CBL-005', 'Cable Cisco 5000', 'Cable de 64 puertos', 500, 500, 10, 30, 30, 6, 1),
+  ('https://elpuntodelaimpresora.com/wp-content/uploads/2020/10/hp240g7.jpg', 11, 26, null, 'HP 240 G7 Notebook PC', null, 280, 280, 0, 30, 30, 7, 6);
 
 insert into compras (id, fecha_hora_creacion, tasa_bcv, id_proveedor) values
   (1, '2020-01-01 00:00:00', 10000, 1),
