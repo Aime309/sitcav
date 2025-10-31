@@ -1,18 +1,6 @@
-<?php
-
-$errores = (array) flash()->display('errores');
-$exitos = (array) flash()->display('exitos');
-
-?>
-
-<div
-  class="toast-container position-fixed top-0 end-0 p-3"
-  x-data='{
-    errores: JSON.parse(`<?= json_encode($errores) ?>`),
-    exitos: JSON.parse(`<?= json_encode($exitos) ?>`),
-  }'>
+<div class="toast-container position-fixed top-0 end-0 p-3" style="width: max-content !important">
   <template x-for="error in errores" :key="error">
-    <div class="toast" x-init="new bootstrap.Toast($el).show()">
+    <div class="toast p-0 bg-transparent" x-init="new bootstrap.Toast($el).show()">
       <div class="toast-header text-danger">
         <i class="bi bi-x-circle-fill me-2"></i>
         <strong class="me-auto" x-text="error"></strong>

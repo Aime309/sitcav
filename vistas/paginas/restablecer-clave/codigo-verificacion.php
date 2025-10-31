@@ -33,6 +33,21 @@
           <label for="input-respuesta-secreta" class="form-label d-flex align-items-center justify-content-between">
             Escribe tu código de seguridad de 6 dígitos
             <button
+              x-data="{
+                get puedePegar() {
+                  return navigator.permissions
+                    .query({ name: 'clipboard-read' })
+                    .then((resultado) => resultado.state === 'granted' || resultado.state === 'prompt')
+                    .catch(() => false);
+                }
+              }"
+              x-init="
+                puedePegar.then((puedePegar) => {
+                  if (!puedePegar) {
+                    $el.disabled = true;
+                  }
+                });
+              "
               type="button"
               class="btn btn-primary"
               @click="
@@ -55,12 +70,13 @@
           <div class="d-flex align-items-center gap-2 gap-sm-3">
             <?php for ($i = 0; $i < 6; ++$i): ?>
               <input
+                tabindex="<?= $i + 1 ?>"
                 type="number"
                 min="0"
                 max="9"
                 name="codigo[]"
                 :required="!reenviar"
-                @input="
+                @keyup="
                   $el.value = $el.value.slice(0, 1);
 
                   if ($el.value.length >= 1 && foco < 6) {
@@ -68,7 +84,13 @@
                     $el.nextElementSibling.focus();
                   }
 
-                  if ($event.inputType === 'deleteContentBackward' && foco > 1) {
+                  if (
+                    (
+                      $event.inputType === 'deleteContentBackward'
+                      || $event.key === 'Backspace'
+                    ) && $el.value.length === 0
+                    && foco > 1
+                  ) {
                     --foco;
                     $el.previousElementSibling.focus();
                   }

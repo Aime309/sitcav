@@ -56,7 +56,7 @@ $ultimaCotizacion = Cotizacion::query()->latest()->get()[0] ?? new Cotizacion;
           </div>
         </div>
       </li>
-      <li class="nav-item">
+      <li class="nav-item d-none d-xl-flex">
         <form action="./cotizaciones" method="post" class="d-flex align-items-center gap-2 text-nowrap">
           Tasa según
           <a href="https://www.bcv.org.ve/">bcv.org.ve</a>

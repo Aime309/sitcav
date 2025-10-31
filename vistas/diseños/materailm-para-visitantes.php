@@ -1,9 +1,18 @@
+<?php
+
+$errores = (array) flash()->display('errores');
+$exitos = (array) flash()->display('exitos');
+
+?>
+
 <!doctype html>
 <html
   lang="es"
-  x-data="{
-    tema: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
-  }"
+  x-data='{
+    tema: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+    errores: JSON.parse(`<?= json_encode($errores) ?>`),
+    exitos: JSON.parse(`<?= json_encode($exitos) ?>`),
+  }'
   x-init="
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (evento) => {
       tema = evento.matches ? 'dark' : 'light';
