@@ -21,7 +21,11 @@ return [
   'GOOGLE_AUTH_CLIENT_ID' => '{google-client-id}',
   'GOOGLE_AUTH_CLIENT_SECRET' => '{google-client-secret}',
 
+  # =========================================================================================
+  # =           Credenciales de Gemini (https://aistudio.google.com/app/api-keys)           =
+  # =========================================================================================
   'GEMINI_API_KEY' => 'YOUR_API_KEY',
+
   'PHPMAILER_HOST' => 'smtp.gmail.com',
   'PHPMAILER_USERNAME' => '<usuario>@gmail.com',
 
