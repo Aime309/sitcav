@@ -31,4 +31,12 @@ Flight::group('/api', static function (): void {
     // );
     // $response->text(); // Hello! How can I assist you today?
   });
+
+  Flight::group('/ajustes', static function (): void {
+    Flight::route('POST /tema', static function (): void {
+      $tema = Flight::request()->data->tema;
+
+      session()->set('tema', $tema);
+    });
+  });
 });

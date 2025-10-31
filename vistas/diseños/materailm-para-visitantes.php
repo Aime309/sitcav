@@ -1,5 +1,20 @@
 <!doctype html>
-<html lang="es">
+<html
+  lang="es"
+  x-data="{
+    tema: `<?= session()->get('tema', '${matchMedia(`(prefers-color-scheme: dark)`).matches ? `dark` : `light`}') ?>`,
+  }"
+  data-bs-theme="<?= session()->get('tema', 'light') ?>"
+  :data-bs-theme="tema"
+  x-effect="
+    fetch('./api/ajustes/tema', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ tema })
+    });
+  ">
 
 <head>
   <meta charset="utf-8" />
@@ -7,11 +22,11 @@
   <title><?= $titulo ?> | SITCAV</title>
   <base href="<?= str_replace('index.php', '', $_SERVER['SCRIPT_NAME']) ?>" />
   <link rel="icon" href="./recursos/imagenes/favicon.png" />
-  <link rel="stylesheet" href="./recursos/css/materialm.min.css" />
+  <link rel="stylesheet" href="./recursos/css/styles.css" />
   <link rel="stylesheet" href="./recursos/compilados/visitantes.css" />
 
   <style>
-    body {
+    html[data-bs-theme="light"] body {
       background: url('./recursos/imagenes/Imagen de WhatsApp 2025-10-30 a las 21.55.54_e571a147.jpg');
       background-repeat: no-repeat;
       background-size: cover;
@@ -19,7 +34,7 @@
   </style>
 </head>
 
-<body>
+<body :class="`text-bg-${tema}`" x-data="SITCAV">
   <?php Flight::render('componentes/indicador-cargando-pagina') ?>
   <?= $pagina ?>
 

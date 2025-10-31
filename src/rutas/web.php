@@ -69,7 +69,7 @@ Flight::group('', static function (): void {
 
   Flight::route('GET /ingresar', static function (): void {
     Flight::render('paginas/ingresar', [], 'pagina');
-    Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Ingresar']);
+    Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Ingresar']);
   });
 
   Flight::route('POST /ingresar', static function (): void {
@@ -88,7 +88,7 @@ Flight::group('', static function (): void {
 
   Flight::route('GET /registrarse', static function (): void {
     Flight::render('paginas/registrarse', [], 'pagina');
-    Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Registrarse']);
+    Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Registrarse']);
   });
 
   Flight::route('POST /registrarse', static function (): void {
@@ -116,7 +116,7 @@ Flight::group('', static function (): void {
   Flight::group('/restablecer-clave', static function (): void {
     Flight::route('GET /', static function (): void {
       Flight::render('paginas/restablecer-clave/paso-1', [], 'pagina');
-      Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+      Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
     });
 
     Flight::route('POST /', static function (): void {
@@ -126,14 +126,14 @@ Flight::group('', static function (): void {
       if (!$usuario) {
         flash()->set(['No existe ningún usuario con esa cédula.'], 'errores');
         Flight::render('paginas/restablecer-clave/paso-1', [], 'pagina');
-        Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+        Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
         return;
       }
 
       session()->set('usuarios.id', $usuario->id);
       Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
-      Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+      Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
     });
 
     Flight::route('POST /2', static function (): void {
@@ -142,7 +142,7 @@ Flight::group('', static function (): void {
 
       if (!$respuestaSecreta) {
         Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
-        Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+        Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
         return;
       }
@@ -150,11 +150,11 @@ Flight::group('', static function (): void {
       try {
         $usuario->asegurarValidezRespuestaSecreta($respuestaSecreta);
         Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
-        Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+        Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
       } catch (Throwable) {
         flash()->set(['La respuesta secreta es incorrecta.'], 'errores');
         Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
-        Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+        Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
       }
     });
 
@@ -167,7 +167,7 @@ Flight::group('', static function (): void {
       } catch (Error $error) {
         flash()->set([$error->getMessage()], 'errores');
         Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
-        Flight::render('diseños/diseño-con-alpine-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+        Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
         return;
       }
@@ -240,7 +240,7 @@ Flight::group('', static function (): void {
       );
 
       Flight::render(
-        'diseños/diseño-con-alpine-para-visitantes',
+        'diseños/materailm-para-visitantes',
         ['titulo' => 'Restablecer contraseña']
       );
     });
@@ -267,7 +267,7 @@ Flight::group('', static function (): void {
         );
 
         Flight::render(
-          'diseños/diseño-con-alpine-para-visitantes',
+          'diseños/materailm-para-visitantes',
           ['titulo' => 'Restablecer contraseña']
         );
 
@@ -284,7 +284,7 @@ Flight::group('', static function (): void {
       );
 
       Flight::render(
-        'diseños/diseño-con-alpine-para-visitantes',
+        'diseños/materailm-para-visitantes',
         ['titulo' => 'Restablecer contraseña']
       );
     });
