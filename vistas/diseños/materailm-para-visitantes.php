@@ -10,8 +10,6 @@ $exitos = (array) flash()->display('exitos');
   lang="es"
   x-data='{
     tema: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
-    errores: JSON.parse(`<?= json_encode($errores) ?>`),
-    exitos: JSON.parse(`<?= json_encode($exitos) ?>`),
   }'
   x-init="
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (evento) => {
@@ -48,7 +46,11 @@ $exitos = (array) flash()->display('exitos');
   </style>
 </head>
 
-<body :class="`text-bg-${tema}`" x-data="SITCAV">
+<body
+  :class="`text-bg-${tema}`"
+  x-data="SITCAV"
+  data-errores='<?= json_encode(array_values($errores)) ?>'
+  data-exitos='<?= json_encode(array_values($exitos)) ?>'>
   <?php Flight::render('componentes/indicador-cargando-pagina') ?>
   <?= $pagina ?>
 

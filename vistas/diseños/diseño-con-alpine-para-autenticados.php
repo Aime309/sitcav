@@ -1,5 +1,12 @@
+<?php
+
+$errores = (array) flash()->display('errores');
+$exitos = (array) flash()->display('exitos');
+
+?>
+
 <!doctype html>
-<html lang="es" x-data="SITCAV">
+<html lang="es">
 
 <head>
   <meta charset="utf-8" />
@@ -11,7 +18,10 @@
   <link rel="stylesheet" href="./recursos/compilados/visitantes.css" />
 </head>
 
-<body>
+<body
+  x-data="SITCAV"
+  data-errores='<?= json_encode(array_values($errores)) ?>'
+  data-exitos='<?= json_encode(array_values($exitos)) ?>'>
   <?php Flight::render('componentes/indicador-cargando-pagina') ?>
 
   <!--  Body Wrapper -->
