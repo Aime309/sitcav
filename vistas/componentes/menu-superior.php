@@ -69,7 +69,7 @@ $ultimaCotizacion = Cotizacion::query()->latest()->get()[0] ?? new Cotizacion;
                 name="nueva_tasa"
                 required
                 placeholder="Tasa BCV"
-                value="<?= $ultimaCotizacion->tasa_bcv ?>"
+                value="<?= round($ultimaCotizacion->tasa_bcv, 2) ?>"
                 class="form-control" />
               <label>Tasa BCV</label>
             </div>
