@@ -16,6 +16,11 @@ $secciones = [
         'url' => './inventario',
         'permisos' => ['ver productos'],
       ],
+      [
+        'nombre' => 'Empleados',
+        'icono' => 'solar:users-group-two-rounded-broken',
+        'url' => './empleados',
+        'permisos' => ['ver empleados'],
       ],
       // [
       //   'nombre' => 'Front Pages',

@@ -8,3 +8,4 @@ import "./ts/configurar-dropdowns-de-bootstrap";
 import "./ts/configurar-modals-de-bootstrap";
 import "./ts/configurar-toasts-de-bootstrap";
 import "./ts/configurar-tooltips-de-bootstrap";
+import "./ts/configurar-tabs-de-bootstrap";

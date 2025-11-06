@@ -32,6 +32,7 @@ class Usuario extends Model
 
   protected $casts = [
     'esta_despedido' => 'boolean',
+    'roles' => 'array',
   ];
 
   protected $hidden = [
@@ -119,7 +120,11 @@ class Usuario extends Model
    */
   function empleados(): HasMany
   {
-    return $this->hasMany(self::class, 'id_encargado');
+    if ($this->esEncargado) {
+      return $this->hasMany(self::class, 'id_encargado');
+    }
+
+    return $this->hasMany(self::class, 'id_encargado', 'id_encargado');
   }
 
   /**
@@ -186,6 +191,6 @@ class Usuario extends Model
 
   function getEsEncargadoAttribute(): bool
   {
-    return str_contains($this->roles, 'Encargado');
+    return in_array('Encargado', $this->roles);
   }
 }

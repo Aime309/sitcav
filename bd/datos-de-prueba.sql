@@ -22,8 +22,9 @@ delete from usuarios;
 
 insert into usuarios (id, cedula, clave_encriptada, roles, esta_despedido, pregunta_secreta, respuesta_secreta_encriptada, id_encargado) values
   (1, 12345678, /* Admin.123 */ '$2y$10$HoG.Mi9zoKT7MhhELX9aKesjOxyk1o4DGlSdy3307jAxwV3Jnm23e', '["Encargado", "Empleado superior", "Vendedor"]', false, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null),
-  (2, 12345679, /* Vendedor.123 */ '$2y$10$UwZFBCo836pmmP9NRQjC2ufi6lQYWIDmKEi0yZhPmMh4.RqRqGmQW', '["Empleado superior", "Vendedor"]', false, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', 1),
-  (3, 12345689, /* Hacker.123 */ '$2y$10$qtKkRdQdzZ1gcU2wggVzwelxLPi6FDfC.TTInshPk74ljkTg/nQNa', '["Encargado", "Empleado superior", "Vendedor"]', false, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null);
+  (2, 12345677, /* Empleado.123 */ '$2y$10$qXCMa0gmDATyZ6yMvqXYM.edW/s00.3XospLduP1hNwpZVOk7nq2a', '["Empleado superior", "Vendedor"]', false, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', 1),
+  (3, 12345679, /* Vendedor.123 */ '$2y$10$UwZFBCo836pmmP9NRQjC2ufi6lQYWIDmKEi0yZhPmMh4.RqRqGmQW', '["Vendedor"]', false, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', 1),
+  (4, 12345689, /* Hacker.123 */ '$2y$10$qtKkRdQdzZ1gcU2wggVzwelxLPi6FDfC.TTInshPk74ljkTg/nQNa', '["Encargado", "Empleado superior", "Vendedor"]', false, 'nombre del sistema', /* sitcav */ '$2y$10$MOBiWkg7wIWzLMJuvprhE.svQ366OfvnbfMlIrQUDQGC.a6uVUfeC', null);
 
 insert into marcas (id, nombre, id_encargado) values
   (0, 'Sin marca', 1),

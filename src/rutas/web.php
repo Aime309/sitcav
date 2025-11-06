@@ -4,6 +4,7 @@ use Illuminate\Container\Container;
 use Leaf\Helpers\Password;
 use PHPMailer\PHPMailer\PHPMailer;
 use SITCAV\Autorizadores\SoloAutenticados;
+use SITCAV\Autorizadores\SoloPersonalAutorizado;
 use SITCAV\Autorizadores\SoloTasaActualizada;
 use SITCAV\Autorizadores\SoloVisitantes;
 use SITCAV\Modelos\Cliente;
@@ -363,10 +364,18 @@ Flight::group('', static function (): void {
     Flight::route('GET /perfil/editar', static function (): void {});
     Flight::route('POST /perfil/editar', static function (): void {});
 
-    // Flight::route('GET /empleados', function (): void {});
-    // Flight::route('POST /empleados/@id:\d/restablecer-clave', function (): void {});
-    // Flight::route('/empleados/despedir', function (): void {});
-    // Flight::route('/empleados/promover', function (): void {});
+    Flight::route('GET /empleados', static function (): void {
+      $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
+
+      Flight::render('paginas/empleados', compact('empleados'), 'pagina');
+      Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Empleados']);
+    })->addMiddleware(new SoloPersonalAutorizado(['ver empleados']));
+
+    Flight::route('POST /empleados/@id:\d/restablecer-clave', static function (): void {});
+
+    Flight::route('/empleados/despedir', static function (): void {});
+
+    Flight::route('/empleados/promover', static function (): void {});
 
     // Flight::route('GET /eventos', function (): void {});
 
