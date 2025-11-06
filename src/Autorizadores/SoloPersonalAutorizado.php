@@ -17,7 +17,7 @@ final readonly class SoloPersonalAutorizado
       return true;
     }
 
-    flash()->set(['No tienes permiso para acceder a esta sección.'], 'errores');
+    flash()->set(['No tienes permiso para acceder realizar esta acción.'], 'errores');
     Flight::redirect('/');
   }
 }

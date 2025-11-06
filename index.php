@@ -63,9 +63,30 @@ auth()->config('messages.loginParamsError', 'Cédula o contraseña incorrecta');
 auth()->config('messages.loginPasswordError', auth()->config('messages.loginParamsError'));
 
 auth()->createRoles([
-  'Vendedor' => ['editar perfil', 'ver productos', 'registrar pago', 'realizar pago', 'generar factura'],
-  'Empleado superior' => ['registrar cliente', 'registrar categoria', 'registrar producto', 'registrar cotizacion', 'registrar compra'],
-  'Encargado' => ['editar datos del negocio', 'registrar proveedor', 'registrar empleado', 'respaldar la base de datos', 'restaurar la base de datos', 'despedir vendedor', 'promover vendedor'],
+  'Vendedor' => [
+    'editar perfil',
+    'ver productos',
+    'registrar pago',
+    'realizar pago',
+    'generar factura'
+  ],
+  'Empleado superior' => [
+    'registrar cliente',
+    'registrar categoria',
+    'registrar producto',
+    'registrar cotizacion',
+    'registrar compra'
+  ],
+  'Encargado' => [
+    'editar datos del negocio',
+    'registrar proveedor',
+    'registrar empleado',
+    'respaldar la base de datos',
+    'restaurar la base de datos',
+    'despedir vendedor',
+    'promover vendedor',
+    'ver empleados',
+  ],
 ]);
 
 // DESACTIVAR LA VERIFICACIÓN SSL DE GUZZLE (CLIENTE HTTP)
