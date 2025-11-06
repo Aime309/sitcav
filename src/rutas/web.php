@@ -47,14 +47,14 @@ Flight::group('', static function (): void {
         'code' => $codigo,
       ]);
 
-      $usuarioDeGoogle = auth()->client('google')->getResourceOwner($token)->toArray();
+      $usuarioDeGoogle = auth()->client('google')->getResourceOwner($token);
 
       auth()->fromOAuth([
         'token' => $token,
         'user' => [
           'roles' => json_encode(['Encargado', 'Empleado superior', 'Vendedor']),
-          'email' => $usuarioDeGoogle['email'],
-          'url_imagen' => $usuarioDeGoogle['picture'],
+          'email' => $usuarioDeGoogle->toArray()['email'],
+          'url_imagen' => $usuarioDeGoogle->toArray()['picture'],
         ],
       ]);
 
