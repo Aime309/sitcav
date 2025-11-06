@@ -36,6 +36,7 @@ $exitos = (array) flash()->display('exitos');
   <link rel="icon" href="./recursos/imagenes/favicon.png" />
   <link rel="stylesheet" href="./recursos/css/styles.css" />
   <link rel="stylesheet" href="./recursos/compilados/visitantes.css" />
+  <script src="./recursos/compilados/visitantes.js"></script>
 
   <style>
     body {
@@ -55,7 +56,6 @@ $exitos = (array) flash()->display('exitos');
   <?= $pagina ?>
 
   <?php Flight::render('componentes/notificaciones') ?>
-  <script defer src="./recursos/compilados/visitantes.js"></script>
 </body>
 
 </html>

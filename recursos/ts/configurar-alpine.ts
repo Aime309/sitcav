@@ -4,12 +4,17 @@ import Alpine from "alpinejs";
 window.Alpine = Alpine;
 
 Alpine.data("SITCAV", () => ({
-  errores: JSON.parse(document.body.dataset.errores || "[]") as string[],
-  exitos: JSON.parse(document.body.dataset.exitos || "[]") as string[],
+  errores: [] as string[],
+  exitos: [] as string[],
   cargandoPagina: true,
   tasaDePagina: "Cargando",
 
   init() {
+    document.addEventListener("DOMContentLoaded", () => {
+      this.errores = JSON.parse(document.body.dataset.errores || "[]");
+      this.exitos = JSON.parse(document.body.dataset.exitos || "[]");
+    });
+
     this.cargandoPagina = false;
     this.cargarTasaDePagina();
 

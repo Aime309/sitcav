@@ -16,6 +16,7 @@ $exitos = (array) flash()->display('exitos');
   <link rel="icon" href="./recursos/imagenes/favicon.png" />
   <link rel="stylesheet" href="./recursos/css/materialm.min.css" />
   <link rel="stylesheet" href="./recursos/compilados/visitantes.css" />
+  <script src="./recursos/compilados/autenticados.js"></script>
 </head>
 
 <body
@@ -50,7 +51,6 @@ $exitos = (array) flash()->display('exitos');
 
   <?php Flight::render('componentes/notificaciones') ?>
 
-  <script defer src="./recursos/compilados/autenticados.js"></script>
   <script defer src="./recursos/js/sidebarmenu.js"></script>
   <script defer src="./recursos/js/app.min.js"></script>
 </body>
