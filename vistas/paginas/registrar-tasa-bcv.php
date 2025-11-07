@@ -2,6 +2,7 @@
 
 $dolaresDeLaApi = @file_get_contents('https://ve.dolarapi.com/v1/dolares') ?: '[{"promedio":"Error de conexión"}]';
 $tasaDePagina = json_decode($dolaresDeLaApi)[0]->promedio;
+$tasaBcv = ceil(max($ultimaCotizacion->tasa_bcv, $tasaDePagina));
 
 ?>
 
@@ -19,7 +20,7 @@ $tasaDePagina = json_decode($dolaresDeLaApi)[0]->promedio;
             name="nueva_tasa"
             required
             placeholder="Tasa BCV"
-            value="<?= $ultimaCotizacion->tasa_bcv ?: $tasaDePagina ?>"
+            value="<?= $tasaBcv ?>"
             class="form-control" />
           <label>Tasa BCV</label>
         </div>
