@@ -8,13 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Leaf\Helpers\Password;
+use SITCAV\Enums\Traducciones;
 use ZxcvbnPhp\Zxcvbn;
 
 /**
  * @property-read int $id
+ * @property string $email
  * @property int $cedula
+ * @property-read string[] $roles
  * @property bool $esta_despedido
  * @property string $pregunta_secreta
+ * @property ?string $url_imagen
  * @property-read ?self $encargado
  * @property-read Collection<Usuario> $empleados
  * @property-read Collection<Cotizacion> $cotizaciones
@@ -43,12 +47,22 @@ class Usuario extends Model
 
   function restablecerClave(string $nuevaClave): void
   {
+    $traducciones = Traducciones::class;
     $validador = new Zxcvbn;
     $fuerzaClave = $validador->passwordStrength($nuevaClave);
     $puntajeFuerzaClave = $fuerzaClave['score'];
+    $advertencia = $traducciones::ADVERTENCIAS->comoString($fuerzaClave['feedback']['warning'] ?? '');
+
+    $sugerencias = join('', array_map(
+      static fn(string $sugerencia): string => "<li>&bullet; {$traducciones::SUGERENCIAS->comoString($sugerencia)}</li>",
+      $fuerzaClave['feedback']['suggestions'] ?? ['Debe tener al menos 8 caracteres y contener letras, números y símbolos.'],
+    ));
 
     if ($puntajeFuerzaClave < self::PUNTAJE_CLAVE_SEGURA) {
-      throw new Error('La nueva clave no es lo suficientemente segura. Debe tener al menos 8 caracteres y contener letras, números y símbolos.');
+      throw new Error(<<<html
+        La nueva clave no es lo suficientemente segura. <strong>$advertencia</strong>
+        <ul>$sugerencias</ul>
+      html);
     }
 
     $this->clave_encriptada = Password::hash($nuevaClave, PASSWORD_DEFAULT, [

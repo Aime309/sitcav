@@ -3,13 +3,13 @@
     <div class="toast p-0 bg-transparent" x-init="new bootstrap.Toast($el).show()">
       <div class="toast-header text-danger">
         <i class="bi bi-x-circle-fill me-2"></i>
-        <strong class="me-auto" x-text="error"></strong>
+        <span x-data="{ message: error }" class="me-auto" x-html="error"></span>
         <button class="btn-close" data-bs-dismiss="toast"></button>
       </div>
     </div>
   </template>
   <template x-for="exito in exitos" :key="exito">
-    <div class="toast" x-init="new bootstrap.Toast($el).show()">
+    <div class="toast p-0 bg-transparent" x-init="new bootstrap.Toast($el).show()">
       <div class="toast-header text-success">
         <i class="bi bi-check-circle-fill me-2"></i>
         <strong class="me-auto" x-text="exito"></strong>

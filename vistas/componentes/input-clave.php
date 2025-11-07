@@ -1,5 +1,7 @@
 <?php
 
+use SITCAV\Enums\Traducciones;
+
 $id = uniqid();
 $required ??= false;
 $mostrarAdvertencias ??= true;
@@ -8,6 +10,10 @@ $mostrarAdvertencias ??= true;
 
 <div x-data="{
   clave: `<?= $value ?? '' ?>`,
+  traducciones: {
+    advertencias: <?= Traducciones::ADVERTENCIAS->comoObjetoJavaScript() ?>,
+    sugerencias: <?= Traducciones::SUGERENCIAS->comoObjetoJavaScript() ?>,
+  },
 
   get validacionClave() {
     return zxcvbn(this.clave);
@@ -30,31 +36,11 @@ $mostrarAdvertencias ??= true;
   },
 
   obtenerSugerenciaTraducida(sugerencia) {
-    const traducciones = {
-      'Use a few words, avoid common phrases': 'Usa algunas palabras, evita frases comunes',
-      'No need for symbols, digits, or uppercase letters': 'No es necesario usar símbolos, dígitos o letras mayúsculas',
-      'Add another word or two. Uncommon words are better.': 'Añade una o dos palabras más. Las palabras poco comunes son mejores.',
-      'Capitalization doesn\'t help very much': 'La capitalización no ayuda mucho',
-      'Reversed words aren\'t much harder to guess': 'Las palabras al revés no son mucho más difíciles de adivinar',
-    };
-
-    return traducciones[sugerencia] || sugerencia;
+    return this.traducciones.sugerencias[sugerencia] || sugerencia;
   },
 
   obtenerAdvertenciaTraducida(advertencia) {
-    if (advertencia.startsWith('Repeats like ')) {
-      return 'Repeticiones como \'aaa\' son fáciles de adivinar';
-    }
-
-    const traducciones = {
-      'This is a very common password': 'Esta es una contraseña muy común',
-      'This is similar to a commonly used password': 'Esta es similar a una contraseña comúnmente usada',
-      'A word by itself is easy to guess': 'Una sola palabra es fácil de adivinar',
-      'Names and surnames by themselves are easy to guess': 'Nombres y apellidos por sí solos son fáciles de adivinar',
-      'Common names and surnames are easy to guess': 'Nombres y apellidos comunes son fáciles de adivinar',
-    };
-
-    return traducciones[advertencia] || advertencia;
+    return this.traducciones.advertencias[advertencia] || advertencia;
   }
 }">
   <label for="<?= $id ?>" class="form-label"><?= $label ?? '' ?></label>
