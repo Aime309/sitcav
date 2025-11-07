@@ -3,6 +3,7 @@
   x-data='{
     empleados: JSON.parse(`<?= json_encode($empleados) ?>`),
     busqueda: "",
+    empleado: JSON.parse(`<?= count($empleados) ? json_encode($empleados[0]) : '{}' ?>`),
 
     get empleadosFiltrados() {
       if (!this.busqueda) {
@@ -107,30 +108,27 @@
                 <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
                   <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: auto; overflow: hidden scroll;">
                     <div class="simplebar-content" style="padding: 0px;">
-                      <ul class="nav nav-tabs">
-                        <template x-for="empleado in empleadosFiltrados">
-                          <li>
-                            <a
-                              :href="`#empleado-${empleado.id}`"
-                              data-bs-toggle="tab"
-                              class="px-4 py-3 bg-hover-light-black d-flex align-items-center chat-user bg-light-subtle">
-                              <span class="position-relative">
-                                <img src="./recursos/imagenes/profile/user-1.jpg" alt="user-4" width="40" height="40" class="rounded-circle">
+                      <template x-for="empleadoFiltrado in empleadosFiltrados">
+                        <li>
+                          <button
+                            @click="empleado = empleadoFiltrado"
+                            class="border-0 px-4 py-3 bg-hover-light-black d-flex align-items-center chat-user bg-light-subtle">
+                            <span class="position-relative">
+                              <img :src="empleadoFiltrado.url_imagen || './recursos/imagenes/profile/user-1.jpg'" alt="user-4" width="40" height="40" class="rounded-circle">
+                            </span>
+                            <div class="ms-6 d-inline-block w-75">
+                              <h6
+                                class="mb-1 fw-semibold chat-title"
+                                x-text="empleadoFiltrado.nombreCompleto || `v-${empleadoFiltrado.cedula}`">
+                              </h6>
+                              <span
+                                class="fs-2 text-body-color d-block"
+                                x-text="empleadoFiltrado.email">
                               </span>
-                              <div class="ms-6 d-inline-block w-75">
-                                <h6
-                                  class="mb-1 fw-semibold chat-title"
-                                  x-text="empleado.nombreCompleto || `v-${empleado.cedula}`">
-                                </h6>
-                                <span
-                                  class="fs-2 text-body-color d-block"
-                                  x-text="empleado.email">
-                                </span>
-                              </div>
-                            </a>
-                          </li>
-                        </template>
-                      </ul>
+                            </div>
+                          </button>
+                        </li>
+                      </template>
                     </div>
                   </div>
                 </div>
@@ -152,81 +150,112 @@
         <div class="chat-box-inner-part h-100">
           <div class="chatting-box app-email-chatting-box">
             <div class="p-9 py-3 border-bottom chat-meta-user d-flex align-items-center justify-content-between">
-              <h5 class="text-dark mb-0 fs-5">Contact Details</h5>
+              <h5 class="text-dark mb-0 fs-5">Detalles del empleado</h5>
               <ul class="list-unstyled mb-0 d-flex align-items-center">
-                <li class="d-lg-none d-block">
+                <!-- <li class="d-lg-none d-block">
                   <a class="text-dark back-btn px-2 fs-5 bg-hover-primary nav-icon-hover position-relative z-index-5" href="javascript:void(0)">
                     <i class="ti ti-arrow-left"></i>
                   </a>
-                </li>
-                <li class="position-relative" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="important">
+                </li> -->
+                <!-- <li class="position-relative" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="important">
                   <a class="text-dark px-2 fs-5 bg-hover-primary nav-icon-hover position-relative z-index-5" href="javascript:void(0)">
                     <i class="ti ti-star"></i>
                   </a>
+                </li> -->
+                <li
+                  class="position-relative"
+                  :class="{ 'disabled opacity-25': empleado.roles && empleado.roles[0] === 'Empleado superior' }"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  data-bs-title="Promover">
+                  <form action="./empleados/promover/${empleado.id}" method="post">
+                    <button
+                      class="btn btn-link text-decoration-none d-block text-dark px-2 fs-5 bg-hover-primary nav-icon-hover position-relative z-index-5">
+                      <i class="ti ti-arrow-up-right"></i>
+                    </button>
+                  </form>
                 </li>
-                <li class="position-relative" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
-                  <a class="d-block text-dark px-2 fs-5 bg-hover-primary nav-icon-hover position-relative z-index-5" href="javascript:void(0)">
-                    <i class="ti ti-pencil"></i>
-                  </a>
-                </li>
-                <li class="position-relative" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
-                  <a class="text-dark px-2 fs-5 bg-hover-primary nav-icon-hover position-relative z-index-5" href="javascript:void(0)">
-                    <i class="ti ti-trash"></i>
-                  </a>
+                <li
+                  class="position-relative"
+                  x-effect="new bootstrap.Tooltip($el, {
+                    title: empleado.esta_despedido ? 'Recontratar' : 'Despedir',
+                    placement: 'top',
+                  })">
+                  <form :action="`./empleados/${empleado.esta_despedido ? 'recontratar' : 'despedir'}/${empleado.id}`" method="post">
+                    <button
+                      class="btn btn-link text-decoration-none text-dark px-2 fs-5 bg-hover-primary nav-icon-hover position-relative z-index-5">
+                      <i
+                        class="ti"
+                        :class="{
+                          'ti-arrow-down-left': empleado.esta_despedido,
+                          'ti-arrow-down-right': !empleado.esta_despedido,
+                        }">
+                      </i>
+                    </button>
+                  </form>
                 </li>
               </ul>
             </div>
             <div class="position-relative overflow-hidden">
               <div class="position-relative">
                 <div class="chat-box email-box mh-n100 p-9 tab-content" data-simplebar="init">
-                  <?php foreach ($empleados as $index => $empleado): ?>
-                    <div class="tab-pane fade <?= !$index ? 'show active' : '' ?>" id="empleado-<?= $empleado->id ?>">
-                      <div class="chat-list chat active-chat" data-user-id="1">
-                        <div class="hstack align-items-start mb-7 pb-1 align-items-center justify-content-between">
-                          <div class="d-flex align-items-center gap-3">
-                            <img src="./recursos/imagenes/profile/user-1.jpg" alt="user4" width="72" height="72" class="rounded-circle">
-                            <div>
-                              <h6 class="fw-semibold fs-4 mb-0"><?= $empleado->nombreCompleto ?: "v-$empleado->cedula" ?></h6>
-                              <p class="mb-0"><?= $empleado->roles[0] ?></p>
-                              <p class="mb-0"><?= $empleado->negocio ?></p>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-4 mb-7">
-                            <p class="mb-1 fs-2">Número de teléfono</p>
-                            <h6 class="fw-semibold mb-0"><?= $empleado->telefono ?></h6>
-                          </div>
-                          <div class="col-8 mb-7">
-                            <p class="mb-1 fs-2">Dirección de correo</p>
-                            <h6 class="fw-semibold mb-0"><?= $empleado->email ?></h6>
-                          </div>
-                          <div class="col-12 mb-9">
-                            <p class="mb-1 fs-2">Dirección</p>
-                            <h6 class="fw-semibold mb-0"><?= $empleado->direccion ?></h6>
-                          </div>
-                          <div class="col-4 mb-7">
-                            <p class="mb-1 fs-2">Ciudad</p>
-                            <h6 class="fw-semibold mb-0"><?= $empleado->ciudad ?></h6>
-                          </div>
-                          <div class="col-8 mb-7">
-                            <p class="mb-1 fs-2">País</p>
-                            <h6 class="fw-semibold mb-0"><?= $empleado->pais ?></h6>
-                          </div>
-                        </div>
-                        <div class="border-bottom pb-7 mb-4">
-                          <p class="mb-2 fs-2">Notas</p>
-                          <p class="mb-3 text-dark">
-                            <?= $empleado->notas ?>
-                          </p>
-                        </div>
-                        <div class="d-flex align-items-center gap-6">
-                          <button class="btn btn-primary" fdprocessedid="pk6kl8">Promover</button>
-                          <button class="btn bg-danger-subtle text-danger" fdprocessedid="83zpb">Despedir</button>
+                  <div class="chat-list chat active-chat" data-user-id="1">
+                    <div class="hstack align-items-start mb-7 pb-1 align-items-center justify-content-between">
+                      <div class="d-flex align-items-center gap-3">
+                        <img :src="empleado.url_imagen || './recursos/imagenes/profile/user-1.jpg'" alt="user4" width="72" height="72" class="rounded-circle">
+                        <div>
+                          <h6 class="fw-semibold fs-4 mb-0" x-text="empleado.nombreCompleto || `v-${empleado.cedula}`"></h6>
+                          <p class="mb-0" x-text="empleado.roles && empleado.roles[0]"></p>
+                          <p class="mb-0" x-text="empleado.negocio"></p>
                         </div>
                       </div>
                     </div>
-                  <?php endforeach ?>
+                    <div class="row">
+                      <div class="col-4 mb-7">
+                        <p class="mb-1 fs-2">Número de teléfono</p>
+                        <h6 class="fw-semibold mb-0" x-text="empleado.telefono"></h6>
+                      </div>
+                      <div class="col-8 mb-7">
+                        <p class="mb-1 fs-2">Dirección de correo</p>
+                        <h6 class="fw-semibold mb-0" x-text="empleado.email"></h6>
+                      </div>
+                      <div class="col-12 mb-9">
+                        <p class="mb-1 fs-2">Dirección</p>
+                        <h6 class="fw-semibold mb-0" x-text="empleado.direccion"></h6>
+                      </div>
+                      <div class="col-4 mb-7">
+                        <p class="mb-1 fs-2">Ciudad</p>
+                        <h6 class="fw-semibold mb-0" x-text="empleado.ciudad"></h6>
+                      </div>
+                      <div class="col-8 mb-7">
+                        <p class="mb-1 fs-2">País</p>
+                        <h6 class="fw-semibold mb-0" x-text="empleado.pais"></h6>
+                      </div>
+                    </div>
+                    <div class="border-bottom pb-7 mb-4">
+                      <p class="mb-2 fs-2">Notas</p>
+                      <p class="mb-3 text-dark" x-text="empleado.notas"></p>
+                    </div>
+                    <form method="post" class="d-flex align-items-center gap-6">
+                      <button
+                        :formaction="`./empleados/promover/${empleado.id}`"
+                        class="btn btn-primary"
+                        :class="{ 'disabled opacity-25': empleado.roles && empleado.roles[0] === 'Empleado superior' }"
+                        fdprocessedid="pk6kl8">
+                        Promover
+                      </button>
+                      <button
+                        :formaction="`./empleados/${empleado.esta_despedido ? 'recontratar' : 'despedir'}/${empleado.id}`"
+                        x-text="empleado.esta_despedido ? 'Recontratar' : 'Despedir'"
+                        class="btn"
+                        :class="{
+                          'bg-danger-subtle text-danger': !empleado.esta_despedido,
+                          'bg-success-subtle text-success': empleado.esta_despedido,
+                        }"
+                        fdprocessedid="83zpb">
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>

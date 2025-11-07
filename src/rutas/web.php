@@ -373,9 +373,73 @@ Flight::group('', static function (): void {
 
     Flight::route('POST /empleados/@id:\d/restablecer-clave', static function (): void {});
 
-    Flight::route('/empleados/despedir', static function (): void {});
+    Flight::route('POST /empleados/despedir/@id', static function (int $id): void {
+      $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
 
-    Flight::route('/empleados/promover', static function (): void {});
+      $empleado = $empleados->find($id);
+
+      if (!$empleado instanceof Usuario) {
+        flash()->set(['El empleado no existe o no te pertenece.'], 'errores');
+        Flight::redirect('/empleados');
+
+        return;
+      }
+
+      $empleado->esta_despedido = true;
+      $empleado->save();
+      flash()->set(['El empleado ha sido despedido exitosamente.'], 'exitos');
+      Flight::redirect('/empleados');
+    })->addMiddleware(new SoloPersonalAutorizado(['despedir vendedor']));
+
+    Flight::route('POST /empleados/recontratar/@id', static function (int $id): void {
+      $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
+
+      $empleado = $empleados->find($id);
+
+      if (!$empleado instanceof Usuario) {
+        flash()->set(['El empleado no existe o no te pertenece.'], 'errores');
+        Flight::redirect('/empleados');
+
+        return;
+      }
+
+      $empleado->esta_despedido = false;
+      $empleado->save();
+      flash()->set(['El empleado ha sido recontratado exitosamente.'], 'exitos');
+      Flight::redirect('/empleados');
+    })->addMiddleware(new SoloPersonalAutorizado(['recontratar vendedor']));
+
+    Flight::route('POST /empleados/promover/@id', static function (int $id): void {
+      $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
+
+      $empleado = $empleados->find($id);
+
+      if (!$empleado instanceof Usuario) {
+        flash()->set(['El empleado no existe o no te pertenece.'], 'errores');
+        Flight::redirect('/empleados');
+
+        return;
+      }
+
+      if (in_array('Empleado superior', $empleado->roles)) {
+        flash()->set(['El empleado ya es un Empleado superior.'], 'errores');
+        Flight::redirect('/empleados');
+
+        return;
+      }
+
+      try {
+        db()->update('usuarios')->params([
+          'roles' => '["Empleado superior", "Vendedor"]',
+        ])->where('id', $empleado->id)->execute();
+        flash()->set(['El empleado ha sido promovido a Empleado superior exitosamente.'], 'exitos');
+      } catch (Throwable $error) {
+        flash()->set(['No se pudo promover al empleado. Por favor, intenta nuevamente más tarde.'], 'errores');
+        error_log("Error al promover empleado (ID: $id): {$error->getMessage()}");
+      }
+
+      Flight::redirect('/empleados');
+    });
 
     // Flight::route('GET /eventos', function (): void {});
 

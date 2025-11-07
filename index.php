@@ -84,6 +84,7 @@ auth()->createRoles([
     'respaldar la base de datos',
     'restaurar la base de datos',
     'despedir vendedor',
+    'recontratar vendedor',
     'promover vendedor',
     'ver empleados',
   ],
