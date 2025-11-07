@@ -194,8 +194,12 @@
                     </div>
                     <form method="post" class="d-flex align-items-center gap-6">
                       <button
+                        class="btn"
                         :formaction="`./empleados/${empleado.roles && empleado.roles[0] === 'Empleado superior' ? 'degradar' : 'promover'}/${empleado.id}`"
-                        class="btn btn-primary"
+                        :class="{
+                          'btn-primary': !(empleado.roles && empleado.roles[0] === 'Empleado superior'),
+                          'btn-danger': empleado.roles && empleado.roles[0] === 'Empleado superior',
+                        }"
                         x-text="empleado.roles && empleado.roles[0] === 'Empleado superior' ? 'Degradar a Vendedor' : 'Promover a Empleado Superior'">
                       </button>
                       <button
