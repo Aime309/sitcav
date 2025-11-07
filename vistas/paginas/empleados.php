@@ -151,50 +151,6 @@
           <div class="chatting-box app-email-chatting-box">
             <div class="p-9 py-3 border-bottom chat-meta-user d-flex align-items-center justify-content-between">
               <h5 class="text-dark mb-0 fs-5">Detalles del empleado</h5>
-              <ul class="list-unstyled mb-0 d-flex align-items-center">
-                <!-- <li class="d-lg-none d-block">
-                  <a class="text-dark back-btn px-2 fs-5 bg-hover-primary nav-icon-hover position-relative z-index-5" href="javascript:void(0)">
-                    <i class="ti ti-arrow-left"></i>
-                  </a>
-                </li> -->
-                <!-- <li class="position-relative" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="important">
-                  <a class="text-dark px-2 fs-5 bg-hover-primary nav-icon-hover position-relative z-index-5" href="javascript:void(0)">
-                    <i class="ti ti-star"></i>
-                  </a>
-                </li> -->
-                <li
-                  class="position-relative"
-                  :class="{ 'disabled opacity-25': empleado.roles && empleado.roles[0] === 'Empleado superior' }"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  data-bs-title="Promover">
-                  <form action="./empleados/promover/${empleado.id}" method="post">
-                    <button
-                      class="btn btn-link text-decoration-none d-block text-dark px-2 fs-5 bg-hover-primary nav-icon-hover position-relative z-index-5">
-                      <i class="ti ti-arrow-up-right"></i>
-                    </button>
-                  </form>
-                </li>
-                <li
-                  class="position-relative"
-                  x-effect="new bootstrap.Tooltip($el, {
-                    title: empleado.esta_despedido ? 'Recontratar' : 'Despedir',
-                    placement: 'top',
-                  })">
-                  <form :action="`./empleados/${empleado.esta_despedido ? 'recontratar' : 'despedir'}/${empleado.id}`" method="post">
-                    <button
-                      class="btn btn-link text-decoration-none text-dark px-2 fs-5 bg-hover-primary nav-icon-hover position-relative z-index-5">
-                      <i
-                        class="ti"
-                        :class="{
-                          'ti-arrow-down-left': empleado.esta_despedido,
-                          'ti-arrow-down-right': !empleado.esta_despedido,
-                        }">
-                      </i>
-                    </button>
-                  </form>
-                </li>
-              </ul>
             </div>
             <div class="position-relative overflow-hidden">
               <div class="position-relative">
@@ -238,11 +194,9 @@
                     </div>
                     <form method="post" class="d-flex align-items-center gap-6">
                       <button
-                        :formaction="`./empleados/promover/${empleado.id}`"
+                        :formaction="`./empleados/${empleado.roles && empleado.roles[0] === 'Empleado superior' ? 'degradar' : 'promover'}/${empleado.id}`"
                         class="btn btn-primary"
-                        :class="{ 'disabled opacity-25': empleado.roles && empleado.roles[0] === 'Empleado superior' }"
-                        fdprocessedid="pk6kl8">
-                        Promover
+                        x-text="empleado.roles && empleado.roles[0] === 'Empleado superior' ? 'Degradar a Vendedor' : 'Promover a Empleado Superior'">
                       </button>
                       <button
                         :formaction="`./empleados/${empleado.esta_despedido ? 'recontratar' : 'despedir'}/${empleado.id}`"

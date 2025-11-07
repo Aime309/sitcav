@@ -439,7 +439,39 @@ Flight::group('', static function (): void {
       }
 
       Flight::redirect('/empleados');
-    });
+    })->addMiddleware(new SoloPersonalAutorizado(['promover vendedor']));
+
+    Flight::route('POST /empleados/degradar/@id', static function (int $id): void {
+      $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
+      $empleado = $empleados->find($id);
+
+      if (!$empleado instanceof Usuario) {
+        flash()->set(['El empleado no existe o no te pertenece.'], 'errores');
+        Flight::redirect('/empleados');
+
+        return;
+      }
+
+      if (!in_array('Empleado superior', $empleado->roles)) {
+        flash()->set(['El empleado ya es un Vendedor.'], 'errores');
+        Flight::redirect('/empleados');
+
+        return;
+      }
+
+      try {
+        db()->update('usuarios')->params([
+          'roles' => '["Vendedor"]',
+        ])->where('id', $empleado->id)->execute();
+
+        flash()->set(['El empleado ha sido degradado a Vendedor exitosamente.'], 'exitos');
+      } catch (Throwable $error) {
+        flash()->set(['No se pudo degradar al empleado. Por favor, intenta nuevamente más tarde.'], 'errores');
+        error_log("Error al degradar empleado (ID: $id): {$error->getMessage()}");
+      }
+
+      Flight::redirect('/empleados');
+    })->addMiddleware(new SoloPersonalAutorizado(['degradar empleado']));
 
     // Flight::route('GET /eventos', function (): void {});
 

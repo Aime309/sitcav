@@ -86,6 +86,7 @@ auth()->createRoles([
     'despedir vendedor',
     'recontratar vendedor',
     'promover vendedor',
+    'degradar empleado',
     'ver empleados',
   ],
 ]);
