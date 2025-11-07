@@ -29,6 +29,8 @@
     "SublimeLinter.linters.rector.disable": true,
     "SublimeLinter.linters.ecs.disable": true,
     "SublimeLinter.linters.phpcsfixer.disable": true,
+    "SublimeLinter.linters.oxlint.disable": true,
+    "SublimeLinter.linters.stylelint.disable": true,
     "translate_tabs_to_spaces": true,
     "tab_size": 2,
     "default_line_ending": "unix",

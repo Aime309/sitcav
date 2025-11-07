@@ -11,6 +11,7 @@ export default defineConfig({
       visitantes: "./recursos/visitantes.ts",
       autenticados: "./recursos/autenticados.ts",
       "registrar-tasa-bcv": "./recursos/registrar-tasa-bcv.ts",
+      errores: "./recursos/errores.ts",
     },
   },
   dev: {

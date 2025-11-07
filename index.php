@@ -183,7 +183,12 @@ Flight::map('error', static function (Throwable $error): never {
 
 Flight::map('notFound', static function (): void {
   http_response_code(404);
-  Flight::render('paginas/404');
+
+  Flight::render('paginas/404', [], 'pagina');
+
+  Flight::render('diseños/materialm-para-errores', [
+    'titulo' => 'Página no encontrada',
+  ]);
 });
 
 /////////////////////////////////////

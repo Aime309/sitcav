@@ -35,8 +35,10 @@ Flight::group('/api', static function (): void {
   Flight::group('/ajustes', static function (): void {
     Flight::route('POST /tema', static function (): void {
       $tema = Flight::request()->data->tema;
+      $temaColores = Flight::request()->data->tema_colores;
 
       session()->set('tema', $tema);
+      session()->set('tema_colores', $temaColores);
     });
   });
 });
