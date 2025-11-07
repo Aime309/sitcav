@@ -9,6 +9,7 @@ use SITCAV\Autorizadores\SoloTasaActualizada;
 use SITCAV\Autorizadores\SoloVisitantes;
 use SITCAV\Modelos\Cliente;
 use SITCAV\Modelos\Producto;
+use SITCAV\Modelos\Proveedor;
 use SITCAV\Modelos\Usuario;
 use SITCAV\Modelos\UsuarioAutenticado;
 
@@ -321,9 +322,13 @@ Flight::group('', static function (): void {
 
     Flight::group('/inventario', static function (): void {
       Flight::route('GET /', static function (): void {
-        $productos = Container::getInstance()->get(UsuarioAutenticado::class)->productos;
+        $usuarioAutenticado = Container::getInstance()->get(UsuarioAutenticado::class);
+        $productos = $usuarioAutenticado->productos;
+        $categorias = $usuarioAutenticado->categorias;
+        $marcas = $usuarioAutenticado->marcas;
+        $proveedores = $usuarioAutenticado->proveedores;
 
-        Flight::render('paginas/inventario', ['productos' => $productos], 'pagina');
+        Flight::render('paginas/inventario', compact('productos', 'categorias', 'proveedores', 'marcas'), 'pagina');
         Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inventario']);
       });
 

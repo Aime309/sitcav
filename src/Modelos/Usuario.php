@@ -139,10 +139,7 @@ class Usuario extends Model
     return $this->hasMany(Cotizacion::class, 'id_encargado', 'id_encargado');
   }
 
-  /**
-   * @return HasMany<Estado>
-   * @deprecated Usa `estados` en su lugar.
-   */
+  /** @return HasMany<Estado> */
   function estados(): HasMany
   {
     if ($this->esEncargado) {

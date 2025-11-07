@@ -461,7 +461,7 @@ use SITCAV\Modelos\Proveedor;
           <label for="id_categoria" class="form-label">Categoría</label>
           <select class="form-select" id="id_categoria" name="id_categoria" required>
             <option value="" disabled selected>Seleccione una categoría</option>
-            <?php foreach (Categoria::all() as $categoria): ?>
+            <?php foreach ($categorias as $categoria): ?>
               <option value="<?= $categoria->id ?>"><?= $categoria->nombre ?></option>
             <?php endforeach ?>
           </select>
@@ -470,7 +470,7 @@ use SITCAV\Modelos\Proveedor;
           <label for="id_proveedor" class="form-label">Proveedor</label>
           <select class="form-select" id="id_proveedor" name="id_proveedor" required>
             <option value="" disabled selected>Seleccione un proveedor</option>
-            <?php foreach (Proveedor::all() as $proveedor): ?>
+            <?php foreach ($proveedores as $proveedor): ?>
               <option value="<?= $proveedor->id ?>"><?= $proveedor->nombre ?></option>
             <?php endforeach ?>
           </select>
@@ -480,7 +480,7 @@ use SITCAV\Modelos\Proveedor;
           <label for="id_marca" class="form-label">Marca</label>
           <select class="form-select" id="id_marca" name="id_marca" required>
             <option value="" disabled selected>Seleccione una marca</option>
-            <?php foreach (Marca::all() as $marca): ?>
+            <?php foreach ($marcas as $marca): ?>
               <option value="<?= $marca->id ?>"><?= $marca->nombre ?></option>
             <?php endforeach ?>
           </select>

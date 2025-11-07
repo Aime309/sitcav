@@ -145,7 +145,7 @@
         </div>
       </div>
     </div>
-    <div class="w-100">
+    <div class="w-100" :class="{ 'disabled opacity-25': !empleado.id }">
       <div class="chat-container h-100 w-100">
         <div class="chat-box-inner-part h-100">
           <div class="chatting-box app-email-chatting-box">
@@ -160,7 +160,7 @@
                       <div class="d-flex align-items-center gap-3">
                         <img :src="empleado.url_imagen || './recursos/imagenes/profile/user-1.jpg'" alt="user4" width="72" height="72" class="rounded-circle">
                         <div>
-                          <h6 class="fw-semibold fs-4 mb-0" x-text="empleado.nombreCompleto || `v-${empleado.cedula}`"></h6>
+                          <h6 class="fw-semibold fs-4 mb-0" x-text="empleado.nombreCompleto || `v-${empleado.cedula || ''}`"></h6>
                           <p class="mb-0" x-text="empleado.roles && empleado.roles[0]"></p>
                           <p class="mb-0" x-text="empleado.negocio"></p>
                         </div>

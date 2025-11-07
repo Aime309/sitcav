@@ -7,6 +7,8 @@ use Illuminate\Support\Collection;
 /**
  * @property-read Cotizacion $ultimaCotizacion
  * @property-read Cotizacion|null $cotizacionDeHoy
+ * @property-read Collection<int, Producto> $productos
+ * @property-read Collection<int, Proveedor> $proveedores
  */
 final class UsuarioAutenticado extends Usuario
 {
@@ -34,9 +36,7 @@ final class UsuarioAutenticado extends Usuario
       ->first();
   }
 
-  /**
-   * @return Collection<int, Producto>
-   */
+  /** @return Collection<int, Producto> */
   function getProductosAttribute(): Collection
   {
     $mapeador = fn(Marca $marca): Collection => $marca->productos;
@@ -46,5 +46,17 @@ final class UsuarioAutenticado extends Usuario
     }
 
     return $this->encargado->marcas()->with('productos')->get()->map($mapeador)->flatten();
+  }
+
+  /** @return Collection<int, Proveedor> */
+  function getProveedoresAttribute(): Collection
+  {
+    $mapeador = fn(Estado $estado): Collection => $estado->proveedores;
+
+    if ($this->esEncargado) {
+      return $this->estados()->with('proveedores')->get()->map($mapeador)->flatten();
+    }
+
+    return $this->encargado->estados()->with('proveedores')->get()->map($mapeador)->flatten();
   }
 }
