@@ -4,6 +4,7 @@ use Illuminate\Container\Container;
 use Leaf\Helpers\Password;
 use PHPMailer\PHPMailer\PHPMailer;
 use SITCAV\Autorizadores\SoloAutenticados;
+use SITCAV\Autorizadores\SoloContratados;
 use SITCAV\Autorizadores\SoloPersonalAutorizado;
 use SITCAV\Autorizadores\SoloTasaActualizada;
 use SITCAV\Autorizadores\SoloVisitantes;
@@ -298,6 +299,7 @@ Flight::route('/salir', static function (): void {
   auth()->logout();
   session()->remove('oauth-token');
   session()->remove('oauth2state');
+  flash()->set(session()->retrieve('errores', []), 'errores');
   Flight::redirect('/ingresar');
 });
 
@@ -560,4 +562,4 @@ Flight::group('', static function (): void {
       html;
     });
   }, [SoloTasaActualizada::class]);
-}, [SoloAutenticados::class]);
+}, [SoloAutenticados::class, SoloContratados::class]);

@@ -47,10 +47,41 @@ class Usuario extends Model
 
   function restablecerClave(string $nuevaClave): void
   {
+    $this->asegurarQueLaClaveEsSegura($nuevaClave);
+
+    $this->clave_encriptada = Password::hash($nuevaClave, Password::DEFAULT, [
+      'cost' => 10,
+    ]);
+
+    $this->save();
+  }
+
+  function cambiarClave(string $claveAnterior, string $nuevaClave): void
+  {
+    if (!Password::verify($claveAnterior, $this->clave_encriptada)) {
+      throw new Error('La clave anterior no es correcta.');
+    }
+
+    if (Password::verify($nuevaClave, $this->clave_encriptada)) {
+      throw new Error('La nueva clave no puede ser igual a la anterior.');
+    }
+
+    $this->asegurarQueLaClaveEsSegura($nuevaClave);
+
+    $this->clave_encriptada = Password::hash($nuevaClave, Password::DEFAULT, [
+      'cost' => 10,
+    ]);
+
+    $this->save();
+  }
+
+  private function asegurarQueLaClaveEsSegura(string $clave): void
+  {
     $traducciones = Traducciones::class;
     $validador = new Zxcvbn;
-    $fuerzaClave = $validador->passwordStrength($nuevaClave);
+    $fuerzaClave = $validador->passwordStrength($clave);
     $puntajeFuerzaClave = $fuerzaClave['score'];
+
     $advertencia = $traducciones::ADVERTENCIAS->comoString($fuerzaClave['feedback']['warning'] ?? '');
 
     $sugerencias = join('', array_map(
@@ -64,37 +95,6 @@ class Usuario extends Model
         <ul>$sugerencias</ul>
       html);
     }
-
-    $this->clave_encriptada = Password::hash($nuevaClave, PASSWORD_DEFAULT, [
-      'cost' => 10,
-    ]);
-
-    $this->save();
-  }
-
-  function cambiarClave(string $claveAnterior, string $nuevaClave): void
-  {
-    if (!password_verify($claveAnterior, $this->clave_encriptada)) {
-      throw new Error('La clave anterior no es correcta.');
-    }
-
-    if (password_verify($nuevaClave, $this->clave_encriptada)) {
-      throw new Error('La nueva clave no puede ser igual a la anterior.');
-    }
-
-    $validador = new Zxcvbn;
-    $fuerzaClave = $validador->passwordStrength($nuevaClave);
-    $puntajeFuerzaClave = $fuerzaClave['score'];
-
-    if ($puntajeFuerzaClave < self::PUNTAJE_CLAVE_SEGURA) {
-      throw new Error('La nueva clave no es lo suficientemente segura. Debe tener al menos 8 caracteres y contener letras, números y símbolos.');
-    }
-
-    $this->clave_encriptada = password_hash($nuevaClave, PASSWORD_DEFAULT, [
-      'cost' => 12,
-    ]);
-
-    $this->save();
   }
 
   function cambiarPreguntaYRespuestaSecreta(
@@ -103,10 +103,10 @@ class Usuario extends Model
   ): void {
     $this->pregunta_secreta = $pregunta_secreta;
 
-    $this->respuesta_secreta_encriptada = password_hash(
+    $this->respuesta_secreta_encriptada = Password::hash(
       $respuesta_secreta,
-      PASSWORD_DEFAULT,
-      ['cost' => 12]
+      Password::DEFAULT,
+      ['cost' => 10]
     );
 
     $this->save();
@@ -119,85 +119,46 @@ class Usuario extends Model
     }
   }
 
-  /**
-   * @return BelongsTo<self, self>
-   * @deprecated Usa `encargado` en su lugar.
-   */
+  /** @return BelongsTo<self, self> */
   function encargado(): BelongsTo
   {
     return $this->belongsTo(self::class, 'id_encargado');
   }
 
-  /**
-   * @return HasMany<self>
-   * @deprecated Usa `empleados` en su lugar.
-   */
+  /** @return HasMany<self> */
   function empleados(): HasMany
   {
-    if ($this->esEncargado) {
-      return $this->hasMany(self::class, 'id_encargado');
-    }
-
-    return $this->hasMany(self::class, 'id_encargado', 'id_encargado');
+    return $this->encargado?->hasMany(self::class, 'id_encargado') ?? $this->hasMany(self::class, 'id_encargado');
   }
 
-  /**
-   * @return HasMany<Cotizacion>
-   */
+  /** @return HasMany<Cotizacion> */
   function cotizaciones(): HasMany
   {
-    if ($this->esEncargado) {
-      return $this->hasMany(Cotizacion::class, 'id_encargado');
-    }
-
-    return $this->hasMany(Cotizacion::class, 'id_encargado', 'id_encargado');
+    return $this->encargado?->hasMany(Cotizacion::class, 'id_encargado') ?? $this->hasMany(Cotizacion::class, 'id_encargado');
   }
 
   /** @return HasMany<Estado> */
   function estados(): HasMany
   {
-    if ($this->esEncargado) {
-      return $this->hasMany(Estado::class, 'id_encargado');
-    }
-
-    return $this->hasMany(Estado::class, 'id_encargado', 'id_encargado');
+    return $this->encargado?->hasMany(Estado::class, 'id_encargado') ?? $this->hasMany(Estado::class, 'id_encargado');
   }
 
-  /**
-   * @return HasMany<Categoria>
-   */
+  /** @return HasMany<Categoria> */
   function categorias(): HasMany
   {
-    if ($this->esEncargado) {
-      return $this->hasMany(Categoria::class, 'id_encargado');
-    }
-
-    return $this->hasMany(Categoria::class, 'id_encargado', 'id_encargado');
+    return $this->encargado?->hasMany(Categoria::class, 'id_encargado') ?? $this->hasMany(Categoria::class, 'id_encargado');
   }
 
-  /**
-   * @return HasMany<Marca>
-   */
+  /** @return HasMany<Marca> */
   function marcas(): HasMany
   {
-    if ($this->esEncargado) {
-      return $this->hasMany(Marca::class, 'id_encargado');
-    }
-
-    return $this->hasMany(Marca::class, 'id_encargado', 'id_encargado');
+    return $this->encargado?->hasMany(Marca::class, 'id_encargado') ?? $this->hasMany(Marca::class, 'id_encargado');
   }
 
-  /**
-   * @return HasMany<TipoPago>
-   * @deprecated Usa `tipos_pago` en su lugar.
-   */
+  /** @return HasMany<TipoPago> */
   function tipos_pago(): HasMany
   {
-    if ($this->esEncargado) {
-      return $this->hasMany(TipoPago::class, 'id_encargado');
-    }
-
-    return $this->hasMany(TipoPago::class, 'id_encargado', 'id_encargado');
+    return $this->encargado?->hasMany(TipoPago::class, 'id_encargado') ?? $this->hasMany(TipoPago::class, 'id_encargado');
   }
 
   function getEsEncargadoAttribute(): bool
