@@ -7,7 +7,6 @@ $exitos = (array) flash()->display('exitos');
 
 <!doctype html>
 <html
-  lang="es"
   x-data='{
     tema: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
   }'
