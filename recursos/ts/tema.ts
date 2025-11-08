@@ -5,7 +5,7 @@ Alpine.data("tema", () => ({
     document.documentElement.dataset.bsTheme ||
     (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
   tema_colores: document.documentElement.dataset.colorTheme || "Blue_Theme",
-  direccion: document.documentElement.dataset.dir || "ltr",
+  direccion: document.documentElement.dir || "ltr",
   layout: document.documentElement.dataset.layout || "vertical",
 
   get temaInverso() {

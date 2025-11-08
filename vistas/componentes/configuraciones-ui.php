@@ -36,15 +36,30 @@ $colores = [
 $temas = [
   [
     'id' => 'light-layout',
-    'title' => 'Light',
+    'title' => 'Claro',
     'icon' => 'bi bi-sun',
     'value' => 'light',
   ],
   [
     'id' => 'dark-layout',
-    'title' => 'Dark',
+    'title' => 'Oscuro',
     'icon' => 'bi bi-moon',
     'value' => 'dark',
+  ],
+];
+
+$direcciones = [
+  [
+    'id' => 'ltr-layout',
+    'title' => 'LTR',
+    'icon' => 'bi bi-text-left',
+    'value' => 'ltr',
+  ],
+  [
+    'id' => 'rtl-layout',
+    'title' => 'RTL',
+    'icon' => 'bi bi-text-right',
+    'value' => 'rtl',
   ],
 ];
 
@@ -53,53 +68,57 @@ $id = uniqid();
 ?>
 
 <button
-  class="btn btn-success rounded-circle d-flex align-items-center justify-content-center customizer-btn"
+  class="btn btn-success rounded-circle customizer-btn"
   type="button"
   data-bs-toggle="offcanvas"
   data-bs-target="#<?= $id ?>"
   style="aspect-ratio: 1/1">
-  <i class="icon bi bi-gear"></i>
+  <i class="bi bi-gear"></i>
 </button>
 
 <div class="offcanvas customizer offcanvas-end" id="<?= $id ?>">
   <div class="offcanvas-header">
-    <h4 class="offcanvas-title">Configuraciones</h4>
+    <h2 class="offcanvas-title">Configuraciones</h2>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
   </div>
-  <div class="offcanvas-body">
-    <h6 class="fs-4">Tema</h6>
+  <div class="offcanvas-body d-grid gap-3">
+    <h3>Tema</h3>
 
-    <div class="d-flex flex-row gap-3 customizer-box">
+    <div class="d-flex gap-3 customizer-box">
       <?php foreach ($temas as $tema): ?>
         <input
-          autocomplete="off"
           class="btn-check"
           id="<?= $tema['id'] ?>"
           name="theme-layout"
           type="radio"
           value="<?= $tema['value'] ?>"
-          x-model="tema"
-        />
+          x-model="tema" />
         <label
           class="btn btn-outline-primary"
           for="<?= $tema['id'] ?>">
-          <i class="icon <?= $tema['icon'] ?> me-2"></i>
+          <i class="icon <?= $tema['icon'] ?> me-3"></i>
           <?= $tema['title'] ?>
         </label>
       <?php endforeach ?>
     </div>
 
-    <h6 class="mt-5 fw-semibold fs-4 mb-2">Theme Direction</h6>
-    <div class="d-flex flex-row gap-3 customizer-box" role="group">
-      <input type="radio" class="btn-check" name="direction-l" id="ltr-layout" autocomplete="off" />
-      <label class="btn p-9 btn-outline-primary rounded-2" for="ltr-layout">
-        <i class="icon ti ti-text-direction-ltr fs-7 me-2"></i>LTR
-      </label>
+    <h3>Dirección</h3>
 
-      <input type="radio" class="btn-check" name="direction-l" id="rtl-layout" autocomplete="off" />
-      <label class="btn p-9 btn-outline-primary rounded-2" for="rtl-layout">
-        <i class="icon ti ti-text-direction-rtl fs-7 me-2"></i>RTL
-      </label>
+    <div class="d-flex gap-3 customizer-box">
+      <?php foreach ($direcciones as $direccion): ?>
+        <input
+          class="btn-check"
+          id="<?= $direccion['id'] ?>"
+          name="direction-l"
+          type="radio"
+          value="<?= $direccion['value'] ?>"
+          x-model="direccion"
+        />
+        <label class="btn btn-outline-primary" for="<?= $direccion['id'] ?>">
+          <i class="icon <?= $direccion['icon'] ?> me-2"></i>
+          <?= $direccion['title'] ?>
+        </label>
+      <?php endforeach ?>
     </div>
 
     <h6 class="mt-5 fw-semibold fs-4 mb-2">Tema de Colores</h6>
