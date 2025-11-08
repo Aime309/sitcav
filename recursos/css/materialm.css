@@ -729,11 +729,6 @@ a:hover h6 {
   color: var(--bs-primary)
 }
 
-ul {
-  list-style: none;
-  padding: 0
-}
-
 @media (min-width:1300px) {
   html[data-layout=vertical] .topbar {
     width: calc(100% - (80px + 240px))

@@ -81,9 +81,9 @@ $mostrarAdvertencias ??= true;
       </template>
     </div>
   </div>
-  <div class="form-text">
+  <ul class="form-text">
     <template x-for="sugerencia in validacionClave.feedback.suggestions">
-      <div x-text="`&bullet; ${obtenerSugerenciaTraducida(sugerencia)}`"></div>
+      <li x-text="obtenerSugerenciaTraducida(sugerencia)"></li>
     </template>
-  </div>
+  </ul>
 </div>

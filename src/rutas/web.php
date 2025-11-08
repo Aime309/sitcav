@@ -92,7 +92,7 @@ Flight::group('', static function (): void {
 
   Flight::route('GET /registrarse', static function (): void {
     Flight::render('paginas/registrarse', [], 'pagina');
-    Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Registrarse']);
+    Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Registrarse']);
   });
 
   Flight::route('POST /registrarse', static function (): void {

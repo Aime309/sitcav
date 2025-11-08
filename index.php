@@ -174,7 +174,7 @@ Flight::map('error', static function (Throwable $error): never {
   }
 
   http_response_code(500);
-  flash()->set(['Ha ocurrido un error inesperado. Por favor intente nuevamente más tarde. ❌'], 'errores');
+  session()->set('errores', ['Ha ocurrido un error inesperado. Por favor intente nuevamente más tarde.']);
   error_log($error->getMessage());
   Flight::redirect('/salir');
 
