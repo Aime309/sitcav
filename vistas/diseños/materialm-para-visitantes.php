@@ -1,6 +1,8 @@
 <?php
 
 $idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
+$errores = (array) flash()->display('errores');
+$exitos = (array) flash()->display('exitos');
 
 ?>
 
@@ -32,8 +34,13 @@ $idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
   </style>
 </head>
 
-<body class="col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-7 pt-3 px-3 mx-auto">
+<body
+  data-errores='<?= json_encode(array_values($errores)) ?>'
+  data-exitos='<?= json_encode(array_values($exitos)) ?>'
+  x-data="mensajes"
+  class="col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-7 pt-3 px-3 mx-auto">
   <?= $pagina ?>
+  <?php Flight::render('componentes/notificaciones') ?>
 </body>
 
 </html>
