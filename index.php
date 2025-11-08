@@ -68,14 +68,14 @@ auth()->createRoles([
     'ver productos',
     'registrar pago',
     'realizar pago',
-    'generar factura'
+    'generar factura',
   ],
   'Empleado superior' => [
     'registrar cliente',
     'registrar categoria',
     'registrar producto',
     'registrar cotizacion',
-    'registrar compra'
+    'registrar compra',
   ],
   'Encargado' => [
     'editar datos del negocio',
