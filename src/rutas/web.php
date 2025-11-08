@@ -73,7 +73,7 @@ Flight::group('', static function (): void {
 
   Flight::route('GET /ingresar', static function (): void {
     Flight::render('paginas/ingresar', [], 'pagina');
-    Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Ingresar']);
+    Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Ingresar']);
   });
 
   Flight::route('POST /ingresar', static function (): void {

@@ -10,10 +10,6 @@
   --bs-progress-bg: #172131 !important
 }
 
-[data-bs-theme=dark] .tooltip-inner {
-  color: rgba(255, 255, 255, .6) !important
-}
-
 [data-bs-theme=dark] .table-primary {
   --bs-table-bg: #5093bb !important
 }
@@ -716,10 +712,6 @@ body {
   padding-left: calc(30px / 2);
   padding-right: calc(30px / 2);
   padding-bottom: 30px
-}
-
-a {
-  text-decoration: none
 }
 
 a:hover .h1,
@@ -14126,10 +14118,6 @@ button.toast-close-button {
 body :not(pre)>code[class*=language-],
 body pre[class*=language-] {
   background: #1f2a3d
-}
-
-a {
-  text-decoration: none
 }
 
 .round-40 {

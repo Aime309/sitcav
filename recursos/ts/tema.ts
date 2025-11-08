@@ -4,6 +4,10 @@ Alpine.data("tema", () => ({
   tema: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
   tema_colores: document.documentElement.dataset.colorTheme || "Blue_Theme",
 
+  get temaInverso() {
+    return this.tema === "dark" ? "light" : "dark";
+  },
+
   init() {
     matchMedia("(prefers-color-scheme: dark)").addEventListener(
       "change",

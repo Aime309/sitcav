@@ -18,12 +18,21 @@ $idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
   <title><?= $titulo ?> | SITCAV</title>
   <base href="<?= str_replace('index.php', '', $_SERVER['SCRIPT_NAME']) ?>" />
   <link rel="icon" href="./recursos/imagenes/favicon.png" />
-  <link rel="stylesheet" href="./recursos/compilados/errores.css?id=<?= $idDeRecursos ?>" />
+  <link
+    rel="stylesheet"
+    href="./recursos/compilados/visitantes.css?id=<?= $idDeRecursos ?>" />
   <link rel="stylesheet" href="./recursos/css/materialm.css?id=<?= $idDeRecursos ?>" />
-  <script src="./recursos/compilados/errores.js?id=<?= $idDeRecursos ?>"></script>
+  <script src="./recursos/compilados/visitantes.js?id=<?= $idDeRecursos ?>"></script>
+  <style>
+    body {
+      background: url('./recursos/imagenes/Imagen de WhatsApp 2025-10-30 a las 21.55.54_e571a147.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+  </style>
 </head>
 
-<body class="text-center">
+<body class="col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-7 pt-3 px-3 mx-auto">
   <?= $pagina ?>
 </body>
 
