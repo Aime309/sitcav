@@ -10,7 +10,6 @@ use SITCAV\Autorizadores\SoloTasaActualizada;
 use SITCAV\Autorizadores\SoloVisitantes;
 use SITCAV\Modelos\Cliente;
 use SITCAV\Modelos\Producto;
-use SITCAV\Modelos\Proveedor;
 use SITCAV\Modelos\Usuario;
 use SITCAV\Modelos\UsuarioAutenticado;
 
@@ -120,7 +119,7 @@ Flight::group('', static function (): void {
   Flight::group('/restablecer-clave', static function (): void {
     Flight::route('GET /', static function (): void {
       Flight::render('paginas/restablecer-clave/paso-1', [], 'pagina');
-      Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+      Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
     });
 
     Flight::route('POST /', static function (): void {
@@ -130,14 +129,14 @@ Flight::group('', static function (): void {
       if (!$usuario) {
         flash()->set(['No existe ningún usuario con esa cédula.'], 'errores');
         Flight::render('paginas/restablecer-clave/paso-1', [], 'pagina');
-        Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+        Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
         return;
       }
 
       session()->set('usuarios.id', $usuario->id);
       Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
-      Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+      Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
     });
 
     Flight::route('POST /2', static function (): void {
@@ -146,7 +145,7 @@ Flight::group('', static function (): void {
 
       if (!$respuestaSecreta) {
         Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
-        Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+        Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
         return;
       }
@@ -154,11 +153,11 @@ Flight::group('', static function (): void {
       try {
         $usuario->asegurarValidezRespuestaSecreta($respuestaSecreta);
         Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
-        Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+        Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
       } catch (Throwable) {
         flash()->set(['La respuesta secreta es incorrecta.'], 'errores');
         Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
-        Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+        Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
       }
     });
 
@@ -171,7 +170,7 @@ Flight::group('', static function (): void {
       } catch (Error $error) {
         flash()->set([$error->getMessage()], 'errores');
         Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
-        Flight::render('diseños/materailm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
+        Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
         return;
       }
@@ -244,7 +243,7 @@ Flight::group('', static function (): void {
       );
 
       Flight::render(
-        'diseños/materailm-para-visitantes',
+        'diseños/materialm-para-visitantes',
         ['titulo' => 'Restablecer contraseña']
       );
     });
@@ -271,7 +270,7 @@ Flight::group('', static function (): void {
         );
 
         Flight::render(
-          'diseños/materailm-para-visitantes',
+          'diseños/materialm-para-visitantes',
           ['titulo' => 'Restablecer contraseña']
         );
 
@@ -288,7 +287,7 @@ Flight::group('', static function (): void {
       );
 
       Flight::render(
-        'diseños/materailm-para-visitantes',
+        'diseños/materialm-para-visitantes',
         ['titulo' => 'Restablecer contraseña']
       );
     });
