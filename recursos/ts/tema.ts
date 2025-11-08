@@ -1,7 +1,9 @@
 import Alpine from "alpinejs";
 
 Alpine.data("tema", () => ({
-  tema: undefined as "light" | "dark" | undefined,
+  tema:
+    document.documentElement.dataset.bsTheme ||
+    (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
   tema_colores: document.documentElement.dataset.colorTheme || "Blue_Theme",
   direccion: document.documentElement.dataset.dir || "ltr",
   layout: document.documentElement.dataset.layout || "vertical",
@@ -11,14 +13,6 @@ Alpine.data("tema", () => ({
   },
 
   init() {
-    document.addEventListener("DOMContentLoaded", () => {
-      this.tema =
-        document.documentElement.dataset.bsTheme ||
-        matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light";
-    });
-
     matchMedia("(prefers-color-scheme: dark)").addEventListener(
       "change",
       (evento) => {
@@ -27,8 +21,6 @@ Alpine.data("tema", () => ({
     );
 
     this.$watch("tema", (nuevoTema) => {
-      document.documentElement.dataset.bsTheme = nuevoTema;
-
       fetch("./api/ajustes/tema", {
         method: "post",
         headers: {

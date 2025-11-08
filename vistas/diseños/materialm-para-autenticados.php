@@ -15,6 +15,7 @@ $exitos = (array) flash()->display('exitos');
   x-data="tema"
   :dir="direccion"
   :data-layout="layout"
+  :data-bs-theme="tema"
   :data-color-theme="tema_colores">
 
 <head>
@@ -51,9 +52,9 @@ $exitos = (array) flash()->display('exitos');
     </div>
   </div>
 
-  <!-- <script src="./recursos/js/theme/theme.js?id=<?= $idDeRecursos ?>"></script> -->
-  <!-- <script src="./recursos/js/theme/app.min.js?id=<?= $idDeRecursos ?>"></script> -->
-  <!-- <script src="./recursos/js/theme/sidebarmenu.js?id=<?= $idDeRecursos ?>"></script> -->
+  <script src="./recursos/js/theme/theme.js?id=<?= $idDeRecursos ?>"></script>
+  <script src="./recursos/js/theme/app.min.js?id=<?= $idDeRecursos ?>"></script>
+  <script src="./recursos/js/theme/sidebarmenu.js?id=<?= $idDeRecursos ?>"></script>
 </body>
 
 </html>
