@@ -33,37 +33,60 @@ $colores = [
   ],
 ];
 
+$temas = [
+  [
+    'id' => 'light-layout',
+    'title' => 'Light',
+    'icon' => 'bi bi-sun',
+    'value' => 'light',
+  ],
+  [
+    'id' => 'dark-layout',
+    'title' => 'Dark',
+    'icon' => 'bi bi-moon',
+    'value' => 'dark',
+  ],
+];
+
+$id = uniqid();
+
 ?>
 
 <button
   class="btn btn-success rounded-circle d-flex align-items-center justify-content-center customizer-btn"
   type="button"
   data-bs-toggle="offcanvas"
-  data-bs-target="#offcanvasExample"
+  data-bs-target="#<?= $id ?>"
   style="aspect-ratio: 1/1">
   <i class="icon bi bi-gear"></i>
 </button>
 
-<div class="offcanvas customizer offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-  <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
-    <h4 class="offcanvas-title fw-semibold" id="offcanvasExampleLabel">
-      Settings
-    </h4>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+<div class="offcanvas customizer offcanvas-end" id="<?= $id ?>">
+  <div class="offcanvas-header">
+    <h4 class="offcanvas-title">Configuraciones</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
   </div>
-  <div class="offcanvas-body h-n80" data-simplebar>
-    <h6 class="fw-semibold fs-4 mb-2">Theme</h6>
+  <div class="offcanvas-body">
+    <h6 class="fs-4">Tema</h6>
 
-    <div class="d-flex flex-row gap-3 customizer-box" role="group">
-      <input type="radio" class="btn-check light-layout" name="theme-layout" id="light-layout" autocomplete="off" />
-      <label class="btn p-9 btn-outline-primary rounded-2" for="light-layout">
-        <i class="icon ti ti-brightness-up fs-7 me-2"></i>Light
-      </label>
-
-      <input type="radio" class="btn-check dark-layout" name="theme-layout" id="dark-layout" autocomplete="off" />
-      <label class="btn p-9 btn-outline-primary rounded-2" for="dark-layout">
-        <i class="icon ti ti-moon fs-7 me-2"></i>Dark
-      </label>
+    <div class="d-flex flex-row gap-3 customizer-box">
+      <?php foreach ($temas as $tema): ?>
+        <input
+          autocomplete="off"
+          class="btn-check"
+          id="<?= $tema['id'] ?>"
+          name="theme-layout"
+          type="radio"
+          value="<?= $tema['value'] ?>"
+          x-model="tema"
+        />
+        <label
+          class="btn btn-outline-primary"
+          for="<?= $tema['id'] ?>">
+          <i class="icon <?= $tema['icon'] ?> me-2"></i>
+          <?= $tema['title'] ?>
+        </label>
+      <?php endforeach ?>
     </div>
 
     <h6 class="mt-5 fw-semibold fs-4 mb-2">Theme Direction</h6>

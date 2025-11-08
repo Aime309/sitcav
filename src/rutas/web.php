@@ -318,7 +318,7 @@ Flight::group('', static function (): void {
   Flight::group('', static function (): void {
     Flight::route('GET /', static function (): void {
       Flight::render('paginas/inicio', [], 'pagina');
-      Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inicio']);
+      Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Inicio']);
     });
 
     Flight::group('/inventario', static function (): void {

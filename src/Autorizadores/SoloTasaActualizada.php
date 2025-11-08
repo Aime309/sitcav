@@ -17,7 +17,7 @@ final readonly class SoloTasaActualizada
         $ultimaCotizacion = Container::getInstance()->get(UsuarioAutenticado::class)->ultimaCotizacion;
 
         Flight::render('paginas/registrar-tasa-bcv', compact('ultimaCotizacion'), 'pagina');
-        Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inicio']);
+        Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Inicio']);
 
         exit;
       } else {

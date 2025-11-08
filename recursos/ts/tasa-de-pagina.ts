@@ -1,30 +1,18 @@
 import Alpine from "alpinejs";
 
-// @ts-ignore
-window.Alpine = Alpine;
-
-Alpine.data("SITCAV", () => ({
-  errores: [] as string[],
-  exitos: [] as string[],
+Alpine.data("tasaDePagina", () => ({
   cargandoPagina: true,
   tasaDePagina: "Cargando",
 
   init() {
-    document.addEventListener("DOMContentLoaded", () => {
-      this.errores = JSON.parse(document.body.dataset.errores || "[]");
-      this.exitos = JSON.parse(document.body.dataset.exitos || "[]");
-    });
-
     this.cargandoPagina = false;
     this.cargarTasaDePagina();
 
-    window.addEventListener("offline", () => {
-      this.errores.push("Has perdido la conexión a la red");
+    addEventListener("offline", () => {
       this.tasaDePagina = "Error de conexión";
     });
 
-    window.addEventListener("online", () => {
-      this.exitos.push("Conexión a la red restablecida");
+    addEventListener("online", () => {
       this.cargarTasaDePagina();
     });
   },
@@ -48,5 +36,3 @@ Alpine.data("SITCAV", () => ({
       });
   },
 }));
-
-Alpine.start();

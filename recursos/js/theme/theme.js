@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Tooltip
   // =================================
   const tooltipTriggerList = Array.from(
-    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    document.querySelectorAll('[data-bs-toggle="tooltip"]'),
   );
   tooltipTriggerList.forEach((tooltipTriggerEl) => {
     new bootstrap.Tooltip(tooltipTriggerEl);
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Popover
   // =================================
   var popoverTriggerList = [].slice.call(
-    document.querySelectorAll('[data-bs-toggle="popover"]')
+    document.querySelectorAll('[data-bs-toggle="popover"]'),
   );
   var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
     return new bootstrap.Popover(popoverTriggerEl);

@@ -34,11 +34,17 @@ Flight::group('/api', static function (): void {
 
   Flight::group('/ajustes', static function (): void {
     Flight::route('POST /tema', static function (): void {
-      $tema = Flight::request()->data->tema;
-      $temaColores = Flight::request()->data->tema_colores;
+      $tema = Flight::request()->data->tema ?: session()->get('tema', 'matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"');
+      $temaColores = Flight::request()->data->tema_colores ?: session()->get('tema_colores', 'Blue_Theme');
+      $direccion = Flight::request()->data->direccion ?: session()->get('direccion', 'ltr');
+      $layout = Flight::request()->data->layout ?: session()->get('layout', 'vertical');
 
       session()->set('tema', $tema);
       session()->set('tema_colores', $temaColores);
+      session()->set('direccion', $direccion);
+      session()->set('layout', $layout);
+
+      Flight::json(session()->all());
     });
   });
 });

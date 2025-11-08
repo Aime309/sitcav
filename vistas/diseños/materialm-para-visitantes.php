@@ -8,7 +8,7 @@ $exitos = (array) flash()->display('exitos');
 
 <!doctype html>
 <html
-  data-bs-theme="<?= session()->get('tema', 'light') ?>"
+  data-bs-theme="<?= session()->get('tema', '') ?>"
   data-color-theme="<?= session()->get('tema_colores', 'Blue_Theme') ?>"
   x-data="tema"
   :data-bs-theme="tema"

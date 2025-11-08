@@ -11,7 +11,7 @@ if ((at = "vertical")) {
       var url = window.location + "";
       var path = url.replace(
         window.location.protocol + "//" + window.location.host + "/",
-        ""
+        "",
       );
 
       //****************************
@@ -27,13 +27,12 @@ if ((at = "vertical")) {
         let refinedUrl = urlSplats[0];
 
         let isQueryParameter = currentURL.includes("?");
-        if(isQueryParameter){
+        if (isQueryParameter) {
           finalUrl = refinedUrl;
+        } else {
+          finalUrl = currentURL;
         }
-        else{
-          finalUrl = currentURL
-        }
- 
+
         for (var i = 0; i < anchors.length; i++) {
           if (anchors[i].href === finalUrl) {
             return anchors[i];
@@ -167,7 +166,7 @@ if ((at = "horizontal")) {
 }
 
 // ----------------------------------------
-// Active 2 file at same time 
+// Active 2 file at same time
 // ----------------------------------------
 
 var currentURL =
@@ -175,7 +174,7 @@ var currentURL =
     ? document.referrer
     : document.location.href;
 
-var link = document.getElementById("get-url");
+var link = document.getElementById("get-url") || document.createElement("a");
 
 if (currentURL.includes("/main/index.html")) {
   link.setAttribute("href", "../main/index.html");
