@@ -40,6 +40,6 @@
   </form>
   <footer class="card-footer text-center">
     <p class="d-inline-block m-0">¿Nuevo en SITCAV?</p>
-    <a class="link-primary" href="./registrarse">Crear una cuenta</a>
+    <a class="link-primary link-offset-3" href="./registrarse">Crear una cuenta</a>
   </footer>
 </main>
