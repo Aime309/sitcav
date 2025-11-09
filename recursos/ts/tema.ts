@@ -24,7 +24,7 @@ Alpine.data("tema", () => ({
     );
 
     this.$watch("tema", (nuevoTema) => {
-      fetch("./api/ajustes/tema", {
+      fetch("./ajax/ajustes/tema", {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -36,7 +36,7 @@ Alpine.data("tema", () => ({
     });
 
     this.$watch("tema_colores", (nuevoTemaColores) => {
-      fetch("./api/ajustes/tema", {
+      fetch("./ajax/ajustes/tema", {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +48,7 @@ Alpine.data("tema", () => ({
     });
 
     this.$watch("direccion", (nuevaDireccion) => {
-      fetch("./api/ajustes/tema", {
+      fetch("./ajax/ajustes/tema", {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +60,7 @@ Alpine.data("tema", () => ({
     });
 
     this.$watch("layout", (nuevoLayout) => {
-      fetch("./api/ajustes/tema", {
+      fetch("./ajax/ajustes/tema", {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +72,7 @@ Alpine.data("tema", () => ({
     });
 
     this.$watch("container", (nuevoContainer) => {
-      fetch("./api/ajustes/tema", {
+      fetch("./ajax/ajustes/tema", {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +84,7 @@ Alpine.data("tema", () => ({
     });
 
     this.$watch("tipo_menu", (nuevoTipoMenu) => {
-      fetch("./api/ajustes/tema", {
+      fetch("./ajax/ajustes/tema", {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -96,7 +96,7 @@ Alpine.data("tema", () => ({
     });
 
     this.$watch("tipo_tarjeta", (nuevoTipoTarjeta) => {
-      fetch("./api/ajustes/tema", {
+      fetch("./ajax/ajustes/tema", {
         method: "post",
         headers: {
           "Content-Type": "application/json",

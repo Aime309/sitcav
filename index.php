@@ -202,8 +202,9 @@ date_default_timezone_set($_ENV['TIMEZONE']);
 //////////////////
 // CARGAR RUTAS //
 //////////////////
-require_once CARPETA_RAIZ . '/src/rutas/api.php';
-require_once CARPETA_RAIZ . '/src/rutas/web.php';
+foreach (glob(CARPETA_RAIZ . '/src/rutas/*.php') as $archivoRuta) {
+  require_once $archivoRuta;
+}
 
 //////////////////////////
 // INICIAR EL FRAMEWORK //
