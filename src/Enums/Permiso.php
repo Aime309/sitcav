@@ -30,4 +30,5 @@ enum Permiso
   case VER_PRODUCTOS;
   case VER_PROVEEDORES;
   case VER_VENTAS;
+  case VER_DETALLES_EMPLEADO;
 }

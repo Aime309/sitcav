@@ -10,14 +10,14 @@ $miniNavItems = [
       'permisos' => [],
     ],
     [
-      'tooltip' => 'Ventas',
-      'icon' => 'bi bi-currency-dollar',
-      'permisos' => [Permiso::VER_VENTAS],
-    ],
-    [
       'tooltip' => 'Empleados',
       'icon' => 'bi bi-people',
       'permisos' => [Permiso::VER_EMPLEADOS],
+    ],
+    [
+      'tooltip' => 'Ventas',
+      'icon' => 'bi bi-currency-dollar',
+      'permisos' => [Permiso::VER_VENTAS],
     ],
     [
       'tooltip' => 'Negocios',
@@ -103,6 +103,34 @@ $sidebarNavs = [
           //     ],
           //   ],
           // ],
+        ],
+      ]
+    ],
+  ],
+  [
+    'permisos' => [Permiso::VER_EMPLEADOS],
+    'grupos' => [
+      [
+        'nombre' => 'Empleados',
+        'enlaces' => [
+          [
+            'href' => './empleados',
+            'icon' => 'bi bi-people',
+            'texto' => 'Ver empleados',
+            'permisos' => [Permiso::VER_EMPLEADOS],
+          ],
+          [
+            'href' => '#buscar-empleado',
+            'icon' => 'bi bi-search',
+            'texto' => 'Buscar empleado',
+            'permisos' => [Permiso::VER_DETALLES_EMPLEADO],
+          ],
+          [
+            'href' => './empleados/registrar',
+            'icon' => 'bi bi-person-plus',
+            'texto' => 'Registrar empleado',
+            'permisos' => [Permiso::REGISTRAR_EMPLEADO],
+          ],
         ],
       ]
     ],
@@ -210,7 +238,9 @@ function tienePermisos(array $enlace): bool
     <div class="sidebarmenu">
       <?php foreach ($sidebarNavs as $indice => $nav): ?>
         <?php if (tienePermisos($nav)): ?>
-          <nav class="sidebar-nav overflow-y-auto" id="menu-right-mini-<?= $indice + 1 ?>">
+          <nav
+            class="sidebar-nav overflow-y-auto <?= !$indice ? 'd-block' : '' ?>"
+            id="menu-right-mini-<?= $indice + 1 ?>">
             <ul class="list-unstyled sidebar-menu" id="sidebarnav">
               <?php foreach ($nav['grupos'] as $grupo): ?>
                 <li class="nav-small-cap">

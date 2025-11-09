@@ -344,7 +344,7 @@ Flight::group('', static function (): void {
           compact('productos', 'categorias', 'proveedores', 'marcas'),
           'pagina'
         );
-        Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inventario']);
+        Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Inventario']);
       });
 
       Flight::route('POST /', static function (): void {
@@ -388,7 +388,7 @@ Flight::group('', static function (): void {
       $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
 
       Flight::render('paginas/empleados', compact('empleados'), 'pagina');
-      Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Empleados']);
+      Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Empleados']);
     })->addMiddleware(new SoloPersonalAutorizado(Permiso::VER_EMPLEADOS));
 
     Flight::route('POST /empleados/@id:\d/restablecer-clave', static function (): void {});
