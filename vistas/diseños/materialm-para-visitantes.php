@@ -47,6 +47,7 @@ $exitos = (array) flash()->display('exitos');
   x-data="mensajes"
   class="col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-7 pt-3 px-3 mx-auto">
   <?php Flight::render('componentes/notificaciones') ?>
+  <?php Flight::render('componentes/configuraciones-ui') ?>
   <?= $pagina ?>
   <script src="./recursos/compilados/visitantes.js?id=<?= $idDeRecursos ?>"></script>
 </body>
