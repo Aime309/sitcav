@@ -49,12 +49,10 @@ $informaciones = (array) flash()->display(ClaveSesion::MENSAJES_INFORMACIONES->n
   x-data="mensajes"
   :data-sidebartype="tipo_menu">
   <?php Flight::render('componentes/notificaciones') ?>
-  <?php Flight::render('componentes/barra-busqueda') ?>
   <?php Flight::render('componentes/configuraciones-ui') ?>
 
   <div id="main-wrapper" x-data="tasaDePagina">
-    <?php Flight::render('componentes/menu-navegacion-vertical')
-    ?>
+    <?php Flight::render('componentes/menu-navegacion-vertical') ?>
     <div class="page-wrapper">
       <?php Flight::render('componentes/menu-superior-v2') ?>
       <?php Flight::render('componentes/menu-navegacion-horizontal') ?>

@@ -103,7 +103,7 @@ if ((at = "vertical")) {
       document
         .getElementById("menu-right-mini-" + menu)
         ?.classList.add("d-block");
-      document.getElementById("mini-" + menu).classList.add("selected");
+      document.getElementById("mini-" + menu)?.classList.add("selected");
 
       //****************************
       // This is for mini sidebar

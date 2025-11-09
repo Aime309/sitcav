@@ -5,3 +5,9 @@ document.addEventListener("DOMContentLoaded", () => {
     new Dropdown(element);
   }
 });
+
+// @ts-ignore
+window.bootstrap = {
+  ...(window.bootstrap || {}),
+  Dropdown,
+};

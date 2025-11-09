@@ -134,7 +134,8 @@ $id = uniqid();
 ?>
 
 <button
-  class="btn btn-success rounded-circle customizer-btn"
+  class="btn rounded-circle customizer-btn"
+  :class="`btn-${temaInverso}`"
   type="button"
   data-bs-toggle="offcanvas"
   data-bs-target="#<?= $id ?>"
