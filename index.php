@@ -3,6 +3,8 @@
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;
 use Leaf\Helpers\Password;
+use SITCAV\Enums\Permiso;
+use SITCAV\Enums\Rol;
 use SITCAV\Modelos\UsuarioAutenticado;
 
 /////////////////////////
@@ -63,31 +65,31 @@ auth()->config('messages.loginParamsError', 'Cédula o contraseña incorrecta');
 auth()->config('messages.loginPasswordError', auth()->config('messages.loginParamsError'));
 
 auth()->createRoles([
-  'Vendedor' => [
-    'editar perfil',
-    'ver productos',
-    'registrar pago',
-    'realizar pago',
-    'generar factura',
+  Rol::VENDEDOR->value => [
+    Permiso::EDITAR_PERFIL->name,
+    Permiso::VER_PRODUCTOS->name,
+    Permiso::REGISTRAR_PAGO->name,
+    Permiso::REALIZAR_VENTA->name,
+    Permiso::GENERAR_FACTURA->name,
   ],
-  'Empleado superior' => [
-    'registrar cliente',
-    'registrar categoria',
-    'registrar producto',
-    'registrar cotizacion',
-    'registrar compra',
+  Rol::EMPLEADO_SUPERIOR->value => [
+    Permiso::REGISTRAR_CLIENTE->name,
+    Permiso::REGISTRAR_CATEGORIA->name,
+    Permiso::REGISTRAR_PRODUCTO->name,
+    Permiso::REGISTRAR_COTIZACION->name,
+    Permiso::REGISTRAR_COMPRA->name,
   ],
-  'Encargado' => [
-    'editar datos del negocio',
-    'registrar proveedor',
-    'registrar empleado',
-    'respaldar la base de datos',
-    'restaurar la base de datos',
-    'despedir vendedor',
-    'recontratar vendedor',
-    'promover vendedor',
-    'degradar empleado',
-    'ver empleados',
+  Rol::ENCARGADO->value => [
+    Permiso::EDITAR_DATOS_DEL_NEGOCIO->name,
+    Permiso::REGISTRAR_PROVEEDOR->name,
+    Permiso::REGISTRAR_EMPLEADO->name,
+    Permiso::RESPALDAR_BASE_DE_DATOS->name,
+    Permiso::RESTAURAR_BASE_DE_DATOS->name,
+    Permiso::DESPEDIR_EMPLEADO->name,
+    Permiso::RECONTRATAR_EMPLEADO->name,
+    Permiso::PROMOVER_VENDEDOR->name,
+    Permiso::DEGRADAR_EMPLEADO_SUPERIOR->name,
+    Permiso::VER_EMPLEADOS->name,
   ],
 ]);
 

@@ -4,6 +4,7 @@ namespace SITCAV\Autorizadores;
 
 use Flight;
 use Illuminate\Container\Container;
+use SITCAV\Enums\Permiso;
 use SITCAV\Modelos\UsuarioAutenticado;
 
 final readonly class SoloTasaActualizada
@@ -13,7 +14,7 @@ final readonly class SoloTasaActualizada
     $cotizacionDeHoy = Container::getInstance()->get(UsuarioAutenticado::class)->cotizacionDeHoy;
 
     if (!$cotizacionDeHoy) {
-      if (auth()->user()->can('registrar cotizacion')) {
+      if (auth()->user()->can(Permiso::REGISTRAR_COTIZACION->name)) {
         $ultimaCotizacion = Container::getInstance()->get(UsuarioAutenticado::class)->ultimaCotizacion;
 
         Flight::render('paginas/registrar-tasa-bcv', compact('ultimaCotizacion'), 'pagina');

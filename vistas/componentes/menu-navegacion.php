@@ -1,5 +1,7 @@
 <?php
 
+use SITCAV\Enums\Permiso;
+
 $secciones = [
   [
     'nombre' => '',
@@ -14,13 +16,13 @@ $secciones = [
         'nombre' => 'Inventario',
         'icono' => 'solar:bill-list-broken',
         'url' => './inventario',
-        'permisos' => ['ver productos'],
+        'permisos' => [Permiso::VER_PRODUCTOS->name],
       ],
       [
         'nombre' => 'Empleados',
         'icono' => 'solar:users-group-two-rounded-broken',
         'url' => './empleados',
-        'permisos' => ['ver empleados'],
+        'permisos' => [Permiso::VER_EMPLEADOS->name],
       ],
       // [
       //   'nombre' => 'Front Pages',

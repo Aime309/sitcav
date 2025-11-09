@@ -8,6 +8,7 @@ use SITCAV\Autorizadores\SoloContratados;
 use SITCAV\Autorizadores\SoloPersonalAutorizado;
 use SITCAV\Autorizadores\SoloTasaActualizada;
 use SITCAV\Autorizadores\SoloVisitantes;
+use SITCAV\Enums\Permiso;
 use SITCAV\Modelos\Cliente;
 use SITCAV\Modelos\Producto;
 use SITCAV\Modelos\Usuario;
@@ -375,7 +376,7 @@ Flight::group('', static function (): void {
 
       Flight::render('paginas/empleados', compact('empleados'), 'pagina');
       Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Empleados']);
-    })->addMiddleware(new SoloPersonalAutorizado(['ver empleados']));
+    })->addMiddleware(new SoloPersonalAutorizado(Permiso::VER_EMPLEADOS));
 
     Flight::route('POST /empleados/@id:\d/restablecer-clave', static function (): void {});
 
@@ -395,7 +396,7 @@ Flight::group('', static function (): void {
       $empleado->save();
       flash()->set(['El empleado ha sido despedido exitosamente.'], 'exitos');
       Flight::redirect('/empleados');
-    })->addMiddleware(new SoloPersonalAutorizado(['despedir vendedor']));
+    })->addMiddleware(new SoloPersonalAutorizado(Permiso::DESPEDIR_EMPLEADO));
 
     Flight::route('POST /empleados/recontratar/@id', static function (int $id): void {
       $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
@@ -413,7 +414,7 @@ Flight::group('', static function (): void {
       $empleado->save();
       flash()->set(['El empleado ha sido recontratado exitosamente.'], 'exitos');
       Flight::redirect('/empleados');
-    })->addMiddleware(new SoloPersonalAutorizado(['recontratar vendedor']));
+    })->addMiddleware(new SoloPersonalAutorizado(Permiso::RECONTRATAR_EMPLEADO));
 
     Flight::route('POST /empleados/promover/@id', static function (int $id): void {
       $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
@@ -445,7 +446,7 @@ Flight::group('', static function (): void {
       }
 
       Flight::redirect('/empleados');
-    })->addMiddleware(new SoloPersonalAutorizado(['promover vendedor']));
+    })->addMiddleware(new SoloPersonalAutorizado(Permiso::PROMOVER_VENDEDOR));
 
     Flight::route('POST /empleados/degradar/@id', static function (int $id): void {
       $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
@@ -477,7 +478,7 @@ Flight::group('', static function (): void {
       }
 
       Flight::redirect('/empleados');
-    })->addMiddleware(new SoloPersonalAutorizado(['degradar empleado']));
+    })->addMiddleware(new SoloPersonalAutorizado(Permiso::DEGRADAR_EMPLEADO_SUPERIOR));
 
     // Flight::route('GET /eventos', function (): void {});
 
