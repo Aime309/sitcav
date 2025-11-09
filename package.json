@@ -1,7 +1,6 @@
 {
   "devDependencies": {
     "@biomejs/biome": "1.7.2",
-    "@fontsource/inter": "^5.2.8",
     "@rsbuild/core": "0.7.10",
     "@types/alpinejs": "^3.13.11",
     "@types/bootstrap": "^5.2.10",
@@ -11,11 +10,7 @@
     "apexcharts": "^5.3.5",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
-    "iconify-icon": "^3.0.2",
     "jquery": "^3.7.1",
-    "pure-css-loader": "^3.3.3",
-    "simplebar": "^6.3.2",
-    "tabler-icons": "^1.35.0",
     "zxcvbn": "^4.4.2"
   },
   "scripts": {

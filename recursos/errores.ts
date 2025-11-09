@@ -1,4 +1,3 @@
-import "@fontsource/inter/latin.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Alpine from "alpinejs";
