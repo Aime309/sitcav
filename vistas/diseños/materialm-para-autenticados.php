@@ -12,11 +12,15 @@ $exitos = (array) flash()->display('exitos');
   data-layout="<?= session()->get('layout', 'vertical') ?>"
   data-bs-theme="<?= session()->get('tema', '') ?>"
   data-color-theme="<?= session()->get('tema_colores', 'Blue_Theme') ?>"
+  data-boxed-layout="<?= session()->get('container', 'boxed') ?>"
+  data-sidebartype="<?= session()->get('sidebar_type', 'full') ?>"
   x-data="tema"
   :dir="direccion"
   :data-layout="layout"
   :data-bs-theme="tema"
-  :data-color-theme="tema_colores">
+  :data-color-theme="tema_colores"
+  :data-boxed-layout="container"
+  :data-sidebartype="tipo_menu">
 
 <head>
   <meta charset="utf-8" />
@@ -32,16 +36,18 @@ $exitos = (array) flash()->display('exitos');
 </head>
 
 <body
+  data-sidebartype="<?= session()->get('sidebar_type', 'full') ?>"
   data-errores='<?= json_encode(array_values($errores)) ?>'
   data-exitos='<?= json_encode(array_values($exitos)) ?>'
-  x-data="mensajes">
+  x-data="mensajes"
+  :data-sidebartype="tipo_menu">
   <?php Flight::render('componentes/notificaciones') ?>
   <?php # Flight::render('componentes/barra-busqueda')
   ?>
   <?php Flight::render('componentes/configuraciones-ui') ?>
 
   <div id="main-wrapper" x-data="tasaDePagina">
-    <?php # Flight::render('componentes/menu-navegacion-vertical')
+    <?php Flight::render('componentes/menu-navegacion-vertical')
     ?>
     <div class="page-wrapper">
       <?php # Flight::render('componentes/menu-superior-v2')

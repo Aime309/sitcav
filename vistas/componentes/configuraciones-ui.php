@@ -4,32 +4,32 @@ $colores = [
   [
     'id' => 'Blue_Theme',
     'class' => 'skin-1',
-    'title' => 'BLUE_THEME'
+    'title' => 'BLUE_THEME',
   ],
   [
     'id' => 'Aqua_Theme',
     'class' => 'skin-2',
-    'title' => 'AQUA_THEME'
+    'title' => 'AQUA_THEME',
   ],
   [
     'id' => 'Purple_Theme',
     'class' => 'skin-3',
-    'title' => 'PURPLE_THEME'
+    'title' => 'PURPLE_THEME',
   ],
   [
     'id' => 'Green_Theme',
     'class' => 'skin-4',
-    'title' => 'GREEN_THEME'
+    'title' => 'GREEN_THEME',
   ],
   [
     'id' => 'Cyan_Theme',
     'class' => 'skin-5',
-    'title' => 'CYAN_THEME'
+    'title' => 'CYAN_THEME',
   ],
   [
     'id' => 'Orange_Theme',
     'class' => 'skin-6',
-    'title' => 'ORANGE_THEME'
+    'title' => 'ORANGE_THEME',
   ],
 ];
 
@@ -60,6 +60,51 @@ $direcciones = [
     'title' => 'RTL',
     'icon' => 'bi bi-text-right',
     'value' => 'rtl',
+  ],
+];
+
+$layouts = [
+  [
+    'id' => 'vertical-layout',
+    'title' => 'Vertical',
+    'icon' => 'bi bi-layout-sidebar',
+    'value' => 'vertical',
+  ],
+  [
+    'id' => 'horizontal-layout',
+    'title' => 'Horizontal',
+    'icon' => 'bi bi-window',
+    'value' => 'horizontal',
+  ],
+];
+
+$containers = [
+  [
+    'id' => 'boxed-layout',
+    'title' => 'Tamaño limitado',
+    'icon' => 'bi bi-distribute-horizontal',
+    'value' => 'boxed',
+  ],
+  [
+    'id' => 'full-layout',
+    'title' => 'Pantalla completa',
+    'icon' => 'bi bi-distribute-vertical',
+    'value' => 'full',
+  ],
+];
+
+$tiposMenu = [
+  [
+    'id' => 'full-sidebar',
+    'title' => 'Completo',
+    'icon' => 'bi bi-arrows-fullscreen',
+    'value' => 'full',
+  ],
+  [
+    'id' => 'mini-sidebar',
+    'title' => 'Simplificado',
+    'icon' => 'bi bi-arrows-collapse-vertical',
+    'value' => 'mini-sidebar',
   ],
 ];
 
@@ -112,8 +157,7 @@ $id = uniqid();
           name="direction-l"
           type="radio"
           value="<?= $direccion['value'] ?>"
-          x-model="direccion"
-        />
+          x-model="direccion" />
         <label class="btn btn-outline-primary" for="<?= $direccion['id'] ?>">
           <i class="icon <?= $direccion['icon'] ?> me-2"></i>
           <?= $direccion['title'] ?>
@@ -121,74 +165,86 @@ $id = uniqid();
       <?php endforeach ?>
     </div>
 
-    <h6 class="mt-5 fw-semibold fs-4 mb-2">Tema de Colores</h6>
+    <h3>Tema de Colores</h3>
 
-    <div class="d-flex flex-row flex-wrap gap-3 customizer-box color-pallete" role="group">
+    <div class="d-flex flex-wrap gap-3 customizer-box color-pallete">
       <?php foreach ($colores as $color): ?>
         <input
-          type="radio"
           class="btn-check"
-          name="color-theme-layout"
           id="<?= $color['id'] ?>"
-          autocomplete="off" />
+          name="color-theme-layout"
+          type="radio"
+          value="<?= $color['id'] ?>"
+          x-model="tema_colores" />
         <label
-          class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center"
-          @click="tema_colores = '<?= $color['id'] ?>'"
+          class="btn btn-outline-primary d-flex align-items-center justify-content-center"
           for="<?= $color['id'] ?>"
           data-bs-toggle="tooltip"
           data-bs-placement="top"
           data-bs-title="<?= $color['title'] ?>">
           <div class="color-box rounded-circle d-flex align-items-center justify-content-center <?= $color['class'] ?>">
-            <i class="bi bi-check text-white d-flex icon"></i>
+            <i class="bi bi-check text-white icon"></i>
           </div>
         </label>
       <?php endforeach ?>
     </div>
 
-    <h6 class="mt-5 fw-semibold fs-4 mb-2">Layout Type</h6>
-    <div class="d-flex flex-row gap-3 customizer-box" role="group">
-      <div>
-        <input type="radio" class="btn-check" name="page-layout" id="vertical-layout" autocomplete="off" />
-        <label class="btn p-9 btn-outline-primary rounded-2" for="vertical-layout">
-          <i class="icon ti ti-layout-sidebar-right fs-7 me-2"></i>Vertical
+    <h3>Posición de la navegación</h3>
+
+    <div class="d-flex gap-3 customizer-box">
+      <?php foreach ($layouts as $layout): ?>
+        <input
+          class="btn-check"
+          id="<?= $layout['id'] ?>"
+          name="page-layout"
+          type="radio"
+          value="<?= $layout['value'] ?>"
+          x-model="layout" />
+        <label
+          class="btn btn-outline-primary" for="<?= $layout['id'] ?>">
+          <i class="icon <?= $layout['icon'] ?> me-2"></i>
+          <?= $layout['title'] ?>
         </label>
-      </div>
-      <div>
-        <input type="radio" class="btn-check" name="page-layout" id="horizontal-layout" autocomplete="off" />
-        <label class="btn p-9 btn-outline-primary rounded-2" for="horizontal-layout">
-          <i class="icon ti ti-layout-navbar fs-7 me-2"></i>Horizontal
-        </label>
-      </div>
+      <?php endforeach ?>
     </div>
 
-    <h6 class="mt-5 fw-semibold fs-4 mb-2">Container Option</h6>
+    <h3>Anchura</h3>
 
-    <div class="d-flex flex-row gap-3 customizer-box" role="group">
-      <input type="radio" class="btn-check" name="layout" id="boxed-layout" autocomplete="off" />
-      <label class="btn p-9 btn-outline-primary rounded-2" for="boxed-layout">
-        <i class="icon ti ti-layout-distribute-vertical fs-7 me-2"></i>Boxed
-      </label>
-
-      <input type="radio" class="btn-check" name="layout" id="full-layout" autocomplete="off" />
-      <label class="btn p-9 btn-outline-primary rounded-2" for="full-layout">
-        <i class="icon ti ti-layout-distribute-horizontal fs-7 me-2"></i>Full
-      </label>
+    <div class="d-flex gap-3 customizer-box">
+      <?php foreach ($containers as $container): ?>
+        <input
+          class="btn-check"
+          id="<?= $container['id'] ?>"
+          name="layout"
+          type="radio"
+          value="<?= $container['value'] ?>"
+          x-model="container" />
+        <label
+          class="btn btn-outline-primary" for="<?= $container['id'] ?>">
+          <i class="icon <?= $container['icon'] ?> me-2"></i>
+          <?= $container['title'] ?>
+        </label>
+      <?php endforeach ?>
     </div>
 
-    <h6 class="fw-semibold fs-4 mb-2 mt-5">Sidebar Type</h6>
-    <div class="d-flex flex-row gap-3 flex-wrap customizer-box" role="group">
-      <a href="javascript:void(0)" class="fullsidebar">
-        <input type="radio" class="btn-check" name="sidebar-type" id="full-sidebar" autocomplete="off" />
-        <label class="btn p-9 btn-outline-primary rounded-2" for="full-sidebar">
-          <i class="icon ti ti-layout-sidebar-right fs-7 me-2"></i>Full
+    <h3>Tipo de menú de navegación</h3>
+
+    <div class="d-flex gap-3 customizer-box">
+      <?php foreach ($tiposMenu as $tipoMenu): ?>
+        <input
+          class="btn-check"
+          id="<?= $tipoMenu['id'] ?>"
+          name="sidebar-type"
+          type="radio"
+          value="<?= $tipoMenu['value'] ?>"
+          x-model="tipo_menu" />
+        <label
+          class="btn btn-outline-primary"
+          for="<?= $tipoMenu['id'] ?>">
+          <i class="icon <?= $tipoMenu['icon'] ?> me-2"></i>
+          <?= $tipoMenu['title'] ?>
         </label>
-      </a>
-      <div>
-        <input type="radio" class="btn-check" name="sidebar-type" id="mini-sidebar" autocomplete="off" />
-        <label class="btn p-9 btn-outline-primary rounded-2" for="mini-sidebar">
-          <i class="icon ti ti-layout-sidebar fs-7 me-2"></i>Collapse
-        </label>
-      </div>
+      <?php endforeach ?>
     </div>
 
     <h6 class="mt-5 fw-semibold fs-4 mb-2">Card With</h6>

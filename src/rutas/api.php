@@ -38,13 +38,15 @@ Flight::group('/api', static function (): void {
       $temaColores = Flight::request()->data->tema_colores ?: session()->get('tema_colores', 'Blue_Theme');
       $direccion = Flight::request()->data->direccion ?: session()->get('direccion', 'ltr');
       $layout = Flight::request()->data->layout ?: session()->get('layout', 'vertical');
+      $container = Flight::request()->data->container ?: session()->get('container', 'boxed');
+      $tipoMenu = Flight::request()->data->tipo_menu ?: session()->get('sidebar_type', 'full');
 
       session()->set('tema', $tema);
       session()->set('tema_colores', $temaColores);
       session()->set('direccion', $direccion);
       session()->set('layout', $layout);
-
-      Flight::json(session()->all());
+      session()->set('container', $container);
+      session()->set('sidebar_type', $tipoMenu);
     });
   });
 });

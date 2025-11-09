@@ -7,6 +7,8 @@ Alpine.data("tema", () => ({
   tema_colores: document.documentElement.dataset.colorTheme || "Blue_Theme",
   direccion: document.documentElement.dir || "ltr",
   layout: document.documentElement.dataset.layout || "vertical",
+  container: document.documentElement.dataset.boxedLayout || "boxed",
+  tipo_menu: document.documentElement.dataset.sidebartype || "full",
 
   get temaInverso() {
     return this.tema === "dark" ? "light" : "dark";
@@ -64,6 +66,30 @@ Alpine.data("tema", () => ({
         },
         body: JSON.stringify({
           layout: nuevoLayout,
+        }),
+      });
+    });
+
+    this.$watch("container", (nuevoContainer) => {
+      fetch("./api/ajustes/tema", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          container: nuevoContainer,
+        }),
+      });
+    });
+
+    this.$watch("tipo_menu", (nuevoTipoMenu) => {
+      fetch("./api/ajustes/tema", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tipo_menu: nuevoTipoMenu,
         }),
       });
     });
