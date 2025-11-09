@@ -149,7 +149,7 @@ $id = uniqid();
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
   </div>
   <div class="offcanvas-body d-grid gap-3">
-    <h3>Tema</h3>
+    <h3 class="m-0">Tema</h3>
 
     <div class="d-flex gap-3 customizer-box">
       <?php foreach ($temas as $tema): ?>
@@ -169,7 +169,7 @@ $id = uniqid();
       <?php endforeach ?>
     </div>
 
-    <h3>Dirección</h3>
+    <h3 class="m-0">Dirección</h3>
 
     <div class="d-flex gap-3 customizer-box">
       <?php foreach ($direcciones as $direccion): ?>
@@ -187,7 +187,7 @@ $id = uniqid();
       <?php endforeach ?>
     </div>
 
-    <h3>Tema de Colores</h3>
+    <h3 class="m-0">Tema de Colores</h3>
 
     <div class="d-flex flex-wrap gap-3 customizer-box color-pallete">
       <?php foreach ($colores as $color): ?>
@@ -211,7 +211,7 @@ $id = uniqid();
       <?php endforeach ?>
     </div>
 
-    <h3>Posición de la navegación</h3>
+    <!-- <h3 class="m-0">Posición de la navegación</h3>
 
     <div class="d-flex gap-3 customizer-box">
       <?php foreach ($layouts as $layout): ?>
@@ -228,9 +228,9 @@ $id = uniqid();
           <?= $layout['title'] ?>
         </label>
       <?php endforeach ?>
-    </div>
+    </div> -->
 
-    <h3>Anchura</h3>
+    <h3 class="m-0">Anchura</h3>
 
     <div class="d-flex gap-3 customizer-box">
       <?php foreach ($containers as $container): ?>
@@ -249,7 +249,7 @@ $id = uniqid();
       <?php endforeach ?>
     </div>
 
-    <h3>Tipo de menú de navegación</h3>
+    <h3 class="m-0">Tipo de menú de navegación</h3>
 
     <div class="d-flex gap-3 customizer-box">
       <?php foreach ($tiposMenu as $tipoMenu): ?>
@@ -269,7 +269,7 @@ $id = uniqid();
       <?php endforeach ?>
     </div>
 
-    <h3>Tipo de tarjetas</h3>
+    <h3 class="m-0">Tipo de tarjetas</h3>
 
     <div class="d-flex gap-3 customizer-box">
       <?php foreach ($tiposTarjeta as $tipoTarjeta): ?>
