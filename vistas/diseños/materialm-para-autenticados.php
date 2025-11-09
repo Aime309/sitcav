@@ -3,8 +3,10 @@
 use SITCAV\Enums\ClaveSesion;
 
 $idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
-$errores = (array) flash()->display('errores');
-$exitos = (array) flash()->display('exitos');
+$errores = (array) flash()->display(ClaveSesion::MENSAJES_ERRORES->name);
+$exitos = (array) flash()->display(ClaveSesion::MENSAJES_EXITOS->name);
+$advertencias = (array) flash()->display(ClaveSesion::MENSAJES_ADVERTENCIAS->name);
+$informaciones = (array) flash()->display(ClaveSesion::MENSAJES_INFORMACIONES->name);
 
 ?>
 
@@ -42,6 +44,8 @@ $exitos = (array) flash()->display('exitos');
   data-sidebartype="<?= session()->get(ClaveSesion::UI_TIPO_MENU_NAVEGACION->name, 'full') ?>"
   data-errores='<?= json_encode(array_values($errores)) ?>'
   data-exitos='<?= json_encode(array_values($exitos)) ?>'
+  data-advertencias='<?= json_encode(array_values($advertencias)) ?>'
+  data-informaciones='<?= json_encode(array_values($informaciones)) ?>'
   x-data="mensajes"
   :data-sidebartype="tipo_menu">
   <?php Flight::render('componentes/notificaciones') ?>

@@ -8,6 +8,7 @@ use SITCAV\Autorizadores\SoloContratados;
 use SITCAV\Autorizadores\SoloPersonalAutorizado;
 use SITCAV\Autorizadores\SoloTasaActualizada;
 use SITCAV\Autorizadores\SoloVisitantes;
+use SITCAV\Enums\ClaveSesion;
 use SITCAV\Enums\Permiso;
 use SITCAV\Modelos\Cliente;
 use SITCAV\Modelos\Producto;
@@ -21,7 +22,7 @@ Flight::group('', static function (): void {
     $estado = Flight::request()->query->state;
 
     if ($error) {
-      flash()->set(['No se pudo iniciar sesión con Google'], 'errores');
+      flash()->set(['No se pudo iniciar sesión con Google'], ClaveSesion::MENSAJES_ERRORES->name);
       error_log("Error de OAuth2 de Google: $error");
       Flight::redirect('/ingresar');
 
@@ -39,7 +40,7 @@ Flight::group('', static function (): void {
 
     if (!$estado || ($estado !== session()->get('oauth2state'))) {
       session()->remove('oauth2state');
-      flash()->set(['No se pudo iniciar sesión con Google. El estado es inválido'], 'errores');
+      flash()->set(['No se pudo iniciar sesión con Google. El estado es inválido'], ClaveSesion::MENSAJES_ERRORES->name);
       Flight::redirect('/ingresar');
 
       return;
@@ -63,7 +64,7 @@ Flight::group('', static function (): void {
 
       Flight::redirect('/');
     } catch (Throwable $error) {
-      flash()->set(["No se pudo iniciar sesión con Google."], 'errores');
+      flash()->set(["No se pudo iniciar sesión con Google."], ClaveSesion::MENSAJES_ERRORES->name);
       error_log("Error al autenticar con OAuth2 de Google: {$error->getMessage()}");
       Flight::redirect('/ingresar');
 
@@ -85,7 +86,7 @@ Flight::group('', static function (): void {
     ])) {
       Flight::redirect('/');
     } else {
-      flash()->set(auth()->errors(), 'errores');
+      flash()->set(auth()->errors(), ClaveSesion::MENSAJES_ERRORES->name);
       Flight::redirect('/ingresar');
     }
   });
@@ -107,13 +108,13 @@ Flight::group('', static function (): void {
       ]),
       'roles' => json_encode(['Encargado', 'Empleado superior', 'Vendedor']),
     ])) {
-      flash()->set(['El registro se ha realizado correctamente.'], 'exitos');
+      flash()->set(['El registro se ha realizado correctamente.'], ClaveSesion::MENSAJES_EXITOS->name);
       Flight::redirect('/');
 
       return;
     }
 
-    flash()->set(auth()->errors(), 'errores');
+    flash()->set(auth()->errors(), ClaveSesion::MENSAJES_ERRORES->name);
     Flight::redirect('/registrarse');
   });
 
@@ -128,7 +129,7 @@ Flight::group('', static function (): void {
       $usuario = Usuario::query()->where('cedula', $cedula)->first();
 
       if (!$usuario) {
-        flash()->set(['No existe ningún usuario con esa cédula.'], 'errores');
+        flash()->set(['No existe ningún usuario con esa cédula.'], ClaveSesion::MENSAJES_ERRORES->name);
         Flight::render('paginas/restablecer-clave/paso-1', [], 'pagina');
         Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
@@ -156,7 +157,7 @@ Flight::group('', static function (): void {
         Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
         Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
       } catch (Throwable) {
-        flash()->set(['La respuesta secreta es incorrecta.'], 'errores');
+        flash()->set(['La respuesta secreta es incorrecta.'], ClaveSesion::MENSAJES_ERRORES->name);
         Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
         Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
       }
@@ -169,7 +170,7 @@ Flight::group('', static function (): void {
       try {
         $usuario->restablecerClave($nuevaClave);
       } catch (Error $error) {
-        flash()->set([$error->getMessage()], 'errores');
+        flash()->set([$error->getMessage()], ClaveSesion::MENSAJES_ERRORES->name);
         Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
         Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
@@ -191,7 +192,7 @@ Flight::group('', static function (): void {
 
       session()->remove('usuarios.id');
       session()->remove('user.email');
-      flash()->set(['La contraseña se ha restablecido correctamente.'], 'exitos');
+      flash()->set(['La contraseña se ha restablecido correctamente.'], ClaveSesion::MENSAJES_EXITOS->name);
       Flight::redirect('/');
     });
 
@@ -200,7 +201,7 @@ Flight::group('', static function (): void {
       $usuario = Usuario::query()->where('email', $correo)->first();
 
       if (!$usuario) {
-        flash()->set(['No existe ningún usuario con ese correo.'], 'errores');
+        flash()->set(['No existe ningún usuario con ese correo.'], ClaveSesion::MENSAJES_ERRORES->name);
         Flight::redirect('/restablecer-clave');
 
         return;
@@ -230,7 +231,7 @@ Flight::group('', static function (): void {
         $clienteCorreo->Body = Flight::view()->fetch('paginas/correo', ['codigo' => $codigoVerificacion]);
         $clienteCorreo->send();
       } catch (Exception) {
-        flash()->set(['No se pudo enviar el correo con el código de verificación. Por favor, intenta nuevamente más tarde.'], 'errores');
+        flash()->set(['No se pudo enviar el correo con el código de verificación. Por favor, intenta nuevamente más tarde.'], ClaveSesion::MENSAJES_ERRORES->name);
         error_log("Error al enviar correo: {$clienteCorreo->ErrorInfo}");
         Flight::redirect('/restablecer-clave');
 
@@ -255,14 +256,14 @@ Flight::group('', static function (): void {
       $expiracionCodigo = session()->get('verification_code_expiration_timestamp');
 
       if (time() > $expiracionCodigo) {
-        flash()->set(['El código de verificación ha expirado. Por favor, solicita uno nuevo.'], 'errores');
+        flash()->set(['El código de verificación ha expirado. Por favor, solicita uno nuevo.'], ClaveSesion::MENSAJES_ERRORES->name);
         Flight::redirect('/restablecer-clave');
 
         return;
       }
 
       if ($codigoIngresado !== (string) $codigoAlmacenado) {
-        flash()->set(['El código de verificación es incorrecto.'], 'errores');
+        flash()->set(['El código de verificación es incorrecto.'], ClaveSesion::MENSAJES_ERRORES->name);
 
         Flight::render(
           'paginas/restablecer-clave/codigo-verificacion',
@@ -299,7 +300,12 @@ Flight::route('/salir', static function (): void {
   auth()->logout();
   session()->remove('oauth-token');
   session()->remove('oauth2state');
-  flash()->set(session()->retrieve('errores', []), 'errores');
+
+  flash()->set(
+    session()->retrieve(ClaveSesion::MENSAJES_ERRORES->name, []),
+    ClaveSesion::MENSAJES_ERRORES->name
+  );
+
   Flight::redirect('/ingresar');
 });
 
@@ -312,7 +318,7 @@ Flight::group('', static function (): void {
       'tasa_bcv' => $nuevaTasa,
     ]);
 
-    flash()->set("Tasa BCV establecida satisfactoriamente en Bs. $nuevaTasa", 'exitos');
+    flash()->set("Tasa BCV establecida satisfactoriamente en Bs. $nuevaTasa", ClaveSesion::MENSAJES_EXITOS->name);
     Flight::redirect(Flight::request()->referrer);
   });
 
@@ -352,7 +358,7 @@ Flight::group('', static function (): void {
           'id_proveedor' => $datos->id_proveedor,
         ]);
 
-        flash()->set(['Producto agregado exitosamente.'], 'exitos');
+        flash()->set(['Producto agregado exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
         Flight::redirect('/inventario');
       });
 
@@ -386,7 +392,7 @@ Flight::group('', static function (): void {
       $empleado = $empleados->find($id);
 
       if (!$empleado instanceof Usuario) {
-        flash()->set(['El empleado no existe o no te pertenece.'], 'errores');
+        flash()->set(['El empleado no existe o no te pertenece.'], ClaveSesion::MENSAJES_ERRORES->name);
         Flight::redirect('/empleados');
 
         return;
@@ -394,7 +400,7 @@ Flight::group('', static function (): void {
 
       $empleado->esta_despedido = true;
       $empleado->save();
-      flash()->set(['El empleado ha sido despedido exitosamente.'], 'exitos');
+      flash()->set(['El empleado ha sido despedido exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
       Flight::redirect('/empleados');
     })->addMiddleware(new SoloPersonalAutorizado(Permiso::DESPEDIR_EMPLEADO));
 
@@ -404,7 +410,7 @@ Flight::group('', static function (): void {
       $empleado = $empleados->find($id);
 
       if (!$empleado instanceof Usuario) {
-        flash()->set(['El empleado no existe o no te pertenece.'], 'errores');
+        flash()->set(['El empleado no existe o no te pertenece.'], ClaveSesion::MENSAJES_ERRORES->name);
         Flight::redirect('/empleados');
 
         return;
@@ -412,7 +418,7 @@ Flight::group('', static function (): void {
 
       $empleado->esta_despedido = false;
       $empleado->save();
-      flash()->set(['El empleado ha sido recontratado exitosamente.'], 'exitos');
+      flash()->set(['El empleado ha sido recontratado exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
       Flight::redirect('/empleados');
     })->addMiddleware(new SoloPersonalAutorizado(Permiso::RECONTRATAR_EMPLEADO));
 
@@ -422,14 +428,14 @@ Flight::group('', static function (): void {
       $empleado = $empleados->find($id);
 
       if (!$empleado instanceof Usuario) {
-        flash()->set(['El empleado no existe o no te pertenece.'], 'errores');
+        flash()->set(['El empleado no existe o no te pertenece.'], ClaveSesion::MENSAJES_ERRORES->name);
         Flight::redirect('/empleados');
 
         return;
       }
 
       if (in_array('Empleado superior', $empleado->roles)) {
-        flash()->set(['El empleado ya es un Empleado superior.'], 'errores');
+        flash()->set(['El empleado ya es un Empleado superior.'], ClaveSesion::MENSAJES_ERRORES->name);
         Flight::redirect('/empleados');
 
         return;
@@ -439,9 +445,9 @@ Flight::group('', static function (): void {
         db()->update('usuarios')->params([
           'roles' => '["Empleado superior", "Vendedor"]',
         ])->where('id', $empleado->id)->execute();
-        flash()->set(['El empleado ha sido promovido a Empleado superior exitosamente.'], 'exitos');
+        flash()->set(['El empleado ha sido promovido a Empleado superior exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
       } catch (Throwable $error) {
-        flash()->set(['No se pudo promover al empleado. Por favor, intenta nuevamente más tarde.'], 'errores');
+        flash()->set(['No se pudo promover al empleado. Por favor, intenta nuevamente más tarde.'], ClaveSesion::MENSAJES_ERRORES->name);
         error_log("Error al promover empleado (ID: $id): {$error->getMessage()}");
       }
 
@@ -453,14 +459,14 @@ Flight::group('', static function (): void {
       $empleado = $empleados->find($id);
 
       if (!$empleado instanceof Usuario) {
-        flash()->set(['El empleado no existe o no te pertenece.'], 'errores');
+        flash()->set(['El empleado no existe o no te pertenece.'], ClaveSesion::MENSAJES_ERRORES->name);
         Flight::redirect('/empleados');
 
         return;
       }
 
       if (!in_array('Empleado superior', $empleado->roles)) {
-        flash()->set(['El empleado ya es un Vendedor.'], 'errores');
+        flash()->set(['El empleado ya es un Vendedor.'], ClaveSesion::MENSAJES_ERRORES->name);
         Flight::redirect('/empleados');
 
         return;
@@ -471,9 +477,9 @@ Flight::group('', static function (): void {
           'roles' => '["Vendedor"]',
         ])->where('id', $empleado->id)->execute();
 
-        flash()->set(['El empleado ha sido degradado a Vendedor exitosamente.'], 'exitos');
+        flash()->set(['El empleado ha sido degradado a Vendedor exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
       } catch (Throwable $error) {
-        flash()->set(['No se pudo degradar al empleado. Por favor, intenta nuevamente más tarde.'], 'errores');
+        flash()->set(['No se pudo degradar al empleado. Por favor, intenta nuevamente más tarde.'], ClaveSesion::MENSAJES_ERRORES->name);
         error_log("Error al degradar empleado (ID: $id): {$error->getMessage()}");
       }
 

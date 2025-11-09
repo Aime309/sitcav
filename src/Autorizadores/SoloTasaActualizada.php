@@ -4,6 +4,7 @@ namespace SITCAV\Autorizadores;
 
 use Flight;
 use Illuminate\Container\Container;
+use SITCAV\Enums\ClaveSesion;
 use SITCAV\Enums\Permiso;
 use SITCAV\Modelos\UsuarioAutenticado;
 
@@ -22,7 +23,11 @@ final readonly class SoloTasaActualizada
 
         exit;
       } else {
-        session()->set('errores', ['La tasa bcv no ha sido actualizada. Contacte a su encargado o empleado superior']);
+        session()->set(
+          ClaveSesion::MENSAJES_ERRORES->name,
+          ['La tasa bcv no ha sido actualizada. Contacte a su encargado o empleado superior']
+        );
+
         Flight::redirect('/salir');
 
         exit;

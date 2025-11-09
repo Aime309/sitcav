@@ -17,4 +17,22 @@
       </div>
     </div>
   </template>
+  <template x-for="advertencia in advertencias" :key="advertencia">
+    <div class="toast" x-init="new bootstrap.Toast($el).show()">
+      <div class="toast-header text-bg-warning">
+        <i class="bi bi-check-circle me-2"></i>
+        <span class="me-auto" x-html="advertencia"></span>
+        <button class="btn-close" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </template>
+  <template x-for="informacion in informaciones" :key="informacion">
+    <div class="toast" x-init="new bootstrap.Toast($el).show()">
+      <div class="toast-header text-bg-info">
+        <i class="bi bi-check-circle me-2"></i>
+        <span class="me-auto" x-html="informacion"></span>
+        <button class="btn-close" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </template>
 </div>

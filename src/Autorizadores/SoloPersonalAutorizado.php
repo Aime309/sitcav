@@ -3,6 +3,7 @@
 namespace SITCAV\Autorizadores;
 
 use Flight;
+use SITCAV\Enums\ClaveSesion;
 use SITCAV\Enums\Permiso;
 
 final readonly class SoloPersonalAutorizado
@@ -25,7 +26,7 @@ final readonly class SoloPersonalAutorizado
       return true;
     }
 
-    flash()->set(['No tienes permiso para acceder realizar esta acción.'], 'errores');
+    flash()->set(['No tienes permiso para acceder realizar esta acción.'], ClaveSesion::MENSAJES_ERRORES->name);
     Flight::redirect('/');
   }
 }

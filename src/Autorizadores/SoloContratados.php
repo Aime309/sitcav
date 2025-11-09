@@ -3,6 +3,7 @@
 namespace SITCAV\Autorizadores;
 
 use Flight;
+use SITCAV\Enums\ClaveSesion;
 
 final readonly class SoloContratados
 {
@@ -12,7 +13,7 @@ final readonly class SoloContratados
       return true;
     }
 
-    session()->set('errores', ['Este usuario ha sido despedido.']);
+    session()->set(ClaveSesion::MENSAJES_ERRORES->name, ['Este usuario ha sido despedido.']);
     Flight::redirect('/salir');
   }
 }

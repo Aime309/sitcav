@@ -3,6 +3,7 @@
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;
 use Leaf\Helpers\Password;
+use SITCAV\Enums\ClaveSesion;
 use SITCAV\Enums\Permiso;
 use SITCAV\Enums\Rol;
 use SITCAV\Modelos\UsuarioAutenticado;
@@ -176,7 +177,7 @@ Flight::map('error', static function (Throwable $error): never {
   }
 
   http_response_code(500);
-  session()->set('errores', ['Ha ocurrido un error inesperado. Por favor intente nuevamente más tarde.']);
+  session()->set(ClaveSesion::MENSAJES_ERRORES->name, ['Ha ocurrido un error inesperado. Por favor intente nuevamente más tarde.']);
   error_log($error->getMessage());
   Flight::redirect('/salir');
 
