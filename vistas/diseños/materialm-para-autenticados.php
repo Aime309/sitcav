@@ -1,5 +1,7 @@
 <?php
 
+use SITCAV\Enums\ClaveSesion;
+
 $idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
 $errores = (array) flash()->display('errores');
 $exitos = (array) flash()->display('exitos');
@@ -8,13 +10,13 @@ $exitos = (array) flash()->display('exitos');
 
 <!doctype html>
 <html
-  dir="<?= session()->get('direccion', 'ltr') ?>"
-  data-layout="<?= session()->get('layout', 'vertical') ?>"
-  data-bs-theme="<?= session()->get('tema', '') ?>"
-  data-color-theme="<?= session()->get('tema_colores', 'Blue_Theme') ?>"
-  data-boxed-layout="<?= session()->get('container', 'boxed') ?>"
-  data-sidebartype="<?= session()->get('sidebar_type', 'full') ?>"
-  data-card="<?= session()->get('card_type', 'shadow') ?>"
+  dir="<?= session()->get(ClaveSesion::UI_DIRECCION->name, 'ltr') ?>"
+  data-layout="<?= session()->get(ClaveSesion::UI_POSICION_MENU_NAVEGACION->name, 'vertical') ?>"
+  data-bs-theme="<?= session()->get(ClaveSesion::UI_TEMA->name, '') ?>"
+  data-color-theme="<?= session()->get(ClaveSesion::UI_COLORES->name, 'Blue_Theme') ?>"
+  data-boxed-layout="<?= session()->get(ClaveSesion::UI_ANCHURA->name, 'boxed') ?>"
+  data-sidebartype="<?= session()->get(ClaveSesion::UI_TIPO_MENU_NAVEGACION->name, 'full') ?>"
+  data-card="<?= session()->get(ClaveSesion::UI_TIPO_TARJETAS->name, 'shadow') ?>"
   x-data="tema"
   :dir="direccion"
   :data-layout="layout"
@@ -34,11 +36,10 @@ $exitos = (array) flash()->display('exitos');
     rel="stylesheet"
     href="./recursos/compilados/autenticados.css?id=<?= $idDeRecursos ?>" />
   <link rel="stylesheet" href="./recursos/css/materialm.css?id=<?= $idDeRecursos ?>" />
-  <script src="./recursos/compilados/autenticados.js?id=<?= $idDeRecursos ?>"></script>
 </head>
 
 <body
-  data-sidebartype="<?= session()->get('sidebar_type', 'full') ?>"
+  data-sidebartype="<?= session()->get(ClaveSesion::UI_TIPO_MENU_NAVEGACION->name, 'full') ?>"
   data-errores='<?= json_encode(array_values($errores)) ?>'
   data-exitos='<?= json_encode(array_values($exitos)) ?>'
   x-data="mensajes"
@@ -57,6 +58,7 @@ $exitos = (array) flash()->display('exitos');
     </div>
   </div>
 
+  <script src="./recursos/compilados/autenticados.js?id=<?= $idDeRecursos ?>"></script>
   <script src="./recursos/js/theme/theme.js?id=<?= $idDeRecursos ?>"></script>
   <script src="./recursos/js/theme/app.min.js?id=<?= $idDeRecursos ?>"></script>
   <script src="./recursos/js/theme/sidebarmenu.js?id=<?= $idDeRecursos ?>"></script>

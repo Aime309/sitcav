@@ -1,6 +1,6 @@
 <main class="card mb-3">
   <header class="card-header text-center">
-    <?php Flight::render('componentes/enlace-logo') ?>
+    <?php Flight::render('componentes/logo') ?>
     <p class="card-text">Crea una cuenta para comenzar</p>
   </header>
   <form class="card-body d-grid gap-3" method="post">

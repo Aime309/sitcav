@@ -1,6 +1,6 @@
 <main class="card">
   <header class="card-header text-center">
-    <?php Flight::render('componentes/enlace-logo') ?>
+    <?php Flight::render('componentes/logo') ?>
     <p class="card-text">
       Para restablecer tu contraseña, responde la siguiente pregunta secreta:
     </p>

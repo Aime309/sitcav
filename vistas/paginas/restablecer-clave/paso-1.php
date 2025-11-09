@@ -1,6 +1,6 @@
 <main class="card">
   <header class="card-header text-center" x-data="{ modo: 'correo' }">
-    <?php Flight::render('componentes/enlace-logo') ?>
+    <?php Flight::render('componentes/logo') ?>
     <ul class="nav nav-pills nav-fill mb-3">
       <li class="nav-item">
         <a

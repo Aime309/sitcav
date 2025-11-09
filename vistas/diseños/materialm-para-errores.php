@@ -1,15 +1,17 @@
 <?php
 
+use SITCAV\Enums\ClaveSesion;
+
 $idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
 
 ?>
 
 <!doctype html>
 <html
-  dir="<?= session()->get('direccion', 'ltr') ?>"
-  data-bs-theme="<?= session()->get('tema', '') ?>"
-  data-color-theme="<?= session()->get('tema_colores', 'Blue_Theme') ?>"
-  data-boxed-layout="<?= session()->get('container', 'boxed') ?>"
+  dir="<?= session()->get(ClaveSesion::UI_DIRECCION->name, 'ltr') ?>"
+  data-bs-theme="<?= session()->get(ClaveSesion::UI_TEMA->name, '') ?>"
+  data-color-theme="<?= session()->get(ClaveSesion::UI_COLORES->name, 'Blue_Theme') ?>"
+  data-boxed-layout="<?= session()->get(ClaveSesion::UI_ANCHURA->name, 'boxed') ?>"
   x-data="tema"
   :dir="direccion"
   :data-bs-theme="tema"
@@ -24,9 +26,11 @@ $idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
   <link rel="icon" href="./recursos/imagenes/favicon.png" />
   <link rel="stylesheet" href="./recursos/compilados/errores.css?id=<?= $idDeRecursos ?>" />
   <link rel="stylesheet" href="./recursos/css/materialm.css?id=<?= $idDeRecursos ?>" />
-  <script src="./recursos/compilados/errores.js?id=<?= $idDeRecursos ?>"></script>
 </head>
 
-<body class="text-center"><?= $pagina ?></body>
+<body class="text-center">
+  <?= $pagina ?>
+  <script src="./recursos/compilados/errores.js?id=<?= $idDeRecursos ?>"></script>
+</body>
 
 </html>

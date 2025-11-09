@@ -1,5 +1,7 @@
 <?php
 
+use SITCAV\Enums\ClaveSesion;
+
 $idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
 $errores = (array) flash()->display('errores');
 $exitos = (array) flash()->display('exitos');
@@ -8,11 +10,11 @@ $exitos = (array) flash()->display('exitos');
 
 <!doctype html>
 <html
-  dir="<?= session()->get('direccion', 'ltr') ?>"
-  data-bs-theme="<?= session()->get('tema', '') ?>"
-  data-color-theme="<?= session()->get('tema_colores', 'Blue_Theme') ?>"
-  data-boxed-layout="<?= session()->get('container', 'boxed') ?>"
-  data-card="<?= session()->get('card_type', 'shadow') ?>"
+  dir="<?= session()->get(ClaveSesion::UI_DIRECCION->name, 'ltr') ?>"
+  data-bs-theme="<?= session()->get(ClaveSesion::UI_TEMA->name, '') ?>"
+  data-color-theme="<?= session()->get(ClaveSesion::UI_COLORES->name, 'Blue_Theme') ?>"
+  data-boxed-layout="<?= session()->get(ClaveSesion::UI_ANCHURA->name, 'boxed') ?>"
+  data-card="<?= session()->get(ClaveSesion::UI_TIPO_TARJETAS->name, 'shadow') ?>"
   x-data="tema"
   :dir="direccion"
   :data-bs-theme="tema"
@@ -30,7 +32,6 @@ $exitos = (array) flash()->display('exitos');
     rel="stylesheet"
     href="./recursos/compilados/visitantes.css?id=<?= $idDeRecursos ?>" />
   <link rel="stylesheet" href="./recursos/css/materialm.css?id=<?= $idDeRecursos ?>" />
-  <script src="./recursos/compilados/visitantes.js?id=<?= $idDeRecursos ?>"></script>
   <style>
     body {
       background: url('./recursos/imagenes/Imagen de WhatsApp 2025-10-30 a las 21.55.54_e571a147.jpg');
@@ -45,8 +46,9 @@ $exitos = (array) flash()->display('exitos');
   data-exitos='<?= json_encode(array_values($exitos)) ?>'
   x-data="mensajes"
   class="col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-7 pt-3 px-3 mx-auto">
-  <?= $pagina ?>
   <?php Flight::render('componentes/notificaciones') ?>
+  <?= $pagina ?>
+  <script src="./recursos/compilados/visitantes.js?id=<?= $idDeRecursos ?>"></script>
 </body>
 
 </html>

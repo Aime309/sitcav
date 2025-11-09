@@ -1,6 +1,6 @@
 <main class="card m-0">
   <header class="card-header text-center">
-    <?php Flight::render('componentes/enlace-logo') ?>
+    <?php Flight::render('componentes/logo') ?>
     <p class="card-text">
       Te hemos enviado un código de verificación a tu correo. Ingresa el código de 6 dígitos en el campo de abajo.
     </p>
