@@ -665,6 +665,11 @@
   --bs-secondary-bg-subtle: rgba(0, 116, 186, 0.1)
 }
 
+[data-bs-theme=dark][data-color-theme]:root .bg-primary-subtle,
+[data-bs-theme=light][data-color-theme]:root .bg-primary-subtle {
+  backdrop-filter: blur(1em);
+}
+
 [data-bs-theme=dark][data-color-theme=Orange_Theme]:root .btn-primary,
 [data-bs-theme=light][data-color-theme=Orange_Theme]:root .btn-primary {
   --bs-btn-bg: #fa896b;
