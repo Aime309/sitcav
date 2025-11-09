@@ -10,6 +10,7 @@ use SITCAV\Autorizadores\SoloTasaActualizada;
 use SITCAV\Autorizadores\SoloVisitantes;
 use SITCAV\Enums\ClaveSesion;
 use SITCAV\Enums\Permiso;
+use SITCAV\Enums\Rol;
 use SITCAV\Modelos\Cliente;
 use SITCAV\Modelos\Producto;
 use SITCAV\Modelos\Usuario;
@@ -17,9 +18,10 @@ use SITCAV\Modelos\UsuarioAutenticado;
 
 Flight::group('', static function (): void {
   Flight::route('GET /oauth2/google', static function (): void {
-    $error = Flight::request()->query->error;
-    $codigo = Flight::request()->query->code;
-    $estado = Flight::request()->query->state;
+    $query = Flight::request()->query;
+    $error = $query->error;
+    $codigo = $query->code;
+    $estado = $query->state;
 
     if ($error) {
       flash()->set(['No se pudo iniciar sesión con Google'], ClaveSesion::MENSAJES_ERRORES->name);
@@ -32,14 +34,14 @@ Flight::group('', static function (): void {
     if (!$codigo) {
       $urlDeGoogle = auth()->client('google')->getAuthorizationUrl();
       $estadoDeGoogle = auth()->client('google')->getState();
-      session()->set('oauth2state', $estadoDeGoogle);
+      session()->set(ClaveSesion::OAUTH2_ESTADO->name, $estadoDeGoogle);
       Flight::redirect($urlDeGoogle);
 
       return;
     }
 
-    if (!$estado || ($estado !== session()->get('oauth2state'))) {
-      session()->remove('oauth2state');
+    if (!$estado || ($estado !== session()->get(ClaveSesion::OAUTH2_ESTADO->name))) {
+      session()->remove(ClaveSesion::OAUTH2_ESTADO->name);
       flash()->set(['No se pudo iniciar sesión con Google. El estado es inválido'], ClaveSesion::MENSAJES_ERRORES->name);
       Flight::redirect('/ingresar');
 
@@ -56,7 +58,11 @@ Flight::group('', static function (): void {
       auth()->fromOAuth([
         'token' => $token,
         'user' => [
-          'roles' => json_encode(['Encargado', 'Empleado superior', 'Vendedor']),
+          'roles' => json_encode([
+            Rol::ENCARGADO->value,
+            Rol::EMPLEADO_SUPERIOR->value,
+            Rol::VENDEDOR->value
+          ]),
           'email' => $usuarioDeGoogle->toArray()['email'],
           'url_imagen' => $usuarioDeGoogle->toArray()['picture'],
         ],
@@ -136,17 +142,17 @@ Flight::group('', static function (): void {
         return;
       }
 
-      session()->set('usuarios.id', $usuario->id);
-      Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
+      session()->set(ClaveSesion::USUARIO_ID->name, $usuario->id);
+      Flight::render('paginas/restablecer-clave/paso-2', compact('usuario'), 'pagina');
       Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
     });
 
     Flight::route('POST /2', static function (): void {
       $respuestaSecreta = Flight::request()->data->respuesta_secreta;
-      $usuario = Usuario::query()->find(session()->get('usuarios.id'));
+      $usuario = Usuario::query()->find(session()->get(ClaveSesion::USUARIO_ID->name));
 
       if (!$respuestaSecreta) {
-        Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
+        Flight::render('paginas/restablecer-clave/paso-2', compact('usuario'), 'pagina');
         Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
         return;
@@ -154,32 +160,32 @@ Flight::group('', static function (): void {
 
       try {
         $usuario->asegurarValidezRespuestaSecreta($respuestaSecreta);
-        Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
+        Flight::render('paginas/restablecer-clave/paso-3', compact('usuario'), 'pagina');
         Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
       } catch (Throwable) {
         flash()->set(['La respuesta secreta es incorrecta.'], ClaveSesion::MENSAJES_ERRORES->name);
-        Flight::render('paginas/restablecer-clave/paso-2', ['usuario' => $usuario], 'pagina');
+        Flight::render('paginas/restablecer-clave/paso-2', compact('usuario'), 'pagina');
         Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
       }
     });
 
     Flight::route('POST /3', static function (): void {
       $nuevaClave = Flight::request()->data->nueva_clave;
-      $usuario = Usuario::query()->find(session()->get('usuarios.id'));
+      $usuario = Usuario::query()->find(session()->get(ClaveSesion::USUARIO_ID->name));
 
       try {
         $usuario->restablecerClave($nuevaClave);
       } catch (Error $error) {
         flash()->set([$error->getMessage()], ClaveSesion::MENSAJES_ERRORES->name);
-        Flight::render('paginas/restablecer-clave/paso-3', ['usuario' => $usuario], 'pagina');
+        Flight::render('paginas/restablecer-clave/paso-3', compact('usuario'), 'pagina');
         Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Restablecer contraseña']);
 
         return;
       }
 
-      if (session()->has('user.email')) {
+      if (session()->has(ClaveSesion::USUARIO_CORREO->name)) {
         auth()->login([
-          'email' => session()->get('user.email'),
+          'email' => session()->get(ClaveSesion::USUARIO_CORREO->name),
           'clave_encriptada' => $nuevaClave,
         ]);
       } else {
@@ -190,14 +196,14 @@ Flight::group('', static function (): void {
       }
 
 
-      session()->remove('usuarios.id');
-      session()->remove('user.email');
+      session()->remove(ClaveSesion::USUARIO_ID->name);
+      session()->remove(ClaveSesion::USUARIO_CORREO->name);
       flash()->set(['La contraseña se ha restablecido correctamente.'], ClaveSesion::MENSAJES_EXITOS->name);
       Flight::redirect('/');
     });
 
     Flight::route('POST /solicitar-codigo', static function (): void {
-      $correo = session()->retrieve('user.email', Flight::request()->data->correo);
+      $correo = session()->retrieve(ClaveSesion::USUARIO_CORREO->name, Flight::request()->data->correo);
       $usuario = Usuario::query()->where('email', $correo)->first();
 
       if (!$usuario) {
@@ -210,10 +216,10 @@ Flight::group('', static function (): void {
       $clienteCorreo = new PHPMailer;
       $codigoVerificacion = rand(100000, 999999);
 
-      session()->set('verification_code', $codigoVerificacion);
-      session()->set('verification_code_expiration_timestamp', time() + 60); // 1 minuto
-      session()->set('user.email', $usuario->email);
-      session()->set('usuarios.id', $usuario->id);
+      session()->set(ClaveSesion::CODIGO_VERIFICACION->name, $codigoVerificacion);
+      session()->set(ClaveSesion::CODIGO_VERIFICACION_EXPIRACION->name, time() + 60); // 1 minuto
+      session()->set(ClaveSesion::USUARIO_CORREO->name, $usuario->email);
+      session()->set(ClaveSesion::USUARIO_ID->name, $usuario->id);
 
       try {
         $clienteCorreo->isSMTP();
@@ -252,8 +258,8 @@ Flight::group('', static function (): void {
 
     Flight::route('POST /verificar-codigo', static function (): void {
       $codigoIngresado = implode('', Flight::request()->data->codigo);
-      $codigoAlmacenado = session()->get('verification_code');
-      $expiracionCodigo = session()->get('verification_code_expiration_timestamp');
+      $codigoAlmacenado = session()->get(ClaveSesion::CODIGO_VERIFICACION->name);
+      $expiracionCodigo = session()->get(ClaveSesion::CODIGO_VERIFICACION_EXPIRACION->name);
 
       if (time() > $expiracionCodigo) {
         flash()->set(['El código de verificación ha expirado. Por favor, solicita uno nuevo.'], ClaveSesion::MENSAJES_ERRORES->name);
@@ -279,8 +285,8 @@ Flight::group('', static function (): void {
         return;
       }
 
-      session()->remove('verification_code');
-      session()->remove('verification_code_expiration_timestamp');
+      session()->remove(ClaveSesion::CODIGO_VERIFICACION->name);
+      session()->remove(ClaveSesion::CODIGO_VERIFICACION_EXPIRACION->name);
 
       Flight::render(
         'paginas/restablecer-clave/paso-3',
@@ -298,8 +304,8 @@ Flight::group('', static function (): void {
 
 Flight::route('/salir', static function (): void {
   auth()->logout();
-  session()->remove('oauth-token');
-  session()->remove('oauth2state');
+  session()->remove(ClaveSesion::OAUTH2_TOKEN->name);
+  session()->remove(ClaveSesion::OAUTH2_ESTADO->name->name);
 
   flash()->set(
     session()->retrieve(ClaveSesion::MENSAJES_ERRORES->name, []),
@@ -313,10 +319,7 @@ Flight::group('', static function (): void {
   Flight::route('POST /cotizaciones', static function (): void {
     $usuarioAutenticado = Container::getInstance()->get(UsuarioAutenticado::class);
     $nuevaTasa = Flight::request()->data->nueva_tasa;
-
-    $usuarioAutenticado->cotizaciones()->create([
-      'tasa_bcv' => $nuevaTasa,
-    ]);
+    $usuarioAutenticado->cotizaciones()->create(['tasa_bcv' => $nuevaTasa]);
 
     flash()->set("Tasa BCV establecida satisfactoriamente en Bs. $nuevaTasa", ClaveSesion::MENSAJES_EXITOS->name);
     Flight::redirect(Flight::request()->referrer);
@@ -336,7 +339,11 @@ Flight::group('', static function (): void {
         $marcas = $usuarioAutenticado->marcas;
         $proveedores = $usuarioAutenticado->proveedores;
 
-        Flight::render('paginas/inventario', compact('productos', 'categorias', 'proveedores', 'marcas'), 'pagina');
+        Flight::render(
+          'paginas/inventario',
+          compact('productos', 'categorias', 'proveedores', 'marcas'),
+          'pagina'
+        );
         Flight::render('diseños/diseño-con-alpine-para-autenticados', ['titulo' => 'Inventario']);
       });
 
@@ -406,7 +413,6 @@ Flight::group('', static function (): void {
 
     Flight::route('POST /empleados/recontratar/@id', static function (int $id): void {
       $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
-
       $empleado = $empleados->find($id);
 
       if (!$empleado instanceof Usuario) {
@@ -424,7 +430,6 @@ Flight::group('', static function (): void {
 
     Flight::route('POST /empleados/promover/@id', static function (int $id): void {
       $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
-
       $empleado = $empleados->find($id);
 
       if (!$empleado instanceof Usuario) {
