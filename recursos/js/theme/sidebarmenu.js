@@ -132,7 +132,7 @@ if ((at = "vertical")) {
               });
             document
               .getElementById("menu-right-" + id)
-              .classList.add("d-block");
+              ?.classList.add("d-block");
             document.body.setAttribute("data-sidebartype", "full");
           });
         });

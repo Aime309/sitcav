@@ -1,47 +1,101 @@
 <?php
 
+use SITCAV\Enums\Permiso;
+
 $miniNavItems = [
   [
     [
-      'id' => 'mini-1',
-      'tooltip' => 'Dashboards',
-      'icon' => 'solar:layers-line-duotone',
+      'tooltip' => 'Estadísticas',
+      'icon' => 'bi bi-stack',
+      'permisos' => [],
+    ],
+    [
+      'tooltip' => 'Ventas',
+      'icon' => 'bi bi-currency-dollar',
+      'permisos' => [Permiso::VER_VENTAS],
+    ],
+    [
+      'tooltip' => 'Empleados',
+      'icon' => 'bi bi-people',
+      'permisos' => [Permiso::VER_EMPLEADOS],
+    ],
+    [
+      'tooltip' => 'Negocios',
+      'icon' => 'bi bi-briefcase',
+      'permisos' => [Permiso::VER_NEGOCIOS],
+    ],
+    [
+      'tooltip' => 'Proveedores',
+      'icon' => 'bi bi-truck',
+      'permisos' => [Permiso::VER_PROVEEDORES],
+    ],
+    [
+      'tooltip' => 'Inventario',
+      'icon' => 'bi bi-box-seam',
+      'permisos' => [Permiso::VER_PRODUCTOS],
+    ],
+    [
+      'tooltip' => 'Compras',
+      'icon' => 'bi bi-cart4',
+      'permisos' => [Permiso::VER_COMPRAS],
+
+    ],
+    [
+      'tooltip' => 'Clientes',
+      'icon' => 'bi bi-person-lines-fill',
+      'permisos' => [Permiso::VER_CLIENTES],
+    ],
+    [
+      'tooltip' => 'Pagos',
+      'icon' => 'bi bi-credit-card-2-front',
+      'permisos' => [Permiso::VER_PAGOS],
+    ],
+    [
+      'tooltip' => 'Configuraciones',
+      'icon' => 'bi bi-gear',
+      'permisos' => [],
     ],
   ]
 ];
 
 $sidebarNavs = [
   [
-    'id' => 'menu-right-mini-1',
+    'permisos' => [],
     'grupos' => [
       [
-        'nombre' => 'Dashboards',
+        'nombre' => 'Estadísticas',
         'enlaces' => [
           [
-            'href' => '../main/index2.html',
-            'icon' => 'solar:widget-add-line-duotone',
-            'texto' => 'eCommerce',
+            'href' => './',
+            'icon' => 'bi bi-shop',
+            'texto' => 'Comercio electrónico',
+            'permisos' => [],
           ],
           // [
           //   'href' => 'javascript:void(0)',
           //   'icon' => 'solar:home-angle-line-duotone',
           //   'texto' => 'Front Pages',
+          //   'permisos' => [],
           //   'subenlaces' => [
           //     [
           //       'href' => '../main/frontend-landingpage.html',
           //       'texto' => 'Homepage',
+          //       'permisos' => [],
           //     ],
           //     [
           //       'href' => '../main/frontend-landingpage-2.html',
           //       'texto' => '1.1',
+          //       'permisos' => [],
           //       'subenlaces' => [
           //         [
           //           'href' => '../main/frontend-landingpage-2.html#section-features',
           //           'texto' => '2.1',
+          //           'permisos' => [],
           //           'subenlaces' => [
           //             [
           //               'href' => '../main/frontend-landingpage-2.html#section-features',
           //               'texto' => '3.1',
+          //               'permisos' => [],
           //             ],
           //           ],
           //         ],
@@ -54,6 +108,12 @@ $sidebarNavs = [
     ],
   ],
 ];
+
+/** @param array{permisos: Permiso[]} $enlace */
+function tienePermisos(array $enlace): bool
+{
+  return !$enlace['permisos'] || auth()->user()?->can(array_map(static fn(Permiso $permiso): string => $permiso->name, $enlace['permisos']));
+}
 
 ?>
 
@@ -68,8 +128,11 @@ $sidebarNavs = [
       </div>
       <ul class="list-unstyled mini-nav-ul overflow-y-auto overflow-x-hidden">
         <?php foreach ($miniNavItems as $links): ?>
-          <?php foreach ($links as $link): ?>
-            <li class="mini-nav-item" id="<?= $link['id'] ?>">
+          <?php foreach ($links as $indice => $link): ?>
+            <li
+              class="mini-nav-item <?= !tienePermisos($link) ? 'disabled opacity-25' : '' ?>"
+              id="mini-<?= $indice + 1 ?>"
+              style="<?= !tienePermisos($link) ? 'pointer-events: none' : '' ?>">
               <a
                 href="javascript:void(0)"
                 data-bs-toggle="tooltip"
@@ -145,65 +208,75 @@ $sidebarNavs = [
       </ul>
     </div>
     <div class="sidebarmenu">
-      <?php foreach ($sidebarNavs as $nav): ?>
-        <nav class="sidebar-nav overflow-y-auto" id="<?= $nav['id'] ?>">
-          <ul class="list-unstyled sidebar-menu" id="sidebarnav">
-            <?php foreach ($nav['grupos'] as $grupo): ?>
-              <li class="nav-small-cap">
-                <span class="hide-menu"><?= $grupo['nombre'] ?></span>
-              </li>
-              <?php foreach ($grupo['enlaces'] as $enlace): ?>
-                <li class="sidebar-item">
-                  <a
-                    class="sidebar-link <?= count($enlace['subenlaces'] ?? []) ? 'has-arrow' : '' ?>"
-                    href="<?= $enlace['href'] ?>">
-                    <iconify-icon icon="<?= $enlace['icon'] ?>" class=""></iconify-icon>
-                    <span class="hide-menu"><?= $enlace['texto'] ?></span>
-                  </a>
-                  <ul class="collapse first-level">
-                    <?php foreach ($enlace['subenlaces'] ?? [] as $subenlace): ?>
-                      <li class="sidebar-item">
-                        <a
-                          class="sidebar-link <?= count($subenlace['subenlaces'] ?? []) ? 'has-arrow' : '' ?>"
-                          href="<?= count($subenlace['subenlaces'] ?? []) ? 'javascript:void(0)' : $subenlace['href'] ?>">
-                          <span class="icon-small"></span>
-                          <?= $subenlace['texto'] ?>
-                        </a>
-                        <ul class="collapse second-level">
-                          <?php foreach ($subenlace['subenlaces'] ?? [] as $subenlace): ?>
-                            <li class="sidebar-item">
-                              <a
-                                class="sidebar-link <?= count($subenlace['subenlaces'] ?? []) ? 'has-arrow' : '' ?>"
-                                href="<?= count($subenlace['subenlaces'] ?? []) ? 'javascript:void(0)' : $subenlace['href'] ?>">
-                                <span class="icon-small"></span>
-                                <?= $subenlace['texto'] ?>
-                              </a>
-                              <ul class="collapse third-level">
-                                <?php foreach ($subenlace['subenlaces'] ?? [] as $subenlace): ?>
-                                  <li class="sidebar-item">
-                                    <a
-                                      class="sidebar-link <?= count($subenlace['subenlaces'] ?? []) ? 'has-arrow' : '' ?>"
-                                      href="<?= count($subenlace['subenlaces'] ?? []) ? 'javascript:void(0)' : $subenlace['href'] ?>">
-                                      <span class="icon-small"></span>
-                                      <?= $subenlace['texto'] ?>
-                                    </a>
-                                  </li>
-                                <?php endforeach ?>
-                              </ul>
-                            </li>
-                          <?php endforeach ?>
-                        </ul>
-                      </li>
-                    <?php endforeach ?>
-                  </ul>
+      <?php foreach ($sidebarNavs as $indice => $nav): ?>
+        <?php if (tienePermisos($nav)): ?>
+          <nav class="sidebar-nav overflow-y-auto" id="menu-right-mini-<?= $indice + 1 ?>">
+            <ul class="list-unstyled sidebar-menu" id="sidebarnav">
+              <?php foreach ($nav['grupos'] as $grupo): ?>
+                <li class="nav-small-cap">
+                  <span class="hide-menu"><?= $grupo['nombre'] ?></span>
+                </li>
+                <?php foreach ($grupo['enlaces'] as $enlace): ?>
+                  <li
+                    class="sidebar-item <?= !tienePermisos($enlace) ? 'disabled opacity-25' : '' ?>"
+                    style="<?= !tienePermisos($enlace) ? 'pointer-events: none' : '' ?>">
+                    <a
+                      class="sidebar-link <?= count($enlace['subenlaces'] ?? []) ? 'has-arrow' : '' ?>"
+                      href="<?= $enlace['href'] ?>">
+                      <i class="<?= $enlace['icon'] ?>"></i>
+                      <span class="hide-menu"><?= $enlace['texto'] ?></span>
+                    </a>
+                    <ul class="collapse first-level ps-1" style="list-style: none">
+                      <?php foreach ($enlace['subenlaces'] ?? [] as $subenlace): ?>
+                        <li
+                          class="sidebar-item <?= !tienePermisos($subenlace) ? 'disabled opacity-25' : '' ?>"
+                          style="<?= !tienePermisos($subenlace) ? 'pointer-events: none' : '' ?>">
+                          <a
+                            class="sidebar-link <?= count($subenlace['subenlaces'] ?? []) ? 'has-arrow' : '' ?>"
+                            href="<?= count($subenlace['subenlaces'] ?? []) ? 'javascript:void(0)' : $subenlace['href'] ?>">
+                            <span class="icon-small"></span>
+                            <?= $subenlace['texto'] ?>
+                          </a>
+                          <ul class="collapse second-level ps-1" style="list-style: none">
+                            <?php foreach ($subenlace['subenlaces'] ?? [] as $subenlace): ?>
+                              <li
+                                class="sidebar-item <?= !tienePermisos($subenlace) ? 'disabled opacity-25' : '' ?>"
+                                style="<?= !tienePermisos($subenlace) ? 'pointer-events: none' : '' ?>">
+                                <a
+                                  class="sidebar-link <?= count($subenlace['subenlaces'] ?? []) ? 'has-arrow' : '' ?>"
+                                  href="<?= count($subenlace['subenlaces'] ?? []) ? 'javascript:void(0)' : $subenlace['href'] ?>">
+                                  <span class="icon-small"></span>
+                                  <?= $subenlace['texto'] ?>
+                                </a>
+                                <ul class="collapse third-level ps-1" style="list-style: none">
+                                  <?php foreach ($subenlace['subenlaces'] ?? [] as $subenlace): ?>
+                                    <li
+                                      class="sidebar-item <?= !tienePermisos($subenlace) ? 'disabled opacity-25' : '' ?>"
+                                      style="<?= !tienePermisos($subenlace) ? 'pointer-events: none' : '' ?>">
+                                      <a
+                                        class="sidebar-link <?= count($subenlace['subenlaces'] ?? []) ? 'has-arrow' : '' ?>"
+                                        href="<?= count($subenlace['subenlaces'] ?? []) ? 'javascript:void(0)' : $subenlace['href'] ?>">
+                                        <span class="icon-small"></span>
+                                        <?= $subenlace['texto'] ?>
+                                      </a>
+                                    </li>
+                                  <?php endforeach ?>
+                                </ul>
+                              </li>
+                            <?php endforeach ?>
+                          </ul>
+                        </li>
+                      <?php endforeach ?>
+                    </ul>
+                  </li>
+                <?php endforeach ?>
+                <li>
+                  <span class="sidebar-divider lg"></span>
                 </li>
               <?php endforeach ?>
-              <li>
-                <span class="sidebar-divider lg"></span>
-              </li>
-            <?php endforeach ?>
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        <?php endif ?>
       <?php endforeach ?>
     </div>
   </div>
