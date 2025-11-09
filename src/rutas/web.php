@@ -305,7 +305,7 @@ Flight::group('', static function (): void {
 Flight::route('/salir', static function (): void {
   auth()->logout();
   session()->remove(ClaveSesion::OAUTH2_TOKEN->name);
-  session()->remove(ClaveSesion::OAUTH2_ESTADO->name->name);
+  session()->remove(ClaveSesion::OAUTH2_ESTADO->name);
 
   flash()->set(
     session()->retrieve(ClaveSesion::MENSAJES_ERRORES->name, []),

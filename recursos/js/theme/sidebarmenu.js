@@ -96,7 +96,7 @@ if ((at = "vertical")) {
       // This is for show menu
       //****************************
 
-      var closestNav = elements.closest("nav[class^=sidebar-nav]");
+      var closestNav = elements?.closest("nav[class^=sidebar-nav]");
       var menuid = (closestNav && closestNav.id) || "menu-right-mini-1";
       var menu = menuid[menuid.length - 1];
 

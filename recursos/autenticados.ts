@@ -7,6 +7,7 @@ import "./ts/tasa-de-pagina";
 import "./ts/configurar-jquery";
 import "./ts/configurar-tooltips-de-bootstrap";
 import "./ts/configurar-offcanvas-de-bootstrap";
+import "./ts/configurar-dropdowns-de-bootstrap";
 import Alpine from "alpinejs";
 
 // @ts-ignore
