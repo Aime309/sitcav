@@ -173,7 +173,7 @@ $notificationes = [];
       <div class="collapse navbar-collapse justify-content-end" id="<?= $idNav ?>">
         <div class="d-flex align-items-center justify-content-between">
           <ul class="navbar-nav flex-row mx-auto ms-lg-auto align-items-center justify-content-center">
-            <li class="nav-item nav-icon-hover dropdown">
+            <!-- <li class="nav-item nav-icon-hover dropdown">
               <a
                 href="#<?= $idEnlacesMovilOffcanvas ?>"
                 class="nav-link d-flex d-lg-none align-items-center justify-content-center"
@@ -182,15 +182,15 @@ $notificationes = [];
                 aria-controls="offcanvasWithBothOptions">
                 <i class="bi bi-list-nested"></i>
               </a>
-            </li>
-            <li class="nav-item nav-icon-hover">
+            </li> -->
+            <!-- <li class="nav-item nav-icon-hover">
               <a
                 class="nav-link"
                 href="#<?= $idModalBusqueda ?>"
                 data-bs-toggle="modal">
                 <i class="bi bi-search"></i>
               </a>
-            </li>
+            </li> -->
             <li class="nav-item nav-icon-hover">
               <button class="nav-link" @click="tema = tema === 'light' ? 'dark' : 'light'">
                 <i
@@ -291,13 +291,13 @@ $notificationes = [];
     <div class="offcanvas offcanvas-start pt-0" data-bs-scroll="true" tabindex="-1" id="<?= $idEnlacesMovilOffcanvas ?>" aria-labelledby="offcanvasWithBothOptionsLabel">
       <nav class="sidebar-nav scroll-sidebar">
         <div class="offcanvas-header justify-content-between">
-          <a href="../main/index.html" class="text-nowrap logo-img">
-            <img src="./recursos/images/logos/logo-icon.svg" alt="Logo" />
+          <a href="./">
+            <img :src="`./recursos/imagenes/logo-horizontal-${tema}.png`" class="img-fluid w-75" />
           </a>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
-        <div class="offcanvas-body pt-0 h-n80" data-simplebar="" data-simplebar>
-          <ul id="sidebarnav">
+        <div class="offcanvas-body pt-0 h-n80 overflow-auto">
+          <ul class="list-unstyled" id="sidebarnav">
             <li class="sidebar-item">
               <a class="sidebar-link has-arrow ms-0" href="javascript:void(0)" aria-expanded="false">
                 <span>
