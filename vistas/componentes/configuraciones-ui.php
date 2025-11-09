@@ -248,7 +248,7 @@ $id = uniqid();
       <?php endforeach ?>
     </div>
 
-    <h3>Tipo de menú de navegación</h3>
+    <!-- <h3>Tipo de menú de navegación</h3>
 
     <div class="d-flex gap-3 customizer-box">
       <?php foreach ($tiposMenu as $tipoMenu): ?>
@@ -266,7 +266,7 @@ $id = uniqid();
           <?= $tipoMenu['title'] ?>
         </label>
       <?php endforeach ?>
-    </div>
+    </div> -->
 
     <h3>Tipo de tarjetas</h3>
 

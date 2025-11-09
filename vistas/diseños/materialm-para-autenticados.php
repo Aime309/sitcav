@@ -17,7 +17,7 @@ $informaciones = (array) flash()->display(ClaveSesion::MENSAJES_INFORMACIONES->n
   data-bs-theme="<?= session()->get(ClaveSesion::UI_TEMA->name, '') ?>"
   data-color-theme="<?= session()->get(ClaveSesion::UI_COLORES->name, 'Blue_Theme') ?>"
   data-boxed-layout="<?= session()->get(ClaveSesion::UI_ANCHURA->name, 'boxed') ?>"
-  data-sidebartype="<?= session()->get(ClaveSesion::UI_TIPO_MENU_NAVEGACION->name, 'full') ?>"
+  data-sidebartype="<?= session()->get(ClaveSesion::UI_TIPO_MENU_NAVEGACION->name, 'mini-sidebar') ?>"
   data-card="<?= session()->get(ClaveSesion::UI_TIPO_TARJETAS->name, 'shadow') ?>"
   x-data="tema"
   :dir="direccion"

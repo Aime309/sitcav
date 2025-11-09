@@ -7,133 +7,209 @@ $miniNavItems = [
     [
       'tooltip' => 'Estadísticas',
       'icon' => 'bi bi-stack',
+      'href' => './',
       'permisos' => [],
+      'activo' => Flight::request()->url === '/',
     ],
     [
       'tooltip' => 'Empleados',
       'icon' => 'bi bi-people',
+      'href' => './empleados',
       'permisos' => [Permiso::VER_EMPLEADOS],
-    ],
-    [
-      'tooltip' => 'Ventas',
-      'icon' => 'bi bi-currency-dollar',
-      'permisos' => [Permiso::VER_VENTAS],
-    ],
-    [
-      'tooltip' => 'Negocios',
-      'icon' => 'bi bi-briefcase',
-      'permisos' => [Permiso::VER_NEGOCIOS],
-    ],
-    [
-      'tooltip' => 'Proveedores',
-      'icon' => 'bi bi-truck',
-      'permisos' => [Permiso::VER_PROVEEDORES],
+      'activo' => Flight::request()->url === '/empleados',
     ],
     [
       'tooltip' => 'Inventario',
       'icon' => 'bi bi-box-seam',
+      'href' => './inventario',
       'permisos' => [Permiso::VER_PRODUCTOS],
+      'activo' => Flight::request()->url === '/inventario',
     ],
-    [
-      'tooltip' => 'Compras',
-      'icon' => 'bi bi-cart4',
-      'permisos' => [Permiso::VER_COMPRAS],
+    // [
+    //   'tooltip' => 'Ventas',
+    //   'icon' => 'bi bi-currency-dollar',
+    //   'permisos' => [Permiso::VER_VENTAS],
+    // ],
+    // [
+    //   'tooltip' => 'Negocios',
+    //   'icon' => 'bi bi-briefcase',
+    //   'permisos' => [Permiso::VER_NEGOCIOS],
+    // ],
+    // [
+    //   'tooltip' => 'Proveedores',
+    //   'icon' => 'bi bi-truck',
+    //   'permisos' => [Permiso::VER_PROVEEDORES],
+    // ],
+    // [
+    //   'tooltip' => 'Compras',
+    //   'icon' => 'bi bi-cart4',
+    //   'permisos' => [Permiso::VER_COMPRAS],
 
-    ],
-    [
-      'tooltip' => 'Clientes',
-      'icon' => 'bi bi-person-lines-fill',
-      'permisos' => [Permiso::VER_CLIENTES],
-    ],
-    [
-      'tooltip' => 'Pagos',
-      'icon' => 'bi bi-credit-card-2-front',
-      'permisos' => [Permiso::VER_PAGOS],
-    ],
-    [
-      'tooltip' => 'Configuraciones',
-      'icon' => 'bi bi-gear',
-      'permisos' => [],
-    ],
+    // ],
+    // [
+    //   'tooltip' => 'Clientes',
+    //   'icon' => 'bi bi-person-lines-fill',
+    //   'permisos' => [Permiso::VER_CLIENTES],
+    // ],
+    // [
+    //   'tooltip' => 'Pagos',
+    //   'icon' => 'bi bi-credit-card-2-front',
+    //   'permisos' => [Permiso::VER_PAGOS],
+    // ],
+    // [
+    //   'tooltip' => 'Configuraciones',
+    //   'icon' => 'bi bi-gear',
+    //   'permisos' => [],
+    // ],
   ]
 ];
 
 $sidebarNavs = [
+  // [
+  //   'activo' => Flight::request()->url === '/',
+  //   'permisos' => [],
+  //   'grupos' => [
+  //     [
+  //       'nombre' => 'Estadísticas',
+  //       'enlaces' => [
+  //         [
+  //           'href' => './',
+  //           'icon' => 'bi bi-shop',
+  //           'texto' => 'Comercio electrónico',
+  //           'permisos' => [],
+  //         ],
+  //         // [
+  //         //   'href' => 'javascript:void(0)',
+  //         //   'icon' => 'solar:home-angle-line-duotone',
+  //         //   'texto' => 'Front Pages',
+  //         //   'permisos' => [],
+  //         //   'subenlaces' => [
+  //         //     [
+  //         //       'href' => '../main/frontend-landingpage.html',
+  //         //       'texto' => 'Homepage',
+  //         //       'permisos' => [],
+  //         //     ],
+  //         //     [
+  //         //       'href' => '../main/frontend-landingpage-2.html',
+  //         //       'texto' => '1.1',
+  //         //       'permisos' => [],
+  //         //       'subenlaces' => [
+  //         //         [
+  //         //           'href' => '../main/frontend-landingpage-2.html#section-features',
+  //         //           'texto' => '2.1',
+  //         //           'permisos' => [],
+  //         //           'subenlaces' => [
+  //         //             [
+  //         //               'href' => '../main/frontend-landingpage-2.html#section-features',
+  //         //               'texto' => '3.1',
+  //         //               'permisos' => [],
+  //         //             ],
+  //         //           ],
+  //         //         ],
+  //         //       ],
+  //         //     ],
+  //         //   ],
+  //         // ],
+  //       ],
+  //     ]
+  //   ],
+  // ],
+  // [
+  //   'activo' => Flight::request()->url === '/empleados',
+  //   'permisos' => [Permiso::VER_EMPLEADOS],
+  //   'grupos' => [
+  //     [
+  //       'nombre' => 'Empleados',
+  //       'enlaces' => [
+  //         [
+  //           'href' => './empleados',
+  //           'icon' => 'bi bi-people',
+  //           'texto' => 'Ver empleados',
+  //           'permisos' => [Permiso::VER_EMPLEADOS],
+  //         ],
+  //         // [
+  //         //   'href' => '#buscar-empleado',
+  //         //   'icon' => 'bi bi-search',
+  //         //   'texto' => 'Buscar empleado',
+  //         //   'permisos' => [Permiso::VER_DETALLES_EMPLEADO],
+  //         // ],
+  //         // [
+  //         //   'href' => './empleados/registrar',
+  //         //   'icon' => 'bi bi-person-plus',
+  //         //   'texto' => 'Registrar empleado',
+  //         //   'permisos' => [Permiso::REGISTRAR_EMPLEADO],
+  //         // ],
+  //         // [
+  //         //   'href' => './empleados/restablecer-clave',
+  //         //   'icon' => 'bi bi-unlock',
+  //         //   'texto' => 'Restablecer contraseña de un empleado',
+  //         //   'permisos' => [Permiso::RESTABLECER_CLAVE_EMPLEADO],
+  //         // ],
+  //         // [
+  //         //   'href' => './empleados/despedir',
+  //         //   'icon' => 'bi bi-person-dash',
+  //         //   'texto' => 'Despedir empleado',
+  //         //   'permisos' => [Permiso::DESPEDIR_EMPLEADO],
+  //         // ],
+  //         // [
+  //         //   'href' => './empleados/recontratar',
+  //         //   'icon' => 'bi bi-person-check',
+  //         //   'texto' => 'Recontratar empleado',
+  //         //   'permisos' => [Permiso::RECONTRATAR_EMPLEADO],
+  //         // ],
+  //         // [
+  //         //   'href' => './empleados/promover',
+  //         //   'icon' => 'bi bi-person-up',
+  //         //   'texto' => 'Promover vendedor',
+  //         //   'permisos' => [Permiso::PROMOVER_VENDEDOR],
+  //         // ],
+  //         // [
+  //         //   'href' => './empleados/degradar',
+  //         //   'icon' => 'bi bi-person-down',
+  //         //   'texto' => 'Degradar empleado superior',
+  //         //   'permisos' => [Permiso::DEGRADAR_EMPLEADO_SUPERIOR],
+  //         // ],
+  //       ],
+  //     ]
+  //   ],
+  // ],
+  // [
+  //   'activo' => Flight::request()->url === '/inventario',
+  //   'permisos' => [Permiso::VER_PRODUCTOS],
+  //   'grupos' => [
+  //     [
+  //       'nombre' => 'Inventario',
+  //       'enlaces' => [
+  //         [
+  //           'href' => './inventario',
+  //           'icon' => 'bi bi-people',
+  //           'texto' => 'Ver productos',
+  //           'permisos' => [Permiso::VER_PRODUCTOS],
+  //         ],
+  //       ],
+  //     ]
+  //   ],
+  // ],
+];
+
+$enlacesPerfil = [
   [
-    'permisos' => [],
-    'grupos' => [
-      [
-        'nombre' => 'Estadísticas',
-        'enlaces' => [
-          [
-            'href' => './',
-            'icon' => 'bi bi-shop',
-            'texto' => 'Comercio electrónico',
-            'permisos' => [],
-          ],
-          // [
-          //   'href' => 'javascript:void(0)',
-          //   'icon' => 'solar:home-angle-line-duotone',
-          //   'texto' => 'Front Pages',
-          //   'permisos' => [],
-          //   'subenlaces' => [
-          //     [
-          //       'href' => '../main/frontend-landingpage.html',
-          //       'texto' => 'Homepage',
-          //       'permisos' => [],
-          //     ],
-          //     [
-          //       'href' => '../main/frontend-landingpage-2.html',
-          //       'texto' => '1.1',
-          //       'permisos' => [],
-          //       'subenlaces' => [
-          //         [
-          //           'href' => '../main/frontend-landingpage-2.html#section-features',
-          //           'texto' => '2.1',
-          //           'permisos' => [],
-          //           'subenlaces' => [
-          //             [
-          //               'href' => '../main/frontend-landingpage-2.html#section-features',
-          //               'texto' => '3.1',
-          //               'permisos' => [],
-          //             ],
-          //           ],
-          //         ],
-          //       ],
-          //     ],
-          //   ],
-          // ],
-        ],
-      ]
-    ],
+    'icon' => 'bi bi-person-circle',
+    'title' => 'Mi perfil',
+    'subtitle' => 'Configuraciones de la cuenta',
+    'href' => './perfil',
   ],
   [
-    'permisos' => [Permiso::VER_EMPLEADOS],
-    'grupos' => [
-      [
-        'nombre' => 'Empleados',
-        'enlaces' => [
-          [
-            'href' => './empleados',
-            'icon' => 'bi bi-people',
-            'texto' => 'Ver empleados',
-            'permisos' => [Permiso::VER_EMPLEADOS],
-          ],
-          [
-            'href' => '#buscar-empleado',
-            'icon' => 'bi bi-search',
-            'texto' => 'Buscar empleado',
-            'permisos' => [Permiso::VER_DETALLES_EMPLEADO],
-          ],
-          [
-            'href' => './empleados/registrar',
-            'icon' => 'bi bi-person-plus',
-            'texto' => 'Registrar empleado',
-            'permisos' => [Permiso::REGISTRAR_EMPLEADO],
-          ],
-        ],
-      ]
-    ],
+    'icon' => 'bi bi-envelope',
+    'title' => 'Mis bandeja de entrada',
+    'subtitle' => 'Mensajes y correos',
+    'href' => './notificaciones',
+  ],
+  [
+    'icon' => 'bi bi-check2-square',
+    'title' => 'Mis tareas',
+    'subtitle' => 'Quehaceres y tareas diarias',
+    'href' => './tareas',
   ],
 ];
 
@@ -147,22 +223,26 @@ function tienePermisos(array $enlace): bool
 
 <aside class="side-mini-panel with-vertical">
   <div class="iconbar">
-    <div class="mini-nav">
-      <div class="brand-logo d-flex align-items-center justify-content-between justify-content-lg-center">
+    <div class="mini-nav d-flex flex-column justify-content-between">
+      <div class="brand-logo d-flex flex-column gap-3 align-items-center justify-content-between justify-content-lg-center">
         <a href="./" class="logo-img">
           <img src="./recursos/imagenes/favicon.png" class="img-fluid" />
         </a>
-        <button class="sidebartoggler btn-close close-btn d-xl-none"></button>
+        <button class="sidebartoggler btn-close close-btn d-xl-none position-relative top-0 end-0"></button>
       </div>
-      <ul class="list-unstyled mini-nav-ul overflow-y-auto overflow-x-hidden">
+      <ul class="list-unstyled mini-nav-ul overflow-y-auto overflow-x-hidden h-auto">
         <?php foreach ($miniNavItems as $links): ?>
           <?php foreach ($links as $indice => $link): ?>
             <li
-              class="mini-nav-item <?= !tienePermisos($link) ? 'disabled opacity-25' : '' ?>"
-              id="mini-<?= $indice + 1 ?>"
+              class="
+                mini-nav-item
+                <?= !tienePermisos($link) ? 'disabled opacity-25' : '' ?>
+              "
+              <?= !key_exists('href', $link) ? sprintf('id="mini-%d"', $indice + 1) : '' ?>
               style="<?= !tienePermisos($link) ? 'pointer-events: none' : '' ?>">
               <a
-                href="javascript:void(0)"
+                class="<?= $link['activo'] ? 'text-bg-primary' : '' ?>"
+                href="<?= key_exists('href', $link) ? $link['href'] : 'javascript:' ?>"
                 data-bs-toggle="tooltip"
                 data-bs-custom-class="custom-tooltip"
                 data-bs-placement="right"
@@ -176,60 +256,53 @@ function tienePermisos(array $enlace): bool
           </li>
         <?php endforeach ?>
       </ul>
-      <ul class="list-unstyled mt-auto mb-4">
-        <li class="dropup">
-          <a href="javascript:void(0)" id="drop1" data-bs-toggle="dropdown" aria-expanded="false">
-            <div class="d-flex align-items-center justify-content-center gap-2 lh-base hover-border p-1 mx-auto rounded-circle" width="35">
-              <img src="./recursos/imagenes/profile/user-1.jpg" class="rounded-circle" width="35" height="35" alt="MaterialM-img" />
-            </div>
-          </a>
-          <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up shadow-lg" aria-labelledby="drop1">
-            <div class="profile-dropdown position-relative" data-simplebar>
-              <div class="py-3 px-7 pb-0">
-                <h5 class="mb-0 fs-5 fw-semibold">User Profile</h5>
-              </div>
-              <div class="d-flex align-items-center py-9 mx-7 border-bottom">
-                <img src="./recursos/imagenes/profile/user-1.jpg" class="rounded-circle" width="80" height="80" alt="MaterialM-img" />
-                <div class="ms-3">
-                  <h5 class="mb-0 fs-4">Jonathan Deo</h5>
-                  <span class="mb-1 d-block">Admin</span>
-                  <p class="mb-0 d-flex align-items-center gap-2">
-                    <i class="ti ti-mail fs-4"></i> info@MaterialM.com
-                  </p>
+      <ul class="list-unstyled">
+        <li class="dropup" data-bs-toggle="tooltip" title="Perfil de usuario" data-bs-placement="right">
+          <button
+            class="border-0 btn btn-outline-primary w-100"
+            data-bs-toggle="dropdown">
+            <img
+              src="./recursos/imagenes/profile/user-1.jpg"
+              class="rounded-circle img-fluid" />
+          </button>
+          <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up shadow-lg pb-0">
+            <div class="profile-dropdown position-relative overflow-y-auto overflow-x-hidden">
+              <h2 class="px-3">Perfil de usuario</h2>
+              <div class="d-flex gap-3 align-items-center border-bottom pb-3 px-3">
+                <img
+                  src="./recursos/imagenes/profile/user-1.jpg"
+                  class="rounded-circle object-fit-contain"
+                  width="80"
+                  height="80" />
+                <div class="d-grid overflow-x-auto">
+                  <strong>
+                    <?= (
+                      auth()->user()?->nombreCompleto
+                        ?: (auth()->user()?->cedula && sprintf('v-%s', auth()->user()?->cedula))
+                        ?: ''
+                    ) ?>
+                    </strong>
+                  <span><?= auth()->user()?->roles()[0] ?></span>
+                  <span class="d-flex align-items-center gap-3">
+                    <i class="bi bi-envelope"></i>
+                    <?= auth()->user()?->email ?>
+                  </span>
                 </div>
               </div>
               <div class="message-body">
-                <a href="../main/page-user-profile.html" class="py-8 px-7 mt-8 d-flex align-items-center">
-                  <span class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded round">
-                    <iconify-icon icon="solar:wallet-2-line-duotone" class="fs-7"></iconify-icon>
-                  </span>
-                  <div class="w-75 v-middle ps-3">
-                    <h5 class="mb-1 fs-3 fw-medium">My Profile</h5>
-                    <span class="fs-2 d-block text-body-secondary">Account Settings</span>
-                  </div>
-                </a>
-                <a href="../main/app-email.html" class="py-8 px-7 d-flex align-items-center">
-                  <span class="d-flex align-items-center justify-content-center bg-success-subtle text-success rounded round">
-                    <iconify-icon icon="solar:inbox-line-duotone" class="fs-7"></iconify-icon>
-                  </span>
-                  <div class="w-75 v-middle ps-3">
-                    <h5 class="mb-1 fs-3 fw-medium">My Inbox</h5>
-                    <span class="fs-2 d-block text-body-secondary">Messages & Emails</span>
-                  </div>
-                </a>
-                <a href="../main/app-notes.html" class="py-8 px-7 d-flex align-items-center">
-                  <span class="d-flex align-items-center justify-content-center bg-danger-subtle text-danger rounded round">
-                    <iconify-icon icon="solar:checklist-minimalistic-line-duotone" class="fs-7"></iconify-icon>
-                  </span>
-                  <div class="w-75 v-middle ps-3">
-                    <h5 class="mb-1 fs-3 fw-medium">My Task</h5>
-                    <span class="fs-2 d-block text-body-secondary">To-do and Daily Tasks</span>
-                  </div>
-                </a>
+                <?php foreach ($enlacesPerfil as $enlace): ?>
+                  <a href="<?= $enlace['href'] ?>" class="d-flex align-items-stretch gap-3 text-decoration-none link-primary">
+                    <span class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary p-3">
+                      <i class="<?= $enlace['icon'] ?>"></i>
+                    </span>
+                    <div class="w-75 d-flex flex-column gap-3 py-3">
+                      <strong><?= $enlace['title'] ?></strong>
+                      <span class="text-muted"><?= $enlace['subtitle'] ?></span>
+                    </div>
+                  </a>
+                <?php endforeach ?>
               </div>
-              <div class="d-grid py-4 px-7 pt-8">
-                <a href="../main/authentication-login.html" class="btn btn-primary">Log Out</a>
-              </div>
+              <a href="./salir" class="btn btn-primary w-100 rounded-0">Cerrar sesión</a>
             </div>
           </div>
         </li>
@@ -254,7 +327,7 @@ function tienePermisos(array $enlace): bool
                       class="sidebar-link <?= count($enlace['subenlaces'] ?? []) ? 'has-arrow' : '' ?>"
                       href="<?= $enlace['href'] ?>">
                       <i class="<?= $enlace['icon'] ?>"></i>
-                      <span class="hide-menu"><?= $enlace['texto'] ?></span>
+                      <span class="hide-menu text-wrap"><?= $enlace['texto'] ?></span>
                     </a>
                     <ul class="collapse first-level ps-1" style="list-style: none">
                       <?php foreach ($enlace['subenlaces'] ?? [] as $subenlace): ?>

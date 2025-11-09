@@ -31,4 +31,5 @@ enum Permiso
   case VER_PROVEEDORES;
   case VER_VENTAS;
   case VER_DETALLES_EMPLEADO;
+  case RESTABLECER_CLAVE_EMPLEADO;
 }
