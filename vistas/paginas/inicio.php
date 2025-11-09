@@ -1274,7 +1274,7 @@ $idDeRecursos = uniqid();
   </div>
 </div>
 
-<script src="./recursos/libs/apexcharts/dist/apexcharts.min.js?id=<?= $idDeRecursos ?>"></script>
-<script src="./recursos/libs/jvectormap/jquery-jvectormap.min.js?id=<?= $idDeRecursos ?>"></script>
-<script src="./recursos/js/jvectormap/jquery-jvectormap-us-aea-en.js?id=<?= $idDeRecursos ?>"></script>
-<script src="./recursos/js/dashboards/dashboard1.js?id=<?= $idDeRecursos ?>"></script>
+<script defer src="./recursos/libs/apexcharts/dist/apexcharts.min.js?id=<?= $idDeRecursos ?>"></script>
+<script defer src="./recursos/libs/jvectormap/jquery-jvectormap.min.js?id=<?= $idDeRecursos ?>"></script>
+<script defer src="./recursos/js/jvectormap/jquery-jvectormap-us-aea-en.js?id=<?= $idDeRecursos ?>"></script>
+<script defer src="./recursos/js/dashboards/dashboard1.js?id=<?= $idDeRecursos ?>"></script>
