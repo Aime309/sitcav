@@ -14,13 +14,15 @@ $exitos = (array) flash()->display('exitos');
   data-color-theme="<?= session()->get('tema_colores', 'Blue_Theme') ?>"
   data-boxed-layout="<?= session()->get('container', 'boxed') ?>"
   data-sidebartype="<?= session()->get('sidebar_type', 'full') ?>"
+  data-card="<?= session()->get('card_type', 'shadow') ?>"
   x-data="tema"
   :dir="direccion"
   :data-layout="layout"
   :data-bs-theme="tema"
   :data-color-theme="tema_colores"
   :data-boxed-layout="container"
-  :data-sidebartype="tipo_menu">
+  :data-sidebartype="tipo_menu"
+  :data-card="tipo_tarjeta">
 
 <head>
   <meta charset="utf-8" />

@@ -40,6 +40,7 @@ Flight::group('/api', static function (): void {
       $layout = Flight::request()->data->layout ?: session()->get('layout', 'vertical');
       $container = Flight::request()->data->container ?: session()->get('container', 'boxed');
       $tipoMenu = Flight::request()->data->tipo_menu ?: session()->get('sidebar_type', 'full');
+      $tipoTarjeta = Flight::request()->data->tipo_tarjeta ?: session()->get('card_type', 'border');
 
       session()->set('tema', $tema);
       session()->set('tema_colores', $temaColores);
@@ -47,6 +48,7 @@ Flight::group('/api', static function (): void {
       session()->set('layout', $layout);
       session()->set('container', $container);
       session()->set('sidebar_type', $tipoMenu);
+      session()->set('card_type', $tipoTarjeta);
     });
   });
 });

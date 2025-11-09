@@ -6,11 +6,15 @@ $idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
 
 <!doctype html>
 <html
+  dir="<?= session()->get('direccion', 'ltr') ?>"
   data-bs-theme="<?= session()->get('tema', '') ?>"
   data-color-theme="<?= session()->get('tema_colores', 'Blue_Theme') ?>"
+  data-boxed-layout="<?= session()->get('container', 'boxed') ?>"
   x-data="tema"
+  :dir="direccion"
   :data-bs-theme="tema"
-  :data-color-theme="tema_colores">
+  :data-color-theme="tema_colores"
+  :data-boxed-layout="container">
 
 <head>
   <meta charset="utf-8" />
@@ -23,8 +27,6 @@ $idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
   <script src="./recursos/compilados/errores.js?id=<?= $idDeRecursos ?>"></script>
 </head>
 
-<body class="text-center">
-  <?= $pagina ?>
-</body>
+<body class="text-center"><?= $pagina ?></body>
 
 </html>

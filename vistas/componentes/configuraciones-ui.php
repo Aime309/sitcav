@@ -108,6 +108,21 @@ $tiposMenu = [
   ],
 ];
 
+$tiposTarjeta = [
+  [
+    'id' => 'card-with-border',
+    'title' => 'Con borde',
+    'icon' => 'bi bi-border',
+    'value' => 'border',
+  ],
+  [
+    'id' => 'card-without-border',
+    'title' => 'Con sombras',
+    'icon' => 'bi bi-shadows',
+    'value' => 'shadow',
+  ],
+];
+
 $id = uniqid();
 
 ?>
@@ -247,18 +262,24 @@ $id = uniqid();
       <?php endforeach ?>
     </div>
 
-    <h6 class="mt-5 fw-semibold fs-4 mb-2">Card With</h6>
+    <h3>Tipo de tarjetas</h3>
 
-    <div class="d-flex flex-row gap-3 customizer-box" role="group">
-      <input type="radio" class="btn-check" name="card-layout" id="card-with-border" autocomplete="off" />
-      <label class="btn p-9 btn-outline-primary rounded-2" for="card-with-border">
-        <i class="icon ti ti-border-outer fs-7 me-2"></i>Border
-      </label>
-
-      <input type="radio" class="btn-check" name="card-layout" id="card-without-border" autocomplete="off" />
-      <label class="btn p-9 btn-outline-primary rounded-2" for="card-without-border">
-        <i class="icon ti ti-border-none fs-7 me-2"></i>Shadow
-      </label>
+    <div class="d-flex gap-3 customizer-box">
+      <?php foreach ($tiposTarjeta as $tipoTarjeta): ?>
+        <input
+          class="btn-check"
+          id="<?= $tipoTarjeta['id'] ?>"
+          name="card-type"
+          type="radio"
+          value="<?= $tipoTarjeta['value'] ?>"
+          x-model="tipo_tarjeta" />
+        <label
+          class="btn btn-outline-primary"
+          for="<?= $tipoTarjeta['id'] ?>">
+          <i class="icon <?= $tipoTarjeta['icon'] ?> me-2"></i>
+          <?= $tipoTarjeta['title'] ?>
+        </label>
+      <?php endforeach ?>
     </div>
   </div>
 </div>

@@ -9,6 +9,7 @@ Alpine.data("tema", () => ({
   layout: document.documentElement.dataset.layout || "vertical",
   container: document.documentElement.dataset.boxedLayout || "boxed",
   tipo_menu: document.documentElement.dataset.sidebartype || "full",
+  tipo_tarjeta: document.documentElement.dataset.card || "shadow",
 
   get temaInverso() {
     return this.tema === "dark" ? "light" : "dark";
@@ -90,6 +91,18 @@ Alpine.data("tema", () => ({
         },
         body: JSON.stringify({
           tipo_menu: nuevoTipoMenu,
+        }),
+      });
+    });
+
+    this.$watch("tipo_tarjeta", (nuevoTipoTarjeta) => {
+      fetch("./api/ajustes/tema", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tipo_tarjeta: nuevoTipoTarjeta,
         }),
       });
     });

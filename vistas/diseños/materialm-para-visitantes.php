@@ -8,11 +8,17 @@ $exitos = (array) flash()->display('exitos');
 
 <!doctype html>
 <html
+  dir="<?= session()->get('direccion', 'ltr') ?>"
   data-bs-theme="<?= session()->get('tema', '') ?>"
   data-color-theme="<?= session()->get('tema_colores', 'Blue_Theme') ?>"
+  data-boxed-layout="<?= session()->get('container', 'boxed') ?>"
+  data-card="<?= session()->get('card_type', 'shadow') ?>"
   x-data="tema"
+  :dir="direccion"
   :data-bs-theme="tema"
-  :data-color-theme="tema_colores">
+  :data-color-theme="tema_colores"
+  :data-boxed-layout="container"
+  :data-card="tipo_tarjeta">
 
 <head>
   <meta charset="utf-8" />
