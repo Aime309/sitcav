@@ -4,18 +4,19 @@ use GuzzleHttp\Client;
 
 Flight::group('/api', static function (): void {
   Flight::route('/gemini', static function (): void {
-    $prompt = (Flight::request()->data->prompt ?: Flight::request()->query->prompt) ?: 'Hola';
-    $apiKey = $_ENV['GEMINI_API_KEY'];
+    $peticion = Flight::request();
+    $prompt = ($peticion->data->prompt ?: $peticion->query->prompt) ?: 'Hola';
+    $claveApi = $_ENV['GEMINI_API_KEY'];
 
-    $geminiClient = Gemini::factory()
-      ->withApiKey($apiKey)
+    $gemini = Gemini::factory()
+      ->withApiKey($claveApi)
       ->withHttpClient(new Client(['verify' => false]))
       ->make();
 
-    $response = $geminiClient
+    $respuesta = $gemini
       ->generativeModel('gemini-2.0-flash')
       ->generateContent($prompt);
 
-    Flight::halt(200, $response->text());
+    Flight::halt(200, $respuesta->text());
   });
 });
