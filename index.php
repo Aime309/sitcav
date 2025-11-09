@@ -51,9 +51,9 @@ auth()->config('session', true);
 auth()->config('session.lifetime', 0);
 
 auth()->config('session.cookie', [
-  'secure' => true,
+  'secure' => false,
   'httponly' => true,
-  'samesite' => 'lax',
+  'samesite' => 'Strict',
 ]);
 
 auth()->config('token.lifetime', null);
