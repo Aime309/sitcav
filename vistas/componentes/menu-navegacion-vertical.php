@@ -295,7 +295,7 @@ function tienePermisos(array $enlace): bool
                     <span class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary p-3">
                       <i class="<?= $enlace['icon'] ?>"></i>
                     </span>
-                    <div class="w-75 d-flex flex-column gap-3 py-3">
+                    <div class="w-75 d-flex flex-column py-3">
                       <strong><?= $enlace['title'] ?></strong>
                       <span class="text-muted"><?= $enlace['subtitle'] ?></span>
                     </div>
