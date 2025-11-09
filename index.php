@@ -97,8 +97,8 @@ auth()->createRoles([
 $guzzle = auth()->client('google')->getHttpClient();
 $refleccionPropiedad = new ReflectionProperty($guzzle, 'config');
 $refleccionPropiedad->setAccessible(true);
-$config = $refleccionPropiedad->getValue($guzzle);
-$refleccionPropiedad->setValue($guzzle, ['verify' => false] + $config);
+$configuracionDeGuzzle = $refleccionPropiedad->getValue($guzzle);
+$refleccionPropiedad->setValue($guzzle, ['verify' => false] + $configuracionDeGuzzle);
 
 ///////////////////////
 // CONFIGURAR FLIGHT //
@@ -133,24 +133,24 @@ $manager->bootEloquent();
 ///////////////////////////////////////////
 // CONFIGURAR CONTENEDOR DE DEPENDENCIAS //
 ///////////////////////////////////////////
-$contenedor = Container::getInstance();
+$dependencias = Container::getInstance();
 
-$contenedor->singleton(
+$dependencias->singleton(
   PDO::class,
   static fn(): PDO => $manager->connection()->getPdo(),
 );
 
-$contenedor->singleton(
+$dependencias->singleton(
   UsuarioAutenticado::class,
   static fn(): UsuarioAutenticado => UsuarioAutenticado::query()->findOrFail(auth()->id()),
 );
 
-Flight::registerContainerHandler($contenedor);
+Flight::registerContainerHandler($dependencias);
 
 ////////////////////////////////////////////////
 // CONFIGURAR CONEXIÓN COMPARTIDA (Singleton) //
 ////////////////////////////////////////////////
-db()->connection($contenedor->get(PDO::class));
+db()->connection($dependencias->get(PDO::class));
 (new ReflectionProperty(auth(), 'db'))->setValue(auth(), db());
 
 ///////////////////////////////////
@@ -196,7 +196,7 @@ Flight::map('notFound', static function (): void {
 /////////////////////////////////////
 // CONFIGURAR GENERACIÓN DE FECHAS //
 /////////////////////////////////////
-date_default_timezone_set($_ENV['TIMEZONE'] ?? 'America/Caracas');
+date_default_timezone_set($_ENV['TIMEZONE']);
 
 //////////////////
 // CARGAR RUTAS //
