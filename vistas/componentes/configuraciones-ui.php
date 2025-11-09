@@ -3,33 +3,39 @@
 $colores = [
   [
     'id' => 'Blue_Theme',
+    'value' => 'Blue_Theme',
     'class' => 'skin-1',
-    'title' => 'BLUE_THEME',
+    'title' => 'Tema azul',
   ],
   [
     'id' => 'Aqua_Theme',
+    'value' => 'Aqua_Theme',
     'class' => 'skin-2',
-    'title' => 'AQUA_THEME',
+    'title' => 'Tema aqua',
   ],
   [
     'id' => 'Purple_Theme',
+    'value' => 'Purple_Theme',
     'class' => 'skin-3',
-    'title' => 'PURPLE_THEME',
+    'title' => 'Tema púrpura',
   ],
   [
     'id' => 'Green_Theme',
+    'value' => 'Green_Theme',
     'class' => 'skin-4',
-    'title' => 'GREEN_THEME',
+    'title' => 'Tema verde',
   ],
   [
     'id' => 'Cyan_Theme',
+    'value' => 'Cyan_Theme',
     'class' => 'skin-5',
-    'title' => 'CYAN_THEME',
+    'title' => 'Tema cyan',
   ],
   [
     'id' => 'Orange_Theme',
+    'value' => 'Orange_Theme',
     'class' => 'skin-6',
-    'title' => 'ORANGE_THEME',
+    'title' => 'Tema naranja',
   ],
 ];
 
@@ -189,7 +195,7 @@ $id = uniqid();
           id="<?= $color['id'] ?>"
           name="color-theme-layout"
           type="radio"
-          value="<?= $color['id'] ?>"
+          value="<?= $color['value'] ?>"
           x-model="tema_colores" />
         <label
           class="btn btn-outline-primary d-flex align-items-center justify-content-center"
