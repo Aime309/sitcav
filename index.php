@@ -91,6 +91,12 @@ auth()->createRoles([
     Permiso::PROMOVER_VENDEDOR->name,
     Permiso::DEGRADAR_EMPLEADO_SUPERIOR->name,
     Permiso::VER_EMPLEADOS->name,
+    Permiso::VER_VENTAS->name,
+    Permiso::VER_NEGOCIOS->name,
+    Permiso::VER_PROVEEDORES->name,
+    Permiso::VER_COMPRAS->name,
+    Permiso::VER_CLIENTES->name,
+    Permiso::VER_PAGOS->name,
   ],
 ]);
 
