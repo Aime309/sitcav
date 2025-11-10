@@ -33,6 +33,20 @@ $notificationes = [];
           <i class="bi bi-search"></i>
         </a>
       </li> -->
+      <!-- Productos en carrito -->
+      <li class="nav-item nav-icon-hover">
+        <a
+          class="nav-link position-relative"
+          href="./vender">
+          <i class="bi bi-basket3-fill position-relative">
+            <span
+              x-text="Object.values(productosEnCarrito).reduce((a, b) => a + b, 0)"
+              x-show="Object.values(productosEnCarrito).reduce((a, b) => a + b, 0) > 0"
+              class="badge text-bg-primary position-absolute top-75 start-50">
+            </span>
+          </i>
+        </a>
+      </li>
       <li class="nav-item nav-icon-hover">
         <button class="nav-link" @click="tema = tema === 'light' ? 'dark' : 'light'">
           <i

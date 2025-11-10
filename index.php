@@ -185,7 +185,7 @@ Flight::map('error', static function (Throwable $error): never {
   http_response_code(500);
   session()->set(ClaveSesion::MENSAJES_ERRORES->name, ['Ha ocurrido un error inesperado. Por favor intente nuevamente más tarde.']);
   error_log($error);
-  Flight::redirect('/salir');
+  Flight::redirect('/');
 
   exit;
 });

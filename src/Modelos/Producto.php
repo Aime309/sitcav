@@ -35,9 +35,9 @@ final class Producto extends Model
   ];
 
   protected $hidden = [
-    'id_categoria',
-    'id_proveedor',
-    'id_marca',
+    // 'id_categoria',
+    // 'id_proveedor',
+    // 'id_marca',
   ];
 
   protected $fillable = [
