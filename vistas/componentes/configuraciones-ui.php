@@ -211,7 +211,7 @@ $id = uniqid();
       <?php endforeach ?>
     </div>
 
-    <!-- <h3 class="m-0">Posición de la navegación</h3>
+    <h3 class="m-0">Posición de la navegación</h3>
 
     <div class="d-flex gap-3 customizer-box">
       <?php foreach ($layouts as $layout): ?>
@@ -228,7 +228,7 @@ $id = uniqid();
           <?= $layout['title'] ?>
         </label>
       <?php endforeach ?>
-    </div> -->
+    </div>
 
     <h3 class="m-0">Anchura</h3>
 
@@ -249,24 +249,30 @@ $id = uniqid();
       <?php endforeach ?>
     </div>
 
-    <h3 class="m-0">Tipo de menú de navegación</h3>
-
-    <div class="d-flex gap-3 customizer-box">
-      <?php foreach ($tiposMenu as $tipoMenu): ?>
-        <input
-          class="btn-check"
-          id="<?= $tipoMenu['id'] ?>"
-          name="sidebar-type"
-          type="radio"
-          value="<?= $tipoMenu['value'] ?>"
-          x-model="tipo_menu" />
-        <label
-          class="btn btn-outline-primary"
-          for="<?= $tipoMenu['id'] ?>">
-          <i class="icon <?= $tipoMenu['icon'] ?> me-2"></i>
-          <?= $tipoMenu['title'] ?>
-        </label>
-      <?php endforeach ?>
+    <div
+      class="d-grid gap-3"
+      :class="{
+        'disabled opacity-25': noHayNavs,
+      }"
+      :style="noHayNavs && 'pointer-events: none'">
+      <h3 class="m-0">Tipo de menú de navegación</h3>
+      <div class="d-flex gap-3 customizer-box">
+        <?php foreach ($tiposMenu as $tipoMenu): ?>
+          <input
+            class="btn-check"
+            id="<?= $tipoMenu['id'] ?>"
+            name="sidebar-type"
+            type="radio"
+            value="<?= $tipoMenu['value'] ?>"
+            x-model="tipo_menu" />
+          <label
+            class="btn btn-outline-primary"
+            for="<?= $tipoMenu['id'] ?>">
+            <i class="icon <?= $tipoMenu['icon'] ?> me-2"></i>
+            <?= $tipoMenu['title'] ?>
+          </label>
+        <?php endforeach ?>
+      </div>
     </div>
 
     <h3 class="m-0">Tipo de tarjetas</h3>

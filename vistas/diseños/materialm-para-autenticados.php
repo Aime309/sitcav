@@ -243,8 +243,6 @@ define('GRUPOS_ENLACES_NAVEGACION', [
   x-data="mensajes"
   :data-sidebartype="tipo_menu">
   <?php Flight::render('componentes/notificaciones') ?>
-  <?php Flight::render('componentes/configuraciones-ui') ?>
-
   <div
     id="main-wrapper"
     x-data="{
@@ -255,6 +253,7 @@ define('GRUPOS_ENLACES_NAVEGACION', [
         tipo_menu = 'mini-sidebar';
       }
     ">
+    <?php Flight::render('componentes/configuraciones-ui') ?>
     <?php Flight::render('componentes/menu-navegacion-vertical') ?>
     <div class="page-wrapper" x-data="tasaDePagina">
       <?php Flight::render('componentes/menu-superior-v2') ?>
