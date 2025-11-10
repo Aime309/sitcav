@@ -7,21 +7,21 @@ $miniNavItems = [
     [
       'tooltip' => 'Estadísticas',
       'icon' => 'bi bi-stack',
-      'href' => './',
+      // 'href' => './',
       'permisos' => [],
       'activo' => Flight::request()->url === '/',
     ],
     [
       'tooltip' => 'Empleados',
       'icon' => 'bi bi-people',
-      'href' => './empleados',
+      // 'href' => './empleados',
       'permisos' => [Permiso::VER_EMPLEADOS],
       'activo' => Flight::request()->url === '/empleados',
     ],
     [
       'tooltip' => 'Inventario',
       'icon' => 'bi bi-box-seam',
-      'href' => './inventario',
+      // 'href' => './inventario',
       'permisos' => [Permiso::VER_PRODUCTOS],
       'activo' => Flight::request()->url === '/inventario',
     ],
@@ -65,131 +65,131 @@ $miniNavItems = [
 ];
 
 $sidebarNavs = [
-  // [
-  //   'activo' => Flight::request()->url === '/',
-  //   'permisos' => [],
-  //   'grupos' => [
-  //     [
-  //       'nombre' => 'Estadísticas',
-  //       'enlaces' => [
-  //         [
-  //           'href' => './',
-  //           'icon' => 'bi bi-shop',
-  //           'texto' => 'Comercio electrónico',
-  //           'permisos' => [],
-  //         ],
-  //         // [
-  //         //   'href' => 'javascript:void(0)',
-  //         //   'icon' => 'solar:home-angle-line-duotone',
-  //         //   'texto' => 'Front Pages',
-  //         //   'permisos' => [],
-  //         //   'subenlaces' => [
-  //         //     [
-  //         //       'href' => '../main/frontend-landingpage.html',
-  //         //       'texto' => 'Homepage',
-  //         //       'permisos' => [],
-  //         //     ],
-  //         //     [
-  //         //       'href' => '../main/frontend-landingpage-2.html',
-  //         //       'texto' => '1.1',
-  //         //       'permisos' => [],
-  //         //       'subenlaces' => [
-  //         //         [
-  //         //           'href' => '../main/frontend-landingpage-2.html#section-features',
-  //         //           'texto' => '2.1',
-  //         //           'permisos' => [],
-  //         //           'subenlaces' => [
-  //         //             [
-  //         //               'href' => '../main/frontend-landingpage-2.html#section-features',
-  //         //               'texto' => '3.1',
-  //         //               'permisos' => [],
-  //         //             ],
-  //         //           ],
-  //         //         ],
-  //         //       ],
-  //         //     ],
-  //         //   ],
-  //         // ],
-  //       ],
-  //     ]
-  //   ],
-  // ],
-  // [
-  //   'activo' => Flight::request()->url === '/empleados',
-  //   'permisos' => [Permiso::VER_EMPLEADOS],
-  //   'grupos' => [
-  //     [
-  //       'nombre' => 'Empleados',
-  //       'enlaces' => [
-  //         [
-  //           'href' => './empleados',
-  //           'icon' => 'bi bi-people',
-  //           'texto' => 'Ver empleados',
-  //           'permisos' => [Permiso::VER_EMPLEADOS],
-  //         ],
-  //         // [
-  //         //   'href' => '#buscar-empleado',
-  //         //   'icon' => 'bi bi-search',
-  //         //   'texto' => 'Buscar empleado',
-  //         //   'permisos' => [Permiso::VER_DETALLES_EMPLEADO],
-  //         // ],
-  //         // [
-  //         //   'href' => './empleados/registrar',
-  //         //   'icon' => 'bi bi-person-plus',
-  //         //   'texto' => 'Registrar empleado',
-  //         //   'permisos' => [Permiso::REGISTRAR_EMPLEADO],
-  //         // ],
-  //         // [
-  //         //   'href' => './empleados/restablecer-clave',
-  //         //   'icon' => 'bi bi-unlock',
-  //         //   'texto' => 'Restablecer contraseña de un empleado',
-  //         //   'permisos' => [Permiso::RESTABLECER_CLAVE_EMPLEADO],
-  //         // ],
-  //         // [
-  //         //   'href' => './empleados/despedir',
-  //         //   'icon' => 'bi bi-person-dash',
-  //         //   'texto' => 'Despedir empleado',
-  //         //   'permisos' => [Permiso::DESPEDIR_EMPLEADO],
-  //         // ],
-  //         // [
-  //         //   'href' => './empleados/recontratar',
-  //         //   'icon' => 'bi bi-person-check',
-  //         //   'texto' => 'Recontratar empleado',
-  //         //   'permisos' => [Permiso::RECONTRATAR_EMPLEADO],
-  //         // ],
-  //         // [
-  //         //   'href' => './empleados/promover',
-  //         //   'icon' => 'bi bi-person-up',
-  //         //   'texto' => 'Promover vendedor',
-  //         //   'permisos' => [Permiso::PROMOVER_VENDEDOR],
-  //         // ],
-  //         // [
-  //         //   'href' => './empleados/degradar',
-  //         //   'icon' => 'bi bi-person-down',
-  //         //   'texto' => 'Degradar empleado superior',
-  //         //   'permisos' => [Permiso::DEGRADAR_EMPLEADO_SUPERIOR],
-  //         // ],
-  //       ],
-  //     ]
-  //   ],
-  // ],
-  // [
-  //   'activo' => Flight::request()->url === '/inventario',
-  //   'permisos' => [Permiso::VER_PRODUCTOS],
-  //   'grupos' => [
-  //     [
-  //       'nombre' => 'Inventario',
-  //       'enlaces' => [
-  //         [
-  //           'href' => './inventario',
-  //           'icon' => 'bi bi-people',
-  //           'texto' => 'Ver productos',
-  //           'permisos' => [Permiso::VER_PRODUCTOS],
-  //         ],
-  //       ],
-  //     ]
-  //   ],
-  // ],
+  [
+    'activo' => Flight::request()->url === '/',
+    'permisos' => [],
+    'grupos' => [
+      [
+        'nombre' => 'Estadísticas',
+        'enlaces' => [
+          [
+            'href' => './',
+            'icon' => 'bi bi-shop',
+            'texto' => 'Comercio electrónico',
+            'permisos' => [],
+          ],
+          // [
+          //   'href' => 'javascript:void(0)',
+          //   'icon' => 'solar:home-angle-line-duotone',
+          //   'texto' => 'Front Pages',
+          //   'permisos' => [],
+          //   'subenlaces' => [
+          //     [
+          //       'href' => '../main/frontend-landingpage.html',
+          //       'texto' => 'Homepage',
+          //       'permisos' => [],
+          //     ],
+          //     [
+          //       'href' => '../main/frontend-landingpage-2.html',
+          //       'texto' => '1.1',
+          //       'permisos' => [],
+          //       'subenlaces' => [
+          //         [
+          //           'href' => '../main/frontend-landingpage-2.html#section-features',
+          //           'texto' => '2.1',
+          //           'permisos' => [],
+          //           'subenlaces' => [
+          //             [
+          //               'href' => '../main/frontend-landingpage-2.html#section-features',
+          //               'texto' => '3.1',
+          //               'permisos' => [],
+          //             ],
+          //           ],
+          //         ],
+          //       ],
+          //     ],
+          //   ],
+          // ],
+        ],
+      ]
+    ],
+  ],
+  [
+    'activo' => Flight::request()->url === '/empleados',
+    'permisos' => [Permiso::VER_EMPLEADOS],
+    'grupos' => [
+      [
+        'nombre' => 'Empleados',
+        'enlaces' => [
+          [
+            'href' => './empleados',
+            'icon' => 'bi bi-people',
+            'texto' => 'Ver empleados',
+            'permisos' => [Permiso::VER_EMPLEADOS],
+          ],
+          // [
+          //   'href' => '#buscar-empleado',
+          //   'icon' => 'bi bi-search',
+          //   'texto' => 'Buscar empleado',
+          //   'permisos' => [Permiso::VER_DETALLES_EMPLEADO],
+          // ],
+          // [
+          //   'href' => './empleados/registrar',
+          //   'icon' => 'bi bi-person-plus',
+          //   'texto' => 'Registrar empleado',
+          //   'permisos' => [Permiso::REGISTRAR_EMPLEADO],
+          // ],
+          // [
+          //   'href' => './empleados/restablecer-clave',
+          //   'icon' => 'bi bi-unlock',
+          //   'texto' => 'Restablecer contraseña de un empleado',
+          //   'permisos' => [Permiso::RESTABLECER_CLAVE_EMPLEADO],
+          // ],
+          // [
+          //   'href' => './empleados/despedir',
+          //   'icon' => 'bi bi-person-dash',
+          //   'texto' => 'Despedir empleado',
+          //   'permisos' => [Permiso::DESPEDIR_EMPLEADO],
+          // ],
+          // [
+          //   'href' => './empleados/recontratar',
+          //   'icon' => 'bi bi-person-check',
+          //   'texto' => 'Recontratar empleado',
+          //   'permisos' => [Permiso::RECONTRATAR_EMPLEADO],
+          // ],
+          // [
+          //   'href' => './empleados/promover',
+          //   'icon' => 'bi bi-person-up',
+          //   'texto' => 'Promover vendedor',
+          //   'permisos' => [Permiso::PROMOVER_VENDEDOR],
+          // ],
+          // [
+          //   'href' => './empleados/degradar',
+          //   'icon' => 'bi bi-person-down',
+          //   'texto' => 'Degradar empleado superior',
+          //   'permisos' => [Permiso::DEGRADAR_EMPLEADO_SUPERIOR],
+          // ],
+        ],
+      ]
+    ],
+  ],
+  [
+    'activo' => Flight::request()->url === '/inventario',
+    'permisos' => [Permiso::VER_PRODUCTOS],
+    'grupos' => [
+      [
+        'nombre' => 'Inventario',
+        'enlaces' => [
+          [
+            'href' => './inventario',
+            'icon' => 'bi bi-people',
+            'texto' => 'Ver productos',
+            'permisos' => [Permiso::VER_PRODUCTOS],
+          ],
+        ],
+      ]
+    ],
+  ],
 ];
 
 /** @param array{permisos: Permiso[]} $enlace */
