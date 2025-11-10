@@ -72,7 +72,11 @@ $idModalFiltros = uniqid();
         </button>
         <h2 class="fs-5 mb-0 d-none d-xl-block">Productos</h2>
         <form class="position-relative">
-          <input type="search" x-model="busqueda" class="form-control ps-5" placeholder="Buscar Producto">
+          <input
+            type="search"
+            x-model="busqueda"
+            class="form-control ps-5"
+            placeholder="Buscar Producto" />
           <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
         </form>
       </div>
