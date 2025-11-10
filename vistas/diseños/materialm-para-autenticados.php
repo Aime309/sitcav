@@ -261,21 +261,23 @@ define('GRUPOS_ENLACES_NAVEGACION', [
       <?php Flight::render('componentes/menu-navegacion-horizontal') ?>
       <div class="body-wrapper">
         <main class="container-fluid">
-          <header class="card card-header flex-row align-items-center justify-content-between">
-            <h1 class="card-title m-0"><?= $titulo ?></h1>
-            <ol class="breadcrumb m-0">
-              <li class="breadcrumb-item d-flex align-items-center">
-                <a class="text-muted text-decoration-none d-flex" href="./">
-                  <i class="bi bi-house"></i>
-                </a>
-              </li>
-              <li class="breadcrumb-item">
-                <span class="badge bg-primary-subtle text-primary">
-                  <?= $titulo ?>
-                </span>
-              </li>
-            </ol>
-          </header>
+          <?php if (!in_array(Flight::request()->url, ['/'])): ?>
+            <header class="card card-header flex-row align-items-center justify-content-between">
+              <h1 class="card-title m-0"><?= $titulo ?></h1>
+              <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item d-flex align-items-center">
+                  <a class="text-muted text-decoration-none d-flex" href="./">
+                    <i class="bi bi-house"></i>
+                  </a>
+                </li>
+                <li class="breadcrumb-item">
+                  <span class="badge bg-primary-subtle text-primary">
+                    <?= $titulo ?>
+                  </span>
+                </li>
+              </ol>
+            </header>
+          <?php endif ?>
           <?= $pagina ?>
         </main>
       </div>
