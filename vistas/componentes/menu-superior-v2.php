@@ -196,8 +196,8 @@ $notificationes = [];
                 <i
                   class="bi"
                   :class="{
-                    'bi-moon': tema === 'light',
-                    'bi-sun': tema === 'dark',
+                    'bi-sun': tema === 'light',
+                    'bi-moon': tema === 'dark',
                   }">
                 </i>
               </button>
