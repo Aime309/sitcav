@@ -14,7 +14,8 @@
     "leafs/password": "^1.0",
     "leafs/session": "^4.0",
     "league/oauth2-google": "^4.0",
-    "phpmailer/phpmailer": "^7.0"
+    "phpmailer/phpmailer": "^7.0",
+    "symfony/polyfill-php84": "^1.33"
   },
   "autoload": {
     "psr-4": {

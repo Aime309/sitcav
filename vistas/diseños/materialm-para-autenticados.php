@@ -51,9 +51,18 @@ $informaciones = (array) flash()->display(ClaveSesion::MENSAJES_INFORMACIONES->n
   <?php Flight::render('componentes/notificaciones') ?>
   <?php Flight::render('componentes/configuraciones-ui') ?>
 
-  <div id="main-wrapper" x-data="tasaDePagina">
+  <div
+    id="main-wrapper"
+    x-data="{
+      noHayNavs: false,
+    }"
+    x-effect="
+      if (noHayNavs) {
+        tipo_menu = 'mini-sidebar';
+      }
+    ">
     <?php Flight::render('componentes/menu-navegacion-vertical') ?>
-    <div class="page-wrapper">
+    <div class="page-wrapper" x-data="tasaDePagina">
       <?php Flight::render('componentes/menu-superior-v2') ?>
       <?php Flight::render('componentes/menu-navegacion-horizontal') ?>
       <?= $pagina ?>

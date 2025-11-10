@@ -12,9 +12,12 @@ $notificationes = [];
   <div class="with-vertical">
     <nav class="navbar navbar-expand-lg p-0">
       <ul class="navbar-nav">
-        <li class="nav-item nav-icon-hover ms-n3">
+        <li class="nav-item nav-icon-hover ms-n3 d-xl-none" :class="{
+          'd-xl-none': noHayNavs,
+        }"
+        x-cloak>
           <a class="nav-link sidebartoggler" id="headerCollapse" href="javascript:void(0)">
-            <i class="bi bi-list"></i>
+            <i class="navbar-toggler-icon"></i>
           </a>
         </li>
         <!-- <li class="nav-item nav-icon-hover d-none d-lg-block dropdown">
