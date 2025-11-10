@@ -90,7 +90,7 @@ $idModalFiltros = uniqid();
                   class="text-bg-primary rounded-pill position-absolute bottom-0 end-0 me-2 mb-2"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
-                  data-bs-title="Añadir al carrito">
+                  title="Añadir al carrito">
                   <i class="bi bi-basket-fill"></i>
                 </button>
                 <button
@@ -99,7 +99,7 @@ $idModalFiltros = uniqid();
                   class="text-bg-danger rounded-pill position-absolute bottom-0 end-0 me-5 mb-2"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
-                  data-bs-title="Eliminar del carrito">
+                  title="Eliminar del carrito">
                   <i class="bi bi-basket-fill"></i>
                   <span x-text="productosEnCarrito[producto.id]"></span>
                 </button>

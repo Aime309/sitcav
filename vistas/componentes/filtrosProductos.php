@@ -64,7 +64,6 @@
     ]">
     <div class="form-check">
       <input
-        checked="false"
         class="form-check-input"
         type="radio"
         name="exampleRadios"
