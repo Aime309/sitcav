@@ -65,9 +65,10 @@ $idModalFiltros = uniqid();
       <div class="d-flex justify-content-between align-items-center mb-5">
         <button
           class="btn d-xl-none"
+          :class="`text-${temaInverso}`"
           data-bs-toggle="offcanvas"
           href="#<?= $idModalFiltros ?>">
-          <i class="navbar-toggler-icon"></i>
+          <i class="bi bi-list"></i>
         </button>
         <h2 class="fs-5 mb-0 d-none d-xl-block">Productos</h2>
         <form class="position-relative">
@@ -149,6 +150,9 @@ $idModalFiltros = uniqid();
   </div>
 
   <div class="offcanvas offcanvas-start" id="<?= $idModalFiltros ?>">
+    <div class="offcanvas-header">
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
     <div class="offcanvas-body">
       <?php Flight::render('componentes/filtrosProductos') ?>
     </div>
