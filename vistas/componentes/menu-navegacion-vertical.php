@@ -213,10 +213,7 @@ function tienePermisos(array $enlace): bool
         <?php foreach ($miniNavItems as $links): ?>
           <?php foreach ($links as $indice => $link): ?>
             <li
-              class="
-                mini-nav-item
-                <?= !tienePermisos($link) ? 'disabled opacity-25' : '' ?>
-              "
+              class="mini-nav-item <?= !tienePermisos($link) ? 'disabled opacity-25' : '' ?>"
               <?= !key_exists('href', $link) ? sprintf('id="mini-%d"', $indice + 1) : '' ?>
               style="<?= !tienePermisos($link) ? 'pointer-events: none' : '' ?>">
               <a

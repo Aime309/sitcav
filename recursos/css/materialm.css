@@ -49,7 +49,6 @@
 [data-bs-theme=dark] .link-sidebar .left-sidebar,
 [data-bs-theme=dark] .side-mini-panel,
 [data-bs-theme=dark] .side-mini-panel .mini-nav,
-[data-bs-theme=dark] .side-mini-panel .mini-nav .mini-nav-item>a,
 [data-bs-theme=dark] .side-mini-panel .sidebarmenu .sidebar-nav {
   background: #1f2a3d !important
 }
@@ -837,7 +836,6 @@ pre.code-view code.hljs {
   text-align: center;
   color: var(--bs-body-color);
   position: relative;
-  background: var(--bs-white);
   z-index: 99;
   height: 48px;
   margin-bottom: 4px;
