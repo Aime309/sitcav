@@ -1,48 +1,47 @@
-var at = document.documentElement.getAttribute("data-layout");
-if ((at = "vertical")) {
-  // ==============================================================
-  // Auto select left navbar
-  // ==============================================================
+const at = document.documentElement.getAttribute("data-layout");
 
-  document.addEventListener("DOMContentLoaded", function () {
-    "use strict";
-    var isSidebar = document.getElementsByClassName("side-mini-panel");
+if (at === "vertical") {
+  document.addEventListener("DOMContentLoaded", () => {
+    const isSidebar = document.getElementsByClassName("side-mini-panel");
+
     if (isSidebar.length > 0) {
-      var url = window.location + "";
-      var path = url.replace(
-        window.location.protocol + "//" + window.location.host + "/",
-        "",
-      );
+      const url = `${window.location}`;
+
+      url.replace(`${window.location.protocol}//${window.location.host}/`, "");
 
       //****************************
       // This is for
       //****************************
-
       function findMatchingElement() {
-        var currentUrl = window.location.href;
-        var anchors = document.querySelectorAll("#sidebarnav a");
+        const anchors = document.querySelectorAll("#sidebarnav a");
         let finalUrl = "";
 
-        let urlSplats = currentURL.split("?");
-        let refinedUrl = urlSplats[0];
+        const urlSplats = currentURL.split("?");
+        const refinedUrl = urlSplats[0];
+        const isQueryParameter = currentURL.includes("?");
 
-        let isQueryParameter = currentURL.includes("?");
         if (isQueryParameter) {
           finalUrl = refinedUrl;
         } else {
           finalUrl = currentURL;
         }
 
-        for (var i = 0; i < anchors.length; i++) {
-          if (anchors[i].href === finalUrl) {
-            return anchors[i];
+        for (let i = 0; i < anchors.length; i++) {
+          const anchor = anchors[i];
+
+          if (!(anchor instanceof HTMLAnchorElement)) {
+            continue;
+          }
+
+          if (anchor.href === finalUrl) {
+            return anchor;
           }
         }
 
         return null; // Return null if no matching element is found
       }
 
-      var elements = findMatchingElement();
+      const elements = findMatchingElement();
 
       if (elements) {
         // Do something with the matching element
@@ -52,129 +51,155 @@ if ((at = "vertical")) {
       //****************************
       // This is for the multilevel menu
       //****************************
-      document.querySelectorAll("#sidebarnav a").forEach(function (link) {
-        link.addEventListener("click", function (e) {
-          const isActive = this.classList.contains("active");
-          const parentUl = this.closest("ul");
+      for (const link of document.querySelectorAll("#sidebarnav a")) {
+        if (!(link instanceof HTMLAnchorElement)) {
+          return;
+        }
+
+        link.addEventListener("click", () => {
+          const isActive = link.classList.contains("active");
+          const parentUl = link.closest("ul");
 
           if (!isActive) {
             // hide any open menus and remove all other classes
-            parentUl.querySelectorAll("ul").forEach(function (submenu) {
+            for (const submenu of parentUl?.querySelectorAll("ul") ||
+              new HTMLCollection()) {
               submenu.classList.remove("in");
-            });
-            parentUl.querySelectorAll("a").forEach(function (navLink) {
+            }
+
+            for (const navLink of parentUl?.querySelectorAll("a") ||
+              new HTMLCollection()) {
               navLink.classList.remove("active");
-            });
+            }
 
             // open our new menu and add the open class
-            const submenu = this.nextElementSibling;
+            const submenu = link.nextElementSibling;
             if (submenu) {
               submenu.classList.add("in");
             }
 
-            this.classList.add("active");
+            link.classList.add("active");
           } else {
-            this.classList.remove("active");
-            parentUl.classList.remove("active");
-            const submenu = this.nextElementSibling;
+            link.classList.remove("active");
+            parentUl?.classList.remove("active");
+            const submenu = link.nextElementSibling;
             if (submenu) {
               submenu.classList.remove("in");
             }
           }
         });
-      });
+      }
 
-      document
-        .querySelectorAll("#sidebarnav > li > a.has-arrow")
-        .forEach(function (link) {
-          link.addEventListener("click", function (e) {
-            e.preventDefault();
-          });
+      for (const link of document.querySelectorAll(
+        "#sidebarnav > li > a.has-arrow",
+      )) {
+        if (!(link instanceof HTMLAnchorElement)) {
+          return;
+        }
+
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
         });
+      }
 
       //****************************
       // This is for show menu
       //****************************
-
-      var closestNav = elements?.closest("nav[class^=sidebar-nav]");
-      var menuid = (closestNav && closestNav.id) || "menu-right-mini-1";
-      var menu = menuid[menuid.length - 1];
+      const closestNav = elements?.closest("nav[class^=sidebar-nav]");
+      const menuid = closestNav?.id || "menu-right-mini-1";
+      const menu = menuid[menuid.length - 1];
 
       document
-        .getElementById("menu-right-mini-" + menu)
+        .getElementById(`menu-right-mini-${menu}`)
         ?.classList.add("d-block");
-      document.getElementById("mini-" + menu)?.classList.add("selected");
+
+      document.getElementById(`mini-${menu}`)?.classList.add("selected");
 
       //****************************
       // This is for mini sidebar
       //****************************
-      document
-        .querySelectorAll("ul#sidebarnav ul li a.active")
-        .forEach(function (link) {
-          link.closest("ul").classList.add("in");
-          link.closest("ul").parentElement.classList.add("selected");
-        });
-      document
-        .querySelectorAll(".mini-nav .mini-nav-item")
-        .forEach(function (item) {
-          item.addEventListener("click", function () {
-            var id = this.id;
+      for (const link of document.querySelectorAll(
+        "ul#sidebarnav ul li a.active",
+      )) {
+        link.closest("ul")?.classList.add("in");
+        link.closest("ul")?.parentElement?.classList.add("selected");
+      }
+
+      for (const item of document.querySelectorAll(
+        ".mini-nav .mini-nav-item",
+      )) {
+        if (!(item instanceof HTMLLIElement)) {
+          continue;
+        }
+
+        item.querySelector('a[href="javascript:"]') &&
+          item.addEventListener("click", () => {
+            const id = item.id;
+
+            for (const navItem of document.querySelectorAll(
+              ".mini-nav .mini-nav-item",
+            )) {
+              navItem.classList.remove("selected");
+            }
+
+            item.classList.add("selected");
+
+            for (const nav of document.querySelectorAll(".sidebarmenu nav")) {
+              nav.classList.remove("d-block");
+            }
+
             document
-              .querySelectorAll(".mini-nav .mini-nav-item")
-              .forEach(function (navItem) {
-                navItem.classList.remove("selected");
-              });
-            this.classList.add("selected");
-            document
-              .querySelectorAll(".sidebarmenu nav")
-              .forEach(function (nav) {
-                nav.classList.remove("d-block");
-              });
-            document
-              .getElementById("menu-right-" + id)
+              .getElementById(`menu-right-${id}`)
               ?.classList.add("d-block");
             document.body.setAttribute("data-sidebartype", "full");
           });
-        });
+      }
     }
   });
 }
 
-if ((at = "horizontal")) {
+if (at === "horizontal") {
   function findMatchingElement() {
-    var currentUrl = window.location.href;
-    var anchors = document.querySelectorAll("#sidebarnavh ul#sidebarnav a");
-    for (var i = 0; i < anchors.length; i++) {
-      if (anchors[i].href === currentUrl) {
-        return anchors[i];
+    const currentUrl = window.location.href;
+    const anchors = document.querySelectorAll("#sidebarnavh ul#sidebarnav a");
+    for (let i = 0; i < anchors.length; i++) {
+      const anchor = anchors[i];
+
+      if (!(anchor instanceof HTMLAnchorElement)) {
+        continue;
+      }
+
+      if (anchor.href === currentUrl) {
+        return anchor;
       }
     }
 
     return null; // Return null if no matching element is found
   }
-  var elements = findMatchingElement();
+
+  const elements = findMatchingElement();
 
   if (elements) {
     elements.classList.add("active");
   }
-  document
-    .querySelectorAll("#sidebarnavh ul#sidebarnav a.active")
-    .forEach(function (link) {
-      link.closest("a").parentElement.classList.add("selected");
-      link.closest("ul").parentElement.classList.add("selected");
-    });
+
+  for (const link of document.querySelectorAll(
+    "#sidebarnavh ul#sidebarnav a.active",
+  )) {
+    link.closest("a")?.parentElement?.classList.add("selected");
+    link.closest("ul")?.parentElement?.classList.add("selected");
+  }
 }
 
 // ----------------------------------------
 // Active 2 file at same time
 // ----------------------------------------
-
-var currentURL =
-  window.location != window.parent.location
+const currentURL =
+  window.location !== window.parent.location
     ? document.referrer
     : document.location.href;
 
-var link = document.getElementById("get-url") || document.createElement("a");
+const link = document.getElementById("get-url") || document.createElement("a");
 
 if (currentURL.includes("/main/index.html")) {
   link.setAttribute("href", "../main/index.html");
