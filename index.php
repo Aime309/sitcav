@@ -97,6 +97,7 @@ auth()->createRoles([
     Permiso::VER_COMPRAS->name,
     Permiso::VER_CLIENTES->name,
     Permiso::VER_PAGOS->name,
+    Permiso::RESTABLECER_CLAVE_EMPLEADO->name,
   ],
 ]);
 

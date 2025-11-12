@@ -1,4 +1,5 @@
 import Alpine from "alpinejs";
+import Toast from "bootstrap/js/dist/toast";
 
 Alpine.data("mensajes", () => ({
   errores: [] as string[],
@@ -7,6 +8,11 @@ Alpine.data("mensajes", () => ({
   informaciones: [] as string[],
 
   init() {
+    this.$watch("errores", this.mostrarMensajes);
+    this.$watch("exitos", this.mostrarMensajes);
+    this.$watch("advertencias", this.mostrarMensajes);
+    this.$watch("informaciones", this.mostrarMensajes);
+
     document.addEventListener("DOMContentLoaded", () => {
       this.errores = JSON.parse(document.body.dataset.errores || "[]");
       this.exitos = JSON.parse(document.body.dataset.exitos || "[]");
@@ -26,5 +32,11 @@ Alpine.data("mensajes", () => ({
     window.addEventListener("online", () => {
       this.exitos.push("Conexión a la red restablecida");
     });
+  },
+
+  mostrarMensajes() {
+    for (const toast of document.querySelectorAll(".toast")) {
+      new Toast(toast).show();
+    }
   },
 }));

@@ -391,9 +391,10 @@ Flight::group('', static function (): void {
       Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Empleados']);
     })->addMiddleware(new SoloPersonalAutorizado(Permiso::VER_EMPLEADOS));
 
-    Flight::route('POST /empleados/@id:\d/restablecer-clave', static function (): void {});
+    Flight::route('/empleados/restablecer-clave@id', static function (): void {})
+      ->addMiddleware(new SoloPersonalAutorizado(Permiso::RESTABLECER_CLAVE_EMPLEADO));
 
-    Flight::route('POST /empleados/despedir/@id', static function (int $id): void {
+    Flight::route('/empleados/despedir/@id', static function (int $id): void {
       $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
 
       $empleado = $empleados->find($id);
@@ -411,7 +412,7 @@ Flight::group('', static function (): void {
       Flight::redirect('/empleados');
     })->addMiddleware(new SoloPersonalAutorizado(Permiso::DESPEDIR_EMPLEADO));
 
-    Flight::route('POST /empleados/recontratar/@id', static function (int $id): void {
+    Flight::route('/empleados/recontratar/@id', static function (int $id): void {
       $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
       $empleado = $empleados->find($id);
 
@@ -428,7 +429,7 @@ Flight::group('', static function (): void {
       Flight::redirect('/empleados');
     })->addMiddleware(new SoloPersonalAutorizado(Permiso::RECONTRATAR_EMPLEADO));
 
-    Flight::route('POST /empleados/promover/@id', static function (int $id): void {
+    Flight::route('/empleados/promover/@id', static function (int $id): void {
       $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
       $empleado = $empleados->find($id);
 
@@ -459,7 +460,7 @@ Flight::group('', static function (): void {
       Flight::redirect('/empleados');
     })->addMiddleware(new SoloPersonalAutorizado(Permiso::PROMOVER_VENDEDOR));
 
-    Flight::route('POST /empleados/degradar/@id', static function (int $id): void {
+    Flight::route('/empleados/degradar/@id', static function (int $id): void {
       $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
       $empleado = $empleados->find($id);
 

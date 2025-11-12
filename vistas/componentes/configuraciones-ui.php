@@ -143,7 +143,7 @@ $id = uniqid();
   <i class="bi bi-gear"></i>
 </button>
 
-<div class="offcanvas customizer offcanvas-end bg-primary-subtle" id="<?= $id ?>">
+<div class="offcanvas customizer offcanvas-end" id="<?= $id ?>">
   <div class="offcanvas-header">
     <h2 class="offcanvas-title">Configuraciones</h2>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
