@@ -27,6 +27,7 @@ use ZxcvbnPhp\Zxcvbn;
  * @property-read Collection<Marca> $marcas
  * @property-read Collection<TipoPago> $tipos_pago
  * @property-read bool $esEncargado
+ * @property-read Collection<Producto> $productos
  */
 class Usuario extends Model
 {
@@ -129,6 +130,12 @@ class Usuario extends Model
   function empleados(): HasMany
   {
     return $this->encargado?->hasMany(self::class, 'id_encargado') ?? $this->hasMany(self::class, 'id_encargado');
+  }
+
+  /** @return HasMany<Producto> */
+  function productos(): HasMany
+  {
+    return $this->encargado?->hasMany(Producto::class, 'id_encargado') ?? $this->hasMany(Producto::class, 'id_encargado');
   }
 
   /** @return HasMany<Cotizacion> */

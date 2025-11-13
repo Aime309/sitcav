@@ -127,13 +127,15 @@ create table productos (
   cantidad_disponible integer not null check (cantidad_disponible >= 0),
   dias_garantia integer check (dias_garantia >= 0),
   dias_apartado integer not null check (dias_apartado >= 0),
-  id_categoria integer not null,
-  id_proveedor integer not null,
-  id_marca integer not null,
+  id_categoria integer,
+  id_proveedor integer,
+  id_marca integer,
+  id_encargado integer not null,
 
   foreign key (id_categoria) references categorias(id),
   foreign key (id_proveedor) references proveedores(id),
-  foreign key (id_marca) references marcas(id)
+  foreign key (id_marca) references marcas(id),
+  foreign key (id_encargado) references usuarios(id)
 );
 
 create table compras (
