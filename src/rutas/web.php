@@ -391,8 +391,9 @@ Flight::group('', static function (): void {
       Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Empleados']);
     })->addMiddleware(new SoloPersonalAutorizado(Permiso::VER_EMPLEADOS));
 
-    Flight::route('/empleados/restablecer-clave@id', static function (): void {})
-      ->addMiddleware(new SoloPersonalAutorizado(Permiso::RESTABLECER_CLAVE_EMPLEADO));
+    Flight::route('POST /empleados/restablecer-clave/@id', static function (int $id): void {
+      $nuevaClave = Flight::request()->data->nueva_clave;
+    })->addMiddleware(new SoloPersonalAutorizado(Permiso::RESTABLECER_CLAVE_EMPLEADO));
 
     Flight::route('/empleados/despedir/@id', static function (int $id): void {
       $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;

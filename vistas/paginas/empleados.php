@@ -3,6 +3,8 @@
 use SITCAV\Enums\Permiso;
 use SITCAV\Enums\Rol;
 
+$idModalRestablecerClave = uniqid();
+
 ?>
 
 <div
@@ -128,7 +130,8 @@ use SITCAV\Enums\Rol;
                     title="Restablecer contraseña">
                     <a
                       class="text-dark px-2 fs-5 bg-hover-primary nav-icon-hover position-relative z-index-5"
-                      :href="empleadoSeleccionado.id && `./empleados/${empleadoSeleccionado.id}/restablecer-clave`">
+                      href="#<?= $idModalRestablecerClave ?>"
+                      data-bs-toggle="modal">
                       <i class="bi bi-unlock"></i>
                     </a>
                   </li>
@@ -226,7 +229,8 @@ use SITCAV\Enums\Rol;
                         </div> -->
                         <div class="d-flex align-items-center gap-6 btn-group py-5">
                           <a
-                            :href="`./empleados/${empleadoIterado.id}/restablecer-clave`"
+                            href="#<?= $idModalRestablecerClave ?>"
+                            data-bs-toggle="modal"
                             class="btn btn-primary <?= auth()->user()->cannot(Permiso::RESTABLECER_CLAVE_EMPLEADO->name) ? 'disabled opacity-25' : '' ?>"
                             style="<?= auth()->user()->cannot(Permiso::RESTABLECER_CLAVE_EMPLEADO->name) ? 'pointer-events: none' : '' ?>">
                             <i class="bi bi-unlock"></i>
@@ -284,6 +288,29 @@ use SITCAV\Enums\Rol;
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <?php Flight::render('componentes/filtrosEmpleados') ?>
+    </div>
+  </div>
+
+  <div class="modal fade" id="<?= $idModalRestablecerClave ?>">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header align-items-center">
+          <div>
+            <h4 class="modal-title">Restablecer clave</h4>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body w-100 border position-relative overflow-hidden">
+          <form :action="`./empleados/restablecer-clave/${empleadoSeleccionado.id}`" method="post" class="d-grid gap-3">
+            <?php Flight::render('componentes/input-clave', [
+              'required' => true,
+              'label' => 'Nueva contraseña',
+              'name' => 'nueva_clave',
+            ]) ?>
+            <button class="btn btn-primary">Restablecer</button>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>
