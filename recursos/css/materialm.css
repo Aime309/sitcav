@@ -1072,7 +1072,7 @@ pre.code-view code.hljs {
   }
 }
 
-@media (max-width:1299.98px) {
+@media (max-width:1270px) {
   #main-wrapper.show-sidebar .left-sidebar {
     left: 0
   }
