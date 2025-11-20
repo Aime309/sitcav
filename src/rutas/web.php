@@ -392,7 +392,7 @@ Flight::group('', static function (): void {
 
     Flight::route('POST /empleados/restablecer-clave/@id', static function (int $id): void {
       $nuevaClave = Flight::request()->data->nueva_clave;
-      $empleado = Usuario::query()->find(session()->get($id));
+      $empleado = Usuario::query()->find($id);
 
       try {
         $empleado->restablecerClave($nuevaClave);
@@ -400,7 +400,6 @@ Flight::group('', static function (): void {
       } catch (Error $error) {
         flash()->set([$error->getMessage()], ClaveSesion::MENSAJES_ERRORES->name);
       }
-
 
       Flight::redirect('/empleados');
     })->addMiddleware(new SoloPersonalAutorizado(Permiso::RESTABLECER_CLAVE_EMPLEADO));
