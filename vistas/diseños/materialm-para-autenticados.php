@@ -4,10 +4,10 @@ use SITCAV\Enums\ClaveSesion;
 use SITCAV\Enums\Permiso;
 
 $idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
-$errores = (array) flash()->display(ClaveSesion::MENSAJES_ERRORES->name);
-$exitos = (array) flash()->display(ClaveSesion::MENSAJES_EXITOS->name);
-$advertencias = (array) flash()->display(ClaveSesion::MENSAJES_ADVERTENCIAS->name);
-$informaciones = (array) flash()->display(ClaveSesion::MENSAJES_INFORMACIONES->name);
+$errores = (array) session()->retrieve(ClaveSesion::MENSAJES_ERRORES->name, flash()->display(ClaveSesion::MENSAJES_ERRORES->name));
+$exitos = (array) session()->retrieve(ClaveSesion::MENSAJES_EXITOS->name, flash()->display(ClaveSesion::MENSAJES_EXITOS->name));
+$advertencias = (array) session()->retrieve(ClaveSesion::MENSAJES_ADVERTENCIAS->name, flash()->display(ClaveSesion::MENSAJES_ADVERTENCIAS->name));
+$informaciones = (array) session()->retrieve(ClaveSesion::MENSAJES_INFORMACIONES->name, flash()->display(ClaveSesion::MENSAJES_INFORMACIONES->name));
 
 /** @param array{permisos: Permiso[]} $enlace */
 function tienePermisos(array $enlace): bool

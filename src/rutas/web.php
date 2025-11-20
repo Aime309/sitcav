@@ -195,7 +195,6 @@ Flight::group('', static function (): void {
         ]);
       }
 
-
       session()->remove(ClaveSesion::USUARIO_ID->name);
       session()->remove(ClaveSesion::USUARIO_CORREO->name);
       flash()->set(['La contraseña se ha restablecido correctamente.'], ClaveSesion::MENSAJES_EXITOS->name);
@@ -393,6 +392,17 @@ Flight::group('', static function (): void {
 
     Flight::route('POST /empleados/restablecer-clave/@id', static function (int $id): void {
       $nuevaClave = Flight::request()->data->nueva_clave;
+      $empleado = Usuario::query()->find(session()->get($id));
+
+      try {
+        $empleado->restablecerClave($nuevaClave);
+        flash()->set(['La contraseña se ha restablecido correctamente.'], ClaveSesion::MENSAJES_EXITOS->name);
+      } catch (Error $error) {
+        flash()->set([$error->getMessage()], ClaveSesion::MENSAJES_ERRORES->name);
+      }
+
+
+      Flight::redirect('/empleados');
     })->addMiddleware(new SoloPersonalAutorizado(Permiso::RESTABLECER_CLAVE_EMPLEADO));
 
     Flight::route('/empleados/despedir/@id', static function (int $id): void {
