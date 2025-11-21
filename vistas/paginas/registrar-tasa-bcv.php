@@ -2,7 +2,7 @@
 
 $dolaresDeLaApi = @file_get_contents('https://ve.dolarapi.com/v1/dolares') ?: '[{"promedio":"Error de conexión"}]';
 $tasaDePagina = json_decode($dolaresDeLaApi)[0]->promedio;
-$tasaBcv = ceil(max($ultimaCotizacion->tasa_bcv, $tasaDePagina));
+$tasaBcv = ceil(max($ultimaCotizacion->tasa_bcv, floatval($tasaDePagina) ?: 0));
 
 ?>
 

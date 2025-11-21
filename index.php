@@ -183,6 +183,13 @@ Flight::map('error', static function (Throwable $error): never {
     exit;
   }
 
+  if (str_contains($error->getMessage(), 'Template file not found')) {
+    Flight::notFound();
+    error_log($error);
+
+    exit;
+  }
+
   http_response_code(500);
   session()->set(ClaveSesion::MENSAJES_ERRORES->name, ['Ha ocurrido un error inesperado. Por favor intente nuevamente más tarde.']);
   error_log($error);

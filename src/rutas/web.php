@@ -383,124 +383,131 @@ Flight::group('', static function (): void {
     Flight::route('GET /perfil/editar', static function (): void {});
     Flight::route('POST /perfil/editar', static function (): void {});
 
-    Flight::route('GET /empleados', static function (): void {
-      $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
+    Flight::group('/empleados', static function (): void {
+      Flight::route('GET /', static function (): void {
+        $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
 
-      Flight::render('paginas/empleados', compact('empleados'), 'pagina');
-      Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Empleados']);
-    })->addMiddleware(new SoloPersonalAutorizado(Permiso::VER_EMPLEADOS));
+        Flight::render('paginas/empleados', compact('empleados'), 'pagina');
+        Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Empleados']);
+      })->addMiddleware(new SoloPersonalAutorizado(Permiso::VER_EMPLEADOS));
 
-    Flight::route('POST /empleados/restablecer-clave/@id', static function (int $id): void {
-      $nuevaClave = Flight::request()->data->nueva_clave;
-      $empleado = Usuario::query()->find($id);
+      Flight::route('POST /restablecer-clave/@id', static function (int $id): void {
+        $nuevaClave = Flight::request()->data->nueva_clave;
+        $empleado = Usuario::query()->find($id);
 
-      try {
-        $empleado->restablecerClave($nuevaClave);
-        flash()->set(['La contraseña se ha restablecido correctamente.'], ClaveSesion::MENSAJES_EXITOS->name);
-      } catch (Error $error) {
-        flash()->set([$error->getMessage()], ClaveSesion::MENSAJES_ERRORES->name);
-      }
+        try {
+          $empleado->restablecerClave($nuevaClave);
+          flash()->set(['La contraseña se ha restablecido correctamente.'], ClaveSesion::MENSAJES_EXITOS->name);
+        } catch (Error $error) {
+          flash()->set([$error->getMessage()], ClaveSesion::MENSAJES_ERRORES->name);
+        }
 
-      Flight::redirect('/empleados');
-    })->addMiddleware(new SoloPersonalAutorizado(Permiso::RESTABLECER_CLAVE_EMPLEADO));
-
-    Flight::route('/empleados/despedir/@id', static function (int $id): void {
-      $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
-
-      $empleado = $empleados->find($id);
-
-      if (!$empleado instanceof Usuario) {
-        flash()->set(['El empleado no existe o no te pertenece.'], ClaveSesion::MENSAJES_ERRORES->name);
         Flight::redirect('/empleados');
+      })->addMiddleware(new SoloPersonalAutorizado(Permiso::RESTABLECER_CLAVE_EMPLEADO));
 
-        return;
-      }
+      Flight::route('/despedir/@id', static function (int $id): void {
+        $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
 
-      $empleado->esta_despedido = true;
-      $empleado->save();
-      flash()->set(['El empleado ha sido despedido exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
-      Flight::redirect('/empleados');
-    })->addMiddleware(new SoloPersonalAutorizado(Permiso::DESPEDIR_EMPLEADO));
+        $empleado = $empleados->find($id);
 
-    Flight::route('/empleados/recontratar/@id', static function (int $id): void {
-      $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
-      $empleado = $empleados->find($id);
+        if (!$empleado instanceof Usuario) {
+          flash()->set(['El empleado no existe o no te pertenece.'], ClaveSesion::MENSAJES_ERRORES->name);
+          Flight::redirect('/empleados');
 
-      if (!$empleado instanceof Usuario) {
-        flash()->set(['El empleado no existe o no te pertenece.'], ClaveSesion::MENSAJES_ERRORES->name);
+          return;
+        }
+
+        $empleado->esta_despedido = true;
+        $empleado->save();
+        flash()->set(['El empleado ha sido despedido exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
         Flight::redirect('/empleados');
+      })->addMiddleware(new SoloPersonalAutorizado(Permiso::DESPEDIR_EMPLEADO));
 
-        return;
-      }
+      Flight::route('/recontratar/@id', static function (int $id): void {
+        $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
+        $empleado = $empleados->find($id);
 
-      $empleado->esta_despedido = false;
-      $empleado->save();
-      flash()->set(['El empleado ha sido recontratado exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
-      Flight::redirect('/empleados');
-    })->addMiddleware(new SoloPersonalAutorizado(Permiso::RECONTRATAR_EMPLEADO));
+        if (!$empleado instanceof Usuario) {
+          flash()->set(['El empleado no existe o no te pertenece.'], ClaveSesion::MENSAJES_ERRORES->name);
+          Flight::redirect('/empleados');
 
-    Flight::route('/empleados/promover/@id', static function (int $id): void {
-      $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
-      $empleado = $empleados->find($id);
+          return;
+        }
 
-      if (!$empleado instanceof Usuario) {
-        flash()->set(['El empleado no existe o no te pertenece.'], ClaveSesion::MENSAJES_ERRORES->name);
+        $empleado->esta_despedido = false;
+        $empleado->save();
+        flash()->set(['El empleado ha sido recontratado exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
         Flight::redirect('/empleados');
+      })->addMiddleware(new SoloPersonalAutorizado(Permiso::RECONTRATAR_EMPLEADO));
 
-        return;
-      }
+      Flight::route('/promover/@id', static function (int $id): void {
+        $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
+        $empleado = $empleados->find($id);
 
-      if (in_array('Empleado superior', $empleado->roles)) {
-        flash()->set(['El empleado ya es un Empleado superior.'], ClaveSesion::MENSAJES_ERRORES->name);
+        if (!$empleado instanceof Usuario) {
+          flash()->set(['El empleado no existe o no te pertenece.'], ClaveSesion::MENSAJES_ERRORES->name);
+          Flight::redirect('/empleados');
+
+          return;
+        }
+
+        if (in_array('Empleado superior', $empleado->roles)) {
+          flash()->set(['El empleado ya es un Empleado superior.'], ClaveSesion::MENSAJES_ERRORES->name);
+          Flight::redirect('/empleados');
+
+          return;
+        }
+
+        try {
+          db()->update('usuarios')->params([
+            'roles' => '["Empleado superior", "Vendedor"]',
+          ])->where('id', $empleado->id)->execute();
+          flash()->set(['El empleado ha sido promovido a Empleado superior exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
+        } catch (Throwable $error) {
+          flash()->set(['No se pudo promover al empleado. Por favor, intenta nuevamente más tarde.'], ClaveSesion::MENSAJES_ERRORES->name);
+          error_log("Error al promover empleado (ID: $id): {$error->getMessage()}");
+        }
+
         Flight::redirect('/empleados');
+      })->addMiddleware(new SoloPersonalAutorizado(Permiso::PROMOVER_VENDEDOR));
 
-        return;
-      }
+      Flight::route('/degradar/@id', static function (int $id): void {
+        $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
+        $empleado = $empleados->find($id);
 
-      try {
-        db()->update('usuarios')->params([
-          'roles' => '["Empleado superior", "Vendedor"]',
-        ])->where('id', $empleado->id)->execute();
-        flash()->set(['El empleado ha sido promovido a Empleado superior exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
-      } catch (Throwable $error) {
-        flash()->set(['No se pudo promover al empleado. Por favor, intenta nuevamente más tarde.'], ClaveSesion::MENSAJES_ERRORES->name);
-        error_log("Error al promover empleado (ID: $id): {$error->getMessage()}");
-      }
+        if (!$empleado instanceof Usuario) {
+          flash()->set(['El empleado no existe o no te pertenece.'], ClaveSesion::MENSAJES_ERRORES->name);
+          Flight::redirect('/empleados');
 
-      Flight::redirect('/empleados');
-    })->addMiddleware(new SoloPersonalAutorizado(Permiso::PROMOVER_VENDEDOR));
+          return;
+        }
 
-    Flight::route('/empleados/degradar/@id', static function (int $id): void {
-      $empleados = Container::getInstance()->get(UsuarioAutenticado::class)->empleados;
-      $empleado = $empleados->find($id);
+        if (!in_array('Empleado superior', $empleado->roles)) {
+          flash()->set(['El empleado ya es un Vendedor.'], ClaveSesion::MENSAJES_ERRORES->name);
+          Flight::redirect('/empleados');
 
-      if (!$empleado instanceof Usuario) {
-        flash()->set(['El empleado no existe o no te pertenece.'], ClaveSesion::MENSAJES_ERRORES->name);
+          return;
+        }
+
+        try {
+          db()->update('usuarios')->params([
+            'roles' => '["Vendedor"]',
+          ])->where('id', $empleado->id)->execute();
+
+          flash()->set(['El empleado ha sido degradado a Vendedor exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
+        } catch (Throwable $error) {
+          flash()->set(['No se pudo degradar al empleado. Por favor, intenta nuevamente más tarde.'], ClaveSesion::MENSAJES_ERRORES->name);
+          error_log("Error al degradar empleado (ID: $id): {$error->getMessage()}");
+        }
+
         Flight::redirect('/empleados');
+      })->addMiddleware(new SoloPersonalAutorizado(Permiso::DEGRADAR_EMPLEADO_SUPERIOR));
 
-        return;
-      }
-
-      if (!in_array('Empleado superior', $empleado->roles)) {
-        flash()->set(['El empleado ya es un Vendedor.'], ClaveSesion::MENSAJES_ERRORES->name);
-        Flight::redirect('/empleados');
-
-        return;
-      }
-
-      try {
-        db()->update('usuarios')->params([
-          'roles' => '["Vendedor"]',
-        ])->where('id', $empleado->id)->execute();
-
-        flash()->set(['El empleado ha sido degradado a Vendedor exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
-      } catch (Throwable $error) {
-        flash()->set(['No se pudo degradar al empleado. Por favor, intenta nuevamente más tarde.'], ClaveSesion::MENSAJES_ERRORES->name);
-        error_log("Error al degradar empleado (ID: $id): {$error->getMessage()}");
-      }
-
-      Flight::redirect('/empleados');
-    })->addMiddleware(new SoloPersonalAutorizado(Permiso::DEGRADAR_EMPLEADO_SUPERIOR));
+      Flight::route('GET /registrar', static function (): void {
+        Flight::render('paginas/empleados/registrar', [], 'pagina');
+        Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Registrar empleado']);
+      });
+    });
 
     // Flight::route('GET /eventos', function (): void {});
 
