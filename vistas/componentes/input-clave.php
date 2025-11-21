@@ -5,6 +5,7 @@ use SITCAV\Enums\Traducciones;
 $id = uniqid();
 $required ??= false;
 $mostrarAdvertencias ??= true;
+$model ??= '';
 
 ?>
 
@@ -54,7 +55,8 @@ $mostrarAdvertencias ??= true;
       'is-valid': validacionClave.score >= 2,
     }"
     id="<?= $id ?>"
-    x-model="clave" />
+    x-model="clave"
+    @change="<?= $model ? "$model = \$el.value" : '' ?>" />
   <?php if ($mostrarAdvertencias): ?>
     <div
       class="invalid-feedback"

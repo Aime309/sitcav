@@ -506,7 +506,33 @@ Flight::group('', static function (): void {
       Flight::route('GET /registrar', static function (): void {
         Flight::render('paginas/empleados/registrar', [], 'pagina');
         Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Registrar empleado']);
-      });
+      })->addMiddleware(new SoloPersonalAutorizado(Permiso::CONTRATAR_EMPLEADO));
+
+      Flight::route('POST /', static function (): void {
+        $datos = Flight::request()->data;
+        $roles = [Rol::VENDEDOR->value];
+
+        if ($datos->rol === Rol::EMPLEADO_SUPERIOR->value) {
+          $roles[] = Rol::EMPLEADO_SUPERIOR->value;
+        }
+
+        if (auth()->createUserFor([
+          'email' => $datos->correo ?: null,
+          'cedula' => $datos->cedula ?: null,
+          'clave_encriptada' => $datos->clave,
+          'roles' => json_encode($roles),
+          'url_imagen' => $datos->url_imagen ?: null,
+          'id_encargado' => auth()->id(),
+        ])) {
+          flash()->set(['Empleado contratado correctamente.'], ClaveSesion::MENSAJES_EXITOS->name);
+          Flight::redirect('/empleados');
+
+          return;
+        }
+
+        flash()->set(auth()->errors(), ClaveSesion::MENSAJES_ERRORES->name);
+        Flight::redirect('/empleados/registrar');
+      })->addMiddleware(new SoloPersonalAutorizado(Permiso::CONTRATAR_EMPLEADO));
     });
 
     // Flight::route('GET /eventos', function (): void {});

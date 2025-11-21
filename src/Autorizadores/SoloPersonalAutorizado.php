@@ -26,7 +26,7 @@ final readonly class SoloPersonalAutorizado
       return true;
     }
 
-    flash()->set(['No tienes permiso para acceder realizar esta acción.'], ClaveSesion::MENSAJES_ERRORES->name);
-    Flight::redirect('/');
+    session()->set(ClaveSesion::MENSAJES_ERRORES->name, ['No tienes permiso para acceder realizar esta acción.']);
+    Flight::redirect(Flight::request()->referrer);
   }
 }
