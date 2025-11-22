@@ -10,18 +10,6 @@ $enlacesPerfil = [
     'subtitle' => 'Configuraciones de la cuenta',
     'href' => './perfil',
   ],
-  [
-    'icon' => 'bi bi-envelope',
-    'title' => 'Mis bandeja de entrada',
-    'subtitle' => 'Mensajes y correos',
-    'href' => './notificaciones',
-  ],
-  [
-    'icon' => 'bi bi-check2-square',
-    'title' => 'Mis tareas',
-    'subtitle' => 'Quehaceres y tareas diarias',
-    'href' => './tareas',
-  ],
 ];
 
 ?>
@@ -49,15 +37,16 @@ $enlacesPerfil = [
           <strong>
             <?= (
               auth()->user()?->nombreCompleto
-              ?: (auth()->user()?->cedula && sprintf('v-%s', auth()->user()?->cedula))
-              ?: ''
+              ?: ('v-' . auth()->user()?->cedula)
             ) ?>
           </strong>
           <span><?= auth()->user()?->roles()[0] ?></span>
-          <span class="d-flex align-items-center gap-3">
-            <i class="bi bi-envelope"></i>
-            <?= auth()->user()?->email ?>
-          </span>
+          <?php if (auth()->user()?->email): ?>
+            <span class="d-flex align-items-center gap-3">
+              <i class="bi bi-envelope"></i>
+              <?= auth()->user()?->email ?>
+            </span>
+          <?php endif ?>
         </div>
       </div>
       <div class="message-body">
