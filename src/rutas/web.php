@@ -18,10 +18,10 @@ use SITCAV\Modelos\UsuarioAutenticado;
 
 Flight::group('', static function (): void {
   Flight::route('GET /oauth2/google', static function (): void {
-    $query = Flight::request()->query;
-    $error = $query->error;
-    $codigo = $query->code;
-    $estado = $query->state;
+    $parametrosGET = Flight::request()->query;
+    $error = $parametrosGET->error;
+    $codigo = $parametrosGET->code;
+    $estado = $parametrosGET->state;
 
     if ($error) {
       flash()->set(['No se pudo iniciar sesión con Google'], ClaveSesion::MENSAJES_ERRORES->name);

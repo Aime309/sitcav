@@ -2,8 +2,6 @@
 
 use SITCAV\Enums\ClaveSesion;
 
-$idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
-
 ?>
 
 <!doctype html>
@@ -24,13 +22,13 @@ $idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
   <title><?= $titulo ?> | SITCAV</title>
   <base href="<?= str_replace('index.php', '', $_SERVER['SCRIPT_NAME']) ?>" />
   <link rel="icon" href="./recursos/imagenes/favicon.png" />
-  <link rel="stylesheet" href="./recursos/compilados/errores.css?id=<?= $idDeRecursos ?>" />
-  <link rel="stylesheet" href="./recursos/css/materialm.css?id=<?= $idDeRecursos ?>" />
+  <link rel="stylesheet" href="./recursos/compilados/errores.css?id=<?= ID_DE_RECURSOS ?>" />
+  <link rel="stylesheet" href="./recursos/css/materialm.css?id=<?= ID_DE_RECURSOS ?>" />
 </head>
 
 <body class="text-center">
   <?= $pagina ?>
-  <script src="./recursos/compilados/errores.js?id=<?= $idDeRecursos ?>"></script>
+  <script src="./recursos/compilados/errores.js?id=<?= ID_DE_RECURSOS ?>"></script>
 </body>
 
 </html>

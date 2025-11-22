@@ -20,17 +20,31 @@ require_once CARPETA_RAIZ . '/vendor/autoload.php';
 /** Por ejemplo sería: `http://localhost/sitcav` **NO INCLUYE `/` al FINAL** */
 define(
   'URL_BASE_COMPLETA',
-  Flight::request()->getScheme() . '://' . Flight::request()->host . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME'])
+  Flight::request()->getScheme()
+    . '://'
+    . Flight::request()->host
+    . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']),
 );
 
 ////////////////////////////////////////////////////////
 // CARGAR VARIABLES DE ENTORNO - ver archivo .env.php //
 ////////////////////////////////////////////////////////
-$_ENV += file_exists(CARPETA_RAIZ . '/.env.php') ? require CARPETA_RAIZ . '/.env.php' : [];
+$_ENV += file_exists(CARPETA_RAIZ . '/.env.php')
+  ? require CARPETA_RAIZ . '/.env.php'
+  : [];
+
 $_ENV += require CARPETA_RAIZ . '/.env.dist.php';
 
 $_ENV['GOOGLE_AUTH_REDIRECT_URI'] = URL_BASE_COMPLETA . '/oauth2/google';
 $_ENV['APP_URL'] = URL_BASE_COMPLETA;
+
+////////////////////////////
+// CONSTANTES PARA VISTAS //
+////////////////////////////
+define(
+  'ID_DE_RECURSOS',
+  $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '',
+);
 
 ////////////////////////////////////////////////////
 // CONFIGURAR LEAF AUTH (módulo de autenticación) //
@@ -41,11 +55,14 @@ auth()->config('roles.key', 'roles');
 auth()->config('timestamps', false);
 auth()->config('timestamps.format', 'YYYY-MM-DD HH:mm:ss');
 
-auth()->config('password.encode', static function (string $password): string {
-  return Password::hash($password, Password::BCRYPT, [
-    'cost' => 10,
-  ]);
-});
+auth()->config(
+  'password.encode',
+  static fn(string $password): string => Password::hash(
+    $password,
+    Password::BCRYPT,
+    ['cost' => 10],
+  )
+);
 
 auth()->config('password.verify', Password::verify(...));
 auth()->config('password.key', 'clave_encriptada');
@@ -108,12 +125,20 @@ $guzzle = auth()->client('google')->getHttpClient();
 $refleccionPropiedad = new ReflectionProperty($guzzle, 'config');
 $refleccionPropiedad->setAccessible(true);
 $configuracionDeGuzzle = $refleccionPropiedad->getValue($guzzle);
-$refleccionPropiedad->setValue($guzzle, ['verify' => false] + $configuracionDeGuzzle);
+
+$refleccionPropiedad->setValue(
+  $guzzle,
+  ['verify' => false] + $configuracionDeGuzzle
+);
 
 ///////////////////////
 // CONFIGURAR FLIGHT //
 ///////////////////////
-Flight::set('flight.base_url', str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']));
+Flight::set(
+  'flight.base_url',
+  str_replace('/index.php', '', $_SERVER['SCRIPT_NAME'])
+);
+
 Flight::set('flight.case_sensitive', false);
 Flight::set('flight.handle_errors', true);
 Flight::set('flight.log_errors', false);
@@ -179,12 +204,6 @@ ini_set('ignore_repeated_source', true);
 ini_set('error_log', CARPETA_RAIZ . '/logs/php_errors.log');
 
 Flight::map('error', static function (Throwable $error): never {
-  if (str_contains($error->getPrevious()?->getMessage() ?: $error->getMessage(), UsuarioAutenticado::class)) {
-    Flight::redirect('/salir');
-
-    exit;
-  }
-
   if (str_contains($error->getMessage(), 'Template file not found')) {
     Flight::notFound();
     error_log($error);
@@ -208,7 +227,7 @@ Flight::map('error', static function (Throwable $error): never {
 Flight::map('notFound', static function (): void {
   http_response_code(404);
 
-  Flight::render('paginas/404', [], 'pagina');
+  Flight::render('paginas/404', key: 'pagina');
 
   Flight::render('diseños/materialm-para-errores', [
     'titulo' => 'Página no encontrada',

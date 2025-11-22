@@ -2,7 +2,6 @@
 
 use SITCAV\Enums\ClaveSesion;
 
-$idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
 $errores = (array) flash()->display(ClaveSesion::MENSAJES_ERRORES->name);
 $exitos = (array) flash()->display(ClaveSesion::MENSAJES_EXITOS->name);
 $advertencias = (array) flash()->display(ClaveSesion::MENSAJES_ADVERTENCIAS->name);
@@ -32,8 +31,8 @@ $informaciones = (array) flash()->display(ClaveSesion::MENSAJES_INFORMACIONES->n
   <link rel="icon" href="./recursos/imagenes/favicon.png" />
   <link
     rel="stylesheet"
-    href="./recursos/compilados/visitantes.css?id=<?= $idDeRecursos ?>" />
-  <link rel="stylesheet" href="./recursos/css/materialm.css?id=<?= $idDeRecursos ?>" />
+    href="./recursos/compilados/visitantes.css?id=<?= ID_DE_RECURSOS ?>" />
+  <link rel="stylesheet" href="./recursos/css/materialm.css?id=<?= ID_DE_RECURSOS ?>" />
   <style>
     body {
       background: url('./recursos/imagenes/Imagen de WhatsApp 2025-10-30 a las 21.55.54_e571a147.jpg');
@@ -53,7 +52,7 @@ $informaciones = (array) flash()->display(ClaveSesion::MENSAJES_INFORMACIONES->n
   <?php Flight::render('componentes/notificaciones') ?>
   <?php Flight::render('componentes/configuraciones-ui') ?>
   <?= $pagina ?>
-  <script src="./recursos/compilados/visitantes.js?id=<?= $idDeRecursos ?>"></script>
+  <script src="./recursos/compilados/visitantes.js?id=<?= ID_DE_RECURSOS ?>"></script>
 </body>
 
 </html>

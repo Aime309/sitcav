@@ -3,7 +3,6 @@
 use SITCAV\Enums\ClaveSesion;
 use SITCAV\Enums\Permiso;
 
-$idDeRecursos = $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '';
 $errores = (array) session()->retrieve(ClaveSesion::MENSAJES_ERRORES->name, flash()->display(ClaveSesion::MENSAJES_ERRORES->name));
 $exitos = (array) session()->retrieve(ClaveSesion::MENSAJES_EXITOS->name, flash()->display(ClaveSesion::MENSAJES_EXITOS->name));
 $advertencias = (array) session()->retrieve(ClaveSesion::MENSAJES_ADVERTENCIAS->name, flash()->display(ClaveSesion::MENSAJES_ADVERTENCIAS->name));
@@ -230,8 +229,8 @@ define('GRUPOS_ENLACES_NAVEGACION', [
   <link rel="icon" href="./recursos/imagenes/favicon.png" />
   <link
     rel="stylesheet"
-    href="./recursos/compilados/autenticados.css?id=<?= $idDeRecursos ?>" />
-  <link rel="stylesheet" href="./recursos/css/materialm.css?id=<?= $idDeRecursos ?>" />
+    href="./recursos/compilados/autenticados.css?id=<?= ID_DE_RECURSOS ?>" />
+  <link rel="stylesheet" href="./recursos/css/materialm.css?id=<?= ID_DE_RECURSOS ?>" />
 </head>
 
 <body
@@ -284,10 +283,10 @@ define('GRUPOS_ENLACES_NAVEGACION', [
     </div>
   </div>
 
-  <script src="./recursos/compilados/autenticados.js?id=<?= $idDeRecursos ?>"></script>
-  <script src="./recursos/js/theme/theme.js?id=<?= $idDeRecursos ?>"></script>
-  <script src="./recursos/js/theme/app.min.js?id=<?= $idDeRecursos ?>"></script>
-  <script src="./recursos/js/theme/sidebarmenu.js?id=<?= $idDeRecursos ?>"></script>
+  <script src="./recursos/compilados/autenticados.js?id=<?= ID_DE_RECURSOS ?>"></script>
+  <script src="./recursos/js/theme/theme.js?id=<?= ID_DE_RECURSOS ?>"></script>
+  <script src="./recursos/js/theme/app.min.js?id=<?= ID_DE_RECURSOS ?>"></script>
+  <script src="./recursos/js/theme/sidebarmenu.js?id=<?= ID_DE_RECURSOS ?>"></script>
 </body>
 
 </html>
