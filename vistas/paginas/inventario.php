@@ -81,6 +81,13 @@ $idModalFiltros = uniqid();
         </form>
       </div>
       <div class="row row-gap-4">
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <a
+            href="./productos/registrar"
+            class="card h-100 rounded-2 border text-bg-success d-flex justify-content-center align-items-center">
+            <i class="bi bi-plus display-1"></i>
+          </a>
+        </div>
         <template x-for="producto in productosFiltrados">
           <div class="col-sm-6 col-md-4 col-lg-3">
             <div class="card h-100 overflow-hidden rounded-2 border">
@@ -90,9 +97,17 @@ $idModalFiltros = uniqid();
                     :src="producto.url_imagen || './recursos/imagenes/products/s11.jpg'"
                     class="card-img-top object-fit-contain" />
                 </a>
+                <a
+                  :href="`./productos/${producto.id}/editar`"
+                  class="btn text-bg-secondary rounded-pill position-absolute top-0 end-0 me-2 mt-2"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Editar producto">
+                  <i class="bi bi-pencil"></i>
+                </a>
                 <button
                   @click="productosEnCarrito[producto.id] = (productosEnCarrito[producto.id] || 0) + 1"
-                  class="text-bg-primary rounded-pill position-absolute bottom-0 end-0 me-2 mb-2"
+                  class="btn text-bg-primary rounded-pill position-absolute bottom-0 end-0 me-2 mb-2"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Añadir al carrito">
@@ -101,7 +116,7 @@ $idModalFiltros = uniqid();
                 <button
                   x-show="productosEnCarrito[producto.id] > 0"
                   @click="productosEnCarrito[producto.id] = Math.max((productosEnCarrito[producto.id] || 0) - 1, 0)"
-                  class="text-bg-danger rounded-pill position-absolute bottom-0 end-0 me-5 mb-2"
+                  class="btn text-bg-danger rounded-pill position-absolute bottom-0 start-0 ms-2 mb-2"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Eliminar del carrito">

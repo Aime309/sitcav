@@ -324,6 +324,28 @@ Flight::group('', static function (): void {
       Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Inicio']);
     });
 
+    Flight::group('/productos', static function (): void {
+      Flight::route('GET /registrar', static function (): void {
+        Flight::render('paginas/productos/registrar', key: 'pagina');
+        Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Registrar producto']);
+      });
+
+      Flight::route('POST /', static function (): void {});
+
+      Flight::group('/@id', static function (): void {
+        Flight::route('GET /', static function (int $id): void {
+          $producto = Producto::query()->find($id);
+
+          Flight::render('paginas/productos/detalles', compact('producto'));
+          Flight::render('diseños/materialm-para-autenticados', ['titulo' => $producto->nombre]);
+        });
+
+        Flight::route('GET /editar', static function (int $id): void {});
+
+        Flight::route('POST /', static function (int $id): void {});
+      });
+    });
+
     Flight::group('/inventario', static function (): void {
       Flight::route('GET /', static function (): void {
         $usuarioAutenticado = Container::getInstance()->get(UsuarioAutenticado::class);
