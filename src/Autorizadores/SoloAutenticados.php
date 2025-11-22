@@ -11,7 +11,7 @@ final readonly class SoloAutenticados
     if (auth()->user() === null) {
       Flight::redirect('/ingresar');
     } else {
-      return auth()->user()->assign(auth()->user()->roles);
+      return auth()->user()->assign(auth()->user()->__get('roles'));
     }
   }
 }

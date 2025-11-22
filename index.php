@@ -11,6 +11,7 @@ use SITCAV\Modelos\UsuarioAutenticado;
 /////////////////////////
 // CONSTANTES GLOBALES //
 /////////////////////////
+
 /** Por ejemplo sería: `C:\xampp\htdocs\sitcav` */
 const CARPETA_RAIZ = __DIR__;
 
@@ -98,6 +99,7 @@ auth()->createRoles([
     Permiso::VER_CLIENTES->name,
     Permiso::VER_PAGOS->name,
     Permiso::RESTABLECER_CLAVE_EMPLEADO->name,
+    Permiso::CONTRATAR_EMPLEADO->name,
   ],
 ]);
 
@@ -191,7 +193,12 @@ Flight::map('error', static function (Throwable $error): never {
   }
 
   http_response_code(500);
-  session()->set(ClaveSesion::MENSAJES_ERRORES->name, ['Ha ocurrido un error inesperado. Por favor intente nuevamente más tarde.']);
+
+  flash()->set(
+    ['Ha ocurrido un error inesperado. Por favor intente nuevamente más tarde.'],
+    ClaveSesion::MENSAJES_ERRORES->name,
+  );
+
   error_log($error);
   Flight::redirect('/');
 

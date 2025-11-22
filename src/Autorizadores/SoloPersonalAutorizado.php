@@ -19,14 +19,16 @@ final readonly class SoloPersonalAutorizado
   {
     $permisos = array_map(
       static fn(Permiso $permiso): string => $permiso->name,
-      $this->permisos
+      $this->permisos,
     );
 
     if (auth()->user()?->can($permisos)) {
       return true;
     }
 
-    session()->set(ClaveSesion::MENSAJES_ERRORES->name, ['No tienes permiso para acceder realizar esta acción.']);
+    flash()->set(['No tienes permiso para acceder realizar esta acción.'], ClaveSesion::MENSAJES_ERRORES->name);
     Flight::redirect(Flight::request()->referrer);
+
+    exit;
   }
 }

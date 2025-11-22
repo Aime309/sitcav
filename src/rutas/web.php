@@ -109,10 +109,10 @@ Flight::group('', static function (): void {
       'cedula' => $datos->cedula ?: null,
       'clave_encriptada' => $datos->clave,
       'pregunta_secreta' => $datos->pregunta_secreta ?: null,
-      'respuesta_secreta_encriptada' => Password::hash($datos->respuesta_secreta, options: [
+      'respuesta_secreta_encriptada' => $datos->respuesta_secreta ? Password::hash($datos->respuesta_secreta, options: [
         'cost' => 10,
-      ]),
-      'roles' => json_encode(['Encargado', 'Empleado superior', 'Vendedor']),
+      ]) : null,
+      'roles' => Rol::comoJsonString(),
     ])) {
       flash()->set(['El registro se ha realizado correctamente.'], ClaveSesion::MENSAJES_EXITOS->name);
       Flight::redirect('/');
@@ -305,12 +305,6 @@ Flight::route('/salir', static function (): void {
   auth()->logout();
   session()->remove(ClaveSesion::OAUTH2_TOKEN->name);
   session()->remove(ClaveSesion::OAUTH2_ESTADO->name);
-
-  flash()->set(
-    session()->retrieve(ClaveSesion::MENSAJES_ERRORES->name, []),
-    ClaveSesion::MENSAJES_ERRORES->name
-  );
-
   Flight::redirect('/ingresar');
 });
 
@@ -343,6 +337,7 @@ Flight::group('', static function (): void {
           compact('productos', 'categorias', 'proveedores', 'marcas'),
           'pagina'
         );
+
         Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Inventario']);
       });
 
@@ -367,8 +362,6 @@ Flight::group('', static function (): void {
         flash()->set(['Producto agregado exitosamente.'], ClaveSesion::MENSAJES_EXITOS->name);
         Flight::redirect('/inventario');
       });
-
-      Flight::route('POST /', static function (): void {});
 
       Flight::group('/@id:[0-9]+', static function (): void {
         Flight::route('GET /', static function (int $id): void {});

@@ -23,9 +23,9 @@ final readonly class SoloTasaActualizada
 
         exit;
       } else {
-        session()->set(
+        flash()->set(
+          ['La tasa bcv no ha sido actualizada. Contacte a su encargado o empleado superior'],
           ClaveSesion::MENSAJES_ERRORES->name,
-          ['La tasa bcv no ha sido actualizada. Contacte a su encargado o empleado superior']
         );
 
         Flight::redirect('/salir');

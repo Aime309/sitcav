@@ -13,7 +13,9 @@ final readonly class SoloContratados
       return true;
     }
 
-    session()->set(ClaveSesion::MENSAJES_ERRORES->name, ['Este usuario ha sido despedido.']);
+    flash()->set(['Este usuario ha sido despedido.'], ClaveSesion::MENSAJES_ERRORES->name);
     Flight::redirect('/salir');
+
+    exit;
   }
 }
