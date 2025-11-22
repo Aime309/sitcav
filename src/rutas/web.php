@@ -372,9 +372,37 @@ Flight::group('', static function (): void {
       });
     });
 
-    Flight::route('GET /perfil', static function (): void {});
-    Flight::route('GET /perfil/editar', static function (): void {});
-    Flight::route('POST /perfil/editar', static function (): void {});
+    Flight::group('/perfil', static function (): void {
+      Flight::route('GET /', static function (): void {
+        Flight::render('paginas/perfil', key: 'pagina');
+        Flight::render('diseños/materialm-para-autenticados', ['titulo' => 'Mi perfil']);
+      });
+
+      Flight::route('POST /', static function (): void {
+        $datos = Flight::request()->data;
+        $usuarioAutenticado = Container::getInstance()->get(UsuarioAutenticado::class);
+
+        $datos->url_imagen = $datos->url_imagen ?: auth()->user()?->url_imagen;
+        $datos->correo = $datos->correo ?: auth()->user()?->email;
+        $datos->cedula = $datos->cedula ?: auth()->user()?->cedula;
+
+        if ($datos->clave_anterior && $datos->nueva_clave) {
+          $usuarioAutenticado->cambiarClave($datos->clave_anterior, $datos->nueva_clave);
+        }
+
+        if (auth()->update([
+          'email' => $datos->correo,
+          'cedula' => $datos->cedula,
+          'url_imagen' => $datos->url_imagen,
+        ])) {
+          flash()->set(['Perfil actualizado exitósamente'], ClaveSesion::MENSAJES_EXITOS->name);
+        } else {
+          flash()->set(auth()->errors(), ClaveSesion::MENSAJES_ERRORES->name);
+        }
+
+        Flight::redirect('/perfil');
+      });
+    });
 
     Flight::group('/empleados', static function (): void {
       Flight::route('GET /', static function (): void {
