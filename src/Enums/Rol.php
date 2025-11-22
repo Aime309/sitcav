@@ -12,7 +12,7 @@ enum Rol: string
   {
     return json_encode(array_map(
       static fn(Rol $rol) => $rol->value,
-      self::cases()
+      array_filter(self::cases(), static fn(Rol $rol): bool => $rol !== self::ENCARGADO),
     ));
   }
 }
