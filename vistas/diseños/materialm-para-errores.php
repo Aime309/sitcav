@@ -19,8 +19,8 @@ use SITCAV\Enums\ClaveSesion;
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
-  <title><?= $titulo ?> | SITCAV</title>
-  <base href="<?= str_replace('index.php', '', $_SERVER['SCRIPT_NAME']) ?>" />
+  <title><?= $titulo ?? '' ?> | SITCAV</title>
+  <base href="<?= BASE_HREF ?>" />
   <link rel="icon" href="./recursos/imagenes/favicon.png" />
   <link rel="stylesheet" href="./recursos/compilados/errores.css?id=<?= ID_DE_RECURSOS ?>" />
   <link rel="stylesheet" href="./recursos/css/materialm.css?id=<?= ID_DE_RECURSOS ?>" />

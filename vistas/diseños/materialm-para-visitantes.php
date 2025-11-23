@@ -27,7 +27,7 @@ $informaciones = (array) flash()->display(ClaveSesion::MENSAJES_INFORMACIONES->n
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title><?= $titulo ?> | SITCAV</title>
-  <base href="<?= str_replace('index.php', '', $_SERVER['SCRIPT_NAME']) ?>" />
+  <base href="<?= BASE_HREF ?>" />
   <link rel="icon" href="./recursos/imagenes/favicon.png" />
   <link
     rel="stylesheet"

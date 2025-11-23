@@ -46,6 +46,8 @@ define(
   $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '',
 );
 
+define('BASE_HREF', str_replace('index.php', '', $_SERVER['SCRIPT_NAME']));
+
 ////////////////////////////////////////////////////
 // CONFIGURAR LEAF AUTH (módulo de autenticación) //
 ////////////////////////////////////////////////////
@@ -204,6 +206,12 @@ ini_set('ignore_repeated_source', true);
 ini_set('error_log', CARPETA_RAIZ . '/logs/php_errors.log');
 
 Flight::map('error', static function (Throwable $error): never {
+  if (str_contains($error->getPrevious()?->getMessage() ?: $error->getMessage(), UsuarioAutenticado::class)) {
+    Flight::redirect('/salir');
+
+    exit;
+  }
+
   if (str_contains($error->getMessage(), 'Template file not found')) {
     Flight::notFound();
     error_log($error);
@@ -230,7 +238,7 @@ Flight::map('notFound', static function (): void {
   Flight::render('paginas/404', key: 'pagina');
 
   Flight::render('diseños/materialm-para-errores', [
-    'titulo' => 'Página no encontrada',
+    // 'titulo' => 'Página no encontrada',
   ]);
 });
 
