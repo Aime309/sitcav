@@ -2,10 +2,10 @@
 
 use SITCAV\Enums\ClaveSesion;
 
-$errores = (array) flash()->display(ClaveSesion::MENSAJES_ERRORES->name);
-$exitos = (array) flash()->display(ClaveSesion::MENSAJES_EXITOS->name);
-$advertencias = (array) flash()->display(ClaveSesion::MENSAJES_ADVERTENCIAS->name);
-$informaciones = (array) flash()->display(ClaveSesion::MENSAJES_INFORMACIONES->name);
+$errores = (array) session()->retrieve(ClaveSesion::MENSAJES_ERRORES->name, flash()->display(ClaveSesion::MENSAJES_ERRORES->name));
+$exitos = (array) session()->retrieve(ClaveSesion::MENSAJES_EXITOS->name, flash()->display(ClaveSesion::MENSAJES_EXITOS->name));
+$advertencias = (array) session()->retrieve(ClaveSesion::MENSAJES_ADVERTENCIAS->name, flash()->display(ClaveSesion::MENSAJES_ADVERTENCIAS->name));
+$informaciones = (array) session()->retrieve(ClaveSesion::MENSAJES_INFORMACIONES->name, flash()->display(ClaveSesion::MENSAJES_INFORMACIONES->name));
 
 ?>
 
@@ -26,7 +26,7 @@ $informaciones = (array) flash()->display(ClaveSesion::MENSAJES_INFORMACIONES->n
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
-  <title><?= $titulo ?> | SITCAV</title>
+  <title><?= $titulo ?? '' ?> | SITCAV</title>
   <base href="<?= BASE_HREF ?>" />
   <link rel="icon" href="./recursos/imagenes/favicon.png" />
   <link
