@@ -27,7 +27,20 @@ use SITCAV\Enums\ClaveSesion;
 </head>
 
 <body class="text-center">
-  <?= $pagina ?>
+  <div
+    id="main-wrapper"
+    x-data="{
+      noHayNavs: false,
+      productosEnCarrito: {},
+    }"
+    x-effect="
+      if (noHayNavs) {
+        tipo_menu = 'mini-sidebar';
+      }
+    ">
+    <?php Flight::render('componentes/configuraciones-ui') ?>
+    <?= $pagina ?>
+  </div>
   <script src="./recursos/compilados/errores.js?id=<?= ID_DE_RECURSOS ?>"></script>
 </body>
 

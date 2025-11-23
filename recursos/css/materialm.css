@@ -1789,86 +1789,6 @@ html[data-layout=horizontal] .body-wrapper>.container-xxl {
   }
 }
 
-.customizer-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 99
-}
-
-.customizer-box label.btn {
-  background: 0 0 !important;
-  color: var(--bs-body-color);
-  box-shadow: rgba(0, 0, 0, .05) 0 9px 17.5px !important;
-  border: 1px solid var(--bs-border-color) !important;
-  display: flex;
-  align-items: center;
-  transition: all .1s ease-in 0s;
-  min-width: 80px
-}
-
-.customizer-box label.btn:hover {
-  color: var(--bs-primary);
-  transform: scale(1.05)
-}
-
-.customizer-box .btn-check:checked+.btn,
-.customizer-box .btn.active,
-.customizer-box .btn.show,
-.customizer-box .btn:first-child:active,
-.customizer-box :not(.btn-check)+.btn:active {
-  color: var(--bs-body-color)
-}
-
-.customizer-box .btn-check:checked+.btn .icon,
-.customizer-box .btn.active .icon,
-.customizer-box .btn.show .icon,
-.customizer-box .btn:first-child:active .icon,
-.customizer-box :not(.btn-check)+.btn:active .icon {
-  color: var(--bs-primary)
-}
-
-.customizer-box.color-pallete .btn-check:checked+.btn .icon,
-.customizer-box.color-pallete .btn.active .icon,
-.customizer-box.color-pallete .btn.show .icon,
-.customizer-box.color-pallete .btn:first-child:active .icon,
-.customizer-box.color-pallete :not(.btn-check)+.btn:active .icon {
-  opacity: 1
-}
-
-.customizer-box.color-pallete label .color-box {
-  width: 25px;
-  height: 25px
-}
-
-.customizer-box.color-pallete label .color-box .icon {
-  opacity: 0
-}
-
-.customizer-box.color-pallete label .color-box.skin-1 {
-  background-color: #00a1ff
-}
-
-.customizer-box.color-pallete label .color-box.skin-2 {
-  background-color: #0074ba
-}
-
-.customizer-box.color-pallete label .color-box.skin-3 {
-  background-color: #763ebd
-}
-
-.customizer-box.color-pallete label .color-box.skin-4 {
-  background-color: #0a7ea4
-}
-
-.customizer-box.color-pallete label .color-box.skin-5 {
-  background-color: #01c0c8
-}
-
-.customizer-box.color-pallete label .color-box.skin-6 {
-  background-color: #fa896b
-}
-
 .preloader {
   width: 100%;
   height: 100%;
@@ -1880,7 +1800,6 @@ html[data-layout=horizontal] .body-wrapper>.container-xxl {
 
 .lds-ripple {
   display: inline-block;
-  position: relative;
   width: 40px;
   position: absolute;
   top: calc(50% - 3.5px);
@@ -2568,10 +2487,6 @@ body table.dataTable>tbody>tr.selected>* {
   background: var(--bs-light-bg-subtle)
 }
 
-hr {
-  border-top: 1px solid var(--bs-border-color) !important
-}
-
 .z-index-5 {
   z-index: 5 !important
 }
@@ -2863,19 +2778,9 @@ html[dir=rtl] .my-3 {
   margin-top: 1rem !important
 }
 
-html[dir=rtl] .me-3 {
-  margin-right: unset !important;
-  margin-left: 1rem !important
-}
-
 html[dir=rtl] .mb-3,
 html[dir=rtl] .my-3 {
   margin-bottom: 1rem !important
-}
-
-html[dir=rtl] .ms-3 {
-  margin-left: unset !important;
-  margin-right: 1rem !important
 }
 
 html[dir=rtl] .m-4 {
@@ -9125,11 +9030,6 @@ html[dir=rtl] .rounded-left {
   border-bottom-right-radius: 9px !important
 }
 
-html[dir=rtl] .end-0 {
-  right: unset !important;
-  left: 0
-}
-
 html[dir=rtl] .card-group>.card {
   margin-bottom: 15px
 }
@@ -9353,15 +9253,6 @@ html[dir=rtl] .rounded-end {
   border-bottom-right-radius: 0 !important
 }
 
-html[dir=rtl] .customizer-btn {
-  right: unset;
-  left: 20px
-}
-
-html[dir=rtl] .customizer {
-  right: auto
-}
-
 html[dir=rtl] .customizer.show-service-panel {
   left: 0;
   right: auto
@@ -9472,11 +9363,6 @@ html[dir=rtl] .make-social-media {
 
 html[dir=rtl] .make-social-media img {
   transform: scaleX(-1)
-}
-
-html[dir=rtl] .start-0 {
-  right: 0;
-  left: unset !important
 }
 
 html[dir=rtl] .sidebar-nav ul .sidebar-item .two-level .sidebar-item .sidebar-link {
