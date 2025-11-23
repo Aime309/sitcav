@@ -238,7 +238,7 @@ Flight::map('notFound', static function (): void {
   Flight::render('paginas/404', key: 'pagina');
 
   Flight::render('diseños/materialm-para-errores', [
-    // 'titulo' => 'Página no encontrada',
+    'titulo' => 'Página no encontrada',
   ]);
 });
 
