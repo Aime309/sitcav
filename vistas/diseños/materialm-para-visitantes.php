@@ -48,7 +48,7 @@ $informaciones = (array) session()->retrieve(ClaveSesion::MENSAJES_INFORMACIONES
   data-advertencias='<?= json_encode(array_values($advertencias)) ?>'
   data-informaciones='<?= json_encode(array_values($informaciones)) ?>'
   x-data="mensajes"
-  class="col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-7 pt-3 px-3 mx-auto">
+  class="col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-7 py-3 px-3 m-auto">
   <?php Flight::render('componentes/notificaciones') ?>
 
   <?php Flight::render('componentes/configuraciones-ui', [

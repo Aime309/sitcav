@@ -14,25 +14,23 @@
       Google
     </a>
     <div class="position-relative text-center">
-      <p class="m-0 px-3 d-inline-block bg-body position-relative z-1">o ingresa con</p>
+      <p class="m-0 px-3 d-inline-block bg-body position-relative z-1">
+        o ingresa con
+      </p>
       <hr class="position-absolute top-50 start-0 m-0 w-100 translate-middle-y z-0" />
     </div>
-    <div>
-      <label class="form-label">Cédula</label>
-      <input
-        class="form-control"
-        name="cedula"
-        required
-        type="number" />
-    </div>
-    <div>
-      <label class="form-label">Contraseña</label>
-      <input
-        class="form-control"
-        name="clave"
-        required
-        type="password" />
-    </div>
+    <?php Flight::render('componentes/input', [
+      'label' => 'Cédula',
+      'name' => 'cedula',
+      'required' => true,
+      'type' => 'number',
+    ]) ?>
+    <?php Flight::render('componentes/input', [
+      'label' => 'Contraseña',
+      'name' => 'clave',
+      'required' => true,
+      'type' => 'password',
+    ]) ?>
     <a class="d-inline-block ms-auto link-primary link-offset-3" href="./restablecer-clave">
       ¿Olvidó su contraseña?
     </a>
