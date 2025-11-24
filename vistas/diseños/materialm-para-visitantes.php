@@ -50,7 +50,12 @@ $informaciones = (array) session()->retrieve(ClaveSesion::MENSAJES_INFORMACIONES
   x-data="mensajes"
   class="col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-7 pt-3 px-3 mx-auto">
   <?php Flight::render('componentes/notificaciones') ?>
-  <?php Flight::render('componentes/configuraciones-ui') ?>
+
+  <?php Flight::render('componentes/configuraciones-ui', [
+    'mostrarLayouts' => false,
+    'mostrarTiposMenu' => false,
+  ]) ?>
+
   <?= $pagina ?>
   <script src="./recursos/compilados/visitantes.js?id=<?= ID_DE_RECURSOS ?>"></script>
 </body>

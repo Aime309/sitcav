@@ -131,6 +131,12 @@ $tiposTarjeta = [
 
 $id = uniqid();
 
+$mostrarTema ??= true;
+$mostrarColores ??= true;
+$mostrarLayouts ??= true;
+$mostrarContenedores ??= true;
+$mostrarTiposMenu ??= true;
+
 ?>
 
 <button
@@ -160,123 +166,129 @@ $id = uniqid();
     <button type="button" class="btn-close m-0" data-bs-dismiss="offcanvas"></button>
   </div>
   <div class="offcanvas-body d-grid align-content-start">
-    <section>
-      <h3>Tema</h3>
-      <div class="btn-group w-100 flex-wrap">
-        <?php foreach ($temas as $tema): ?>
-          <input
-            class="btn-check"
-            id="<?= $tema['id'] ?>"
-            name="theme-layout"
-            type="radio"
-            value="<?= $tema['value'] ?>"
-            x-model="tema" />
-          <label
-            class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-3 rounded-0"
-            for="<?= $tema['id'] ?>">
-            <i class="<?= $tema['icon'] ?>"></i>
-            <?= $tema['title'] ?>
-          </label>
-        <?php endforeach ?>
-      </div>
-    </section>
+    <?php if ($mostrarTema): ?>
+      <section>
+        <h3>Tema</h3>
+        <div class="btn-group w-100 flex-wrap">
+          <?php foreach ($temas as $tema): ?>
+            <input
+              class="btn-check"
+              id="<?= $tema['id'] ?>"
+              name="theme-layout"
+              type="radio"
+              value="<?= $tema['value'] ?>"
+              x-model="tema" />
+            <label
+              class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-3 rounded-0"
+              for="<?= $tema['id'] ?>">
+              <i class="<?= $tema['icon'] ?>"></i>
+              <?= $tema['title'] ?>
+            </label>
+          <?php endforeach ?>
+        </div>
+      </section>
+      <hr />
+    <?php endif ?>
 
-    <hr />
+    <?php if ($mostrarColores): ?>
+      <section>
+        <h3>Tema de Colores</h3>
+        <div class="btn-group w-100 flex-wrap">
+          <?php foreach ($colores as $color): ?>
+            <input
+              class="btn-check"
+              id="<?= $color['id'] ?>"
+              name="color-theme-layout"
+              type="radio"
+              value="<?= $color['value'] ?>"
+              x-model="tema_colores" />
+            <label
+              class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-3 rounded-0"
+              for="<?= $color['id'] ?>"
+              data-bs-toggle="tooltip"
+              data-bs-title="<?= $color['title'] ?>">
+              <div
+                class="text-light-emphasis rounded-circle d-flex align-items-center justify-content-center ratio ratio-1x1"
+                style="background: <?= $color['color'] ?>">
+              </div>
+            </label>
+          <?php endforeach ?>
+        </div>
+      </section>
+      <hr />
+    <?php endif ?>
 
-    <section>
-      <h3>Tema de Colores</h3>
-      <div class="btn-group w-100 flex-wrap">
-        <?php foreach ($colores as $color): ?>
-          <input
-            class="btn-check"
-            id="<?= $color['id'] ?>"
-            name="color-theme-layout"
-            type="radio"
-            value="<?= $color['value'] ?>"
-            x-model="tema_colores" />
-          <label
-            class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-3 rounded-0"
-            for="<?= $color['id'] ?>"
-            data-bs-toggle="tooltip"
-            data-bs-title="<?= $color['title'] ?>">
-            <div
-              class="text-light-emphasis rounded-circle d-flex align-items-center justify-content-center ratio ratio-1x1"
-              style="background: <?= $color['color'] ?>">
-            </div>
-          </label>
-        <?php endforeach ?>
-      </div>
-    </section>
+    <?php if ($mostrarLayouts): ?>
+      <section>
+        <h3>Posición de la navegación</h3>
+        <div class="btn-group w-100 flex-wrap">
+          <?php foreach ($layouts as $layout): ?>
+            <input
+              class="btn-check"
+              id="<?= $layout['id'] ?>"
+              name="page-layout"
+              type="radio"
+              value="<?= $layout['value'] ?>"
+              x-model="layout" />
+            <label
+              class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-3 rounded-0"
+              for="<?= $layout['id'] ?>">
+              <i class="<?= $layout['icon'] ?>"></i>
+              <?= $layout['title'] ?>
+            </label>
+          <?php endforeach ?>
+        </div>
+      </section>
+      <hr />
+    <?php endif ?>
 
-    <hr />
+    <?php if ($mostrarContenedores): ?>
+      <section>
+        <h3>Anchura de la página</h3>
+        <div class="btn-group w-100">
+          <?php foreach ($containers as $container): ?>
+            <input
+              class="btn-check"
+              id="<?= $container['id'] ?>"
+              name="layout"
+              type="radio"
+              value="<?= $container['value'] ?>"
+              x-model="container" />
+            <label
+              class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-3 rounded-0"
+              for="<?= $container['id'] ?>">
+              <i class="<?= $container['icon'] ?>"></i>
+              <?= $container['title'] ?>
+            </label>
+          <?php endforeach ?>
+        </div>
+      </section>
+      <hr />
+    <?php endif ?>
 
-    <section>
-      <h3>Posición de la navegación</h3>
-      <div class="btn-group w-100 flex-wrap">
-        <?php foreach ($layouts as $layout): ?>
-          <input
-            class="btn-check"
-            id="<?= $layout['id'] ?>"
-            name="page-layout"
-            type="radio"
-            value="<?= $layout['value'] ?>"
-            x-model="layout" />
-          <label
-            class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-3 rounded-0"
-            for="<?= $layout['id'] ?>">
-            <i class="<?= $layout['icon'] ?>"></i>
-            <?= $layout['title'] ?>
-          </label>
-        <?php endforeach ?>
-      </div>
-    </section>
-
-    <hr />
-
-    <section>
-      <h3>Anchura de la página</h3>
-      <div class="btn-group w-100">
-        <?php foreach ($containers as $container): ?>
-          <input
-            class="btn-check"
-            id="<?= $container['id'] ?>"
-            name="layout"
-            type="radio"
-            value="<?= $container['value'] ?>"
-            x-model="container" />
-          <label
-            class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-3 rounded-0"
-            for="<?= $container['id'] ?>">
-            <i class="<?= $container['icon'] ?>"></i>
-            <?= $container['title'] ?>
-          </label>
-        <?php endforeach ?>
-      </div>
-    </section>
-
-    <hr />
-
-    <section
-      :class="{ 'disabled opacity-25': noHayNavs }"
-      :style="noHayNavs && 'pointer-events: none'">
-      <h3>Tipo de menú de navegación</h3>
-      <div class="btn-group w-100 flex-wrap">
-        <?php foreach ($tiposMenu as $tipoMenu): ?>
-          <input
-            class="btn-check"
-            id="<?= $tipoMenu['id'] ?>"
-            name="sidebar-type"
-            type="radio"
-            value="<?= $tipoMenu['value'] ?>"
-            x-model="tipo_menu" />
-          <label
-            class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-3 rounded-0"
-            for="<?= $tipoMenu['id'] ?>">
-            <i class="<?= $tipoMenu['icon'] ?>"></i>
-            <?= $tipoMenu['title'] ?>
-          </label>
-        <?php endforeach ?>
-      </div>
-    </section>
+    <?php if ($mostrarTiposMenu): ?>
+      <section
+        :class="{ 'disabled opacity-25': noHayNavs }"
+        :style="noHayNavs && 'pointer-events: none'">
+        <h3>Tipo de menú de navegación</h3>
+        <div class="btn-group w-100 flex-wrap">
+          <?php foreach ($tiposMenu as $tipoMenu): ?>
+            <input
+              class="btn-check"
+              id="<?= $tipoMenu['id'] ?>"
+              name="sidebar-type"
+              type="radio"
+              value="<?= $tipoMenu['value'] ?>"
+              x-model="tipo_menu" />
+            <label
+              class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-3 rounded-0"
+              for="<?= $tipoMenu['id'] ?>">
+              <i class="<?= $tipoMenu['icon'] ?>"></i>
+              <?= $tipoMenu['title'] ?>
+            </label>
+          <?php endforeach ?>
+        </div>
+      </section>
+    <?php endif ?>
   </div>
 </div>

@@ -38,7 +38,11 @@ use SITCAV\Enums\ClaveSesion;
         tipo_menu = 'mini-sidebar';
       }
     ">
-    <?php Flight::render('componentes/configuraciones-ui') ?>
+    <?php Flight::render('componentes/configuraciones-ui', [
+      'mostrarLayouts' => false,
+      'mostrarTiposMenu' => false,
+    ]) ?>
+
     <?= $pagina ?>
   </div>
   <script src="./recursos/compilados/errores.js?id=<?= ID_DE_RECURSOS ?>"></script>
