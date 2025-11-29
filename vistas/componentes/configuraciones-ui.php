@@ -140,7 +140,7 @@ $mostrarTiposMenu ??= true;
 ?>
 
 <button
-  class="btn rounded-circle position-fixed bottom-0 mb-3"
+  class="btn rounded-circle position-fixed bottom-0 mb-3 z-1"
   :class="{
     'btn-light': tema === 'dark',
     'btn-dark': tema === 'light',
