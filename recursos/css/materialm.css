@@ -733,7 +733,7 @@ a:hover h6 {
   color: var(--bs-primary)
 }
 
-@media (min-width:1300px) {
+@media (min-width:1023px) {
   html[data-layout=vertical] .topbar {
     width: calc(100% - (80px + 240px))
   }
@@ -1072,7 +1072,7 @@ pre.code-view code.hljs {
   }
 }
 
-@media (max-width:1270px) {
+@media (max-width:1023px) {
   #main-wrapper.show-sidebar .left-sidebar {
     left: 0
   }
