@@ -4,9 +4,9 @@
     "bjeavons/zxcvbn-php": "^1.4",
     "flightphp/core": "^3.17",
     "giggsey/libphonenumber-for-php-lite": "^9.0",
-    "google-gemini-php/client": "^2.6",
-    "illuminate/container": "^12.37",
-    "illuminate/database": "^12.37",
+    "google-gemini-php/client": "^2.7",
+    "illuminate/container": "^12.40",
+    "illuminate/database": "^12.40",
     "leafs/auth": "^4.2",
     "leafs/db": "^4.0",
     "leafs/form": "^3.2",
@@ -37,7 +37,7 @@
   "require-dev": {
     "guzzlehttp/guzzle": "^7.10",
     "phpunit/phpunit": "^11.5",
-    "symfony/var-dumper": "^7.3"
+    "symfony/var-dumper": "^7.4"
   },
   "config": {
     "sort-packages": true,
