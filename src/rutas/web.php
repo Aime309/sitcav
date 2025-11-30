@@ -79,20 +79,29 @@ Flight::group('', static function (): void {
   });
 
   Flight::route('GET /ingresar', static function (): void {
-    Flight::render('paginas/ingresar', [], 'pagina');
+    Flight::render('paginas/ingresar', key: 'pagina');
     Flight::render('diseños/materialm-para-visitantes', ['titulo' => 'Ingresar']);
   });
 
   Flight::route('POST /ingresar', static function (): void {
     $credenciales = Flight::request()->data;
 
-    if (auth()->login([
-      'cedula' => $credenciales->cedula,
-      'clave_encriptada' => $credenciales->clave,
+    $credencialesValidadas = form()->validate($credenciales->getData(), [
+      'cedula' => 'number',
+      'clave' => 'password',
+    ]);
+
+    if ($credencialesValidadas && auth()->login([
+      'cedula' => $credencialesValidadas['cedula'],
+      'clave_encriptada' => $credencialesValidadas['clave'],
     ])) {
       Flight::redirect('/');
     } else {
-      flash()->set(auth()->errors(), ClaveSesion::MENSAJES_ERRORES->name);
+      flash()->set(
+        auth()->errors() + form()->errors() + db()->errors(),
+        ClaveSesion::MENSAJES_ERRORES->name
+      );
+
       Flight::redirect('/ingresar');
     }
   });

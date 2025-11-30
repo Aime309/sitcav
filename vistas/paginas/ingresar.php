@@ -3,7 +3,7 @@
     <?php Flight::render('componentes/logo') ?>
     <p class="card-text">Ingrese a su cuenta para continuar</p>
   </header>
-  <form method="post" class="card-body d-grid gap-3">
+  <form method="post" class="card-body d-grid gap-3 needs-validation">
     <a
       class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2"
       href="./oauth2/google">
@@ -24,12 +24,14 @@
       'name' => 'cedula',
       'required' => true,
       'type' => 'number',
+      'value' => 12345678,
     ]) ?>
     <?php Flight::render('componentes/input', [
       'label' => 'Contraseña',
       'name' => 'clave',
       'required' => true,
       'type' => 'password',
+      'value' => 'Admin.123',
     ]) ?>
     <a class="d-inline-block ms-auto link-primary link-offset-3" href="./restablecer-clave">
       ¿Olvidó su contraseña?

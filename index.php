@@ -122,6 +122,12 @@ auth()->createRoles([
   ],
 ]);
 
+///////////////////////////////////////////////////
+// CONFIGURAR LEAF FORM (módulo de validaciones) //
+///////////////////////////////////////////////////
+form()->rule('password', '/^.{8,}$/', 'La contraseña debe tener al menos 8 caracteres.');
+form()->message('min', 'El campo {Field} debe tener al menos %s caracteres.');
+
 // DESACTIVAR LA VERIFICACIÓN SSL DE GUZZLE (CLIENTE HTTP)
 $guzzle = auth()->client('google')->getHttpClient();
 $refleccionPropiedad = new ReflectionProperty($guzzle, 'config');
