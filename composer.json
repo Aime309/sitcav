@@ -15,7 +15,9 @@
     "leafs/session": "^4.0",
     "league/oauth2-google": "^4.1",
     "phpmailer/phpmailer": "^7.0",
-    "symfony/polyfill-php84": "^1.33"
+    "symfony/polyfill-php83": "^1.33",
+    "symfony/polyfill-php84": "^1.33",
+    "symfony/polyfill-php85": "^1.33"
   },
   "autoload": {
     "psr-4": {
@@ -36,7 +38,7 @@
       "start .phpunit.cache/coverage/index.html"
     ],
     "update:deps": [
-      "composer require bjeavons/zxcvbn-php flightphp/core giggsey/libphonenumber-for-php-lite google-gemini-php/client illuminate/container illuminate/database leafs/auth leafs/db leafs/form leafs/leaf leafs/password leafs/session league/oauth2-google phpmailer/phpmailer symfony/polyfill-php84 -W",
+      "composer require bjeavons/zxcvbn-php flightphp/core giggsey/libphonenumber-for-php-lite google-gemini-php/client illuminate/container illuminate/database leafs/auth leafs/db leafs/form leafs/leaf leafs/password leafs/session league/oauth2-google phpmailer/phpmailer symfony/polyfill-php83 symfony/polyfill-php84 symfony/polyfill-php85 -W",
       "composer require guzzlehttp/guzzle phpunit/phpunit symfony/var-dumper --dev -W"
     ]
   },
