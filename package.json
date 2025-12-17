@@ -6,7 +6,7 @@
     "@types/bootstrap": "^5.2.10",
     "@types/jquery": "^3.5.33",
     "@types/zxcvbn": "^4.4.5",
-    "alpinejs": "^3.15.2",
+    "alpinejs": "^3.15.3",
     "apexcharts": "^5.3.6",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
@@ -17,6 +17,7 @@
     "format": "biome format . --write",
     "ci": "biome ci .",
     "dev": "rsbuild dev",
-    "build": "rsbuild build"
+    "build": "rsbuild build",
+    "update:deps": "npm i -D @types/alpinejs@latest @types/bootstrap@latest @types/jquery@latest @types/zxcvbn@latest alpinejs@latest apexcharts@latest bootstrap@latest bootstrap-icons@latest jquery@latest zxcvbn@latest"
   }
 }
