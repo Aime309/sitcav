@@ -5,15 +5,15 @@
     "flightphp/core": "^3.17",
     "giggsey/libphonenumber-for-php-lite": "^9.0",
     "google-gemini-php/client": "^2.7",
-    "illuminate/container": "^12.40",
-    "illuminate/database": "^12.40",
+    "illuminate/container": "^12.43",
+    "illuminate/database": "^12.43",
     "leafs/auth": "^4.2",
     "leafs/db": "^4.0",
     "leafs/form": "^3.2",
     "leafs/leaf": "^4.4",
     "leafs/password": "^1.0",
     "leafs/session": "^4.0",
-    "league/oauth2-google": "^4.0",
+    "league/oauth2-google": "^4.1",
     "phpmailer/phpmailer": "^7.0",
     "symfony/polyfill-php84": "^1.33"
   },
@@ -28,10 +28,16 @@
     }
   },
   "scripts": {
-    "ci": ["phpunit"],
+    "ci": [
+      "phpunit"
+    ],
     "coverage": [
       "phpunit --coverage-html .phpunit.cache/coverage",
       "start .phpunit.cache/coverage/index.html"
+    ],
+    "update:deps": [
+      "composer require bjeavons/zxcvbn-php flightphp/core giggsey/libphonenumber-for-php-lite google-gemini-php/client illuminate/container illuminate/database leafs/auth leafs/db leafs/form leafs/leaf leafs/password leafs/session league/oauth2-google phpmailer/phpmailer symfony/polyfill-php84 -W",
+      "composer require guzzlehttp/guzzle phpunit/phpunit symfony/var-dumper --dev -W"
     ]
   },
   "require-dev": {
