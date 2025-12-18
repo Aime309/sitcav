@@ -1,7 +1,5 @@
 <?php
 
-use SITCAV\Enums\Rol;
-
 $formularios = [
   'cuenta' => [
     'id' => uniqid(),
