@@ -1,7 +1,7 @@
 <?php
 
-$dolaresDeLaApi = @file_get_contents('https://ve.dolarapi.com/v1/dolares') ?: '[{"promedio":"Error de conexión"}]';
-$tasaDePagina = json_decode($dolaresDeLaApi)[0]->promedio;
+$dolaresDeLaApi = @file_get_contents('https://api.dolarvzla.com/public/exchange-rate') ?: '[{"promedio":"Error de conexión"}]';
+$tasaDePagina = json_decode($dolaresDeLaApi)?->current?->usd;
 $tasaBcv = ceil(max($ultimaCotizacion->tasa_bcv, floatval($tasaDePagina) ?: 0));
 
 ?>

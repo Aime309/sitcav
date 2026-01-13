@@ -20,7 +20,7 @@ Alpine.data("tasaDePagina", () => ({
   cargarTasaDePagina() {
     this.tasaDePagina = "Cargando";
 
-    fetch("https://ve.dolarapi.com/v1/dolares")
+    fetch("https://api.dolarvzla.com/public/exchange-rate")
       .then((respuesta) => {
         if (respuesta.ok) {
           return respuesta.json();
@@ -29,7 +29,7 @@ Alpine.data("tasaDePagina", () => ({
         throw new Error();
       })
       .then((datos) => {
-        this.tasaDePagina = `Bs. ${datos[0].promedio.toFixed(2)}`;
+        this.tasaDePagina = `Bs. ${datos.current.usd.toFixed(2)}`;
       })
       .catch(() => {
         this.tasaDePagina = "Error de conexión";
