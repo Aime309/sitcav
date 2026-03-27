@@ -47,7 +47,7 @@ $idModalBusqueda = uniqid();
                 <li class="sidebar-item py-2">
                   <a href="../main/app-chat.html" class="d-flex align-items-center">
                     <div class="text-bg-light rounded-circle round-40 me-3 p-6 d-flex align-items-center justify-content-center">
-                      <img src="./recursos/images/svgs/icon-dd-chat.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" />
+                      <!-- <img src="./recursos/images/svgs/icon-dd-chat.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" /> -->
                     </div>
                     <div class="d-inline-block">
                       <h6 class="mb-0 bg-hover-primary">Chat Application</h6>
@@ -58,7 +58,7 @@ $idModalBusqueda = uniqid();
                 <li class="sidebar-item py-2">
                   <a href="../main/app-invoice.html" class="d-flex align-items-center">
                     <div class="text-bg-light rounded-circle round-40 me-3 p-6 d-flex align-items-center justify-content-center">
-                      <img src="./recursos/images/svgs/icon-dd-invoice.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" />
+                      <!-- <img src="./recursos/images/svgs/icon-dd-invoice.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" /> -->
                     </div>
                     <div class="d-inline-block">
                       <h6 class="mb-0 bg-hover-primary">Invoice App</h6>
@@ -69,7 +69,7 @@ $idModalBusqueda = uniqid();
                 <li class="sidebar-item py-2">
                   <a href="../main/app-contact2.html" class="d-flex align-items-center">
                     <div class="text-bg-light rounded-circle round-40 me-3 p-6 d-flex align-items-center justify-content-center">
-                      <img src="./recursos/images/svgs/icon-dd-mobile.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" />
+                      <!-- <img src="./recursos/images/svgs/icon-dd-mobile.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" /> -->
                     </div>
                     <div class="d-inline-block">
                       <h6 class="mb-0 bg-hover-primary">Contact Application</h6>
@@ -80,7 +80,7 @@ $idModalBusqueda = uniqid();
                 <li class="sidebar-item py-2">
                   <a href="../main/app-email.html" class="d-flex align-items-center">
                     <div class="text-bg-light rounded-circle round-40 me-3 p-6 d-flex align-items-center justify-content-center">
-                      <img src="./recursos/images/svgs/icon-dd-message-box.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" />
+                      <!-- <img src="./recursos/images/svgs/icon-dd-message-box.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" /> -->
                     </div>
                     <div class="d-inline-block">
                       <h6 class="mb-0 bg-hover-primary">Email App</h6>
@@ -91,7 +91,7 @@ $idModalBusqueda = uniqid();
                 <li class="sidebar-item py-2">
                   <a href="../main/page-user-profile.html" class="d-flex align-items-center">
                     <div class="text-bg-light rounded-circle round-40 me-3 p-6 d-flex align-items-center justify-content-center">
-                      <img src="./recursos/images/svgs/icon-dd-cart.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" />
+                      <!-- <img src="./recursos/images/svgs/icon-dd-cart.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" /> -->
                     </div>
                     <div class="d-inline-block">
                       <h6 class="mb-0 bg-hover-primary">User Profile</h6>
@@ -102,7 +102,7 @@ $idModalBusqueda = uniqid();
                 <li class="sidebar-item py-2">
                   <a href="../main/app-calendar.html" class="d-flex align-items-center">
                     <div class="text-bg-light rounded-circle round-40 me-3 p-6 d-flex align-items-center justify-content-center">
-                      <img src="./recursos/images/svgs/icon-dd-date.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" />
+                      <!-- <img src="./recursos/images/svgs/icon-dd-date.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" /> -->
                     </div>
                     <div class="d-inline-block">
                       <h6 class="mb-0 bg-hover-primary">Calendar App</h6>
@@ -113,7 +113,7 @@ $idModalBusqueda = uniqid();
                 <li class="sidebar-item py-2">
                   <a href="../main/app-contact.html" class="d-flex align-items-center">
                     <div class="text-bg-light rounded-circle round-40 me-3 p-6 d-flex align-items-center justify-content-center">
-                      <img src="./recursos/images/svgs/icon-dd-lifebuoy.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" />
+                      <!-- <img src="./recursos/images/svgs/icon-dd-lifebuoy.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" /> -->
                     </div>
                     <div class="d-inline-block">
                       <h6 class="mb-0 bg-hover-primary">Contact List Table</h6>
@@ -124,7 +124,7 @@ $idModalBusqueda = uniqid();
                 <li class="sidebar-item py-2">
                   <a href="../main/app-notes.html" class="d-flex align-items-center">
                     <div class="text-bg-light rounded-circle round-40 me-3 p-6 d-flex align-items-center justify-content-center">
-                      <img src="./recursos/images/svgs/icon-dd-application.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" />
+                      <!-- <img src="./recursos/images/svgs/icon-dd-application.svg" alt="MaterialM-img" class="img-fluid" width="24" height="24" /> -->
                     </div>
                     <div class="d-inline-block">
                       <h6 class="mb-0 bg-hover-primary">Notes Application</h6>
