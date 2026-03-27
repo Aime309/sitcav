@@ -1,7 +1,21 @@
 <?php
 
-$dolaresDeLaApi = @file_get_contents('https://api.dolarvzla.com/public/exchange-rate') ?: '[{"promedio":"Error de conexión"}]';
-$tasaDePagina = json_decode($dolaresDeLaApi)?->current?->usd;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+
+try {
+  $dolaresDeLaApi = (new Client())->get('https://api.dolarvzla.com/public/bcv/exchange-rate', [
+    'headers' => [
+      'x-dolarvzla-key' => $_ENV['TASA_BCV_API_KEY'],
+    ],
+  ])->getBody()->getContents();
+} catch (GuzzleException $error) {
+  error_log($error);
+
+  $dolaresDeLaApi = '[{"promedio":"Error de conexión"}]';
+}
+
+$tasaDePagina = json_decode($dolaresDeLaApi)?->current?->usd ?? null;
 $tasaBcv = ceil(max($ultimaCotizacion->tasa_bcv, floatval($tasaDePagina) ?: 0));
 
 ?>
