@@ -4,13 +4,13 @@
     "@rsbuild/core": "0.7.10",
     "@types/alpinejs": "^3.13.11",
     "@types/bootstrap": "^5.2.10",
-    "@types/jquery": "^3.5.33",
+    "@types/jquery": "^4.0.0",
     "@types/zxcvbn": "^4.4.5",
-    "alpinejs": "^3.15.3",
-    "apexcharts": "^5.3.6",
+    "alpinejs": "^3.15.8",
+    "apexcharts": "^5.10.4",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
-    "jquery": "^3.7.1",
+    "jquery": "^4.0.0",
     "zxcvbn": "^4.4.2"
   },
   "scripts": {
