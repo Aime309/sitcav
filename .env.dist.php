@@ -34,4 +34,9 @@ return [
   # =           Contraseña para PHPMailer, se obtiene de (https://myaccount.google.com/apppasswords)           =
   # ============================================================================================================
   'PHPMAILER_PASSWORD' => '{google-app-password}',
+
+  # ==========================================================================================================================
+  # =           Credenciales para la API de consulta de las tasas de cambio https://www.dolarvzla.com/settings/api           =
+  # ==========================================================================================================================
+  'TASA_BCV_API_KEY' => '{tasa-bcv-api-key}',
 ];
