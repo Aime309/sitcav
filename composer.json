@@ -2,18 +2,19 @@
   "require": {
     "php": "^8.2",
     "bjeavons/zxcvbn-php": "^1.4",
-    "flightphp/core": "^3.17",
+    "flightphp/core": "v4.x-dev",
     "giggsey/libphonenumber-for-php-lite": "^9.0",
     "google-gemini-php/client": "^2.7",
-    "illuminate/container": "^12.43",
-    "illuminate/database": "^12.43",
-    "leafs/auth": "^4.2",
+    "guzzlehttp/guzzle": "^7.10",
+    "illuminate/container": "^12.56",
+    "illuminate/database": "^12.56",
+    "leafs/auth": "^5.0",
     "leafs/db": "^4.0",
     "leafs/form": "^3.2",
     "leafs/leaf": "^4.4",
     "leafs/password": "^1.0",
     "leafs/session": "^4.0",
-    "league/oauth2-google": "^4.1",
+    "league/oauth2-google": "^5.0",
     "phpmailer/phpmailer": "^7.0",
     "symfony/polyfill-php83": "^1.33",
     "symfony/polyfill-php84": "^1.33",
@@ -36,12 +37,11 @@
       "start .phpunit.cache/coverage/index.html"
     ],
     "update:deps": [
-      "composer require bjeavons/zxcvbn-php flightphp/core giggsey/libphonenumber-for-php-lite google-gemini-php/client illuminate/container illuminate/database leafs/auth leafs/db leafs/form leafs/leaf leafs/password leafs/session league/oauth2-google phpmailer/phpmailer symfony/polyfill-php83 symfony/polyfill-php84 symfony/polyfill-php85 -W",
-      "composer require guzzlehttp/guzzle phpunit/phpunit symfony/var-dumper --dev -W"
+      "composer require bjeavons/zxcvbn-php flightphp/core giggsey/libphonenumber-for-php-lite google-gemini-php/client guzzlehttp/guzzle illuminate/container illuminate/database leafs/auth leafs/db leafs/form leafs/leaf leafs/password leafs/session league/oauth2-google phpmailer/phpmailer symfony/polyfill-php83 symfony/polyfill-php84 symfony/polyfill-php85 -W",
+      "composer require phpunit/phpunit symfony/var-dumper --dev -W"
     ]
   },
   "require-dev": {
-    "guzzlehttp/guzzle": "^7.10",
     "phpunit/phpunit": "^11.5",
     "symfony/var-dumper": "^7.4"
   },
@@ -49,6 +49,9 @@
     "sort-packages": true,
     "allow-plugins": {
       "php-http/discovery": true
+    },
+    "audit": {
+      "ignore": ["firebase/php-jwt"]
     }
   }
 }
