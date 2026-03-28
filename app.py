@@ -1298,7 +1298,7 @@ def initialize_database():
         print("✅ Base de datos y tablas creadas.")
         
         if Usuario.query.count() > 0:
-            print(f"ℹ️  Ya existen {Usuario.query.count()} usuarios en la base de datos.")
+            print(f"Ya existen {Usuario.query.count()} usuarios en la base de datos.")
             return
         
         print("📊 Añadiendo datos de prueba...")
