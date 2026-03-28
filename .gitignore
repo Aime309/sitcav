@@ -1,3 +1,5 @@
 vendor
+__pycache__
 
 *.sublime-workspace
+*.db
