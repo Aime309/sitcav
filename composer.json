@@ -1,0 +1,6 @@
+{
+	"scripts": {
+		"api": "start py app.py",
+		"frontend": "start py serve.py"
+	}
+}
