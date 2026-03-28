@@ -14,9 +14,9 @@ Flight::group('/api', static function (): void {
       ->make();
 
     $respuesta = $gemini
-      ->generativeModel('gemini-2.0-flash')
+      ->generativeModel('gemini-3-flash-preview')
       ->generateContent($prompt);
 
-    Flight::halt(200, $respuesta->text());
+    echo $respuesta->text();
   });
 });
