@@ -13,14 +13,14 @@ Necesitas **2 terminales abiertas**:
 ### Terminal 1: Backend API
 ```bash
 cd c:\Users\nadet\Desktop\Proyecto
-py app.py
+composer api
 ```
 ✅ Debe mostrar: `🚀 Servidor Flask corriendo en http://127.0.0.1:5000`
 
 ### Terminal 2: Frontend HTTP Server
 ```bash
 cd c:\Users\nadet\Desktop\Proyecto
-py serve.py
+composer frontend
 ```
 ✅ Debe mostrar: `✅ Servidor HTTP corriendo en http://localhost:8000`
 
@@ -49,13 +49,13 @@ http://localhost:8000/index.html
 **Terminal 1 - Backend:**
 ```powershell
 cd c:\Users\nadet\Desktop\Proyecto
-py app.py
+composer api
 ```
 
 **Terminal 2 - Frontend:**
 ```powershell
 cd c:\Users\nadet\Desktop\Proyecto
-py serve.py
+composer frontend
 ```
 
 ### Paso 3: Abre navegador:

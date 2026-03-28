@@ -3,6 +3,8 @@
 ## 📋 Requisitos Previos
 
 - **Python 3.8 o superior** instalado en el sistema
+- **PHP 8.2 o superior** instalado en el sistema
+- **Composer 2 o superior** instalado en el sistema
 - **Navegador web moderno** (Chrome, Firefox, Edge)
 - **Conexión a internet** (solo para la primera instalación de dependencias)
 
@@ -49,7 +51,7 @@ py -c "import flask, flask_cors, flask_sqlalchemy, werkzeug, reportlab; print('�
 En la carpeta del proyecto, ejecute:
 
 ```bash
-py app.py
+composer api
 ```
 
 **Salida esperada:**
