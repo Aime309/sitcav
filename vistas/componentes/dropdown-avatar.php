@@ -19,7 +19,7 @@ $enlacesPerfil = [
     class="border-0 btn btn-outline-primary w-100"
     data-bs-toggle="dropdown">
     <img
-      src="./recursos/imagenes/profile/user-1.jpg"
+      src="<?= auth()->user()?->url_imagen ?: './recursos/imagenes/profile/user-1.jpg' ?>"
       class="rounded-circle img-fluid"
       width="35"
       height="35" />
@@ -29,7 +29,7 @@ $enlacesPerfil = [
       <h2 class="px-3">Perfil de usuario</h2>
       <div class="d-flex gap-3 align-items-center border-bottom pb-3 px-3">
         <img
-          src="./recursos/imagenes/profile/user-1.jpg"
+          src="<?= auth()->user()?->url_imagen ?: './recursos/imagenes/profile/user-1.jpg' ?>"
           class="rounded-circle object-fit-contain"
           width="80"
           height="80" />
