@@ -1,6 +1,6 @@
 {
 	"scripts": {
 		"api": "start py app.py",
-		"frontend": "start py serve.py"
+		"frontend": "start php -S localhost:5000"
 	}
 }

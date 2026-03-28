@@ -35,7 +35,7 @@ http://localhost:8000/index.html
 
 1. ✅ **app.py línea 268** - Error `NameError: name 'e' is not defined` - ARREGLADO
 2. ✅ **Endpoint /api/productos** - Ahora acepta GET y POST
-3. ✅ **CORS** - Se soluciona usando serve.py en vez de abrir el HTML directamente
+3. ✅ **CORS** - Se soluciona usando `composer frontend` en vez de abrir el HTML directamente
 4. ✅ **Base de datos** - Recreada con campo `imagen_url`
 
 ---
