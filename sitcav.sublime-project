@@ -37,6 +37,7 @@
     "default_encoding": "UTF-8",
     "trim_trailing_white_space_on_save": "not_on_caret",
     "ensure_newline_at_eof_on_save": true,
+    "lsp_format_on_save": false,
   },
   "connections": {
     "sitcav-sqlite-faslatam": {
