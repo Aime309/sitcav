@@ -20,7 +20,7 @@ Alpine.data("tasaDePagina", () => ({
   cargarTasaDePagina() {
     this.tasaDePagina = "Cargando";
 
-    fetch("https://api.dolarvzla.com/public/exchange-rate")
+    fetch("./api/bcv/exchange-rate")
       .then((respuesta) => {
         if (respuesta.ok) {
           return respuesta.json();

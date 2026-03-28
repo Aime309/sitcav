@@ -4,11 +4,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
 try {
-  $dolaresDeLaApi = (new Client())->get('https://api.dolarvzla.com/public/bcv/exchange-rate', [
-    'headers' => [
-      'x-dolarvzla-key' => $_ENV['TASA_BCV_API_KEY'],
-    ],
-  ])->getBody()->getContents();
+  $dolaresDeLaApi = (new Client())->get(URL_BASE_COMPLETA . '/api/bcv/exchange-rate')->getBody()->getContents();
 } catch (GuzzleException $error) {
   error_log($error);
 
