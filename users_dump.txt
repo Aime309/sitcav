@@ -1,0 +1,3 @@
+ID: 1, Nombre: Juan Pérez (Encargado), Rol: 'Encargado'
+ID: 2, Nombre: María García (Emp. Superior), Rol: 'Empleado Superior'
+ID: 3, Nombre: Carlos López (Vendedor), Rol: 'Vendedor'

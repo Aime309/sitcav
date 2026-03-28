@@ -1,0 +1,9 @@
+Starting migration for instance\system_data.db
+Existing columns in 'usuarios': ['id', 'cedula', 'contrasena', 'rol', 'activo', 'pregunta_secreta', 'respuesta_secreta', 'admin_id', 'nombre', 'pregunta_1', 'respuesta_1', 'pregunta_2', 'respuesta_2', 'pregunta_3', 'respuesta_3']
+Column pregunta_1 already exists.
+Column respuesta_1 already exists.
+Column pregunta_2 already exists.
+Column respuesta_2 already exists.
+Column pregunta_3 already exists.
+Column respuesta_3 already exists.
+Migration completed.
