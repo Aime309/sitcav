@@ -59,6 +59,21 @@ Flight::set('flight.content_length', true);
 Flight::set('flight.v2.output_buffering', false);
 Flight::view()->preserveVars = false;
 
+///////////////////////////////////
+// CONFIGURAR CONTROL DE ERRORES //
+///////////////////////////////////
+error_reporting(
+  $_ENV['ENVIRONMENT'] === 'development'
+    ? E_ALL
+    : E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED & ~E_STRICT
+);
+
+ini_set('display_errors', $_ENV['ENVIRONMENT'] === 'development');
+ini_set('display_startup_errors', $_ENV['ENVIRONMENT'] === 'development');
+ini_set('log_errors', true);
+ini_set('ignore_repeated_source', true);
+ini_set('error_log', ROOT_DIR . '/storage/logs/php_errors.log');
+
 //////////////////
 // CARGAR RUTAS //
 //////////////////
