@@ -5,13 +5,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>Sistema de Gestión Administrativo</title>
-    <base href="/" />
+    <base href="<?= BASE_HREF ?>" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="./index.css" />
+    <link rel="stylesheet" href="./resources/css/index.css?id=<?= RESOURCES_ID ?>" />
   </head>
 
   <body>
@@ -2309,7 +2309,7 @@
       </div>
     </div>
 
-    <script src="app.js?v=14"></script>
+    <script src="./resources/js/app.js?id=<?= RESOURCES_ID ?>"></script>
   </body>
 
 </html>

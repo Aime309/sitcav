@@ -1,4 +1,24 @@
 {
+	"autoload": {
+		"psr-4": {
+			"App\\": "app"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tests\\": "tests"
+		}
+	},
+	"config": {
+		"sort-packages": true
+	},
+	"require": {
+		"flightphp/core": "v4.x-dev"
+	},
+	"require-dev": {
+		"guzzlehttp/guzzle": "^7.10",
+		"phpunit/phpunit": "^11.5"
+	},
 	"scripts": {
 		"api": "start py app.py",
 		"frontend": "start php -S localhost:8000"

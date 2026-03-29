@@ -3,4 +3,4 @@ __pycache__
 venv
 
 *.sublime-*
-*.db
+.phpunit.result.cache
