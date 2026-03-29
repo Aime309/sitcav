@@ -1,4 +1,4 @@
-# Sistema de Gestión Administrativo - Guía de Instalación
+# Sistema de Gestión Administrativo - Guía de Instalación e Inicio
 
 ## 📋 Requisitos Previos
 
@@ -8,11 +8,13 @@
 - **Navegador web moderno** (Chrome, Firefox, Edge)
 - **Conexión a internet** (solo para la primera instalación de dependencias)
 
+---
+
 ## 🚀 Instalación Paso a Paso
 
 ### 1. Instalar Dependencias de Python
 
-Abra PowerShell o CMD en la carpeta del proyecto y ejecute:
+Abra PowerShell o bash en la carpeta del proyecto y ejecute:
 
 ```bash
 pip install Flask Flask-CORS Flask-SQLAlchemy werkzeug reportlab
@@ -38,23 +40,29 @@ Ejecute este comando para verificar que todo esté instalado correctamente:
 python -c "import flask, flask_cors, flask_sqlalchemy, werkzeug, reportlab; print('✅ Todas las dependencias instaladas correctamente')"
 ```
 
-O si usa `py`:
-
-```bash
-py -c "import flask, flask_cors, flask_sqlalchemy, werkzeug, reportlab; print('✅ Todas las dependencias instaladas correctamente')"
-```
+---
 
 ## 🔧 Ejecución del Sistema
 
-### Paso 1: Iniciar el Servidor Backend
+### 🔴 PROBLEMA ACTUAL: CORS
 
-En la carpeta del proyecto, ejecute:
+Si abres `index.html` directamente (doble click), tendrás errores de CORS porque el navegador bloquea peticiones desde `file://`.
+
+### 🎯 SOLUCIÓN: Usar Servidores HTTP
+
+Necesitas **2 terminales abiertas**:
+
+#### Terminal 1: Backend API
 
 ```bash
+cd ruta/del/proyecto
 composer api
 ```
 
-**Salida esperada:**
+✅ Debe mostrar: `🚀 Servidor Flask corriendo en http://127.0.0.1:5000`
+
+**Salida esperada completa:**
+
 ```
 ✅ Base de datos y tablas creadas.
 📊 Añadiendo datos de prueba...
@@ -77,33 +85,36 @@ composer api
 
 > ⚠️ **No cierre esta ventana.** El servidor debe permanecer en ejecución para que el sistema funcione.
 
-### Paso 2: Abrir el Frontend
+#### Terminal 2: Frontend HTTP Server
 
-Abra el archivo `index.html` en su navegador web:
+```bash
+cd ruta/del/proyecto
+composer frontend
+```
 
-1. **Opción 1:** Doble clic en `index.html`
-2. **Opción 2:** Click derecho → "Abrir con" → Navegador
-3. **Opción 3:** Arrastrar `index.html` a una ventana del navegador
+✅ Debe mostrar: `✅ Servidor HTTP corriendo en http://localhost:8000`
 
-### Paso 3: Iniciar Sesión
+#### Abrir Navegador:
+
+http://localhost:8000/index.html
+
+---
+
+## 🔐 Iniciar Sesión
 
 Use una de las credenciales de prueba:
 
-**Encargado (acceso total):**
-- Usuario: `12345678`
-- Contraseña: `test1`
+| Rol | Cédula | Contraseña |
+|-----|--------|------------|
+| Encargado (acceso total) | `12345678` | `test1` |
+| Empleado Superior | `87654321` | `test1` |
+| Vendedor (acceso limitado) | `11223344` | `test1` |
 
-**Empleado Superior:**
-- Usuario: `87654321`
-- Contraseña: `test1`
-
-**Vendedor (acceso limitado):**
-- Usuario: `11223344`
-- Contraseña: `test1`
+---
 
 ## 📁 Estructura del Proyecto
 
-```
+```bash
 c:/Users/nadet/Desktop/Proyecto/
 ├── app.py                  # ⭐ Servidor Flask completo
 ├── app.js                  # ⭐ JavaScript del frontend (modular)
@@ -115,6 +126,8 @@ c:/Users/nadet/Desktop/Proyecto/
 │   └── backup_*.sql       # Backups generados
 └── [archivos antiguos]     # Pueden ignorarse/eliminarse
 ```
+
+---
 
 ## ✨ Funcionalidades Disponibles
 
@@ -140,6 +153,8 @@ c:/Users/nadet/Desktop/Proyecto/
 | Ventas | ✅ | ✅ | ✅ |
 | Backup | ❌ | ❌ | ✅ |
 
+---
+
 ## 🧪 Testear la API Directamente
 
 ### Ejemplo: Listar Productos
@@ -148,57 +163,49 @@ c:/Users/nadet/Desktop/Proyecto/
 curl http://127.0.0.1:5000/api/productos
 ```
 
-### Ejemplo: Obtener Cotización
-
-```bash
-curl http://127.0.0.1:5000/api/cotizacion/actual
-```
-
 ### Ejemplo: Crear Cliente
 
 ```bash
 curl -X POST http://127.0.0.1:5000/api/clientes -H "Content-Type: application/json" -d "{\"nombre\":\"Pedro\",\"apellidos\":\"González\",\"cedula\":\"12341234\",\"telefono\":\"0424-1234567\"}"
 ```
 
+---
+
 ## 🛠️ Troubleshooting
 
-### Problema: "Module not found: flask"
+### Error CORS
+- **Causa:** Abrir `index.html` directamente desde el sistema de archivos.
+- **Solución:** Usar siempre `composer frontend` para servir el frontend.
 
-**Solución:**
+### "Module not found: flask"
+
 ```bash
 pip install Flask Flask-CORS Flask-SQLAlchemy werkzeug reportlab
 ```
 
-### Problema: "Port 5000 already in use"
+### Puerto 5000 en uso
 
-**Solución:** Edite `app.py` línea final y cambie el puerto:
+Edite `app.py` línea final y cambie el puerto:
 
-```python
+```py
 app.run(debug=True, port=5001)  # Cambiar 5000 por 5001
 ```
 
 Luego actualice `app.js` línea 5:
 
-```javascript
+```js
 const API_BASE_URL = 'http://127.0.0.1:5001';
 ```
 
-### Problema: "CORS error" en el navegador
+### Base de datos corrupta o quieres empezar de cero
 
-**Solución:** Asegúrese de que el servidor esté corriendo y que Flask-CORS esté instalado:
+Elimine el archivo `instance/system_data.db` y reinicie el servidor con `composer api`.
 
-```bash
-pip install Flask-CORS
-```
+---
 
-### Problema: La base de datos ya existe
-
-Si quiere empezar de cero, elimine el archivo `instance/system_data.db` y reinicia el servidor.
-
-## 📊 Datos de Prueba Incluidos
+## 📦 Datos de Prueba Incluidos
 
 El sistema viene pre-cargado con:
-
 - ✅ 3 usuarios (Encargado, Empleado Superior, Vendedor)
 - ✅ 6 productos en 4 categorías
 - ✅ 3 clientes
@@ -207,33 +214,26 @@ El sistema viene pre-cargado con:
 - ✅ 5 tipos de pago
 - ✅ Cotización del dólar (35.50 Bs/USD)
 
-## 🎓 Próximos Pasos
+---
 
-1. **Explorar** todos los módulos usando diferentes roles
-2. **Crear** nuevos productos, clientes y proveedores
-3. **Generar** un backup desde el módulo de respaldo
-4. **Revisar** las estadísticas del dashboard
-5. **Probar** las alertas de stock bajo (productos con < 10 unidades)
+## 📌 IMPORTANTE
 
-## 📚 Documentación API
+❌ **NO abras index.html directamente** (doble click)
+✅ **SIEMPRE usa http://localhost:8000/index.html**
 
-Para ver todos los endpoints disponibles, consulte el archivo `walkthrough.md` en la carpeta de artefactos.
+¡Esto soluciona TODOS los errores de CORS!
 
-## ⚠️ Importante
-
-- El sistema usa **autenticación simple** (no JWT). Para producción se recomienda implementar tokens.
-- Los datos se guardan en **SQLite** (archivo local). Para entornos multi-usuario considere PostgreSQL o MySQL.
-- Los backups se guardan en formato SQL en la carpeta `instance/`.
+---
 
 ## ✅ Checklist de Instalación Exitosa
 
 - [ ] Python 3.8+ instalado
 - [ ] Dependencias instaladas (Flask, Flask-CORS, Flask-SQLAlchemy, werkzeug)
 - [ ] Servidor ejecutándose en http://127.0.0.1:5000
-- [ ] index.html abierto en el navegador
+- [ ] Frontend servido en http://localhost:8000
 - [ ] Login exitoso con credenciales de prueba
 - [ ] Módulos cargando datos correctamente
 
 ---
 
-**¿Necesita ayuda?** Revise la sección de Troubleshooting o consulte los logs del servidor en la consola donde ejecutó `py app.py`.
+**¿Necesita ayuda?** Revise la sección de Troubleshooting, verifique la consola del navegador (F12) o revise los logs del servidor en la terminal donde ejecutó `composer api`.
