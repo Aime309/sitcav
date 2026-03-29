@@ -21,6 +21,7 @@
 	},
 	"scripts": {
 		"api": "start py app.py",
-		"frontend": "start php -S localhost:8000"
+		"frontend": "start php -S localhost:8000",
+		"test": "phpunit"
 	}
 }
