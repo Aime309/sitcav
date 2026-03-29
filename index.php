@@ -74,6 +74,11 @@ ini_set('log_errors', true);
 ini_set('ignore_repeated_source', true);
 ini_set('error_log', ROOT_DIR . '/storage/logs/php_errors.log');
 
+/////////////////////////////////////
+// CONFIGURAR GENERACIÓN DE FECHAS //
+/////////////////////////////////////
+date_default_timezone_set($_ENV['TIMEZONE']);
+
 //////////////////
 // CARGAR RUTAS //
 //////////////////
