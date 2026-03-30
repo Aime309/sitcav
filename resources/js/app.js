@@ -2,6 +2,7 @@
 // CONFIGURATION
 // =====================================================
 const API_BASE_URL = 'http://127.0.0.1:5000';
+const PHP_API_BASE_URL = 'http://localhost:8000';
 let currentUser = null;
 let currentCarouselPosition = 0;
 let productsData = [];
@@ -53,7 +54,7 @@ async function handleLogin(event) {
     const errorDiv = document.getElementById('login-error');
 
     try {
-        const response = await fetch(`${API_BASE_URL}/login`, {
+        const response = await fetch(`${PHP_API_BASE_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -3544,7 +3545,7 @@ async function saveNewPassword(event) {
 
         // Verify current password by attempting login
         console.log('Verifying password...');
-        const verifyResponse = await fetch(`${API_BASE_URL}/login`, {
+        const verifyResponse = await fetch(`${PHP_API_BASE_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -100,52 +100,6 @@ def uploaded_file(filename):
     print(f"DEBUG: Serving file {filename} from {app.config['UPLOAD_FOLDER']}")
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route('/api/debug/uploads', methods=['GET'])
-def list_uploaded_files():
-    try:
-        files = os.listdir(app.config['UPLOAD_FOLDER'])
-        return jsonify({
-            "folder": app.config['UPLOAD_FOLDER'],
-            "files": files,
-            "exists": os.path.exists(app.config['UPLOAD_FOLDER'])
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)})
-
-# =====================================================================
-# AUTENTICACIÓN
-# =====================================================================
-@app.route('/login', methods=['POST'])
-def login():
-    """Ruta para la autenticación de usuarios"""
-    data = request.get_json()
-    cedula = data.get('usuario')
-    contrasena = data.get('contrasena')
-    
-    usuario = Usuario.query.filter_by(cedula=cedula, activo=True).first()
-    
-    if usuario and check_password_hash(usuario.contrasena, contrasena):
-        print(f"Login exitoso para: {usuario.nombre} con rol: {usuario.rol}")
-        return jsonify({
-            "success": True,
-            "message": "Autenticación exitosa",
-            "rol": usuario.rol,
-            "usuario_id": usuario.id,
-            "nombre": usuario.nombre,
-            "cedula": usuario.cedula,
-            "foto_url": usuario.foto_url
-        })
-    else:
-        print(f"Intento de login fallido para: {cedula}")
-        return jsonify({
-            "success": False,
-            "message": "Credenciales inválidas"
-        }), 401
-
-@app.route('/logout', methods=['POST'])
-def logout():
-    return jsonify({"success": True, "message": "Sesión cerrada correctamente"})
-
 @app.route('/api/dashboard/stats', methods=['GET'])
 def get_dashboard_stats():
     """Retorna estadísticas generales para el dashboard (contadores)"""
