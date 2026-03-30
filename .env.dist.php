@@ -9,7 +9,7 @@ return [
   // 'DB_PORT' => '3306',
   // 'DB_USERNAME' => 'root',
   // 'DB_PASSWORD' => null,
-  'DB_DATABASE' => __DIR__ . '/bd/sitcav.db',
+  'DB_DATABASE' => __DIR__ . '/instance/system_data.db',
 
   'TEST_URL' => 'http://localhost:8080',
   'TOKEN_SECRET' => '{token-secret}',

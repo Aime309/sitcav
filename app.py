@@ -10,10 +10,10 @@ import os
 import sqlite3
 from decimal import Decimal
 from datetime import datetime, timedelta
+import bcrypt
 from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
 
 # Importar modelos
@@ -24,6 +24,12 @@ from models import (
     Estado, Localidad, Sector, Negocio,
     Apartado, DetalleApartado, PagoApartado, MovimientoInventario, Reembolso
 )
+
+def generate_password_hash(password: str):
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt(10))
+
+def check_password_hash(pwHash: bytes, password: bytes) -> bool:
+    return bcrypt.checkpw(password, pwHash)
 
 # =====================================================================
 # CONFIGURACIÓN DE LA APLICACIÓN

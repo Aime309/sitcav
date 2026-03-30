@@ -8,6 +8,12 @@ use PHPUnit\Framework\Attributes\Test;
 
 final class StatusCheckTest extends FeatureTestCase
 {
+  public function setup(): void
+  {
+    $_ENV['APP_URL'] = 'http://localhost:8000';
+    parent::setUp();
+  }
+
   #[Test]
   public function apiIsRunning(): void
   {

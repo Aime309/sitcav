@@ -1,3 +1,4 @@
+bcrypt==5.0.0
 blinker==1.8.2
 certifi==2026.2.25
 charset-normalizer==3.4.6
@@ -18,5 +19,4 @@ requests==2.32.4
 SQLAlchemy==2.0.48
 typing_extensions==4.13.2
 urllib3==2.2.3
-Werkzeug==3.0.6
 zipp==3.20.2

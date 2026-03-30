@@ -15,13 +15,13 @@ abstract class FeatureTestCase extends TestCase
   {
     parent::setUp();
 
-    $_ENV['APP_URL'] ??= 'http://localhost:8000';
+    $_ENV['APP_URL'] ??= 'http://localhost:5000';
 
     if (!str_ends_with(strval($_ENV['APP_URL']), '/')) {
       $_ENV['APP_URL'] .= '/';
     }
 
-    self::$client ??= new Client([
+    self::$client = new Client([
       'base_uri' => $_ENV['APP_URL'],
     ]);
   }

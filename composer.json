@@ -13,11 +13,15 @@
 		"sort-packages": true
 	},
 	"require": {
-		"flightphp/core": "v4.x-dev"
+		"php": ">=8.2",
+		"flightphp/container": "^1.3",
+		"flightphp/core": "v4.x-dev",
+		"leafs/auth": "^5.0"
 	},
 	"require-dev": {
 		"guzzlehttp/guzzle": "^7.10",
-		"phpunit/phpunit": "^11.5"
+		"phpunit/phpunit": "^11.5",
+		"symfony/var-dumper": "^7.4"
 	},
 	"scripts": {
 		"api": "start py app.py",

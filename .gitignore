@@ -4,3 +4,5 @@ venv
 
 *.sublime-*
 .phpunit.result.cache
+.env.php
+*.db
