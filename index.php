@@ -138,7 +138,7 @@ error_reporting(
 
 ini_set('display_errors', $_ENV['ENVIRONMENT'] === 'development');
 ini_set('display_startup_errors', $_ENV['ENVIRONMENT'] === 'development');
-ini_set('html_errors', false);
+// ini_set('html_errors', false);
 ini_set('log_errors', true);
 ini_set('ignore_repeated_source', true);
 ini_set('error_log', ROOT_DIR . '/storage/logs/php_errors.log');

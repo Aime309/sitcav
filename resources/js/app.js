@@ -2938,7 +2938,7 @@ async function loadCredenciales() {
 
 async function loadDashboardStats() {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/dashboard/stats`);
+        const response = await fetch(`${PHP_API_BASE_URL}/api/dashboard/stats`);
         const data = await response.json();
 
         // Actualizar contadores principales
