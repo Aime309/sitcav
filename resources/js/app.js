@@ -1837,7 +1837,7 @@ async function loadEmpleados() {
     tbody.innerHTML = '<tr><td colspan="5" class="loading active"><div class="spinner"></div>Cargando...</td></tr>';
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/usuarios`);
+        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios`);
         const empleados = await response.json();
 
         tbody.innerHTML = '';

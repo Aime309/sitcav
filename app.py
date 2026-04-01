@@ -103,12 +103,6 @@ def uploaded_file(filename):
 # =====================================================================
 # CRUD: USUARIOS / EMPLEADOS
 # =====================================================================
-@app.route('/api/usuarios', methods=['GET'])
-def list_usuarios():
-    """Obtiene la lista de todos los usuarios"""
-    usuarios = Usuario.query.all()
-    return jsonify([user.to_dict() for user in usuarios])
-
 @app.route('/api/usuarios', methods=['POST'])
 def create_usuario():
     """Crea un nuevo usuario"""

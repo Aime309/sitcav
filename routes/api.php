@@ -64,6 +64,19 @@ Flight::group('/api', static function (): void {
       ], 500);
     }
   });
+
+  Flight::group('/usuarios', static function (): void {
+    Flight::route('GET /', static function (): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+
+      $users = array_map(
+        static fn(array $user): array => ['activo' => filter_var($user['activo'], FILTER_VALIDATE_BOOL)] + $user,
+        $db->select('usuarios')->all(),
+      );
+
+      Flight::json($users);
+    });
+  });
 });
 
 Flight::route('POST /login', static function (): void {
