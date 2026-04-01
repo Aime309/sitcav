@@ -92,3 +92,41 @@ Flight::route('POST /login', static function (): void {
     ], 401);
   }
 });
+
+Flight::route('POST /register', static function (): void {
+  $data = Flight::request()->data;
+  $auth = Container::getInstance()->get(Auth::class);
+
+  $userWasRegisteredSuccessfully = $auth->register([
+    'cedula' => $data->cedula,
+    'nombre' => $data->nombre,
+    'contrasena' => $data->contrasena ?? '',
+    'rol' => 'Vendedor',
+    'activo' => true,
+    'pregunta_1' => $data->pregunta_1,
+    'pregunta_2' => $data->pregunta_2,
+    'pregunta_3' => $data->pregunta_3,
+    'respuesta_1' => $data->respuesta_1,
+    'respuesta_2' => $data->respuesta_2,
+    'respuesta_3' => $data->respuesta_3,
+  ]);
+
+  if ($userWasRegisteredSuccessfully) {
+    Flight::jsonHalt([
+      'success' => true,
+      'message' => 'Usuario registrado exitosamente',
+      'usuario' => ['activo' => filter_var($auth->user()->activo, FILTER_VALIDATE_BOOL)] + (array) $auth->data()->user,
+      'errors' => $auth->errors(),
+    ], 201);
+  } elseif (key_exists('cedula', $auth->errors())) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'La cédula ya está registrada',
+    ], 400);
+  } else {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'Error al registrar:' . print_r($auth->errors(), true),
+    ], 500);
+  }
+});

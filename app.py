@@ -100,46 +100,6 @@ def uploaded_file(filename):
     print(f"DEBUG: Serving file {filename} from {app.config['UPLOAD_FOLDER']}")
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route('/register', methods=['POST'])
-def register():
-    """Registro público de nuevos usuarios"""
-    data = request.get_json()
-    try:
-        # Verificar si la cédula ya existe
-        existing_user = Usuario.query.filter_by(cedula=data['cedula']).first()
-        if existing_user:
-            return jsonify({"success": False, "message": "La cédula ya está registrada"}), 400
-        
-        hashed_password = generate_password_hash(data['contrasena'])
-        
-        nuevo_usuario = Usuario(
-            cedula=data['cedula'],
-            nombre=data['nombre'],
-            contrasena=hashed_password,
-            rol='Vendedor',
-            activo=True,
-            pregunta_1=data.get('pregunta_1'),
-            respuesta_1=data.get('respuesta_1'),
-            pregunta_2=data.get('pregunta_2'),
-            respuesta_2=data.get('respuesta_2'),
-            pregunta_3=data.get('pregunta_3'),
-            respuesta_3=data.get('respuesta_3')
-        )
-        db.session.add(nuevo_usuario)
-        db.session.commit()
-        
-        return jsonify({
-            "success": True,
-            "message": "Usuario registrado exitosamente",
-            "usuario": nuevo_usuario.to_dict()
-        }), 201
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"success": False, "message": f"Error al registrar: {str(e)}"}), 400
-
-
-
-
 # =====================================================================
 # CRUD: USUARIOS / EMPLEADOS
 # =====================================================================
