@@ -76,6 +76,28 @@ Flight::group('/api', static function (): void {
 
       Flight::json($users);
     });
+
+    Flight::route('POST /', static function (): void {
+      $data = Flight::request()->data;
+      $auth = Container::getInstance()->get(Auth::class);
+
+      $user = $auth->createUserFor([
+        'cedula' => $data->cedula,
+        'nombre' => $data->nombre,
+        'contrasena' => $data->contrasena ?? '123456',
+        'rol' => $data->rol ?? 'Vendedor',
+        'activo' => true,
+      ]);
+
+      if ($user) {
+        Flight::jsonHalt(['activo' => filter_var($user->activo, FILTER_VALIDATE_BOOL)] + $user->get(), 201);
+      } else {
+        Flight::jsonHalt([
+          'success' => false,
+          'message' => 'Error al crear usuario: ' . print_r($auth->errors(), true),
+        ], 400);
+      }
+    });
   });
 });
 

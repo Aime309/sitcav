@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use GuzzleHttp\Exception\ClientException;
-use PDO;
 use PHPUnit\Framework\Attributes\Test;
 
 final class RegisterTest extends FeatureTestCase
@@ -14,9 +13,6 @@ final class RegisterTest extends FeatureTestCase
   {
     $_ENV['APP_URL'] = 'http://localhost:8000';
     parent::setUp();
-
-    $pdo = new PDO('sqlite:' . dirname(__DIR__, 2) . '/instance/system_data.db');
-    $pdo->exec("DELETE FROM usuarios WHERE cedula = '28072391'");
   }
 
   #[Test]

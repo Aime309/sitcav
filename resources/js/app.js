@@ -1884,7 +1884,7 @@ function getRoleBadgeClass(rol) {
 
 async function editEmpleado(id) {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/usuarios`);
+        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios`);
         const users = await response.json();
         const user = users.find(u => u.id === id);
 
@@ -1912,7 +1912,7 @@ async function saveEmpleado(event) {
     const rol = document.getElementById('empleado-rol').value;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/usuarios/${id}`, {
+        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ rol: rol })
@@ -1935,7 +1935,7 @@ async function deleteEmpleado(id) {
     if (!confirm('¿Está seguro de eliminar este empleado? Esta acción no se puede deshacer.')) return;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/usuarios/${id}`, {
+        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios/${id}`, {
             method: 'DELETE'
         });
 
@@ -3277,7 +3277,7 @@ async function loadProfileDataToForm() {
     if (!currentUser) return;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/usuarios`);
+        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios`);
         const usuarios = await response.json();
 
         const usuario = usuarios.find(u => u.id === currentUser.id);
@@ -3391,7 +3391,7 @@ async function saveProfileChanges(event) {
             const formData = new FormData();
             formData.append('foto', fotoFile);
 
-            const uploadResponse = await fetch(`${API_BASE_URL}/api/usuarios/${currentUser.id}/foto`, {
+            const uploadResponse = await fetch(`${PHP_API_BASE_URL}/api/usuarios/${currentUser.id}/foto`, {
                 method: 'POST',
                 body: formData
             });
@@ -3409,10 +3409,10 @@ async function saveProfileChanges(event) {
         }
 
         console.log('Final foto_url:', finalFotoUrl);
-        console.log('Updating profile with PUT to:', `${API_BASE_URL}/api/usuarios/${currentUser.id}`);
+        console.log('Updating profile with PUT to:', `${PHP_API_BASE_URL}/api/usuarios/${currentUser.id}`);
 
         // Now update profile data
-        const response = await fetch(`${API_BASE_URL}/api/usuarios/${currentUser.id}`, {
+        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios/${currentUser.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -3531,7 +3531,7 @@ async function saveNewPassword(event) {
     try {
         // ALWAYS fetch user data from API to ensure we have cedula
         console.log('Fetching user data from API for id:', currentUser.id);
-        const userResponse = await fetch(`${API_BASE_URL}/api/usuarios`);
+        const userResponse = await fetch(`${PHP_API_BASE_URL}/api/usuarios`);
         const usuarios = await userResponse.json();
         const usuario = usuarios.find(u => u.id === currentUser.id);
 
@@ -3566,7 +3566,7 @@ async function saveNewPassword(event) {
         console.log('Password verified! Updating password...');
 
         // Update the password
-        const updateResponse = await fetch(`${API_BASE_URL}/api/usuarios/${currentUser.id}`, {
+        const updateResponse = await fetch(`${PHP_API_BASE_URL}/api/usuarios/${currentUser.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -3614,7 +3614,7 @@ function closeSecurityQuestionsModal() {
 
 async function loadSecurityQuestions() {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/usuarios`);
+        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios`);
         const usuarios = await response.json();
 
         const usuario = usuarios.find(u => u.id === currentUser.id);
@@ -3663,7 +3663,7 @@ async function saveSecurityQuestions(event) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/usuarios/${currentUser.id}`, {
+        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios/${currentUser.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

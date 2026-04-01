@@ -103,27 +103,6 @@ def uploaded_file(filename):
 # =====================================================================
 # CRUD: USUARIOS / EMPLEADOS
 # =====================================================================
-@app.route('/api/usuarios', methods=['POST'])
-def create_usuario():
-    """Crea un nuevo usuario"""
-    data = request.get_json()
-    try:
-        hashed_password = generate_password_hash(data.get('contrasena', '123456'))
-        
-        nuevo_usuario = Usuario(
-            cedula=data['cedula'],
-            nombre=data['nombre'],
-            contrasena=hashed_password,
-            rol=data.get('rol', 'Vendedor'),
-            activo=True
-        )
-        db.session.add(nuevo_usuario)
-        db.session.commit()
-        return jsonify(nuevo_usuario.to_dict()), 201
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"message": f"Error al crear usuario: {str(e)}", "success": False}), 400
-
 @app.route('/api/usuarios/<int:id>', methods=['PUT'])
 def update_usuario(id):
     """Actualiza la información de un usuario"""
