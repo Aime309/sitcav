@@ -191,6 +191,31 @@ Flight::group('/api', static function (): void {
           'foto_url' => $user['foto_url'],
         ]);
       });
+
+      Flight::route('DELETE /', static function (int $id): void {
+        $db = Container::getInstance()->get(Auth::class)->db();
+        $user = $db->select('usuarios')->find($id);
+
+        if (!$user) {
+          Flight::jsonHalt(['message' => 'Usuario no encontrado'], 404);
+
+          return;
+        }
+
+        $db->delete('usuarios')->where('id', $id)->execute();
+
+        if ($db->errors()) {
+          Flight::jsonHalt([
+            'success' => false,
+            'message' => 'Error al eliminar usuario: ' . json_encode($db->errors()),
+          ], 500);
+        } else {
+          Flight::json([
+            'success' => true,
+            'message' => 'Usuario eliminado con éxito',
+          ]);
+        }
+      });
     });
   });
 });

@@ -95,35 +95,6 @@ check_and_migrate_db()
 
 db.init_app(app)
 
-@app.route('/uploads/productos/<filename>')
-def uploaded_file(filename):
-    print(f"DEBUG: Serving file {filename} from {app.config['UPLOAD_FOLDER']}")
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-# =====================================================================
-# CRUD: USUARIOS / EMPLEADOS
-# =====================================================================
-# Serve uploaded profile photos
-@app.route('/uploads/profiles/<filename>')
-def serve_profile_photo(filename):
-    profiles_folder = os.path.join(basedir, 'instance', 'uploads', 'profiles')
-    return send_from_directory(profiles_folder, filename)
-
-@app.route('/api/usuarios/<int:id>', methods=['DELETE'])
-def delete_usuario(id):
-    """Elimina un usuario"""
-    usuario = Usuario.query.get(id)
-    if usuario is None:
-        return jsonify({"message": "Usuario no encontrado"}), 404
-    
-    try:
-        db.session.delete(usuario)
-        db.session.commit()
-        return jsonify({"message": "Usuario eliminado con éxito", "success": True})
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"message": f"Error al eliminar usuario: {str(e)}", "success": False}), 500
-
 # =====================================================================
 # CRUD: CLIENTES
 # =====================================================================
