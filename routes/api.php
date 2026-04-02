@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\Category;
 use App\Models\Client;
 use App\Models\ExchangeRate;
 use App\Models\InventoryMovement;
@@ -216,6 +217,310 @@ Flight::group('/api', static function (): void {
           ]);
         }
       });
+    });
+  });
+
+  Flight::group('/clientes', static function (): void {
+    Flight::route('GET /', static function (): void {
+      $client = new Client;
+
+      Flight::json($client->all());
+    });
+
+    Flight::route('POST /', static function (): void {
+      $data = Flight::request()->data;
+
+      if (!$data) {
+        Flight::jsonHalt([
+          'message' => 'No se recibieron datos',
+          'success' => false,
+        ], 400);
+
+        return;
+      }
+
+      if (!$data->nombre || !$data->cedula) {
+        Flight::jsonHalt([
+          'message' => 'Nombre y cédula son requeridos',
+          'success' => false,
+        ], 400);
+
+        return;
+      }
+
+      try {
+        $newClient = new Client;
+        $newClient->nombre = $data->nombre;
+        $newClient->apellidos = $data->apellidos ?? '';
+        $newClient->cedula = $data->cedula;
+        $newClient->telefono = $data->telefono ?? null;
+        $newClient->direccion = $data->direccion ?? null;
+        $newClient->id_localidad = $data->id_localidad ?? null;
+        $newClient->save();
+
+        Flight::json($newClient, 201);
+      } catch (Throwable $throwable) {
+        Flight::jsonHalt([
+          'message' => "Error al crear cliente: $throwable",
+          'success' => false,
+        ], 400);
+      }
+    });
+
+    Flight::group('/@id:[0-9]+', static function (): void {
+      Flight::route('PUT /', static function (int $id): void {
+        $db = Container::getInstance()->get(Auth::class)->db();
+        $client = $db->select('clientes')->find($id);
+
+        if (!$client) {
+          Flight::halt(404);
+
+          return;
+        }
+
+        $data = Flight::request()->data;
+
+        try {
+          $client['nombre'] = $data->nombre ?? $client['nombre'];
+          $client['apellidos'] = $data->apellidos ?? $client['apellidos'];
+          $client['cedula'] = $data->cedula ?? $client['cedula'];
+          $client['telefono'] = $data->telefono ?? $client['telefono'];
+          $client['direccion'] = $data->direccion ?? $client['direccion'];
+          $client['id_localidad'] = $data->id_localidad ?? $client['id_localidad'];
+
+          $db->update('clientes')->params($client)->where('id', $id)->execute();
+
+          if ($db->errors()) {
+            Flight::jsonHalt([
+              'success' => false,
+              'message' => 'Error al actualizar cliente: ' . json_encode($db->errors()),
+            ], 400);
+          } else {
+            Flight::json($client);
+          }
+        } catch (Throwable $throwable) {
+          Flight::jsonHalt([
+            'message' => "Error al actualizar cliente: $throwable",
+            'success' => false,
+          ], 400);
+        }
+      });
+
+      Flight::route('DELETE /', static function (int $id): void {
+        $db = Container::getInstance()->get(Auth::class)->db();
+        $client = $db->select('clientes')->find($id);
+
+        if (!$client) {
+          Flight::jsonHalt(['message' => 'Cliente no encontrado'], 404);
+
+          return;
+        }
+
+        $db->delete('clientes')->where('id', $id)->execute();
+
+        if ($db->errors()) {
+          Flight::jsonHalt([
+            'success' => false,
+            'message' => 'Error al eliminar cliente: ' . json_encode($db->errors()),
+          ], 500);
+        } else {
+          Flight::json([
+            'success' => true,
+            'message' => 'Cliente eliminado con éxito',
+          ]);
+        }
+      });
+    });
+  });
+
+  Flight::group('/categorias', static function (): void {
+    Flight::route('GET /', static function (): void {
+      Flight::json((new Category)->all());
+    });
+
+    Flight::route('POST /', static function (): void {
+      $data = Flight::request()->data;
+
+      if (!$data || !$data->nombre) {
+        Flight::jsonHalt([
+          'message' => 'El nombre de la categoría es requerido',
+          'success' => false,
+        ], 400);
+
+        return;
+      }
+
+      try {
+        $category = new Category;
+        $category->nombre = $data->nombre;
+        $category->id_usuario = $data->id_usuario ?? 1;
+        $category->save();
+
+        Flight::json($category, 201);
+      } catch (Throwable $throwable) {
+        Flight::jsonHalt([
+          'message' => "Error al crear categoría: $throwable",
+          'success' => false,
+        ], 400);
+      }
+    });
+
+    Flight::route('DELETE /@id:[0-9]+', static function (int $id): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $category = $db->select('categorias')->find($id);
+
+      if (!$category) {
+        Flight::jsonHalt(['message' => 'Categoría no encontrada'], 404);
+
+        return;
+      }
+
+      $productsCount = $db->select('productos')->where('id_categoria', $id)->count();
+
+      if ($productsCount > 0) {
+        Flight::jsonHalt([
+          'message' => "No se puede eliminar la categoría '{$category['nombre']}' porque tiene {$productsCount} producto(s) asociado(s). Reasigne o elimine los productos primero.",
+          'success' => false,
+        ], 400);
+
+        return;
+      }
+
+      $db->delete('categorias')->where('id', $id)->execute();
+
+      if ($db->errors()) {
+        Flight::jsonHalt([
+          'success' => false,
+          'message' => 'Error al eliminar categoría: ' . json_encode($db->errors()),
+        ], 500);
+      } else {
+        Flight::json([
+          'success' => true,
+          'message' => 'Categoría eliminada con éxito',
+        ]);
+      }
+    });
+  });
+
+  Flight::group('/productos', static function (): void {
+    Flight::route('GET /', static function (): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $products = $db->query('SELECT p.*, c.nombre AS categoria_nombre FROM productos p LEFT JOIN categorias c ON p.id_categoria = c.id')->all();
+
+      Flight::json($products);
+    });
+
+    Flight::route('POST /', static function (): void {
+      $data = Flight::request()->data;
+
+      if (!$data || !$data->nombre || !$data->codigo || !$data->id_categoria || !$data->precio_unitario_actual_dolares) {
+        Flight::jsonHalt([
+          'message' => 'Los campos nombre, código, categoría e precio son requeridos',
+          'success' => false,
+        ], 400);
+
+        return;
+      }
+
+      try {
+        $product = new Product;
+        $product->nombre = $data->nombre;
+        $product->descripcion = $data->descripcion ?? '';
+        $product->codigo = $data->codigo;
+        $product->id_categoria = $data->id_categoria;
+        $product->id_proveedor = $data->id_proveedor ?? null;
+        $product->precio_unitario_actual_dolares = $data->precio_unitario_actual_dolares;
+        $product->cantidad_disponible = $data->cantidad_disponible ?? 0;
+        $product->dias_garantia = $data->dias_garantia ?? 0;
+        $product->dias_apartado = $data->dias_apartado ?? 0;
+        $product->imei = $data->imei ?? null;
+        $product->save();
+
+        Flight::json($product, 201);
+      } catch (Throwable $throwable) {
+        Flight::jsonHalt([
+          'message' => "Error al crear producto: $throwable",
+          'success' => false,
+        ], 400);
+      }
+    });
+
+    Flight::group('/@id:[0-9]+', static function (): void {
+      Flight::route('PUT /', static function (int $id): void {
+        $db = Container::getInstance()->get(Auth::class)->db();
+        $product = $db->select('productos')->find($id);
+
+        if (!$product) {
+          Flight::halt(404);
+
+          return;
+        }
+
+        $data = Flight::request()->data;
+
+        try {
+          $product['nombre'] = $data->nombre ?? $product['nombre'];
+          $product['descripcion'] = $data->descripcion ?? $product['descripcion'];
+          $product['codigo'] = $data->codigo ?? $product['codigo'];
+          $product['id_categoria'] = $data->id_categoria ?? $product['id_categoria'];
+          $product['id_proveedor'] = $data->id_proveedor ?? $product['id_proveedor'];
+          $product['precio_unitario_actual_dolares'] = $data->precio_unitario_actual_dolares ?? $product['precio_unitario_actual_dolares'];
+          $product['cantidad_disponible'] = $data->cantidad_disponible ?? $product['cantidad_disponible'];
+          $product['dias_garantia'] = $data->dias_garantia ?? $product['dias_garantia'];
+          $product['dias_apartado'] = $data->dias_apartado ?? $product['dias_apartado'];
+          $product['imei'] = $data->imei ?? $product['imei'];
+
+          $db->update('productos')->params($product)->where('id', $id)->execute();
+
+          if ($db->errors()) {
+            Flight::jsonHalt([
+              'success' => false,
+              'message' => 'Error al actualizar producto: ' . json_encode($db->errors()),
+            ], 400);
+          } else {
+            Flight::json($product);
+          }
+        } catch (Throwable $throwable) {
+          Flight::jsonHalt([
+            'message' => "Error al actualizar producto: $throwable",
+            'success' => false,
+          ], 400);
+        }
+      });
+
+      Flight::route('DELETE /', static function (int $id): void {
+        $db = Container::getInstance()->get(Auth::class)->db();
+        $product = $db->select('productos')->find($id);
+
+        if (!$product) {
+          Flight::jsonHalt(['message' => 'Producto no encontrado'], 404);
+
+          return;
+        }
+
+        // Aquí podrías agregar lógica para verificar si el producto tiene ventas, apartados o movimientos asociados antes de eliminarlo.
+
+        $db->delete('productos')->where('id', $id)->execute();
+
+        if ($db->errors()) {
+          Flight::jsonHalt([
+            'success' => false,
+            'message' => 'Error al eliminar producto: ' . json_encode($db->errors()),
+          ], 500);
+        } else {
+          Flight::json([
+            'success' => true,
+            'message' => 'Producto eliminado con éxito',
+          ]);
+        }
+      });
+    });
+
+    Flight::route('GET /stock-bajo', static function (): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $lowStockProducts = $db->query('SELECT p.*, c.nombre AS categoria_nombre FROM productos p LEFT JOIN categorias c ON p.id_categoria = c.id WHERE p.cantidad_disponible < 10')->all();
+
+      Flight::json($lowStockProducts);
     });
   });
 });
