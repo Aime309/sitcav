@@ -98,6 +98,56 @@ Flight::group('/api', static function (): void {
         ], 400);
       }
     });
+
+    Flight::group('/@id:[0-9]+', static function (): void {
+      Flight::route('PUT /', static function (int $id): void {
+        $auth = Container::getInstance()->get(Auth::class);
+        $db = $auth->db();
+        $user = $db->select('usuarios')->find($id);
+
+        if (!$user) {
+          Flight::halt(404);
+
+          return;
+        }
+
+        $data = Flight::request()->data;
+        $user['nombre'] = $data->nombre ?? $user['nombre'];
+        $user['cedula'] = $data->cedula ?? $user['cedula'];
+        $user['rol'] = $data->rol ?? $user['rol'];
+        $user['activo'] = filter_var($data->activo ?? $user['activo'], FILTER_VALIDATE_BOOL);
+        $user['apellidos'] = $data->apellidos ?? $user['apellidos'];
+        $user['direccion'] = $data->direccion ?? $user['direccion'];
+        $user['foto_url'] = $data->foto_url ?? $user['foto_url'];
+
+        if ($data->contrasena) {
+          $user['contrasena'] = $auth->config('password.encode')($data->contrasena);
+        }
+
+        $user['pregunta_1'] = $data->pregunta_1 ?? $user['pregunta_1'];
+        $user['pregunta_2'] = $data->pregunta_2 ?? $user['pregunta_2'];
+        $user['pregunta_3'] = $data->pregunta_3 ?? $user['pregunta_3'];
+        $user['respuesta_1'] = $data->respuesta_1 ?? $user['respuesta_1'];
+        $user['respuesta_2'] = $data->respuesta_2 ?? $user['respuesta_2'];
+        $user['respuesta_3'] = $data->respuesta_3 ?? $user['respuesta_3'];
+
+        $db
+          ->update('usuarios')
+          ->params($user)
+          ->where('id', $user['id'])
+          ->unique('cedula')
+          ->execute();
+
+        if ($db->errors()) {
+          Flight::jsonHalt([
+            'success' => false,
+            'message' => 'Error al actualizar usuario: ' . print_r($db->errors(), true),
+          ], 400);
+        } else {
+          Flight::json($user);
+        }
+      });
+    });
   });
 });
 

@@ -103,50 +103,6 @@ def uploaded_file(filename):
 # =====================================================================
 # CRUD: USUARIOS / EMPLEADOS
 # =====================================================================
-@app.route('/api/usuarios/<int:id>', methods=['PUT'])
-def update_usuario(id):
-    """Actualiza la información de un usuario"""
-    usuario = Usuario.query.get_or_404(id)
-    data = request.get_json()
-    try:
-        # Basic info
-        usuario.nombre = data.get('nombre', usuario.nombre)
-        usuario.cedula = data.get('cedula', usuario.cedula)
-        usuario.rol = data.get('rol', usuario.rol)
-        usuario.activo = data.get('activo', usuario.activo)
-        
-        # Extended profile fields
-        if 'apellidos' in data:
-            usuario.apellidos = data.get('apellidos')
-        if 'direccion' in data:
-            usuario.direccion = data.get('direccion')
-        if 'foto_url' in data:
-            usuario.foto_url = data.get('foto_url')
-        
-        # Password update
-        if 'contrasena' in data and data['contrasena']:
-            usuario.contrasena = generate_password_hash(data['contrasena'])
-        
-        # Security questions
-        if 'pregunta_1' in data:
-            usuario.pregunta_1 = data.get('pregunta_1')
-        if 'respuesta_1' in data:
-            usuario.respuesta_1 = data.get('respuesta_1')
-        if 'pregunta_2' in data:
-            usuario.pregunta_2 = data.get('pregunta_2')
-        if 'respuesta_2' in data:
-            usuario.respuesta_2 = data.get('respuesta_2')
-        if 'pregunta_3' in data:
-            usuario.pregunta_3 = data.get('pregunta_3')
-        if 'respuesta_3' in data:
-            usuario.respuesta_3 = data.get('respuesta_3')
-        
-        db.session.commit()
-        return jsonify(usuario.to_dict())
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"message": f"Error al actualizar usuario: {str(e)}", "success": False}), 400
-
 @app.route('/api/usuarios/<int:id>/foto', methods=['POST'])
 def upload_usuario_foto(id):
     """Sube una foto de perfil para un usuario"""

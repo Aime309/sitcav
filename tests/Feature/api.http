@@ -1,0 +1,32 @@
+@host = http://localhost:8000
+
+### Update user
+PUT {{host}}/api/usuarios/4
+###
+PUT {{host}}/api/usuarios/1
+Content-Type: application/json
+
+{
+  "nombre": "Updated Name",
+  "cedula": "1234567890",
+  "rol": "Vendedor",
+  "activo": true,
+  "apellidos": "Updated Last Name",
+  "direccion": "Updated Address",
+  "foto_url": "http://example.com/updated_photo.jpg",
+  "contrasena": "newpassword",
+  "pregunta_1": "Updated Question 1",
+  "respuesta_1": "Updated Answer 1",
+  "pregunta_2": "Updated Question 2",
+  "respuesta_2": "Updated Answer 2",
+  "pregunta_3": "Updated Question 3",
+  "respuesta_3": "Updated Answer 3"
+}
+###
+POST {{host}}/login
+Content-Type: application/json
+
+{
+  "usuario": "1234567890",
+  "contrasena": "newpassword"
+}
