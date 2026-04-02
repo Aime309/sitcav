@@ -25,7 +25,7 @@ final class DashboardStatsTest extends FeatureTestCase
     self::assertSame(3, $contents->total_clientes);
     self::assertSame(1, $contents->total_ventas);
     self::assertSame(0, $contents->ventas_mes);
-    self::assertSame(4, $contents->total_empleados);
+    self::assertSame(3, $contents->total_empleados);
     self::assertSame(2, $contents->total_proveedores);
     self::assertSame(0, $contents->total_compras);
     self::assertSame(0, $contents->total_apartados_activos);

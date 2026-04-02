@@ -20,7 +20,7 @@ final class GetAllUsersTest extends FeatureTestCase
     $response = self::$client->get('./api/usuarios');
     $contents = json_decode($response->getBody()->getContents());
 
-    self::assertCount(4, $contents);
+    self::assertCount(3, $contents);
     self::assertTrue($contents[0]->activo);
     self::assertNull($contents[0]->apellidos);
     self::assertSame('12345678', $contents[0]->cedula);

@@ -180,7 +180,7 @@ function loadDashboard() {
 
     // Set avatar with photo or initial
     if (currentUser.foto_url) {
-        const fullUrl = currentUser.foto_url.startsWith('http') ? currentUser.foto_url : `${API_BASE_URL}${currentUser.foto_url}`;
+        const fullUrl = currentUser.foto_url.startsWith('http') ? currentUser.foto_url : `${PHP_API_BASE_URL}${currentUser.foto_url}`;
         console.log('Setting avatar with photo URL:', fullUrl);
         document.getElementById('user-avatar').innerHTML = `<img src="${fullUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.parentElement.textContent='${currentUser.nombre.charAt(0).toUpperCase()}'">`;
     } else {
@@ -3230,7 +3230,7 @@ function updateProfileDropdownInfo() {
     // Update avatar with photo or initial
     if (avatarLarge) {
         if (currentUser.foto_url) {
-            const fullUrl = currentUser.foto_url.startsWith('http') ? currentUser.foto_url : `${API_BASE_URL}${currentUser.foto_url}`;
+            const fullUrl = currentUser.foto_url.startsWith('http') ? currentUser.foto_url : `${PHP_API_BASE_URL}${currentUser.foto_url}`;
             avatarLarge.innerHTML = `<img src="${fullUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
         } else {
             avatarLarge.innerHTML = currentUser.nombre ? currentUser.nombre.charAt(0).toUpperCase() : 'U';
@@ -3307,7 +3307,7 @@ function updateProfilePhotoPreview(photoUrl, nombre) {
     const photoInitial = document.getElementById('profile-photo-initial');
 
     if (photoUrl) {
-        const fullUrl = photoUrl.startsWith('http') ? photoUrl : `${API_BASE_URL}${photoUrl}`;
+        const fullUrl = photoUrl.startsWith('http') ? photoUrl : `${PHP_API_BASE_URL}${photoUrl}`;
         photoImg.src = fullUrl;
         photoImg.style.display = 'block';
         photoInitial.style.display = 'none';
@@ -3460,7 +3460,7 @@ function updateUserAvatarUI(nombre, fotoUrl) {
     if (userName) userName.textContent = nombre;
 
     if (fotoUrl) {
-        const fullUrl = fotoUrl.startsWith('http') ? fotoUrl : `${API_BASE_URL}${fotoUrl}`;
+        const fullUrl = fotoUrl.startsWith('http') ? fotoUrl : `${PHP_API_BASE_URL}${fotoUrl}`;
 
         // Update main avatar
         userAvatar.innerHTML = `<img src="${fullUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;

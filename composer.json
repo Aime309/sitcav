@@ -25,7 +25,10 @@
 	},
 	"scripts": {
 		"api": "start py app.py",
-		"frontend": "start php -S localhost:8000",
+		"frontend": [
+			"@putenv PHP_INI_SCAN_DIR=./",
+			"start php -S localhost:8000"
+		],
 		"test": "phpunit"
 	}
 }

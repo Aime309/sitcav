@@ -103,49 +103,6 @@ def uploaded_file(filename):
 # =====================================================================
 # CRUD: USUARIOS / EMPLEADOS
 # =====================================================================
-@app.route('/api/usuarios/<int:id>/foto', methods=['POST'])
-def upload_usuario_foto(id):
-    """Sube una foto de perfil para un usuario"""
-    usuario = Usuario.query.get_or_404(id)
-    
-    if 'foto' not in request.files:
-        return jsonify({"success": False, "message": "No se recibió ningún archivo"}), 400
-    
-    file = request.files['foto']
-    if file.filename == '':
-        return jsonify({"success": False, "message": "No se seleccionó ningún archivo"}), 400
-    
-    if file:
-        try:
-            # Create profiles upload directory
-            profiles_folder = os.path.join(basedir, 'instance', 'uploads', 'profiles')
-            os.makedirs(profiles_folder, exist_ok=True)
-            
-            # Generate safe filename
-            filename = secure_filename(f"user_{id}_{file.filename}")
-            filepath = os.path.join(profiles_folder, filename)
-            
-            # Save file
-            file.save(filepath)
-            
-            # Generate URL
-            foto_url = f"/uploads/profiles/{filename}"
-            
-            # Update user record
-            usuario.foto_url = foto_url
-            db.session.commit()
-            
-            return jsonify({
-                "success": True,
-                "message": "Foto actualizada correctamente",
-                "foto_url": foto_url
-            })
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({"success": False, "message": f"Error al guardar foto: {str(e)}"}), 500
-    
-    return jsonify({"success": False, "message": "Error al procesar archivo"}), 400
-
 # Serve uploaded profile photos
 @app.route('/uploads/profiles/<filename>')
 def serve_profile_photo(filename):

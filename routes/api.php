@@ -13,6 +13,7 @@ use App\Models\Refund;
 use App\Models\Sale;
 use flight\Container;
 use Leaf\Auth;
+use Leaf\FS\Storage;
 
 Flight::group('/api', static function (): void {
   Flight::route('GET /status', static fn() => Flight::json(['status' => 'ok']));
@@ -111,6 +112,7 @@ Flight::group('/api', static function (): void {
           return;
         }
 
+        $originalIdCard = $user['cedula'];
         $data = Flight::request()->data;
         $user['nombre'] = $data->nombre ?? $user['nombre'];
         $user['cedula'] = $data->cedula ?? $user['cedula'];
@@ -131,21 +133,63 @@ Flight::group('/api', static function (): void {
         $user['respuesta_2'] = $data->respuesta_2 ?? $user['respuesta_2'];
         $user['respuesta_3'] = $data->respuesta_3 ?? $user['respuesta_3'];
 
-        $db
-          ->update('usuarios')
-          ->params($user)
-          ->where('id', $user['id'])
-          ->unique('cedula')
-          ->execute();
+        $db->update('usuarios')->params($user)->where('id', $user['id']);
+
+        if ($user['cedula'] !== $originalIdCard) {
+          $db->unique('cedula');
+        }
+
+        $db->execute();
 
         if ($db->errors()) {
           Flight::jsonHalt([
             'success' => false,
-            'message' => 'Error al actualizar usuario: ' . print_r($db->errors(), true),
+            'message' => 'Error al actualizar usuario: ' . json_encode($db->errors()),
           ], 400);
         } else {
           Flight::json($user);
         }
+      });
+
+      Flight::route('POST /foto', static function (int $id): void {
+        $db = Container::getInstance()->get(Auth::class)->db();
+        $user = $db->select('usuarios')->find($id);
+
+        if (!$user) {
+          Flight::halt(404);
+
+          return;
+        }
+
+        $files = Flight::request()->files;
+
+        if (!$files->foto) {
+          Flight::jsonHalt([
+            'success' => false,
+            'message' => 'No se recibió ningún archivo',
+          ], 400);
+
+          return;
+        }
+
+        $file = Storage::upload($files->foto, ROOT_DIR . '/instance/uploads/profiles/', [
+          'name' => "user_{$id}_{$files->foto['name']}",
+          'overwrite' => true,
+        ]);
+
+        $user['foto_url'] = str_replace([FULL_BASE_URL, '\\'], ['', '/'], $file['url']);
+
+        $db
+          ->update('usuarios')
+          ->params(['foto_url' => $user['foto_url']])
+          ->where('id', $user['id'])
+          ->execute();
+
+        Flight::json([
+          'success' => true,
+          'message' => 'Foto actualizada correctamente',
+          'foto_url' => $user['foto_url'],
+        ]);
       });
     });
   });
