@@ -37,12 +37,9 @@ def check_password_hash(pwHash: bytes, password: bytes) -> bool:
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///system_data.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'clave-secreta-super-segura-2025'
-
 # Usar ruta absoluta para evitar problemas
 basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database', 'database.sqlite')
 app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'instance', 'uploads', 'productos')
 
 # Asegurar que existe el directorio
@@ -50,7 +47,7 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def check_and_migrate_db():
     """Función de auto-migración para asegurar que la BD tenga las columnas necesarias"""
-    db_path = os.path.join(basedir, 'instance', 'system_data.db')
+    db_path = os.path.join(basedir, 'database', 'database.sqlite')
     if not os.path.exists(db_path):
         return
 
@@ -538,7 +535,7 @@ def crear_backup():
         backup_filename = f"backup_{timestamp}.sql"
         backup_path = os.path.join('instance', backup_filename)
         
-        db_path = os.path.join('instance', 'system_data.db')
+        db_path = os.path.join('database', 'database.sqlite')
         
         with open(backup_path, 'w') as f:
             for line in sqlite3.connect(db_path).iterdump():

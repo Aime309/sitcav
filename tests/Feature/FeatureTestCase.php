@@ -26,7 +26,7 @@ abstract class FeatureTestCase extends TestCase
       'base_uri' => $_ENV['APP_URL'],
     ]);
 
-    $pdo = new PDO('sqlite:' . dirname(__DIR__, 2) . '/instance/system_data.db');
+    $pdo = new PDO('sqlite:' . dirname(__DIR__, 2) . '/database/database.sqlite');
     $pdo->exec("DELETE FROM usuarios WHERE cedula = '28072391'");
 
     $pdo->exec('

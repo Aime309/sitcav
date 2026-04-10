@@ -121,8 +121,9 @@ c:/Users/nadet/Desktop/Proyecto/
 ├── models.py               # ⭐ Modelos de base de datos (16 tablas)
 ├── index.html              # ⭐ Interfaz de usuario
 ├── index.html.backup       # Backup del HTML original
+├── database/
+│   └── database.sqlite    # Base de datos SQLite (se crea automáticamente)
 ├── instance/
-│   └── system_data.db     # Base de datos SQLite (se crea automáticamente)
 │   └── backup_*.sql       # Backups generados
 └── [archivos antiguos]     # Pueden ignorarse/eliminarse
 ```
@@ -199,7 +200,7 @@ const API_BASE_URL = 'http://127.0.0.1:5001';
 
 ### Base de datos corrupta o quieres empezar de cero
 
-Elimine el archivo `instance/system_data.db` y reinicie el servidor con `composer api`.
+Elimine el archivo `database/database.sqlite` y reinicie el servidor con `composer api`.
 
 ---
 
