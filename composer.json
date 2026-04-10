@@ -26,7 +26,7 @@
 	"scripts": {
 		"serve": [
 			"@putenv PHP_INI_SCAN_DIR=./",
-			"php -S localhost:8000 index.php"
+			"start php -S localhost:8000"
 		],
 		"test": "phpunit"
 	}
