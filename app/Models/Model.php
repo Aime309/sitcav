@@ -55,4 +55,9 @@ abstract class Model extends \Leaf\Auth\Model implements JsonSerializable
   {
     return $this->db->insert($this->table)->params($data)->execute();
   }
+
+  final public function inTransaction(): bool
+  {
+    return $this->db->connection()->inTransaction();
+  }
 }

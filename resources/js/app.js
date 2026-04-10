@@ -2,7 +2,6 @@
 // CONFIGURATION
 // =====================================================
 const API_BASE_URL = 'http://localhost:8000';
-const PHP_API_BASE_URL = 'http://localhost:8000';
 let currentUser = null;
 let currentCarouselPosition = 0;
 let productsData = [];
@@ -54,7 +53,7 @@ async function handleLogin(event) {
     const errorDiv = document.getElementById('login-error');
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/login`, {
+        const response = await fetch(`${API_BASE_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -112,7 +111,7 @@ async function handleRegister(event) {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/register`, {
+        const response = await fetch(`${API_BASE_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -180,7 +179,7 @@ function loadDashboard() {
 
     // Set avatar with photo or initial
     if (currentUser.foto_url) {
-        const fullUrl = currentUser.foto_url.startsWith('http') ? currentUser.foto_url : `${PHP_API_BASE_URL}${currentUser.foto_url}`;
+        const fullUrl = currentUser.foto_url.startsWith('http') ? currentUser.foto_url : `${API_BASE_URL}${currentUser.foto_url}`;
         console.log('Setting avatar with photo URL:', fullUrl);
         document.getElementById('user-avatar').innerHTML = `<img src="${fullUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.parentElement.textContent='${currentUser.nombre.charAt(0).toUpperCase()}'">`;
     } else {
@@ -317,19 +316,19 @@ function setupRolePermissions() {
 async function loadDashboardStats() {
     try {
         // Load products count
-        const productos = await fetch(`${PHP_API_BASE_URL}/api/productos`).then(r => r.json());
+        const productos = await fetch(`${API_BASE_URL}/api/productos`).then(r => r.json());
         document.getElementById('stat-productos').textContent = productos.length;
 
         // Load clients count
-        const clientes = await fetch(`${PHP_API_BASE_URL}/api/clientes`).then(r => r.json());
+        const clientes = await fetch(`${API_BASE_URL}/api/clientes`).then(r => r.json());
         document.getElementById('stat-clientes').textContent = clientes.length;
 
         // Load sales count
-        const ventas = await fetch(`${PHP_API_BASE_URL}/api/ventas`).then(r => r.json());
+        const ventas = await fetch(`${API_BASE_URL}/api/ventas`).then(r => r.json());
         document.getElementById('stat-ventas').textContent = ventas.length;
 
         // Load low stock count
-        const stockBajo = await fetch(`${PHP_API_BASE_URL}/api/productos/stock-bajo`).then(r => r.json());
+        const stockBajo = await fetch(`${API_BASE_URL}/api/productos/stock-bajo`).then(r => r.json());
         document.getElementById('stat-stock-bajo').textContent = stockBajo.length;
 
     } catch (error) {
@@ -339,7 +338,7 @@ async function loadDashboardStats() {
 
 async function loadProductCarousel() {
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/productos`);
+        const response = await fetch(`${API_BASE_URL}/api/productos`);
         productsData = await response.json();
         renderCarousel();
     } catch (error) {
@@ -356,7 +355,7 @@ function renderCarousel() {
         const card = document.createElement('div');
         card.className = 'product-card';
         const imgUrl = product.imagen_url ?
-            (product.imagen_url.startsWith('http') ? product.imagen_url : `${PHP_API_BASE_URL}${product.imagen_url}`) :
+            (product.imagen_url.startsWith('http') ? product.imagen_url : `${API_BASE_URL}${product.imagen_url}`) :
             '';
         card.innerHTML = `
             <img src="${imgUrl}"
@@ -503,7 +502,7 @@ async function loadProducts() {
     tbody.innerHTML = '<tr><td colspan="8" class="loading active"><div class="spinner"></div>Cargando...</td></tr>';
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/productos`);
+        const response = await fetch(`${API_BASE_URL}/api/productos`);
         const products = await response.json();
 
         tbody.innerHTML = '';
@@ -520,7 +519,7 @@ async function loadProducts() {
                 `<span class="badge success">OK</span>`;
 
             const imageUrl = product.imagen_url ?
-                (product.imagen_url.startsWith('http') ? product.imagen_url : `${PHP_API_BASE_URL}${product.imagen_url}`) :
+                (product.imagen_url.startsWith('http') ? product.imagen_url : `${API_BASE_URL}${product.imagen_url}`) :
                 '';
 
             tr.innerHTML = `
@@ -560,7 +559,7 @@ async function openProductModal(productId = null) {
     modal.classList.add('active');
 
     // Load categories
-    const categories = await fetch(`${PHP_API_BASE_URL}/api/categorias`).then(r => r.json());
+    const categories = await fetch(`${API_BASE_URL}/api/categorias`).then(r => r.json());
     const select = document.getElementById('product-categoria');
     select.innerHTML = '<option value="">Seleccione...</option>';
     categories.forEach(cat => {
@@ -579,7 +578,7 @@ async function openProductModal(productId = null) {
     if (productId) {
         // Edit mode
         document.getElementById('product-modal-title').textContent = 'Editar Producto';
-        const response = await fetch(`${PHP_API_BASE_URL}/api/productos`);
+        const response = await fetch(`${API_BASE_URL}/api/productos`);
         const products = await response.json();
         const product = products.find(p => p.id === productId);
 
@@ -619,7 +618,7 @@ function updateProductImagePreview(imageUrl) {
     const placeholder = document.getElementById('product-image-placeholder');
 
     if (imageUrl) {
-        const fullUrl = imageUrl.startsWith('http') ? imageUrl : `${PHP_API_BASE_URL}${imageUrl}`;
+        const fullUrl = imageUrl.startsWith('http') ? imageUrl : `${API_BASE_URL}${imageUrl}`;
         img.src = fullUrl;
         img.style.display = 'block';
         placeholder.style.display = 'none';
@@ -688,8 +687,8 @@ async function saveProduct(event) {
 
     try {
         const url = productId ?
-            `${PHP_API_BASE_URL}/api/productos/${productId}` :
-            `${PHP_API_BASE_URL}/api/productos`;
+            `${API_BASE_URL}/api/productos/${productId}` :
+            `${API_BASE_URL}/api/productos`;
         const method = productId ? 'PUT' : 'POST';
 
         const response = await fetch(url, {
@@ -719,7 +718,7 @@ async function deleteProduct(id) {
     if (!confirm('¿Está seguro de eliminar este producto?')) return;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/productos/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/productos/${id}`, {
             method: 'DELETE'
         });
 
@@ -743,7 +742,7 @@ async function loadClients() {
     tbody.innerHTML = '<tr><td colspan="5" class="loading active"><div class="spinner"></div>Cargando...</td></tr>';
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/clientes`);
+        const response = await fetch(`${API_BASE_URL}/api/clientes`);
         const clients = await response.json();
 
         tbody.innerHTML = '';
@@ -805,8 +804,8 @@ async function saveClient(event) {
 
     try {
         const url = clientId
-            ? `${PHP_API_BASE_URL}/api/clientes/${clientId}`
-            : `${PHP_API_BASE_URL}/api/clientes`;
+            ? `${API_BASE_URL}/api/clientes/${clientId}`
+            : `${API_BASE_URL}/api/clientes`;
         const method = clientId ? 'PUT' : 'POST';
 
         const response = await fetch(url, {
@@ -832,7 +831,7 @@ async function deleteClient(id) {
     if (!confirm('¿Está seguro de eliminar este cliente?')) return;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/clientes/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/clientes/${id}`, {
             method: 'DELETE'
         });
 
@@ -853,7 +852,7 @@ async function editClient(id) {
     modal.classList.add('active');
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/clientes`);
+        const response = await fetch(`${API_BASE_URL}/api/clientes`);
         const clients = await response.json();
         const client = clients.find(c => c.id === id);
 
@@ -878,7 +877,7 @@ async function loadVentas() {
     tbody.innerHTML = '<tr><td colspan="6" class="loading active"><div class="spinner"></div>Cargando...</td></tr>';
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/ventas`);
+        const response = await fetch(`${API_BASE_URL}/api/ventas`);
         const ventas = await response.json();
 
         tbody.innerHTML = '';
@@ -926,7 +925,7 @@ async function loadVentas() {
 }
 
 async function verFactura(ventaId) {
-    window.open(`${PHP_API_BASE_URL}/api/factura/${ventaId}`, '_blank');
+    window.open(`${API_BASE_URL}/api/factura/${ventaId}`, '_blank');
 }
 
 // Variable to store products for venta modal
@@ -945,7 +944,7 @@ async function openVentaModal() {
 
     // Load clients
     try {
-        const clientesRes = await fetch(`${PHP_API_BASE_URL}/api/clientes`);
+        const clientesRes = await fetch(`${API_BASE_URL}/api/clientes`);
         const clientes = await clientesRes.json();
         const clienteSelect = document.getElementById('venta-cliente');
         clienteSelect.innerHTML = '<option value="">Seleccione un cliente...</option>';
@@ -958,7 +957,7 @@ async function openVentaModal() {
 
     // Load products
     try {
-        const productosRes = await fetch(`${PHP_API_BASE_URL}/api/productos`);
+        const productosRes = await fetch(`${API_BASE_URL}/api/productos`);
         ventaProductsData = await productosRes.json();
     } catch (error) {
         console.error('Error loading products:', error);
@@ -1072,7 +1071,7 @@ async function saveVenta(event) {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/ventas`, {
+        const response = await fetch(`${API_BASE_URL}/api/ventas`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1101,7 +1100,7 @@ async function deleteVenta(id) {
     if (!confirm('¿Está seguro de eliminar esta venta?')) return;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/ventas/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/ventas/${id}`, {
             method: 'DELETE'
         });
 
@@ -1126,7 +1125,7 @@ async function loadEmpleados() {
     tbody.innerHTML = '<tr><td colspan="5" class="loading active"><div class="spinner"></div>Cargando...</td></tr>';
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/empleados`);
+        const response = await fetch(`${API_BASE_URL}/api/empleados`);
         const empleados = await response.json();
 
         tbody.innerHTML = '';
@@ -1171,7 +1170,7 @@ async function deleteEmpleado(id) {
     if (!confirm('¿Está seguro de eliminar este empleado?')) return;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/empleados/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/empleados/${id}`, {
             method: 'DELETE'
         });
 
@@ -1194,7 +1193,7 @@ async function loadProveedores() {
     tbody.innerHTML = '<tr><td colspan="5" class="loading active"><div class="spinner"></div>Cargando...</td></tr>';
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/proveedores`);
+        const response = await fetch(`${API_BASE_URL}/api/proveedores`);
         const proveedores = await response.json();
 
         tbody.innerHTML = '';
@@ -1260,11 +1259,11 @@ async function saveProveedor(event) {
     };
 
     try {
-        let url = `${PHP_API_BASE_URL}/api/proveedores`;
+        let url = `${API_BASE_URL}/api/proveedores`;
         let method = 'POST';
 
         if (proveedorId) {
-            url = `${PHP_API_BASE_URL}/api/proveedores/${proveedorId}`;
+            url = `${API_BASE_URL}/api/proveedores/${proveedorId}`;
             method = 'PUT';
         }
 
@@ -1289,7 +1288,7 @@ async function saveProveedor(event) {
 
 async function editProveedor(id) {
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/proveedores`);
+        const response = await fetch(`${API_BASE_URL}/api/proveedores`);
         const proveedores = await response.json();
         const proveedor = proveedores.find(p => p.id === id);
 
@@ -1311,7 +1310,7 @@ async function deleteProveedor(id) {
     if (!confirm('¿Está seguro de eliminar este proveedor?')) return;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/proveedores/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/proveedores/${id}`, {
             method: 'DELETE'
         });
 
@@ -1336,7 +1335,7 @@ async function createBackup() {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/backup`, {
+        const response = await fetch(`${API_BASE_URL}/api/backup`, {
             method: 'POST'
         });
 
@@ -1445,7 +1444,7 @@ async function checkUserForRecovery() {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/security-questions/${cedula}`);
+        const response = await fetch(`${API_BASE_URL}/security-questions/${cedula}`);
         const data = await response.json();
 
         if (data.success) {
@@ -1493,7 +1492,7 @@ async function verifyAnswers() {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/verify-security-answers`, {
+        const response = await fetch(`${API_BASE_URL}/verify-security-answers`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1535,7 +1534,7 @@ async function resetPassword() {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/reset-password`, {
+        const response = await fetch(`${API_BASE_URL}/reset-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1569,7 +1568,7 @@ async function loadCompras() {
     tbody.innerHTML = '<tr><td colspan="5" class="loading active"><div class="spinner"></div>Cargando...</td></tr>';
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/compras`);
+        const response = await fetch(`${API_BASE_URL}/api/compras`);
         const compras = await response.json();
 
         tbody.innerHTML = '';
@@ -1616,7 +1615,7 @@ async function openCompraModal() {
     select.innerHTML = '<option value="">Cargando...</option>';
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/proveedores`);
+        const response = await fetch(`${API_BASE_URL}/api/proveedores`);
         const proveedores = await response.json();
 
         select.innerHTML = '<option value="">Seleccione un proveedor...</option>';
@@ -1649,7 +1648,7 @@ async function addCompraRow() {
     // Fetch products for the select
     let productsOptions = '<option value="">Cargando...</option>';
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/productos`);
+        const response = await fetch(`${API_BASE_URL}/api/productos`);
         const productos = await response.json();
         productsOptions = '<option value="">Seleccione...</option>' +
             productos.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
@@ -1722,7 +1721,7 @@ async function createCompra(event) {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/compras`, {
+        const response = await fetch(`${API_BASE_URL}/api/compras`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1746,7 +1745,7 @@ async function createCompra(event) {
 }
 
 function downloadCompraPDF(id) {
-    window.open(`${PHP_API_BASE_URL}/api/compras/${id}/pdf`, '_blank');
+    window.open(`${API_BASE_URL}/api/compras/${id}/pdf`, '_blank');
 }
 
 async function deleteCompra(id) {
@@ -1755,7 +1754,7 @@ async function deleteCompra(id) {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/compras/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/compras/${id}`, {
             method: 'DELETE'
         });
         const data = await response.json();
@@ -1793,7 +1792,7 @@ async function viewCompra(id) {
         // It was at the bottom: `def get_compra(id): ...`
         // Let's verify if it exists.
 
-        const response = await fetch(`${PHP_API_BASE_URL}/api/compras/${id}`);
+        const response = await fetch(`${API_BASE_URL}/api/compras/${id}`);
         if (!response.ok) throw new Error('Error al cargar detalles');
 
         const compra = await response.json();
@@ -1837,7 +1836,7 @@ async function loadEmpleados() {
     tbody.innerHTML = '<tr><td colspan="5" class="loading active"><div class="spinner"></div>Cargando...</td></tr>';
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios`);
+        const response = await fetch(`${API_BASE_URL}/api/usuarios`);
         const empleados = await response.json();
 
         tbody.innerHTML = '';
@@ -1884,7 +1883,7 @@ function getRoleBadgeClass(rol) {
 
 async function editEmpleado(id) {
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios`);
+        const response = await fetch(`${API_BASE_URL}/api/usuarios`);
         const users = await response.json();
         const user = users.find(u => u.id === id);
 
@@ -1912,7 +1911,7 @@ async function saveEmpleado(event) {
     const rol = document.getElementById('empleado-rol').value;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/usuarios/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ rol: rol })
@@ -1935,7 +1934,7 @@ async function deleteEmpleado(id) {
     if (!confirm('¿Está seguro de eliminar este empleado? Esta acción no se puede deshacer.')) return;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/usuarios/${id}`, {
             method: 'DELETE'
         });
 
@@ -1992,7 +1991,7 @@ async function checkUserForRecovery() {
     errorDiv.textContent = '';
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/check-user-recovery`, {
+        const response = await fetch(`${API_BASE_URL}/check-user-recovery`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ cedula })
@@ -2030,7 +2029,7 @@ async function verifyAnswers() {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/verify-security-answers`, {
+        const response = await fetch(`${API_BASE_URL}/verify-security-answers`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -2071,7 +2070,7 @@ async function resetPassword() {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/reset-password-recovery`, {
+        const response = await fetch(`${API_BASE_URL}/reset-password-recovery`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -2111,7 +2110,7 @@ async function loadApartados() {
 
     try {
         const estadoFilter = document.getElementById('filter-apartados-estado')?.value || '';
-        const url = estadoFilter ? `${PHP_API_BASE_URL}/api/apartados?estado=${estadoFilter}` : `${PHP_API_BASE_URL}/api/apartados`;
+        const url = estadoFilter ? `${API_BASE_URL}/api/apartados?estado=${estadoFilter}` : `${API_BASE_URL}/api/apartados`;
 
         const response = await fetch(url);
         const data = await response.json();
@@ -2186,7 +2185,7 @@ async function openApartadoModal() {
 
     const clienteSelect = document.getElementById('apartado-cliente');
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/clientes`);
+        const response = await fetch(`${API_BASE_URL}/api/clientes`);
         const clientes = await response.json();
         clienteSelect.innerHTML = '<option value="">Seleccione un cliente...</option>' +
             clientes.map(c => `<option value="${c.id}">${c.nombre} ${c.apellidos} - ${c.cedula}</option>`).join('');
@@ -2195,7 +2194,7 @@ async function openApartadoModal() {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/productos`);
+        const response = await fetch(`${API_BASE_URL}/api/productos`);
         apartadosProductosData = await response.json();
     } catch (error) {
         console.error('Error loading productos:', error);
@@ -2285,7 +2284,7 @@ async function saveApartado(event) {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/apartados`, {
+        const response = await fetch(`${API_BASE_URL}/api/apartados`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -2334,7 +2333,7 @@ async function registrarPagoApartado(event) {
     const observacion = document.getElementById('pago-apartado-observacion').value;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/apartados/${apartadoId}/pago`, {
+        const response = await fetch(`${API_BASE_URL}/api/apartados/${apartadoId}/pago`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ monto, observacion })
@@ -2359,7 +2358,7 @@ async function completarApartado(id) {
     if (!confirm('¿Está seguro de completar este apartado? Se generará una venta.')) return;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/apartados/${id}/completar`, {
+        const response = await fetch(`${API_BASE_URL}/api/apartados/${id}/completar`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -2382,7 +2381,7 @@ async function cancelarApartado(id) {
     if (!confirm('¿Está seguro de cancelar este apartado? Los productos volverán al inventario. El reembolso debe gestionarse manualmente.')) return;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/apartados/${id}/cancelar`, {
+        const response = await fetch(`${API_BASE_URL}/api/apartados/${id}/cancelar`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -2404,7 +2403,7 @@ async function cancelarApartado(id) {
 
 async function verDetalleApartado(id) {
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/apartados/${id}`);
+        const response = await fetch(`${API_BASE_URL}/api/apartados/${id}`);
         const data = await response.json();
 
         let detalleHTML = `
@@ -2440,14 +2439,14 @@ PRODUCTOS:
 }
 
 function viewApartadoPDF(id) {
-    window.open(`${PHP_API_BASE_URL}/api/apartados/${id}/pdf`, '_blank');
+    window.open(`${API_BASE_URL}/api/apartados/${id}/pdf`, '_blank');
 }
 
 async function deleteApartado(id) {
     if (!confirm('¿Está seguro de eliminar este apartado permanentemente? Esta acción no se puede deshacer.')) return;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/apartados/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/apartados/${id}`, {
             method: 'DELETE'
         });
 
@@ -2476,7 +2475,7 @@ async function loadInventario() {
     tbody.innerHTML = '<tr><td colspan="7" class="loading active"><div class="spinner"></div>Cargando inventario...</td></tr>';
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/inventario`);
+        const response = await fetch(`${API_BASE_URL}/api/inventario`);
         const data = await response.json();
 
         if (data.length === 0) {
@@ -2516,7 +2515,7 @@ async function openAjusteInventarioModal() {
 
     const productoSelect = document.getElementById('ajuste-producto');
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/productos`);
+        const response = await fetch(`${API_BASE_URL}/api/productos`);
         const productos = await response.json();
         productoSelect.innerHTML = '<option value="">Seleccione un producto...</option>' +
             productos.map(p => `<option value="${p.id}">${p.nombre} (Stock: ${p.cantidad_disponible})</option>`).join('');
@@ -2544,7 +2543,7 @@ async function realizarAjusteInventario(event) {
     const observacion = document.getElementById('ajuste-observacion').value;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/inventario/ajuste`, {
+        const response = await fetch(`${API_BASE_URL}/api/inventario/ajuste`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -2573,7 +2572,7 @@ async function realizarAjusteInventario(event) {
 
 async function verMovimientos() {
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/inventario/movimientos`);
+        const response = await fetch(`${API_BASE_URL}/api/inventario/movimientos`);
         const data = await response.json();
 
         if (data.length === 0) {
@@ -2627,7 +2626,7 @@ async function crearNuevaCategoria() {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/categorias`, {
+        const response = await fetch(`${API_BASE_URL}/api/categorias`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -2689,7 +2688,7 @@ async function eliminarCategoria() {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/categorias/${categoriaId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/categorias/${categoriaId}`, {
             method: 'DELETE'
         });
 
@@ -2734,7 +2733,7 @@ async function loadConsultas() {
         if (fechaDesde) params.append('fecha_desde', fechaDesde);
         if (fechaHasta) params.append('fecha_hasta', fechaHasta);
 
-        const response = await fetch(`${PHP_API_BASE_URL}/api/consultas/ventas?${params.toString()}`);
+        const response = await fetch(`${API_BASE_URL}/api/consultas/ventas?${params.toString()}`);
         const ventas = await response.json();
 
         tbody.innerHTML = '';
@@ -2772,7 +2771,7 @@ async function loadConsultas() {
 
 async function loadFiltrosConsultas() {
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/empleados`);
+        const response = await fetch(`${API_BASE_URL}/api/empleados`);
         const empleados = await response.json();
 
         const select = document.getElementById('filtro-vendedor');
@@ -2790,7 +2789,7 @@ async function loadFiltrosConsultas() {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/clientes`);
+        const response = await fetch(`${API_BASE_URL}/api/clientes`);
         const clientes = await response.json();
 
         const select = document.getElementById('filtro-cliente');
@@ -2820,7 +2819,7 @@ async function exportarConsultasPDF() {
     if (fechaDesde) params.append('fecha_desde', fechaDesde);
     if (fechaHasta) params.append('fecha_hasta', fechaHasta);
 
-    window.open(`${PHP_API_BASE_URL}/api/consultas/ventas/pdf?${params.toString()}`, '_blank');
+    window.open(`${API_BASE_URL}/api/consultas/ventas/pdf?${params.toString()}`, '_blank');
 }
 
 // =====================================================
@@ -2836,7 +2835,7 @@ async function loadCotizacion() {
 
     try {
         // Cargar tasa actual
-        const actualRes = await fetch(`${PHP_API_BASE_URL}/api/cotizacion/actual`);
+        const actualRes = await fetch(`${API_BASE_URL}/api/cotizacion/actual`);
         const actualData = await actualRes.json();
 
         if (actualData.tasa_dolar_bolivares) {
@@ -2848,7 +2847,7 @@ async function loadCotizacion() {
         }
 
         // Cargar historial
-        const historyRes = await fetch(`${PHP_API_BASE_URL}/api/cotizacion`);
+        const historyRes = await fetch(`${API_BASE_URL}/api/cotizacion`);
         const historyData = await historyRes.json();
 
         tbody.innerHTML = '';
@@ -2892,7 +2891,7 @@ async function updateCotizacion(event) {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/cotizacion`, {
+        const response = await fetch(`${API_BASE_URL}/api/cotizacion`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -2921,7 +2920,7 @@ async function updateCotizacion(event) {
 // =====================================================
 async function loadCredenciales() {
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/negocio`);
+        const response = await fetch(`${API_BASE_URL}/api/negocio`);
         if (response.ok) {
             const data = await response.json();
             document.getElementById('cred-nombre').value = data.nombre || '';
@@ -2938,7 +2937,7 @@ async function loadCredenciales() {
 
 async function loadDashboardStats() {
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/dashboard/stats`);
+        const response = await fetch(`${API_BASE_URL}/api/dashboard/stats`);
         const data = await response.json();
 
         // Actualizar contadores principales
@@ -2994,7 +2993,7 @@ async function saveCredenciales(event) {
     };
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/negocio`, {
+        const response = await fetch(`${API_BASE_URL}/api/negocio`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -3023,7 +3022,7 @@ async function loadReembolsos() {
     tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">Cargando...</td></tr>';
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/reembolsos`);
+        const response = await fetch(`${API_BASE_URL}/api/reembolsos`);
         const reembolsos = await response.json();
 
         tbody.innerHTML = '';
@@ -3086,7 +3085,7 @@ async function buscarVentaParaReembolso() {
         document.getElementById('venta-info-reembolso').textContent = 'Verificando ID...';
 
         // Obtener datos de la venta incluyendo la cotización histórica
-        const response = await fetch(`${PHP_API_BASE_URL}/api/ventas/${ventaId}`);
+        const response = await fetch(`${API_BASE_URL}/api/ventas/${ventaId}`);
 
         if (response.ok) {
             const venta = await response.json();
@@ -3144,7 +3143,7 @@ async function createReembolso() {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/reembolsos`, {
+        const response = await fetch(`${API_BASE_URL}/api/reembolsos`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -3176,7 +3175,7 @@ async function deleteReembolso(id) {
     if (!confirm('¿Está seguro de eliminar este reembolso?')) return;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/reembolsos/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/reembolsos/${id}`, {
             method: 'DELETE'
         });
         const result = await response.json();
@@ -3194,7 +3193,7 @@ async function deleteReembolso(id) {
 }
 
 function printReembolso(id) {
-    window.open(`${PHP_API_BASE_URL}/api/reembolsos/${id}/pdf`, '_blank');
+    window.open(`${API_BASE_URL}/api/reembolsos/${id}/pdf`, '_blank');
 }
 
 // =====================================================
@@ -3230,7 +3229,7 @@ function updateProfileDropdownInfo() {
     // Update avatar with photo or initial
     if (avatarLarge) {
         if (currentUser.foto_url) {
-            const fullUrl = currentUser.foto_url.startsWith('http') ? currentUser.foto_url : `${PHP_API_BASE_URL}${currentUser.foto_url}`;
+            const fullUrl = currentUser.foto_url.startsWith('http') ? currentUser.foto_url : `${API_BASE_URL}${currentUser.foto_url}`;
             avatarLarge.innerHTML = `<img src="${fullUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
         } else {
             avatarLarge.innerHTML = currentUser.nombre ? currentUser.nombre.charAt(0).toUpperCase() : 'U';
@@ -3277,7 +3276,7 @@ async function loadProfileDataToForm() {
     if (!currentUser) return;
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios`);
+        const response = await fetch(`${API_BASE_URL}/api/usuarios`);
         const usuarios = await response.json();
 
         const usuario = usuarios.find(u => u.id === currentUser.id);
@@ -3307,7 +3306,7 @@ function updateProfilePhotoPreview(photoUrl, nombre) {
     const photoInitial = document.getElementById('profile-photo-initial');
 
     if (photoUrl) {
-        const fullUrl = photoUrl.startsWith('http') ? photoUrl : `${PHP_API_BASE_URL}${photoUrl}`;
+        const fullUrl = photoUrl.startsWith('http') ? photoUrl : `${API_BASE_URL}${photoUrl}`;
         photoImg.src = fullUrl;
         photoImg.style.display = 'block';
         photoInitial.style.display = 'none';
@@ -3391,7 +3390,7 @@ async function saveProfileChanges(event) {
             const formData = new FormData();
             formData.append('foto', fotoFile);
 
-            const uploadResponse = await fetch(`${PHP_API_BASE_URL}/api/usuarios/${currentUser.id}/foto`, {
+            const uploadResponse = await fetch(`${API_BASE_URL}/api/usuarios/${currentUser.id}/foto`, {
                 method: 'POST',
                 body: formData
             });
@@ -3409,10 +3408,10 @@ async function saveProfileChanges(event) {
         }
 
         console.log('Final foto_url:', finalFotoUrl);
-        console.log('Updating profile with PUT to:', `${PHP_API_BASE_URL}/api/usuarios/${currentUser.id}`);
+        console.log('Updating profile with PUT to:', `${API_BASE_URL}/api/usuarios/${currentUser.id}`);
 
         // Now update profile data
-        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios/${currentUser.id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/usuarios/${currentUser.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -3460,7 +3459,7 @@ function updateUserAvatarUI(nombre, fotoUrl) {
     if (userName) userName.textContent = nombre;
 
     if (fotoUrl) {
-        const fullUrl = fotoUrl.startsWith('http') ? fotoUrl : `${PHP_API_BASE_URL}${fotoUrl}`;
+        const fullUrl = fotoUrl.startsWith('http') ? fotoUrl : `${API_BASE_URL}${fotoUrl}`;
 
         // Update main avatar
         userAvatar.innerHTML = `<img src="${fullUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
@@ -3531,7 +3530,7 @@ async function saveNewPassword(event) {
     try {
         // ALWAYS fetch user data from API to ensure we have cedula
         console.log('Fetching user data from API for id:', currentUser.id);
-        const userResponse = await fetch(`${PHP_API_BASE_URL}/api/usuarios`);
+        const userResponse = await fetch(`${API_BASE_URL}/api/usuarios`);
         const usuarios = await userResponse.json();
         const usuario = usuarios.find(u => u.id === currentUser.id);
 
@@ -3545,7 +3544,7 @@ async function saveNewPassword(event) {
 
         // Verify current password by attempting login
         console.log('Verifying password...');
-        const verifyResponse = await fetch(`${PHP_API_BASE_URL}/login`, {
+        const verifyResponse = await fetch(`${API_BASE_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -3566,7 +3565,7 @@ async function saveNewPassword(event) {
         console.log('Password verified! Updating password...');
 
         // Update the password
-        const updateResponse = await fetch(`${PHP_API_BASE_URL}/api/usuarios/${currentUser.id}`, {
+        const updateResponse = await fetch(`${API_BASE_URL}/api/usuarios/${currentUser.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -3614,7 +3613,7 @@ function closeSecurityQuestionsModal() {
 
 async function loadSecurityQuestions() {
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios`);
+        const response = await fetch(`${API_BASE_URL}/api/usuarios`);
         const usuarios = await response.json();
 
         const usuario = usuarios.find(u => u.id === currentUser.id);
@@ -3663,7 +3662,7 @@ async function saveSecurityQuestions(event) {
     }
 
     try {
-        const response = await fetch(`${PHP_API_BASE_URL}/api/usuarios/${currentUser.id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/usuarios/${currentUser.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -3702,7 +3701,7 @@ let chartTopProductos = null;
 async function loadEstadisticas() {
     // Cargar Resumen (KPIs)
     try {
-        const responseKpi = await fetch(`${PHP_API_BASE_URL}/api/estadisticas/resumen`);
+        const responseKpi = await fetch(`${API_BASE_URL}/api/estadisticas/resumen`);
         const kpis = await responseKpi.json();
 
         document.getElementById('stat-ventas-hoy').textContent = `$${kpis.ventas_hoy_monto.toFixed(2)}`;
@@ -3716,7 +3715,7 @@ async function loadEstadisticas() {
 
     // Cargar Gráficas
     try {
-        const responseHist = await fetch(`${PHP_API_BASE_URL}/api/estadisticas/historico`);
+        const responseHist = await fetch(`${API_BASE_URL}/api/estadisticas/historico`);
         const dataHist = await responseHist.json();
 
         // 1. Gráfica Histórica (Line)

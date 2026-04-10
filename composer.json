@@ -24,10 +24,9 @@
 		"symfony/var-dumper": "^7.4"
 	},
 	"scripts": {
-		"api": "start py app.py",
-		"frontend": [
+		"serve": [
 			"@putenv PHP_INI_SCAN_DIR=./",
-			"start php -S localhost:8000"
+			"php -S localhost:8000 index.php"
 		],
 		"test": "phpunit"
 	}

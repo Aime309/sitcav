@@ -16,19 +16,22 @@ abstract class FeatureTestCase extends TestCase
   {
     parent::setUp();
 
-    $_ENV['APP_URL'] ??= 'http://localhost:5000';
+    $baseUrl = $_ENV['APP_URL'] ?? 'http://localhost:5000';
 
-    if (!str_ends_with(strval($_ENV['APP_URL']), '/')) {
-      $_ENV['APP_URL'] .= '/';
+    if (!str_ends_with(strval($baseUrl), '/')) {
+      $baseUrl .= '/';
     }
 
     self::$client = new Client([
-      'base_uri' => $_ENV['APP_URL'],
+      'base_uri' => $baseUrl,
     ]);
 
     $pdo = new PDO('sqlite:' . dirname(__DIR__, 2) . '/database/database.sqlite');
     $pdo->exec("DELETE FROM usuarios WHERE cedula = '28072391'");
     $pdo->exec("DELETE FROM proveedores WHERE rif = 'J-TEST-123'");
+    $pdo->exec("DELETE FROM ventas WHERE id_cliente IN (SELECT id FROM clientes WHERE cedula = '99999999')");
+    $pdo->exec("DELETE FROM apartados WHERE id_cliente IN (SELECT id FROM clientes WHERE cedula = '99999999')");
+    $pdo->exec("DELETE FROM clientes WHERE cedula = '99999999'");
 
     $pdo->exec('
       UPDATE usuarios

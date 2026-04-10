@@ -632,6 +632,551 @@ Flight::group('/api', static function (): void {
       }
     });
   });
+
+  Flight::group('/ventas', static function (): void {
+    Flight::route('GET /', static function (): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $sales = $db->query('SELECT v.*, c.nombre || " " || c.apellidos AS cliente_nombre FROM ventas v JOIN clientes c ON v.id_cliente = c.id ORDER BY v.fecha_creacion DESC')->all();
+
+      Flight::json($sales);
+    });
+
+    Flight::route('POST /', static function (): void {
+      $data = Flight::request()->data;
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $pdo = $db->connection();
+      $productModel = new Product;
+
+      try {
+        $pdo->beginTransaction();
+
+        $clientId = $data->id_cliente;
+        if (!$clientId && isset($data->nuevo_cliente)) {
+          $db->insert('clientes')->params([
+            'nombre' => $data->nuevo_cliente['nombre'],
+            'apellidos' => $data->nuevo_cliente['apellidos'] ?? '',
+            'cedula' => $data->nuevo_cliente['cedula'],
+            'telefono' => $data->nuevo_cliente['telefono'] ?? null,
+          ])->execute();
+          $clientId = $db->lastInsertId();
+        }
+
+        $exchangeRate = $db->query('SELECT tasa_dolar_bolivares FROM cotizaciones ORDER BY fecha_hora DESC LIMIT 1')->column();
+        $exchangeRate = $exchangeRate[0] ?? 1.0;
+
+        $db->insert('ventas')->params([
+          'id_cliente' => $clientId,
+          'id_vendedor' => $data->id_vendedor ?? null,
+          'cotizacion_dolar_bolivares' => $exchangeRate,
+          'fecha_creacion' => date('Y-m-d H:i:s'),
+        ])->execute();
+
+        $saleId = $db->lastInsertId();
+        $total = 0;
+
+        foreach ($data->detalles as $detalle) {
+          $detalle = (array) $detalle;
+          $product = $db->select('productos')->find($detalle['id_producto']);
+          if (!$product) {
+             throw new Exception("Producto no encontrado ID: {$detalle['id_producto']}");
+          }
+          if ($product['cantidad_disponible'] < $detalle['cantidad']) {
+            throw new Exception("Stock insuficiente para el producto ID: {$detalle['id_producto']}");
+          }
+
+          $db->insert('detalles_ventas')->params([
+            'id_venta' => $saleId,
+            'id_producto' => $product['id'],
+            'precio_unitario_tipo_dolares' => $product['precio_unitario_actual_dolares'],
+            'cantidad' => $detalle['cantidad'],
+            'esta_apartado' => $detalle['esta_apartado'] ?? false,
+          ])->execute();
+
+          $db->query('UPDATE productos SET cantidad_disponible = cantidad_disponible - ? WHERE id = ?', $detalle['cantidad'], $product['id'])->execute();
+
+          $total += $product['precio_unitario_actual_dolares'] * $detalle['cantidad'];
+        }
+
+        $pdo->commit();
+
+        Flight::json([
+          'success' => true,
+          'message' => 'Venta creada exitosamente',
+          'venta_id' => $saleId,
+          'total' => $total,
+        ], 201);
+      } catch (Throwable $throwable) {
+        if ($pdo->inTransaction()) {
+          $pdo->rollBack();
+        }
+        Flight::jsonHalt(['message' => $throwable->getMessage(), 'success' => false], 400);
+      }
+    });
+
+    Flight::route('GET /@id:[0-9]+', static function (int $id): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $sale = $db->select('ventas')->find($id);
+
+      if (!$sale) {
+        Flight::halt(404);
+
+        return;
+      }
+
+      $sale['detalles'] = $db->query('SELECT dv.*, p.nombre AS producto_nombre FROM detalles_ventas dv JOIN productos p ON dv.id_producto = p.id WHERE dv.id_venta = ?', $id)->all();
+
+      Flight::json($sale);
+    });
+
+    Flight::route('DELETE /@id:[0-9]+', static function (int $id): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+
+      try {
+        $db->beginTransaction();
+        $detalles = $db->select('detalles_ventas')->where('id_venta', $id)->all();
+
+        foreach ($detalles as $detalle) {
+          $db->query('UPDATE productos SET cantidad_disponible = cantidad_disponible + ? WHERE id = ?', $detalle['cantidad'], $detalle['id_producto'])->execute();
+        }
+
+        $db->delete('ventas')->where('id', $id)->execute();
+        $db->commit();
+
+        Flight::json(['success' => true, 'message' => 'Venta eliminada y stock restaurado']);
+      } catch (Throwable $throwable) {
+        $db->rollback();
+        Flight::jsonHalt(['message' => $throwable->getMessage(), 'success' => false], 500);
+      }
+    });
+  });
+
+  Flight::group('/compras', static function (): void {
+    Flight::route('GET /', static function (): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $purchases = $db->query('SELECT c.*, p.nombre AS proveedor_nombre FROM compras c JOIN proveedores p ON c.id_proveedor = p.id ORDER BY c.fecha_creacion DESC')->all();
+
+      Flight::json($purchases);
+    });
+
+    Flight::route('POST /', static function (): void {
+      $data = Flight::request()->data;
+      $db = Container::getInstance()->get(Auth::class)->db();
+
+      try {
+        $db->beginTransaction();
+        $exchangeRate = $db->query('SELECT tasa_dolar_bolivares FROM cotizaciones ORDER BY fecha_hora DESC LIMIT 1')->column() ?? 1.0;
+
+        $db->insert('compras')->params([
+          'id_proveedor' => $data->id_proveedor,
+          'cotizacion_dolar_bolivares' => $exchangeRate,
+        ])->execute();
+
+        $purchaseId = $db->lastInsertId();
+
+        foreach ($data->detalles as $detalle) {
+          $db->insert('detalles_compras')->params([
+            'id_compra' => $purchaseId,
+            'id_producto' => $detalle['id_producto'],
+            'precio_unitario_tipo_dolares' => $detalle['precio_unitario'],
+            'cantidad' => $detalle['cantidad'],
+          ])->execute();
+
+          $db->query('UPDATE productos SET cantidad_disponible = cantidad_disponible + ? WHERE id = ?', $detalle['cantidad'], $detalle['id_producto'])->execute();
+        }
+
+        $db->commit();
+
+        Flight::json(['success' => true, 'message' => 'Compra registrada exitosamente', 'compra_id' => $purchaseId], 201);
+      } catch (Throwable $throwable) {
+        $db->rollback();
+        Flight::jsonHalt(['message' => $throwable->getMessage(), 'success' => false], 400);
+      }
+    });
+
+    Flight::route('DELETE /@id:[0-9]+', static function (int $id): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+
+      try {
+        $db->beginTransaction();
+        $detalles = $db->select('detalles_compras')->where('id_compra', $id)->all();
+
+        foreach ($detalles as $detalle) {
+          $db->query('UPDATE productos SET cantidad_disponible = cantidad_disponible - ? WHERE id = ?', $detalle['cantidad'], $detalle['id_producto'])->execute();
+        }
+
+        $db->delete('compras')->where('id', $id)->execute();
+        $db->commit();
+
+        Flight::json(['success' => true, 'message' => 'Compra eliminada y stock revertido']);
+      } catch (Throwable $throwable) {
+        $db->rollback();
+        Flight::jsonHalt(['message' => $throwable->getMessage(), 'success' => false], 500);
+      }
+    });
+  });
+
+  Flight::group('/apartados', static function (): void {
+    Flight::route('GET /', static function (): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $estado = Flight::request()->query->estado;
+      $query = 'SELECT a.*, c.nombre || " " || c.apellidos AS cliente_nombre FROM apartados a JOIN clientes c ON a.id_cliente = c.id';
+
+      if ($estado) {
+        $query .= " WHERE a.estado = '$estado'";
+      }
+
+      $query .= ' ORDER BY a.fecha_creacion DESC';
+
+      Flight::json($db->query($query)->all());
+    });
+
+    Flight::route('POST /', static function (): void {
+      $data = Flight::request()->data;
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $pdo = $db->connection();
+      $productModel = new Product;
+
+      try {
+        $pdo->beginTransaction();
+        $montoTotal = 0;
+
+        foreach ($data->productos as $item) {
+          $item = (array) $item;
+          $product = $db->select('productos')->find($item['id_producto']);
+          if (!$product) throw new Exception("Producto no encontrado ID: {$item['id_producto']}");
+          if ($product['cantidad_disponible'] < $item['cantidad']) {
+            throw new Exception("Stock insuficiente para el producto ID: {$item['id_producto']}");
+          }
+          $montoTotal += $product['precio_unitario_actual_dolares'] * $item['cantidad'];
+        }
+
+        $fechaLimite = date('Y-m-d H:i:s', strtotime("+{$data->dias_limite} days"));
+
+        $db->insert('apartados')->params([
+          'id_cliente' => $data->id_cliente,
+          'fecha_limite' => $fechaLimite,
+          'monto_total' => $montoTotal,
+          'monto_pagado' => $data->abono_inicial ?? 0,
+          'estado' => 'activo',
+          'observaciones' => $data->observaciones ?? '',
+          'fecha_creacion' => date('Y-m-d H:i:s'),
+        ])->execute();
+
+        $layawayId = $db->lastInsertId();
+
+        foreach ($data->productos as $item) {
+          $item = (array) $item;
+          $product = $db->select('productos')->find($item['id_producto']);
+          $db->insert('detalles_apartados')->params([
+            'id_apartado' => $layawayId,
+            'id_producto' => $product['id'],
+            'cantidad' => $item['cantidad'],
+            'precio_unitario' => $product['precio_unitario_actual_dolares'],
+          ])->execute();
+
+          $db->query('UPDATE productos SET cantidad_disponible = cantidad_disponible - ? WHERE id = ?', $item['cantidad'], $product['id'])->execute();
+        }
+
+        if (isset($data->abono_inicial) && $data->abono_inicial > 0) {
+          $db->insert('pagos_apartados')->params([
+            'id_apartado' => $layawayId,
+            'monto' => $data->abono_inicial,
+            'observacion' => 'Abono inicial',
+            'fecha_pago' => date('Y-m-d H:i:s'),
+          ])->execute();
+        }
+
+        $pdo->commit();
+
+        Flight::json(['success' => true, 'message' => 'Apartado creado exitosamente'], 201);
+      } catch (Throwable $throwable) {
+        if ($pdo->inTransaction()) {
+          $pdo->rollBack();
+        }
+        Flight::jsonHalt(['message' => $throwable->getMessage(), 'success' => false], 500);
+      }
+    });
+
+    Flight::group('/@id:[0-9]+', static function (): void {
+      Flight::route('GET /', static function (int $id): void {
+        $db = Container::getInstance()->get(Auth::class)->db();
+        $layaway = $db->select('apartados')->find($id);
+
+        if (!$layaway) {
+          Flight::halt(404);
+
+          return;
+        }
+
+        $layaway['detalles'] = $db->query('SELECT da.*, p.nombre AS producto_nombre FROM detalles_apartados da JOIN productos p ON da.id_producto = p.id WHERE da.id_apartado = ?', $id)->all();
+        $layaway['pagos'] = $db->select('pagos_apartados')->where('id_apartado', $id)->all();
+
+        Flight::json($layaway);
+      });
+
+      Flight::route('POST /pago', static function (int $id): void {
+        $db = Container::getInstance()->get(Auth::class)->db();
+        $layaway = $db->select('apartados')->find($id);
+
+        if (!$layaway || $layaway['estado'] !== 'activo') {
+          Flight::jsonHalt(['message' => 'Apartado no activo o no encontrado'], 400);
+
+          return;
+        }
+
+        $data = Flight::request()->data;
+        $monto = $data->monto;
+
+        try {
+          $db->beginTransaction();
+          $db->insert('pagos_apartados')->params(['id_apartado' => $id, 'monto' => $monto, 'observacion' => $data->observacion ?? ''])->execute();
+
+          $nuevoPagado = $layaway['monto_pagado'] + $monto;
+          $estado = ($nuevoPagado >= $layaway['monto_total']) ? 'completado' : 'activo';
+
+          $db->update('apartados')->params(['monto_pagado' => $nuevoPagado, 'estado' => $estado])->where('id', $id)->execute();
+          $db->commit();
+
+          Flight::json(['success' => true, 'message' => 'Pago registrado']);
+        } catch (Throwable $throwable) {
+          $db->rollback();
+          Flight::jsonHalt(['message' => $throwable->getMessage()], 500);
+        }
+      });
+
+      Flight::route('POST /cancelar', static function (int $id): void {
+        $db = Container::getInstance()->get(Auth::class)->db();
+        $layaway = $db->select('apartados')->find($id);
+
+        if (!$layaway || $layaway['estado'] !== 'activo') {
+          Flight::jsonHalt(['message' => 'Apartado no activo'], 400);
+
+          return;
+        }
+
+        try {
+          $db->beginTransaction();
+          $detalles = $db->select('detalles_apartados')->where('id_apartado', $id)->all();
+
+          foreach ($detalles as $detalle) {
+            $db->query('UPDATE productos SET cantidad_disponible = cantidad_disponible + ? WHERE id = ?', $detalle['cantidad'], $detalle['id_producto'])->execute();
+          }
+
+          $db->update('apartados')->params(['estado' => 'cancelado'])->where('id', $id)->execute();
+          $db->commit();
+
+          Flight::json(['success' => true, 'message' => 'Apartado cancelado']);
+        } catch (Throwable $throwable) {
+          $db->rollback();
+          Flight::jsonHalt(['message' => $throwable->getMessage()], 500);
+        }
+      });
+    });
+  });
+
+  Flight::group('/estadisticas', static function (): void {
+    Flight::route('GET /resumen', static function (): void {
+      $sale = new Sale;
+      $purchase = new Purchase;
+      $product = new Product;
+      $layaway = new Layaway;
+
+      $today = date('Y-m-d');
+
+      Flight::json([
+        'ventas_hoy_monto' => $sale->sumDailySales($today),
+        'ventas_hoy_cantidad' => Container::getInstance()->get(Auth::class)->db()->query("SELECT COUNT(*) FROM ventas WHERE date(fecha_creacion) = date('$today')")->column(),
+        'compras_hoy_monto' => $purchase->sumDailyPurchases($today),
+        'stock_bajo_count' => $product->countWithLowStock(),
+        'apartados_activos' => $layaway->countActiveLayaways(),
+      ]);
+    });
+
+    Flight::route('GET /historico', static function (): void {
+      $sale = new Sale;
+      $purchase = new Purchase;
+
+      $fechas = [];
+      $ventas = [];
+      $compras = [];
+
+      for ($i = 6; $i >= 0; $i--) {
+        $date = date('Y-m-d', strtotime("-$i days"));
+        $fechas[] = date('d/m', strtotime($date));
+        $ventas[] = $sale->sumDailySales($date);
+        $compras[] = $purchase->sumDailyPurchases($date);
+      }
+
+      Flight::json([
+        'fechas' => $fechas,
+        'ventas' => $ventas,
+        'compras' => $compras,
+        'top_productos' => [
+          'labels' => array_column($sale->getTopProducts(), 'nombre'),
+          'data' => array_column($sale->getTopProducts(), 'total_vendido'),
+        ],
+        'ventas_por_categoria' => [
+          'labels' => array_column($sale->getSalesByCategory(), 'nombre'),
+          'data' => array_column($sale->getSalesByCategory(), 'total'),
+        ],
+      ]);
+    });
+  });
+
+  Flight::group('/inventario', static function (): void {
+    Flight::route('GET /', static function (): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $productModel = new Product;
+      $products = $db->query('SELECT p.*, c.nombre AS categoria_nombre FROM productos p LEFT JOIN categorias c ON p.id_categoria = c.id')->all();
+
+      foreach ($products as &$p) {
+        $p['cantidad_apartada'] = $productModel->getReservedQuantity($p['id']);
+        $p['cantidad_total'] = $p['cantidad_disponible'] + $p['cantidad_apartada'];
+      }
+
+      Flight::json($products);
+    });
+
+    Flight::route('POST /ajuste', static function (): void {
+      $data = Flight::request()->data;
+      $productModel = new Product;
+
+      try {
+        $productModel->adjustStock($data->id_producto, $data->cantidad, $data->tipo);
+        Flight::json(['success' => true, 'message' => 'Ajuste realizado']);
+      } catch (Throwable $throwable) {
+        Flight::jsonHalt(['message' => $throwable->getMessage()], 400);
+      }
+    });
+  });
+
+  Flight::group('/negocio', static function (): void {
+    Flight::route('GET /', static function (): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      Flight::json($db->select('negocio')->first());
+    });
+
+    Flight::route('PUT /', static function (): void {
+      $data = Flight::request()->data;
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $negocio = $db->select('negocio')->first();
+
+      $params = [
+        'nombre' => $data->nombre,
+        'rif' => $data->rif,
+        'telefono' => $data->telefono,
+        'direccion' => $data->direccion,
+      ];
+
+      if ($negocio) {
+        $db->update('negocio')->params($params)->where('id', $negocio['id'])->execute();
+      } else {
+        $db->insert('negocio')->params($params)->execute();
+      }
+
+      Flight::json(['success' => true]);
+    });
+  });
+
+  Flight::group('/cotizacion', static function (): void {
+    Flight::route('GET /actual', static function (): void {
+      $rate = new ExchangeRate;
+      Flight::json(['tasa_dolar_bolivares' => $rate->current()]);
+    });
+
+    Flight::route('POST /', static function (): void {
+      $data = Flight::request()->data;
+      $db = Container::getInstance()->get(Auth::class)->db();
+
+      $db->insert('cotizaciones')->params([
+        'id_usuario' => $data->usuario_id,
+        'tasa_dolar_bolivares' => $data->tasa,
+      ])->execute();
+
+      Flight::json(['success' => true]);
+    });
+  });
+
+  Flight::group('/reembolsos', static function (): void {
+    Flight::route('GET /', static function (): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      Flight::json($db->select('reembolsos')->orderBy('fecha DESC')->all());
+    });
+
+    Flight::route('POST /', static function (): void {
+      $data = Flight::request()->data;
+      $db = Container::getInstance()->get(Auth::class)->db();
+
+      $venta = $db->select('ventas')->find($data->id_venta);
+      $tasa = $venta['cotizacion_dolar_bolivares'] ?? 1.0;
+
+      $db->insert('reembolsos')->params([
+        'id_venta' => $data->id_venta,
+        'id_usuario' => $data->id_usuario,
+        'monto_dolares' => $data->monto_dolares,
+        'monto_bolivares' => $data->monto_dolares * $tasa,
+        'tasa_cambio' => $tasa,
+        'motivo' => $data->motivo,
+      ])->execute();
+
+      Flight::json(['success' => true], 201);
+    });
+  });
+
+  Flight::group('/localizacion', static function (): void {
+    Flight::route('GET /estados', static function (): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      Flight::json($db->select('estados')->all());
+    });
+    Flight::route('GET /localidades/@id:[0-9]+', static function (int $id): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      Flight::json($db->select('localidades')->where('id_estado', $id)->all());
+    });
+    Flight::route('GET /sectores/@id:[0-9]+', static function (int $id): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      Flight::json($db->select('sectores')->where('id_localidad', $id)->all());
+    });
+  });
+
+  Flight::group('/auth-recovery', static function (): void {
+    Flight::route('POST /check', static function (): void {
+      $data = Flight::request()->data;
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $user = $db->select('usuarios')->where('cedula', $data->cedula)->first();
+
+      if (!$user) Flight::halt(404);
+
+      Flight::json([
+        'success' => true,
+        'user_id' => $user['id'],
+        'preguntas' => [$user['pregunta_1'], $user['pregunta_2'], $user['pregunta_3']],
+      ]);
+    });
+
+    Flight::route('POST /verify', static function (): void {
+      $data = Flight::request()->data;
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $user = $db->select('usuarios')->find($data->user_id);
+
+      $r1 = strtolower(trim($data->respuestas[0])) === strtolower(trim($user['respuesta_1']));
+      $r2 = strtolower(trim($data->respuestas[1])) === strtolower(trim($user['respuesta_2']));
+      $r3 = strtolower(trim($data->respuestas[2])) === strtolower(trim($user['respuesta_3']));
+
+      Flight::json(['success' => $r1 && $r2 && $r3]);
+    });
+
+    Flight::route('POST /reset', static function (): void {
+      $data = Flight::request()->data;
+      $auth = Container::getInstance()->get(Auth::class);
+      $db = $auth->db();
+
+      $db->update('usuarios')->params([
+        'contrasena' => $auth->config('password.encode')($data->new_password),
+      ])->where('id', $data->user_id)->execute();
+
+      Flight::json(['success' => true]);
+    });
+  });
 });
 
 Flight::route('POST /login', static function (): void {
