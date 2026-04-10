@@ -28,6 +28,7 @@ abstract class FeatureTestCase extends TestCase
 
     $pdo = new PDO('sqlite:' . dirname(__DIR__, 2) . '/database/database.sqlite');
     $pdo->exec("DELETE FROM usuarios WHERE cedula = '28072391'");
+    $pdo->exec("DELETE FROM proveedores WHERE rif = 'J-TEST-123'");
 
     $pdo->exec('
       UPDATE usuarios

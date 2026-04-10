@@ -523,6 +523,115 @@ Flight::group('/api', static function (): void {
       Flight::json($lowStockProducts);
     });
   });
+
+  Flight::group('/proveedores', static function (): void {
+    Flight::route('GET /', static function (): void {
+      Flight::json((new Provider)->all());
+    });
+
+    Flight::route('POST /', static function (): void {
+      $data = Flight::request()->data;
+
+      if (!$data || !$data->nombre) {
+        Flight::jsonHalt([
+          'message' => 'El nombre del proveedor es requerido',
+          'success' => false,
+        ], 400);
+
+        return;
+      }
+
+      try {
+        $db = Container::getInstance()->get(Auth::class)->db();
+        $params = [
+          'nombre' => $data->nombre,
+          'rif' => $data->rif ?? null,
+          'telefono' => $data->telefono ?? null,
+          'direccion' => $data->direccion ?? null,
+          'id_estado' => $data->id_estado ?? null,
+          'id_localidad' => $data->id_localidad ?? null,
+          'id_sector' => $data->id_sector ?? null,
+        ];
+
+        $db->insert('proveedores')->params($params)->execute();
+        $id = $db->lastInsertId();
+        $provider = $db->select('proveedores')->find($id);
+
+        Flight::json($provider, 201);
+      } catch (Throwable $throwable) {
+        Flight::jsonHalt([
+          'message' => "Error al crear proveedor: $throwable",
+          'success' => false,
+        ], 400);
+      }
+    });
+
+    Flight::route('PUT /@id:[0-9]+', static function (int $id): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $provider = $db->select('proveedores')->find($id);
+
+      if (!$provider) {
+        Flight::halt(404);
+
+        return;
+      }
+
+      $data = Flight::request()->data;
+
+      try {
+        $params = [
+          'nombre' => $data->nombre ?? $provider['nombre'],
+          'rif' => $data->rif ?? $provider['rif'],
+          'telefono' => $data->telefono ?? $provider['telefono'],
+          'direccion' => $data->direccion ?? $provider['direccion'],
+          'id_estado' => $data->id_estado ?? $provider['id_estado'],
+          'id_localidad' => $data->id_localidad ?? $provider['id_localidad'],
+          'id_sector' => $data->id_sector ?? $provider['id_sector'],
+        ];
+
+        $db->update('proveedores')->params($params)->where('id', $id)->execute();
+
+        if ($db->errors()) {
+          Flight::jsonHalt([
+            'success' => false,
+            'message' => 'Error al actualizar proveedor: ' . json_encode($db->errors()),
+          ], 400);
+        } else {
+          Flight::json($db->select('proveedores')->find($id));
+        }
+      } catch (Throwable $throwable) {
+        Flight::jsonHalt([
+          'message' => "Error al actualizar proveedor: $throwable",
+          'success' => false,
+        ], 400);
+      }
+    });
+
+    Flight::route('DELETE /@id:[0-9]+', static function (int $id): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $provider = $db->select('proveedores')->find($id);
+
+      if (!$provider) {
+        Flight::jsonHalt(['message' => 'Proveedor no encontrado'], 404);
+
+        return;
+      }
+
+      $db->delete('proveedores')->where('id', $id)->execute();
+
+      if ($db->errors()) {
+        Flight::jsonHalt([
+          'success' => false,
+          'message' => 'Error al eliminar proveedor: ' . json_encode($db->errors()),
+        ], 500);
+      } else {
+        Flight::json([
+          'success' => true,
+          'message' => 'Proveedor eliminado con éxito',
+        ]);
+      }
+    });
+  });
 });
 
 Flight::route('POST /login', static function (): void {
