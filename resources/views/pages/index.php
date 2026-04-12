@@ -1524,7 +1524,7 @@
             <!-- URL input with delete button -->
             <div
               style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
-              <input type="url" id="product-imagen"
+              <input type="text" id="product-imagen"
                 placeholder="https://..." style="flex: 1;"
                 onchange="previewProductImageUrl()">
               <button type="button" class="btn btn-outline"
@@ -2126,7 +2126,7 @@
               style="display: flex; gap: 10px; flex-direction: column;">
               <div
                 style="display: flex; gap: 10px; align-items: center;">
-                <input type="url" id="profile-foto-url"
+                <input type="text" id="profile-foto-url"
                   placeholder="https://ejemplo.com/foto.jpg"
                   style="flex: 1;"
                   onchange="previewProfilePhotoUrl()">
