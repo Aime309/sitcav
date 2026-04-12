@@ -438,6 +438,18 @@ Flight::group('/api', static function (): void {
         $product->dias_garantia = $data->dias_garantia ?? 0;
         $product->dias_apartado = $data->dias_apartado ?? 0;
         $product->imei = $data->imei ?? null;
+        $product->imagen_url = $data->imagen_url ?? null;
+
+        // Manejar subida de imagen
+        $files = Flight::request()->files;
+        if ($files && $files->imagen_file) {
+          $file = Storage::upload($files->imagen_file, ROOT_DIR . '/instance/uploads/productos/', [
+            'name' => "prod_{$data->codigo}_{$files->imagen_file['name']}",
+            'overwrite' => true,
+          ]);
+          $product->imagen_url = str_replace([FULL_BASE_URL, '\\'], ['', '/'], $file['url']);
+        }
+
         $product->save();
 
         Flight::json($product, 201);
@@ -473,6 +485,17 @@ Flight::group('/api', static function (): void {
           $product['dias_garantia'] = $data->dias_garantia ?? $product['dias_garantia'];
           $product['dias_apartado'] = $data->dias_apartado ?? $product['dias_apartado'];
           $product['imei'] = $data->imei ?? $product['imei'];
+          $product['imagen_url'] = $data->imagen_url ?? $product['imagen_url'];
+
+          // Manejar subida de nueva imagen
+          $files = Flight::request()->files;
+          if ($files && $files->imagen_file) {
+            $file = Storage::upload($files->imagen_file, ROOT_DIR . '/instance/uploads/productos/', [
+              'name' => "prod_{$product['codigo']}_{$files->imagen_file['name']}",
+              'overwrite' => true,
+            ]);
+            $product['imagen_url'] = str_replace([FULL_BASE_URL, '\\'], ['', '/'], $file['url']);
+          }
 
           $db->update('productos')->params($product)->where('id', $id)->execute();
 
