@@ -141,6 +141,16 @@ if ($pdo instanceof PDO) {
   $auth->dbConnection($pdo);
 }
 
+foreach (glob(__DIR__ . '/database/migrations/*.sql') as $sqlFilePath) {
+  $sql = file_get_contents($sqlFilePath);
+
+  if ($sql === false) {
+    throw new RuntimeException("No se pudo leer el archivo SQL: $sqlFilePath");
+  }
+
+  $pdo->exec($sql);
+}
+
 ///////////////////////////////////////////
 // CONFIGURAR CONTENEDOR DE DEPENDENCIAS //
 ///////////////////////////////////////////
