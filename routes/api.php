@@ -980,9 +980,16 @@ Flight::group('/api', static function () use ($loadBusiness, $hydrateSale, $hydr
 
     Flight::route('DELETE /@id:[0-9]+', static function (int $id): void {
       $db = Container::getInstance()->get(Auth::class)->db();
+      $pdo = $db->connection();
 
       try {
-        $db->beginTransaction();
+        $sale = $db->select('ventas')->find($id);
+
+        if (!$sale) {
+          Flight::jsonHalt(['message' => 'Venta no encontrada', 'success' => false], 404);
+        }
+
+        $pdo->beginTransaction();
         $detalles = $db->select('detalles_ventas')->where('id_venta', $id)->all();
 
         foreach ($detalles as $detalle) {
@@ -990,11 +997,13 @@ Flight::group('/api', static function () use ($loadBusiness, $hydrateSale, $hydr
         }
 
         $db->delete('ventas')->where('id', $id)->execute();
-        $db->commit();
+        $pdo->commit();
 
         Flight::json(['success' => true, 'message' => 'Venta eliminada y stock restaurado']);
       } catch (Throwable $throwable) {
-        $db->rollback();
+        if ($pdo->inTransaction()) {
+          $pdo->rollBack();
+        }
         Flight::jsonHalt(['message' => $throwable->getMessage(), 'success' => false], 500);
       }
     });

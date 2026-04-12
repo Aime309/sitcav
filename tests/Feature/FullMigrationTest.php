@@ -123,6 +123,41 @@ final class FullMigrationTest extends FeatureTestCase
     $this->assertStringContainsString('inline; filename="reporte_consultas.pdf"', $response->getHeaderLine('Content-Disposition'));
   }
 
+  public function test_can_delete_venta(): void
+  {
+    $createResponse = self::$client->post('api/ventas', [
+      'json' => [
+        'id_vendedor' => 1,
+        'nuevo_cliente' => [
+          'nombre' => 'Cliente Test',
+          'apellidos' => 'Venta',
+          'cedula' => '99999999'
+        ],
+        'detalles' => [
+          [
+            'id_producto' => 1,
+            'cantidad' => 1,
+            'precio_unitario' => 1
+          ]
+        ]
+      ]
+    ]);
+
+    $createData = json_decode($createResponse->getBody()->getContents(), true);
+    $ventaId = $createData['venta_id'];
+
+    $deleteResponse = self::$client->delete("api/ventas/$ventaId");
+    $this->assertSame(200, $deleteResponse->getStatusCode());
+    $deleteData = json_decode($deleteResponse->getBody()->getContents(), true);
+    $this->assertTrue($deleteData['success']);
+
+    $salesResponse = self::$client->get('api/ventas');
+    $sales = json_decode($salesResponse->getBody()->getContents(), true);
+    foreach ($sales as $sale) {
+      $this->assertNotSame((int) $ventaId, (int) $sale['id']);
+    }
+  }
+
   public function test_can_create_apartado(): void
   {
     // Create client first

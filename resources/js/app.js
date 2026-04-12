@@ -1132,12 +1132,23 @@ async function deleteVenta(id) {
             method: 'DELETE'
         });
 
-        if (response.ok) {
+        const contentType = response.headers.get('content-type') || '';
+        if (!response.ok || response.redirected || !contentType.includes('application/json')) {
+            let message = 'Error al eliminar venta';
+            try {
+                const data = contentType.includes('application/json') ? await response.json() : null;
+                if (data?.message) message = data.message;
+            } catch (_) {}
+            alert('Error: ' + message);
+            return;
+        }
+
+        const data = await response.json();
+        if (data.success) {
             loadVentas();
             loadDashboardStats();
             alert('Venta eliminada');
         } else {
-            const data = await response.json();
             alert('Error: ' + (data.message || 'Error al eliminar venta'));
         }
     } catch (error) {
