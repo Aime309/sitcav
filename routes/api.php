@@ -351,10 +351,14 @@ Flight::group('/api', static function (): void {
       }
 
       try {
-        $category = new Category;
-        $category->nombre = $data->nombre;
-        $category->id_usuario = $data->id_usuario ?? 1;
-        $category->save();
+        $db = Container::getInstance()->get(Auth::class)->db();
+        $db->insert('categorias')->params([
+          'nombre' => $data->nombre,
+          'id_usuario' => $data->id_usuario ?? 1,
+        ])->execute();
+
+        $id = $db->connection()->lastInsertId();
+        $category = $db->select('categorias')->find($id);
 
         Flight::json($category, 201);
       } catch (Throwable $throwable) {

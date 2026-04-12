@@ -1474,9 +1474,9 @@ async function checkUserForRecovery() {
 
         if (data.success) {
             // Populate questions
-            document.getElementById('label-pregunta-1').textContent = formatQuestion(data.preguntas[0]);
-            document.getElementById('label-pregunta-2').textContent = formatQuestion(data.preguntas[1]);
-            document.getElementById('label-pregunta-3').textContent = formatQuestion(data.preguntas[2]);
+            document.getElementById('label-pregunta-1').innerHTML = `${formatQuestion(data.preguntas[0])} <span class="required-asterisk">*</span>`;
+            document.getElementById('label-pregunta-2').innerHTML = `${formatQuestion(data.preguntas[1])} <span class="required-asterisk">*</span>`;
+            document.getElementById('label-pregunta-3').innerHTML = `${formatQuestion(data.preguntas[2])} <span class="required-asterisk">*</span>`;
 
             errorDiv.textContent = '';
             showRecoveryStep(2);
@@ -2683,6 +2683,9 @@ async function crearNuevaCategoria() {
             nombreInput.value = '';
             document.getElementById('nueva-categoria-container').style.display = 'none';
             select.setAttribute('required', 'required');
+            
+            // Actualizar visibilidad del botón de eliminar
+            handleCategoriaChange();
 
             alert('Categoría creada exitosamente');
         } else {
