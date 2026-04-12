@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Category;
 use App\Models\Client;
 use App\Models\ExchangeRate;
+use App\Helpers\PdfService;
 use App\Models\InventoryMovement;
 use App\Models\Layaway;
 use App\Models\Product;
@@ -16,7 +17,203 @@ use flight\Container;
 use Leaf\Auth;
 use Leaf\FS\Storage;
 
-Flight::group('/api', static function (): void {
+$loadBusiness = static function ($db): ?array {
+  $business = $db->select('negocios')->first();
+
+  return $business ?: null;
+};
+
+$estimateSaleFromCatalog = static function ($db, array $sale): array {
+  if (($sale['total'] ?? 0) > 0 || !empty($sale['detalles'])) {
+    return $sale;
+  }
+
+  $products = $db->select('productos')->all();
+
+  if (count($products) !== 1) {
+    return $sale;
+  }
+
+  $product = $products[0];
+  $sale['detalles'] = [[
+    'id' => null,
+    'id_venta' => $sale['id'],
+    'id_producto' => $product['id'],
+    'precio_unitario_tipo_dolares' => (float) $product['precio_unitario_actual_dolares'],
+    'cantidad' => 1,
+    'esta_apartado' => false,
+    'producto_nombre' => $product['nombre'],
+    'producto_imei' => $product['imei'] ?? null,
+    'producto' => [
+      'id' => $product['id'],
+      'nombre' => $product['nombre'],
+      'imei' => $product['imei'] ?? null,
+    ],
+    'es_estimado' => true,
+  ]];
+  $sale['total'] = (float) $product['precio_unitario_actual_dolares'];
+
+  return $sale;
+};
+
+$hydrateSale = static function ($db, array $sale) use ($estimateSaleFromCatalog): array {
+  $sale['cliente'] = null;
+  $sale['cliente_nombre'] = '';
+  $sale['vendedor'] = ['id' => null, 'nombre' => 'Sin asignar'];
+
+  if (!empty($sale['id_cliente'])) {
+    $client = $db->select('clientes')->find($sale['id_cliente']);
+
+    if ($client) {
+      $sale['cliente'] = $client;
+      $sale['cliente_nombre'] = trim(sprintf('%s %s', $client['nombre'], $client['apellidos'] ?? ''));
+    }
+  }
+
+  if (!empty($sale['id_vendedor'])) {
+    $seller = $db->select('usuarios')->find($sale['id_vendedor']);
+
+    if ($seller) {
+      $sale['vendedor'] = [
+        'id' => $seller['id'],
+        'nombre' => $seller['nombre'],
+      ];
+    }
+  }
+
+  $sale['detalles'] = $db->query(
+    'SELECT dv.*, p.nombre AS producto_nombre, p.imei AS producto_imei
+     FROM detalles_ventas dv
+     JOIN productos p ON dv.id_producto = p.id
+     WHERE dv.id_venta = ?',
+    $sale['id']
+  )->all();
+
+  foreach ($sale['detalles'] as &$detail) {
+    $detail['producto'] = [
+      'id' => $detail['id_producto'],
+      'nombre' => $detail['producto_nombre'],
+      'imei' => $detail['producto_imei'] ?? null,
+    ];
+  }
+  unset($detail);
+
+  $sale['total'] = (float) ($db->query(
+    'SELECT COALESCE(SUM(precio_unitario_tipo_dolares * cantidad), 0) AS total FROM detalles_ventas WHERE id_venta = ?',
+    $sale['id']
+  )->column()[0] ?? 0);
+
+  return $estimateSaleFromCatalog($db, $sale);
+};
+
+$hydratePurchase = static function ($db, array $purchase): array {
+  $purchase['proveedor'] = null;
+
+  if (!empty($purchase['id_proveedor'])) {
+    $provider = $db->select('proveedores')->find($purchase['id_proveedor']);
+
+    if ($provider) {
+      $purchase['proveedor'] = $provider;
+    }
+  }
+
+  $purchase['detalles'] = $db->query(
+    'SELECT dc.*, p.nombre AS producto_nombre, p.imei AS producto_imei
+     FROM detalles_compras dc
+     JOIN productos p ON dc.id_producto = p.id
+     WHERE dc.id_compra = ?',
+    $purchase['id']
+  )->all();
+
+  foreach ($purchase['detalles'] as &$detail) {
+    $detail['precio_unitario'] = $detail['precio_unitario_tipo_dolares'];
+    $detail['producto'] = [
+      'id' => $detail['id_producto'],
+      'nombre' => $detail['producto_nombre'],
+      'imei' => $detail['producto_imei'] ?? null,
+    ];
+  }
+  unset($detail);
+
+  $purchase['total'] = array_reduce(
+    $purchase['detalles'],
+    static fn(float $sum, array $detail): float => $sum + ((float) $detail['precio_unitario_tipo_dolares'] * (float) $detail['cantidad']),
+    0.0
+  );
+
+  return $purchase;
+};
+
+$hydrateLayaway = static function ($db, array $layaway): array {
+  $layaway['cliente'] = null;
+
+  if (!empty($layaway['id_cliente'])) {
+    $client = $db->select('clientes')->find($layaway['id_cliente']);
+
+    if ($client) {
+      $layaway['cliente'] = $client;
+      $layaway['cliente_nombre'] = trim(sprintf('%s %s', $client['nombre'], $client['apellidos'] ?? ''));
+    }
+  }
+
+  $layaway['detalles'] = $db->query(
+    'SELECT da.*, p.nombre AS producto_nombre, p.imei AS producto_imei
+     FROM detalles_apartados da
+     JOIN productos p ON da.id_producto = p.id
+     WHERE da.id_apartado = ?',
+    $layaway['id']
+  )->all();
+
+  foreach ($layaway['detalles'] as &$detail) {
+    $detail['producto'] = [
+      'id' => $detail['id_producto'],
+      'nombre' => $detail['producto_nombre'],
+      'imei' => $detail['producto_imei'] ?? null,
+    ];
+  }
+  unset($detail);
+
+  $layaway['pagos'] = $db->query(
+    'SELECT * FROM pagos_apartados WHERE id_apartado = ? ORDER BY fecha_pago ASC',
+    $layaway['id']
+  )->all();
+
+  return $layaway;
+};
+
+$buildConsultationSales = static function ($db, array $filters = []) use ($hydrateSale): array {
+  $query = 'SELECT * FROM ventas WHERE 1 = 1';
+  $params = [];
+
+  if (!empty($filters['id_vendedor'])) {
+    $query .= ' AND id_vendedor = ?';
+    $params[] = $filters['id_vendedor'];
+  }
+
+  if (!empty($filters['id_cliente'])) {
+    $query .= ' AND id_cliente = ?';
+    $params[] = $filters['id_cliente'];
+  }
+
+  if (!empty($filters['fecha_desde'])) {
+    $query .= ' AND fecha_creacion >= ?';
+    $params[] = $filters['fecha_desde'];
+  }
+
+  if (!empty($filters['fecha_hasta'])) {
+    $query .= ' AND fecha_creacion <= ?';
+    $params[] = $filters['fecha_hasta'] . ' 23:59:59';
+  }
+
+  $query .= ' ORDER BY fecha_creacion DESC';
+
+  return array_map(
+    static fn(array $sale): array => $hydrateSale($db, $sale),
+    $db->query($query, ...$params)->all()
+  );
+};
+
+Flight::group('/api', static function () use ($loadBusiness, $hydrateSale, $hydratePurchase, $hydrateLayaway, $buildConsultationSales): void {
   Flight::route('GET /status', static fn() => Flight::json(['status' => 'ok']));
 
   Flight::route('GET /dashboard/stats', static function (): void {
@@ -672,61 +869,26 @@ Flight::group('/api', static function (): void {
     });
   });
 
-  Flight::group('/ventas', static function (): void {
-    Flight::route('GET /', static function (): void {
+  Flight::route('GET /factura/@ventaId:[0-9]+', static function (int $ventaId) use ($loadBusiness, $hydrateSale): void {
+    $db = Container::getInstance()->get(Auth::class)->db();
+    $sale = $db->select('ventas')->find($ventaId);
+
+    if (!$sale) {
+      Flight::halt(404);
+
+      return;
+    }
+
+    (new PdfService)->streamSale($hydrateSale($db, $sale), $loadBusiness($db) ?? []);
+  });
+
+  Flight::group('/ventas', static function () use ($hydrateSale): void {
+    Flight::route('GET /', static function () use ($hydrateSale): void {
       $db = Container::getInstance()->get(Auth::class)->db();
-      $sales = $db->query('
-        SELECT
-          v.*,
-          c.id AS cliente_id,
-          c.nombre AS cliente_nombre,
-          c.apellidos AS cliente_apellidos
-        FROM ventas v
-        LEFT JOIN clientes c ON v.id_cliente = c.id
-        ORDER BY v.fecha_creacion DESC
-      ')->all();
-
-      foreach ($sales as &$sale) {
-        $sale['cliente'] = !empty($sale['cliente_id']) ? [
-          'id' => $sale['cliente_id'],
-          'nombre' => $sale['cliente_nombre'],
-          'apellidos' => $sale['cliente_apellidos'] ?? '',
-        ] : null;
-
-        $sale['cliente_nombre'] = trim(sprintf('%s %s', $sale['cliente_nombre'] ?? '', $sale['cliente_apellidos'] ?? ''));
-        $sale['detalles'] = $db->query(
-          'SELECT dv.*, p.nombre AS producto_nombre FROM detalles_ventas dv JOIN productos p ON dv.id_producto = p.id WHERE dv.id_venta = ?',
-          $sale['id']
-        )->all();
-        $sale['total'] = (float) ($db->query(
-          'SELECT COALESCE(SUM(precio_unitario_tipo_dolares * cantidad), 0) AS total FROM detalles_ventas WHERE id_venta = ?',
-          $sale['id']
-        )->column()[0] ?? 0);
-
-        if ($sale['total'] <= 0 && empty($sale['detalles'])) {
-          $products = $db->select('productos')->all();
-
-          if (count($products) === 1) {
-            $product = $products[0];
-            $sale['detalles'] = [[
-              'id' => null,
-              'id_venta' => $sale['id'],
-              'id_producto' => $product['id'],
-              'precio_unitario_tipo_dolares' => (float) $product['precio_unitario_actual_dolares'],
-              'cantidad' => 1,
-              'esta_apartado' => false,
-              'producto_nombre' => $product['nombre'],
-              'es_estimado' => true,
-            ]];
-            $sale['total'] = (float) $product['precio_unitario_actual_dolares'];
-          }
-        }
-
-        unset($sale['cliente_id'], $sale['cliente_apellidos']);
-      }
-      unset($sale);
-
-      Flight::json($sales);
+      Flight::json(array_map(
+        static fn(array $sale): array => $hydrateSale($db, $sale),
+        $db->query('SELECT * FROM ventas ORDER BY fecha_creacion DESC')->all()
+      ));
     });
 
     Flight::route('POST /', static function (): void {
@@ -803,7 +965,7 @@ Flight::group('/api', static function (): void {
       }
     });
 
-    Flight::route('GET /@id:[0-9]+', static function (int $id): void {
+    Flight::route('GET /@id:[0-9]+', static function (int $id) use ($hydrateSale): void {
       $db = Container::getInstance()->get(Auth::class)->db();
       $sale = $db->select('ventas')->find($id);
 
@@ -813,48 +975,7 @@ Flight::group('/api', static function (): void {
         return;
       }
 
-      $sale['cliente'] = null;
-      $sale['cliente_nombre'] = '';
-
-      if (!empty($sale['id_cliente'])) {
-        $client = $db->select('clientes')->find($sale['id_cliente']);
-
-        if ($client) {
-          $sale['cliente'] = [
-            'id' => $client['id'],
-            'nombre' => $client['nombre'],
-            'apellidos' => $client['apellidos'] ?? '',
-          ];
-          $sale['cliente_nombre'] = trim(sprintf('%s %s', $client['nombre'], $client['apellidos'] ?? ''));
-        }
-      }
-
-      $sale['detalles'] = $db->query('SELECT dv.*, p.nombre AS producto_nombre FROM detalles_ventas dv JOIN productos p ON dv.id_producto = p.id WHERE dv.id_venta = ?', $id)->all();
-      $sale['total'] = (float) ($db->query(
-        'SELECT COALESCE(SUM(precio_unitario_tipo_dolares * cantidad), 0) AS total FROM detalles_ventas WHERE id_venta = ?',
-        $id
-      )->column()[0] ?? 0);
-
-      if ($sale['total'] <= 0 && empty($sale['detalles'])) {
-        $products = $db->select('productos')->all();
-
-        if (count($products) === 1) {
-          $product = $products[0];
-          $sale['detalles'] = [[
-            'id' => null,
-            'id_venta' => $sale['id'],
-            'id_producto' => $product['id'],
-            'precio_unitario_tipo_dolares' => (float) $product['precio_unitario_actual_dolares'],
-            'cantidad' => 1,
-            'esta_apartado' => false,
-            'producto_nombre' => $product['nombre'],
-            'es_estimado' => true,
-          ]];
-          $sale['total'] = (float) $product['precio_unitario_actual_dolares'];
-        }
-      }
-
-      Flight::json($sale);
+      Flight::json($hydrateSale($db, $sale));
     });
 
     Flight::route('DELETE /@id:[0-9]+', static function (int $id): void {
@@ -879,12 +1000,39 @@ Flight::group('/api', static function (): void {
     });
   });
 
-  Flight::group('/compras', static function (): void {
-    Flight::route('GET /', static function (): void {
+  Flight::group('/compras', static function () use ($loadBusiness, $hydratePurchase): void {
+    Flight::route('GET /', static function () use ($hydratePurchase): void {
       $db = Container::getInstance()->get(Auth::class)->db();
-      $purchases = $db->query('SELECT c.*, p.nombre AS proveedor_nombre FROM compras c JOIN proveedores p ON c.id_proveedor = p.id ORDER BY c.fecha_creacion DESC')->all();
+      Flight::json(array_map(
+        static fn(array $purchase): array => $hydratePurchase($db, $purchase),
+        $db->query('SELECT * FROM compras ORDER BY fecha_creacion DESC')->all()
+      ));
+    });
 
-      Flight::json($purchases);
+    Flight::route('GET /@id:[0-9]+', static function (int $id) use ($hydratePurchase): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $purchase = $db->select('compras')->find($id);
+
+      if (!$purchase) {
+        Flight::halt(404);
+
+        return;
+      }
+
+      Flight::json($hydratePurchase($db, $purchase));
+    });
+
+    Flight::route('GET /@id:[0-9]+/pdf', static function (int $id) use ($loadBusiness, $hydratePurchase): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $purchase = $db->select('compras')->find($id);
+
+      if (!$purchase) {
+        Flight::halt(404);
+
+        return;
+      }
+
+      (new PdfService)->streamPurchase($hydratePurchase($db, $purchase), $loadBusiness($db) ?? []);
     });
 
     Flight::route('POST /', static function (): void {
@@ -944,7 +1092,7 @@ Flight::group('/api', static function (): void {
     });
   });
 
-  Flight::group('/apartados', static function (): void {
+  Flight::group('/apartados', static function () use ($loadBusiness, $hydrateLayaway): void {
     Flight::route('GET /', static function (): void {
       $db = Container::getInstance()->get(Auth::class)->db();
       $estado = Flight::request()->query->estado;
@@ -1026,8 +1174,8 @@ Flight::group('/api', static function (): void {
       }
     });
 
-    Flight::group('/@id:[0-9]+', static function (): void {
-      Flight::route('GET /', static function (int $id): void {
+    Flight::group('/@id:[0-9]+', static function () use ($loadBusiness, $hydrateLayaway): void {
+      Flight::route('GET /', static function (int $id) use ($hydrateLayaway): void {
         $db = Container::getInstance()->get(Auth::class)->db();
         $layaway = $db->select('apartados')->find($id);
 
@@ -1037,10 +1185,20 @@ Flight::group('/api', static function (): void {
           return;
         }
 
-        $layaway['detalles'] = $db->query('SELECT da.*, p.nombre AS producto_nombre FROM detalles_apartados da JOIN productos p ON da.id_producto = p.id WHERE da.id_apartado = ?', $id)->all();
-        $layaway['pagos'] = $db->select('pagos_apartados')->where('id_apartado', $id)->all();
+        Flight::json($hydrateLayaway($db, $layaway));
+      });
 
-        Flight::json($layaway);
+      Flight::route('GET /pdf', static function (int $id) use ($loadBusiness, $hydrateLayaway): void {
+        $db = Container::getInstance()->get(Auth::class)->db();
+        $layaway = $db->select('apartados')->find($id);
+
+        if (!$layaway) {
+          Flight::halt(404);
+
+          return;
+        }
+
+        (new PdfService)->streamLayaway($hydrateLayaway($db, $layaway), $loadBusiness($db) ?? []);
       });
 
       Flight::route('POST /pago', static function (int $id): void {
@@ -1152,6 +1310,97 @@ Flight::group('/api', static function (): void {
     });
   });
 
+  Flight::group('/consultas', static function () use ($buildConsultationSales): void {
+    Flight::route('GET /ventas', static function () use ($buildConsultationSales): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $query = Flight::request()->query;
+
+      Flight::json($buildConsultationSales($db, [
+        'id_vendedor' => $query->id_vendedor,
+        'id_cliente' => $query->id_cliente,
+        'fecha_desde' => $query->fecha_desde,
+        'fecha_hasta' => $query->fecha_hasta,
+      ]));
+    });
+
+    Flight::route('GET /ventas/pdf', static function () use ($buildConsultationSales): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $query = Flight::request()->query;
+      $filters = [
+        'id_vendedor' => $query->id_vendedor,
+        'id_cliente' => $query->id_cliente,
+        'fecha_desde' => $query->fecha_desde,
+        'fecha_hasta' => $query->fecha_hasta,
+      ];
+
+      $sales = $buildConsultationSales($db, $filters);
+      $filterText = [];
+
+      if (!empty($filters['id_vendedor'])) {
+        $seller = $db->select('usuarios')->find($filters['id_vendedor']);
+        $filterText[] = 'Vendedor: ' . ($seller['nombre'] ?? $filters['id_vendedor']);
+      }
+
+      if (!empty($filters['id_cliente'])) {
+        $client = $db->select('clientes')->find($filters['id_cliente']);
+        $clientName = $client ? trim(sprintf('%s %s', $client['nombre'], $client['apellidos'] ?? '')) : $filters['id_cliente'];
+        $filterText[] = 'Cliente: ' . $clientName;
+      }
+
+      if (!empty($filters['fecha_desde'])) {
+        $filterText[] = 'Desde: ' . $filters['fecha_desde'];
+      }
+
+      if (!empty($filters['fecha_hasta'])) {
+        $filterText[] = 'Hasta: ' . $filters['fecha_hasta'];
+      }
+
+      $rows = array_map(static function (array $sale): array {
+        return [
+          'codigo' => '#' . str_pad((string) $sale['id'], 6, '0', STR_PAD_LEFT),
+          'fecha' => date('d/m/Y H:i', strtotime($sale['fecha_creacion'])),
+          'vendedor' => $sale['vendedor']['nombre'] ?? 'Sin asignar',
+          'cliente' => trim(sprintf('%s %s', $sale['cliente']['nombre'] ?? '', $sale['cliente']['apellidos'] ?? '')),
+          'total' => (float) ($sale['total'] ?? 0),
+        ];
+      }, $sales);
+
+      (new PdfService)->streamSalesReport($rows, $filterText, 'reporte_consultas.pdf', 'REPORTE DE VENTAS POR VENDEDOR');
+    });
+  });
+
+  Flight::group('/reportes', static function () use ($buildConsultationSales): void {
+    Flight::route('GET /ventas/pdf', static function () use ($buildConsultationSales): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $query = Flight::request()->query;
+      $sales = $buildConsultationSales($db, [
+        'fecha_desde' => $query->desde,
+        'fecha_hasta' => $query->hasta,
+      ]);
+      $filterText = [];
+
+      if ($query->desde) {
+        $filterText[] = 'Desde: ' . $query->desde;
+      }
+
+      if ($query->hasta) {
+        $filterText[] = 'Hasta: ' . $query->hasta;
+      }
+
+      $rows = array_map(static function (array $sale): array {
+        return [
+          'codigo' => '#' . str_pad((string) $sale['id'], 6, '0', STR_PAD_LEFT),
+          'fecha' => date('d/m/Y H:i', strtotime($sale['fecha_creacion'])),
+          'vendedor' => $sale['vendedor']['nombre'] ?? 'Sin asignar',
+          'cliente' => trim(sprintf('%s %s', $sale['cliente']['nombre'] ?? '', $sale['cliente']['apellidos'] ?? '')),
+          'total' => (float) ($sale['total'] ?? 0),
+        ];
+      }, $sales);
+
+      (new PdfService)->streamSalesReport($rows, $filterText, 'reporte_ventas.pdf', 'REPORTE GENERAL DE VENTAS');
+    });
+  });
+
   Flight::group('/inventario', static function (): void {
     Flight::route('GET /', static function (): void {
       $db = Container::getInstance()->get(Auth::class)->db();
@@ -1182,13 +1431,13 @@ Flight::group('/api', static function (): void {
   Flight::group('/negocio', static function (): void {
     Flight::route('GET /', static function (): void {
       $db = Container::getInstance()->get(Auth::class)->db();
-      Flight::json($db->select('negocio')->first());
+      Flight::json($db->select('negocios')->first() ?: []);
     });
 
     Flight::route('PUT /', static function (): void {
       $data = Flight::request()->data;
       $db = Container::getInstance()->get(Auth::class)->db();
-      $negocio = $db->select('negocio')->first();
+      $negocio = $db->select('negocios')->first();
 
       $params = [
         'nombre' => $data->nombre,
@@ -1198,9 +1447,16 @@ Flight::group('/api', static function (): void {
       ];
 
       if ($negocio) {
-        $db->update('negocio')->params($params)->where('id', $negocio['id'])->execute();
+        $db->update('negocios')->params($params)->where('id', $negocio['id'])->execute();
       } else {
-        $db->insert('negocio')->params($params)->execute();
+        $params['id_localidad'] = $db->query('SELECT id FROM localidades ORDER BY id LIMIT 1')->column()[0] ?? null;
+        $params['id_sector'] = $db->query('SELECT id FROM sectores ORDER BY id LIMIT 1')->column()[0] ?? null;
+
+        if (!$params['id_localidad'] || !$params['id_sector']) {
+          Flight::jsonHalt(['success' => false, 'message' => 'No existen localidades o sectores para registrar el negocio'], 400);
+        }
+
+        $db->insert('negocios')->params($params)->execute();
       }
 
       Flight::json(['success' => true]);
@@ -1226,7 +1482,7 @@ Flight::group('/api', static function (): void {
     });
   });
 
-  Flight::group('/reembolsos', static function (): void {
+  Flight::group('/reembolsos', static function () use ($loadBusiness, $hydrateSale): void {
     Flight::route('GET /', static function (): void {
       $db = Container::getInstance()->get(Auth::class)->db();
       Flight::json($db->select('reembolsos')->orderBy('fecha DESC')->all());
@@ -1249,6 +1505,29 @@ Flight::group('/api', static function (): void {
       ])->execute();
 
       Flight::json(['success' => true], 201);
+    });
+
+    Flight::route('GET /@id:[0-9]+/pdf', static function (int $id) use ($loadBusiness, $hydrateSale): void {
+      $db = Container::getInstance()->get(Auth::class)->db();
+      $refund = $db->select('reembolsos')->find($id);
+
+      if (!$refund) {
+        Flight::halt(404);
+
+        return;
+      }
+
+      $sale = null;
+      if (!empty($refund['id_venta'])) {
+        $saleData = $db->select('ventas')->find($refund['id_venta']);
+        if ($saleData) {
+          $sale = $hydrateSale($db, $saleData);
+        }
+      }
+
+      $refund['venta'] = $sale;
+      $refund['usuario'] = !empty($refund['id_usuario']) ? ($db->select('usuarios')->find($refund['id_usuario']) ?: null) : null;
+      (new PdfService)->streamRefund($refund, $loadBusiness($db) ?? []);
     });
   });
 

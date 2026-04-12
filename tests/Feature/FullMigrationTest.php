@@ -75,7 +75,7 @@ final class FullMigrationTest extends FeatureTestCase
     $sale = null;
 
     foreach ($sales as $item) {
-      if ($item['id'] === $ventaId) {
+      if ((int) $item['id'] === (int) $ventaId) {
         $sale = $item;
         break;
       }
@@ -105,6 +105,22 @@ final class FullMigrationTest extends FeatureTestCase
     $result = json_decode($response->getBody()->getContents(), true);
     $this->assertArrayHasKey('ventas_hoy_monto', $result);
     $this->assertArrayHasKey('stock_bajo_count', $result);
+  }
+
+  public function test_can_generate_factura_pdf(): void
+  {
+    $response = self::$client->get('api/factura/1');
+    $this->assertSame(200, $response->getStatusCode());
+    $this->assertSame('application/pdf', $response->getHeaderLine('Content-Type'));
+    $this->assertStringContainsString('inline; filename="factura_1.pdf"', $response->getHeaderLine('Content-Disposition'));
+  }
+
+  public function test_can_generate_consultas_pdf(): void
+  {
+    $response = self::$client->get('api/consultas/ventas/pdf');
+    $this->assertSame(200, $response->getStatusCode());
+    $this->assertSame('application/pdf', $response->getHeaderLine('Content-Type'));
+    $this->assertStringContainsString('inline; filename="reporte_consultas.pdf"', $response->getHeaderLine('Content-Disposition'));
   }
 
   public function test_can_create_apartado(): void
