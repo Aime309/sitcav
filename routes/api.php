@@ -489,12 +489,21 @@ Flight::group('/api', static function (): void {
 
           // Manejar subida de nueva imagen
           $files = Flight::request()->files;
-          if ($files && $files->imagen_file) {
+          if ($files && $files->imagen_file && !empty($files->imagen_file['tmp_name'])) {
             $file = Storage::upload($files->imagen_file, ROOT_DIR . '/instance/uploads/productos/', [
               'name' => "prod_{$product['codigo']}_{$files->imagen_file['name']}",
               'overwrite' => true,
             ]);
-            $product['imagen_url'] = str_replace([FULL_BASE_URL, '\\'], ['', '/'], $file['url']);
+
+            if ($file) {
+              $product['imagen_url'] = str_replace([FULL_BASE_URL, '\\'], ['', '/'], $file['url']);
+            } else {
+              $storageErrors = Storage::errors();
+              Flight::jsonHalt([
+                'success' => false,
+                'message' => 'Error al subir la imagen: ' . (is_array($storageErrors) ? json_encode($storageErrors) : $storageErrors),
+              ], 400);
+            }
           }
 
           $db->update('productos')->params($product)->where('id', $id)->execute();
