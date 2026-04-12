@@ -221,6 +221,12 @@ input::-ms-clear {
 	display: none;
 }
 
+.required-asterisk {
+	color: #ef4444;
+	margin-left: 3px;
+	font-weight: bold;
+}
+
 /* ===== DASHBOARD ===== */
 .app-container {
 	display: none;

@@ -53,7 +53,7 @@
 
       <form onsubmit="handleLogin(event)">
         <div class="form-group">
-          <label for="login-cedula">Cédula de Identidad</label>
+          <label for="login-cedula">Cédula de Identidad <span class="required-asterisk">*</span></label>
           <input
             type="text"
             id="login-cedula"
@@ -61,7 +61,7 @@
             placeholder="Ej: 12345678" />
         </div>
         <div class="form-group">
-          <label for="login-password">Contraseña</label>
+          <label for="login-password">Contraseña <span class="required-asterisk">*</span></label>
           <div class="password-wrapper">
             <input type="password" id="login-password" required />
             <button
@@ -104,7 +104,7 @@
 
       <form onsubmit="handleRegister(event)">
         <div class="form-group">
-          <label for="register-nombre">Nombre Completo</label>
+          <label for="register-nombre">Nombre Completo <span class="required-asterisk">*</span></label>
           <input
             type="text"
             id="register-nombre"
@@ -112,7 +112,7 @@
             placeholder="Ej: Juan Pérez" />
         </div>
         <div class="form-group">
-          <label for="register-cedula">Cédula de Identidad</label>
+          <label for="register-cedula">Cédula de Identidad <span class="required-asterisk">*</span></label>
           <input
             type="text"
             id="register-cedula"
@@ -120,7 +120,7 @@
             placeholder="Ej: 12345678" />
         </div>
         <div class="form-group">
-          <label for="register-password">Contraseña</label>
+          <label for="register-password">Contraseña <span class="required-asterisk">*</span></label>
           <div class="password-wrapper">
             <input
               type="password"
@@ -136,7 +136,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="register-password-confirm">Confirmar Contraseña</label>
+          <label for="register-password-confirm">Confirmar Contraseña <span class="required-asterisk">*</span></label>
           <div class="password-wrapper">
             <input
               type="password"
@@ -163,7 +163,7 @@
 
           <!-- Pregunta 1 -->
           <div class="form-group">
-            <label>Pregunta 1</label>
+            <label>Pregunta 1 <span class="required-asterisk">*</span></label>
             <select id="register-pregunta-1" required>
               <option value="">Seleccione una pregunta...</option>
               <option value="nombre_mascota">
@@ -184,7 +184,7 @@
 
           <!-- Pregunta 2 -->
           <div class="form-group">
-            <label>Pregunta 2</label>
+            <label>Pregunta 2 <span class="required-asterisk">*</span></label>
             <select id="register-pregunta-2" required>
               <option value="">Seleccione una pregunta...</option>
               <option value="escuela_primaria">
@@ -207,7 +207,7 @@
 
           <!-- Pregunta 3 -->
           <div class="form-group">
-            <label>Pregunta 3</label>
+            <label>Pregunta 3 <span class="required-asterisk">*</span></label>
             <select id="register-pregunta-3" required>
               <option value="">Seleccione una pregunta...</option>
               <option value="comida_favorita">
@@ -1216,7 +1216,7 @@
                 onsubmit="updateCotizacion(event)"
                 style="display: flex; gap: 10px; align-items: flex-end;">
                 <div class="form-group" style="margin-bottom: 0; flex: 1;">
-                  <label style="font-size: 0.9em;">Nueva Tasa (Bs)</label>
+                  <label style="font-size: 0.9em;">Nueva Tasa (Bs) <span class="required-asterisk">*</span></label>
                   <input
                     type="number"
                     id="nueva-tasa"
@@ -1266,19 +1266,19 @@
             style="max-width: 600px; margin: 0 auto; padding: 20px;">
             <form onsubmit="saveCredenciales(event)">
               <div class="form-group">
-                <label>Nombre de la Empresa</label>
+                <label>Nombre de la Empresa <span class="required-asterisk">*</span></label>
                 <input type="text" id="cred-nombre" required>
               </div>
               <div class="form-group">
-                <label>RIF</label>
+                <label>RIF <span class="required-asterisk">*</span></label>
                 <input type="text" id="cred-rif" required>
               </div>
               <div class="form-group">
-                <label>Teléfono</label>
+                <label>Teléfono <span class="required-asterisk">*</span></label>
                 <input type="text" id="cred-telefono" required>
               </div>
               <div class="form-group">
-                <label>Dirección</label>
+                <label>Dirección <span class="required-asterisk">*</span></label>
                 <textarea id="cred-direccion" rows="3"
                   required></textarea>
               </div>
@@ -1439,11 +1439,11 @@
         <form onsubmit="saveProduct(event)">
           <input type="hidden" id="product-id">
           <div class="form-group">
-            <label>Nombre</label>
+            <label>Nombre <span class="required-asterisk">*</span></label>
             <input type="text" id="product-nombre" required>
           </div>
           <div class="form-group">
-            <label>Código</label>
+            <label>Código <span class="required-asterisk">*</span></label>
             <input type="text" id="product-codigo" required>
           </div>
           <div class="form-group">
@@ -1456,7 +1456,7 @@
             <input type="text" id="product-descripcion">
           </div>
           <div class="form-group">
-            <label>Categoría</label>
+            <label>Categoría <span class="required-asterisk">*</span></label>
             <div
               style="display: flex; gap: 10px; align-items: center;">
               <select id="product-categoria" required
@@ -1492,12 +1492,12 @@
             </div>
           </div>
           <div class="form-group">
-            <label>Precio (USD)</label>
+            <label>Precio (USD) <span class="required-asterisk">*</span></label>
             <input type="number" id="product-precio" step="0.01"
               required>
           </div>
           <div class="form-group">
-            <label>Cantidad Disponible</label>
+            <label>Cantidad Disponible <span class="required-asterisk">*</span></label>
             <input type="number" id="product-stock" required>
           </div>
           <div class="form-group">
@@ -1573,7 +1573,7 @@
               style="background-color: #f5f5f5;">
           </div>
           <div class="form-group">
-            <label>Rol</label>
+            <label>Rol <span class="required-asterisk">*</span></label>
             <select id="empleado-rol" required>
               <option value="Vendedor">Vendedor</option>
               <option value="Empleado Superior">Empleado Superior
@@ -1603,15 +1603,15 @@
         <form onsubmit="saveClient(event)">
           <input type="hidden" id="client-id">
           <div class="form-group">
-            <label>Nombre</label>
+            <label>Nombre <span class="required-asterisk">*</span></label>
             <input type="text" id="client-nombre" required>
           </div>
           <div class="form-group">
-            <label>Apellidos</label>
+            <label>Apellidos <span class="required-asterisk">*</span></label>
             <input type="text" id="client-apellidos" required>
           </div>
           <div class="form-group">
-            <label>Cédula</label>
+            <label>Cédula <span class="required-asterisk">*</span></label>
             <input type="text" id="client-cedula" required>
           </div>
           <div class="form-group">
@@ -1645,7 +1645,7 @@
         <form onsubmit="saveProveedor(event)">
           <input type="hidden" id="proveedor-id">
           <div class="form-group">
-            <label>Nombre</label>
+            <label>Nombre <span class="required-asterisk">*</span></label>
             <input type="text" id="proveedor-nombre" required>
           </div>
           <div class="form-group">
@@ -1688,7 +1688,7 @@
             cédula para buscar tu
             cuenta.</p>
           <div class="form-group">
-            <label>Cédula de Identidad</label>
+            <label>Cédula de Identidad <span class="required-asterisk">*</span></label>
             <input type="text" id="recovery-cedula" required>
           </div>
           <div class="error-message" id="recovery-error-1"></div>
@@ -1708,19 +1708,19 @@
             identidad.</p>
 
           <div class="form-group">
-            <label id="label-pregunta-1">Pregunta 1</label>
+            <label id="label-pregunta-1">Pregunta 1 <span class="required-asterisk">*</span></label>
             <input type="text" id="recovery-respuesta-1" required
               placeholder="Tu respuesta">
           </div>
 
           <div class="form-group">
-            <label id="label-pregunta-2">Pregunta 2</label>
+            <label id="label-pregunta-2">Pregunta 2 <span class="required-asterisk">*</span></label>
             <input type="text" id="recovery-respuesta-2" required
               placeholder="Tu respuesta">
           </div>
 
           <div class="form-group">
-            <label id="label-pregunta-3">Pregunta 3</label>
+            <label id="label-pregunta-3">Pregunta 3 <span class="required-asterisk">*</span></label>
             <input type="text" id="recovery-respuesta-3" required
               placeholder="Tu respuesta">
           </div>
@@ -1741,7 +1741,7 @@
             contraseña.</p>
 
           <div class="form-group">
-            <label>Nueva Contraseña</label>
+            <label>Nueva Contraseña <span class="required-asterisk">*</span></label>
             <div class="password-wrapper">
               <input type="password" id="recovery-password"
                 required minlength="4">
@@ -1753,7 +1753,7 @@
           </div>
 
           <div class="form-group">
-            <label>Confirmar Contraseña</label>
+            <label>Confirmar Contraseña <span class="required-asterisk">*</span></label>
             <div class="password-wrapper">
               <input type="password" id="recovery-confirm"
                 required minlength="4">
@@ -1785,7 +1785,7 @@
         </div>
         <form onsubmit="createCompra(event)">
           <div class="form-group">
-            <label>Proveedor</label>
+            <label>Proveedor <span class="required-asterisk">*</span></label>
             <select id="compra-proveedor" required>
               <option value="">Seleccione un proveedor...</option>
             </select>
@@ -1844,7 +1844,7 @@
         <form onsubmit="saveVenta(event)">
           <input type="hidden" id="venta-id">
           <div class="form-group">
-            <label>Cliente</label>
+            <label>Cliente <span class="required-asterisk">*</span></label>
             <select id="venta-cliente" required>
               <option value="">Seleccione un cliente...</option>
             </select>
@@ -1901,7 +1901,7 @@
         </div>
         <form onsubmit="saveApartado(event)">
           <div class="form-group">
-            <label>Cliente</label>
+            <label>Cliente <span class="required-asterisk">*</span></label>
             <select id="apartado-cliente" required>
               <option value="">Seleccione un cliente...</option>
             </select>
@@ -1975,7 +1975,7 @@
               style="background: #f5f5f5;">
           </div>
           <div class="form-group">
-            <label>Monto a Pagar</label>
+            <label>Monto a Pagar <span class="required-asterisk">*</span></label>
             <input type="number" id="pago-apartado-monto"
               step="0.01" min="0.01" required>
           </div>
@@ -2006,13 +2006,13 @@
         </div>
         <form onsubmit="realizarAjusteInventario(event)">
           <div class="form-group">
-            <label>Producto</label>
+            <label>Producto <span class="required-asterisk">*</span></label>
             <select id="ajuste-producto" required>
               <option value="">Seleccione un producto...</option>
             </select>
           </div>
           <div class="form-group">
-            <label>Tipo de Ajuste</label>
+            <label>Tipo de Ajuste <span class="required-asterisk">*</span></label>
             <select id="ajuste-tipo" required>
               <option value="entrada">Entrada (aumentar stock)
               </option>
@@ -2021,7 +2021,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Cantidad</label>
+            <label>Cantidad <span class="required-asterisk">*</span></label>
             <input type="number" id="ajuste-cantidad" min="1"
               required>
           </div>
@@ -2052,7 +2052,7 @@
         <form id="reembolso-form"
           onsubmit="event.preventDefault(); createReembolso();">
           <div class="form-group">
-            <label>ID de Venta</label>
+            <label>ID de Venta <span class="required-asterisk">*</span></label>
             <div style="display: flex; gap: 10px;">
               <input type="number" id="reembolso-venta-id"
                 required style="flex: 1;">
@@ -2063,12 +2063,12 @@
               style="color: #6b7280; margin-top: 5px; display: block;"></small>
           </div>
           <div class="form-group">
-            <label>Monto a Reembolsar ($)</label>
+            <label>Monto a Reembolsar ($) <span class="required-asterisk">*</span></label>
             <input type="number" id="reembolso-monto" step="0.01"
               required>
           </div>
           <div class="form-group">
-            <label>Motivo</label>
+            <label>Motivo <span class="required-asterisk">*</span></label>
             <textarea id="reembolso-motivo" rows="2"
               required></textarea>
           </div>
@@ -2151,7 +2151,7 @@
           </div>
 
           <div class="form-group">
-            <label>Nombre</label>
+            <label>Nombre <span class="required-asterisk">*</span></label>
             <input type="text" id="profile-nombre" required>
           </div>
           <div class="form-group">
@@ -2159,7 +2159,7 @@
             <input type="text" id="profile-apellidos">
           </div>
           <div class="form-group">
-            <label>Cédula</label>
+            <label>Cédula <span class="required-asterisk">*</span></label>
             <input type="text" id="profile-cedula" required>
           </div>
           <div class="form-group">
@@ -2189,7 +2189,7 @@
         </div>
         <form onsubmit="saveNewPassword(event)">
           <div class="form-group">
-            <label>Contraseña Actual</label>
+            <label>Contraseña Actual <span class="required-asterisk">*</span></label>
             <div class="password-wrapper">
               <input type="password" id="current-password"
                 required>
@@ -2200,7 +2200,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label>Nueva Contraseña</label>
+            <label>Nueva Contraseña <span class="required-asterisk">*</span></label>
             <div class="password-wrapper">
               <input type="password" id="new-password" required
                 minlength="4">
@@ -2211,7 +2211,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label>Confirmar Nueva Contraseña</label>
+            <label>Confirmar Nueva Contraseña <span class="required-asterisk">*</span></label>
             <div class="password-wrapper">
               <input type="password" id="confirm-new-password"
                 required minlength="4">
@@ -2249,7 +2249,7 @@
             olvidas tu contraseña.
           </p>
           <div class="form-group">
-            <label>Pregunta 1</label>
+            <label>Pregunta 1 <span class="required-asterisk">*</span></label>
             <select id="security-pregunta-1" required>
               <option value="">Seleccione una pregunta...</option>
               <option
@@ -2268,7 +2268,7 @@
               style="margin-top: 8px;">
           </div>
           <div class="form-group">
-            <label>Pregunta 2</label>
+            <label>Pregunta 2 <span class="required-asterisk">*</span></label>
             <select id="security-pregunta-2" required>
               <option value="">Seleccione una pregunta...</option>
               <option value="¿Cuál es tu comida favorita?">¿Cuál
@@ -2285,7 +2285,7 @@
               style="margin-top: 8px;">
           </div>
           <div class="form-group">
-            <label>Pregunta 3</label>
+            <label>Pregunta 3 <span class="required-asterisk">*</span></label>
             <select id="security-pregunta-3" required>
               <option value="">Seleccione una pregunta...</option>
               <option value="¿Cuál es el nombre de tu madre?">
