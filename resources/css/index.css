@@ -215,6 +215,12 @@ body {
 	color: var(--primary);
 }
 
+/* Hide Microsoft Edge's default reveal and clear icons */
+input::-ms-reveal,
+input::-ms-clear {
+	display: none;
+}
+
 /* ===== DASHBOARD ===== */
 .app-container {
 	display: none;
