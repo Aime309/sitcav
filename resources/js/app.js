@@ -705,14 +705,22 @@ async function saveProduct(event) {
     }
 
     try {
-        const url = productId ?
+        let url = productId ?
             `${API_BASE_URL}/api/productos/${productId}` :
             `${API_BASE_URL}/api/productos`;
-        const method = productId ? 'PUT' : 'POST';
+        
+        let method = 'POST'; // We'll use POST for both to support file uploads
+
+        if (productId) {
+            // PHP doesn't natively handle multipart/form-data with PUT
+            // We use POST and add _method=PUT to simulate it if needed
+            // Or just change the backend to handle it as POST
+            formData.append('_method', 'PUT');
+        }
 
         const response = await fetch(url, {
-            method,
-            body: formData // No Content-Type header needed, browser sets it with boundary
+            method: 'POST',
+            body: formData
         });
 
         if (response.ok) {

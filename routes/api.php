@@ -462,7 +462,7 @@ Flight::group('/api', static function (): void {
     });
 
     Flight::group('/@id:[0-9]+', static function (): void {
-      Flight::route('PUT /', static function (int $id): void {
+      $updateHandler = static function (int $id): void {
         $db = Container::getInstance()->get(Auth::class)->db();
         $product = $db->select('productos')->find($id);
 
@@ -522,7 +522,10 @@ Flight::group('/api', static function (): void {
             'success' => false,
           ], 400);
         }
-      });
+      };
+
+      Flight::route('PUT /', $updateHandler);
+      Flight::route('POST /', $updateHandler); // Support POST for file uploads
 
       Flight::route('DELETE /', static function (int $id): void {
         $db = Container::getInstance()->get(Auth::class)->db();
