@@ -374,6 +374,9 @@ function renderCarousel() {
 // SECTION NAVIGATION
 // =====================================================
 function showSection(sectionName) {
+    // Save current section to localStorage
+    localStorage.setItem('currentSection', sectionName);
+
     // Update navigation - safely handle event
     document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
     if (window.event && window.event.target) {
@@ -559,20 +562,33 @@ async function openProductModal(productId = null) {
     modal.classList.add('active');
 
     // Load categories
-    const categories = await fetch(`${API_BASE_URL}/api/categorias`).then(r => r.json());
-    const select = document.getElementById('product-categoria');
-    select.innerHTML = '<option value="">Seleccione...</option>';
-    categories.forEach(cat => {
-        select.innerHTML += `<option value="${cat.id}">${cat.nombre}</option>`;
-    });
-    // Agregar opción para nueva categoría
-    select.innerHTML += '<option value="nueva">➕ Nueva categoría...</option>';
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/categorias`);
+        const categories = await response.json();
+        const select = document.getElementById('product-categoria');
+        select.innerHTML = '<option value="">Seleccione...</option>';
+        if (Array.isArray(categories)) {
+            categories.forEach(cat => {
+                select.innerHTML += `<option value="${cat.id}">${cat.nombre}</option>`;
+            });
+        }
+        // Agregar opción para nueva categoría
+        select.innerHTML += '<option value="nueva">➕ Nueva categoría...</option>';
+    } catch (error) {
+        console.error('Error loading categories:', error);
+        const select = document.getElementById('product-categoria');
+        if (select) {
+            select.innerHTML = '<option value="">Seleccione...</option>';
+            select.innerHTML += '<option value="nueva">➕ Nueva categoría...</option>';
+        }
+    }
 
     // Resetear el contenedor de nueva categoría
     const nuevaCatContainer = document.getElementById('nueva-categoria-container');
     if (nuevaCatContainer) {
         nuevaCatContainer.style.display = 'none';
-        document.getElementById('nueva-categoria-nombre').value = '';
+        const inputNombre = document.getElementById('nueva-categoria-nombre');
+        if (inputNombre) inputNombre.value = '';
     }
 
     if (productId) {
@@ -1384,6 +1400,12 @@ window.addEventListener('DOMContentLoaded', () => {
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
         loadDashboard();
+
+        // Restore last section
+        const lastSection = localStorage.getItem('currentSection');
+        if (lastSection && lastSection !== 'dashboard') {
+            showSection(lastSection);
+        }
     }
 });
 
