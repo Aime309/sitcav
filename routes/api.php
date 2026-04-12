@@ -1243,3 +1243,116 @@ Flight::route('POST /register', static function (): void {
     ], 500);
   }
 });
+
+Flight::route('POST /check-user-recovery', static function (): void {
+  $data = Flight::request()->data;
+  $auth = Container::getInstance()->get(Auth::class);
+  $db = $auth->db();
+
+  $usuario = $db->select('usuarios')->where('cedula', $data->cedula)->first();
+
+  if (!$usuario) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'Usuario no encontrado',
+    ], 404);
+  }
+
+  // Verificar si tiene preguntas configuradas
+  if (empty($usuario['pregunta_1']) || empty($usuario['pregunta_2']) || empty($usuario['pregunta_3'])) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'El usuario no tiene preguntas de seguridad configuradas. Contacte al administrador.',
+    ], 400);
+  }
+
+  Flight::json([
+    'success' => true,
+    'user_id' => $usuario['id'],
+    'preguntas' => [$usuario['pregunta_1'], $usuario['pregunta_2'], $usuario['pregunta_3']],
+  ]);
+});
+
+Flight::route('POST /verify-security-answers', static function (): void {
+  $data = Flight::request()->data;
+  $auth = Container::getInstance()->get(Auth::class);
+  $db = $auth->db();
+
+  $user_id = $data->user_id;
+  $respuestas = $data->respuestas; // Lista de 3 respuestas
+
+  if (!$user_id || !$respuestas || count($respuestas) !== 3) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'Datos incompletos',
+    ], 400);
+  }
+
+  $usuario = $db->select('usuarios')->find($user_id);
+
+  if (!$usuario) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'Usuario no encontrado',
+    ], 404);
+  }
+
+  // Verificar respuestas (ignorando mayúsculas/minúsculas)
+  $r1_ok = strtolower(trim($usuario['respuesta_1'])) === strtolower(trim($respuestas[0]));
+  $r2_ok = strtolower(trim($usuario['respuesta_2'])) === strtolower(trim($respuestas[1]));
+  $r3_ok = strtolower(trim($usuario['respuesta_3'])) === strtolower(trim($respuestas[2]));
+
+  if ($r1_ok && $r2_ok && $r3_ok) {
+    Flight::json(['success' => true]);
+  } else {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'Una o más respuestas son incorrectas',
+    ], 400);
+  }
+});
+
+Flight::route('POST /reset-password-recovery', static function (): void {
+  $data = Flight::request()->data;
+  $auth = Container::getInstance()->get(Auth::class);
+  $db = $auth->db();
+
+  $user_id = $data->user_id;
+  $new_password = $data->new_password;
+
+  if (!$user_id || !$new_password) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'Datos incompletos',
+    ], 400);
+  }
+
+  $usuario = $db->select('usuarios')->find($user_id);
+
+  if (!$usuario) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'Usuario no encontrado',
+    ], 404);
+  }
+
+  try {
+    $hashedPassword = \Leaf\Helpers\Password::hash($new_password, \Leaf\Helpers\Password::BCRYPT, ['cost' => 10]);
+
+    $db->update('usuarios')
+      ->params(['contrasena' => $hashedPassword])
+      ->where('id', $user_id)
+      ->execute();
+
+    Flight::json([
+      'success' => true,
+      'message' => 'Contraseña actualizada exitosamente',
+    ]);
+  } catch (Exception $e) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'Error: ' . $e->getMessage(),
+    ], 500);
+  }
+});
+
