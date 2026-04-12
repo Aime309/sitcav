@@ -377,12 +377,15 @@ function showSection(sectionName) {
     // Save current section to localStorage
     localStorage.setItem('currentSection', sectionName);
 
-    // Update navigation - safely handle event
-    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-    if (window.event && window.event.target) {
-        const navLink = window.event.target.closest('.nav-link');
-        if (navLink) navLink.classList.add('active');
-    }
+    // Update navigation - highlight the correct link based on sectionName
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        // Check if the onclick attribute contains the sectionName
+        const onclickAttr = link.getAttribute('onclick');
+        if (onclickAttr && onclickAttr.includes(`showSection('${sectionName}')`)) {
+            link.classList.add('active');
+        }
+    });
 
     // Update sections
     document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
