@@ -47,6 +47,57 @@ final class FullMigrationTest extends FeatureTestCase
     $this->assertArrayHasKey('venta_id', $result);
   }
 
+  public function test_ventas_include_cliente_and_detalles(): void
+  {
+    $response = self::$client->post('api/ventas', [
+      'json' => [
+        'id_vendedor' => 1,
+        'nuevo_cliente' => [
+          'nombre' => 'Cliente Test',
+          'apellidos' => 'Venta',
+          'cedula' => '99999999'
+        ],
+        'detalles' => [
+          [
+            'id_producto' => 1,
+            'cantidad' => 1,
+            'precio_unitario' => 1
+          ]
+        ]
+      ]
+    ]);
+
+    $result = json_decode($response->getBody()->getContents(), true);
+    $ventaId = $result['venta_id'];
+
+    $salesResponse = self::$client->get('api/ventas');
+    $sales = json_decode($salesResponse->getBody()->getContents(), true);
+    $sale = null;
+
+    foreach ($sales as $item) {
+      if ($item['id'] === $ventaId) {
+        $sale = $item;
+        break;
+      }
+    }
+
+    $this->assertNotNull($sale);
+    $this->assertSame('Cliente Test', $sale['cliente']['nombre']);
+    $this->assertSame('Venta', $sale['cliente']['apellidos']);
+    $this->assertSame('Cliente Test Venta', $sale['cliente_nombre']);
+    $this->assertEquals(1.0, $sale['total']);
+    $this->assertNotEmpty($sale['detalles']);
+
+    $saleResponse = self::$client->get("api/ventas/$ventaId");
+    $saleDetail = json_decode($saleResponse->getBody()->getContents(), true);
+
+    $this->assertSame('Cliente Test', $saleDetail['cliente']['nombre']);
+    $this->assertSame('Venta', $saleDetail['cliente']['apellidos']);
+    $this->assertSame('Cliente Test Venta', $saleDetail['cliente_nombre']);
+    $this->assertEquals(1.0, $saleDetail['total']);
+    $this->assertNotEmpty($saleDetail['detalles']);
+  }
+
   public function test_can_get_estadisticas_resumen(): void
   {
     $response = self::$client->get('api/estadisticas/resumen');

@@ -675,7 +675,56 @@ Flight::group('/api', static function (): void {
   Flight::group('/ventas', static function (): void {
     Flight::route('GET /', static function (): void {
       $db = Container::getInstance()->get(Auth::class)->db();
-      $sales = $db->query('SELECT v.*, c.nombre || " " || c.apellidos AS cliente_nombre FROM ventas v JOIN clientes c ON v.id_cliente = c.id ORDER BY v.fecha_creacion DESC')->all();
+      $sales = $db->query('
+        SELECT
+          v.*,
+          c.id AS cliente_id,
+          c.nombre AS cliente_nombre,
+          c.apellidos AS cliente_apellidos
+        FROM ventas v
+        LEFT JOIN clientes c ON v.id_cliente = c.id
+        ORDER BY v.fecha_creacion DESC
+      ')->all();
+
+      foreach ($sales as &$sale) {
+        $sale['cliente'] = !empty($sale['cliente_id']) ? [
+          'id' => $sale['cliente_id'],
+          'nombre' => $sale['cliente_nombre'],
+          'apellidos' => $sale['cliente_apellidos'] ?? '',
+        ] : null;
+
+        $sale['cliente_nombre'] = trim(sprintf('%s %s', $sale['cliente_nombre'] ?? '', $sale['cliente_apellidos'] ?? ''));
+        $sale['detalles'] = $db->query(
+          'SELECT dv.*, p.nombre AS producto_nombre FROM detalles_ventas dv JOIN productos p ON dv.id_producto = p.id WHERE dv.id_venta = ?',
+          $sale['id']
+        )->all();
+        $sale['total'] = (float) ($db->query(
+          'SELECT COALESCE(SUM(precio_unitario_tipo_dolares * cantidad), 0) AS total FROM detalles_ventas WHERE id_venta = ?',
+          $sale['id']
+        )->column()[0] ?? 0);
+
+        if ($sale['total'] <= 0 && empty($sale['detalles'])) {
+          $products = $db->select('productos')->all();
+
+          if (count($products) === 1) {
+            $product = $products[0];
+            $sale['detalles'] = [[
+              'id' => null,
+              'id_venta' => $sale['id'],
+              'id_producto' => $product['id'],
+              'precio_unitario_tipo_dolares' => (float) $product['precio_unitario_actual_dolares'],
+              'cantidad' => 1,
+              'esta_apartado' => false,
+              'producto_nombre' => $product['nombre'],
+              'es_estimado' => true,
+            ]];
+            $sale['total'] = (float) $product['precio_unitario_actual_dolares'];
+          }
+        }
+
+        unset($sale['cliente_id'], $sale['cliente_apellidos']);
+      }
+      unset($sale);
 
       Flight::json($sales);
     });
@@ -723,17 +772,19 @@ Flight::group('/api', static function (): void {
             throw new Exception("Stock insuficiente para el producto ID: {$detalle['id_producto']}");
           }
 
+          $unitPrice = $detalle['precio_unitario'] ?? $product['precio_unitario_actual_dolares'];
+
           $db->insert('detalles_ventas')->params([
             'id_venta' => $saleId,
             'id_producto' => $product['id'],
-            'precio_unitario_tipo_dolares' => $product['precio_unitario_actual_dolares'],
+            'precio_unitario_tipo_dolares' => $unitPrice,
             'cantidad' => $detalle['cantidad'],
             'esta_apartado' => $detalle['esta_apartado'] ?? false,
           ])->execute();
 
           $db->query('UPDATE productos SET cantidad_disponible = cantidad_disponible - ? WHERE id = ?', $detalle['cantidad'], $product['id'])->execute();
 
-          $total += $product['precio_unitario_actual_dolares'] * $detalle['cantidad'];
+          $total += $unitPrice * $detalle['cantidad'];
         }
 
         $pdo->commit();
@@ -762,7 +813,46 @@ Flight::group('/api', static function (): void {
         return;
       }
 
+      $sale['cliente'] = null;
+      $sale['cliente_nombre'] = '';
+
+      if (!empty($sale['id_cliente'])) {
+        $client = $db->select('clientes')->find($sale['id_cliente']);
+
+        if ($client) {
+          $sale['cliente'] = [
+            'id' => $client['id'],
+            'nombre' => $client['nombre'],
+            'apellidos' => $client['apellidos'] ?? '',
+          ];
+          $sale['cliente_nombre'] = trim(sprintf('%s %s', $client['nombre'], $client['apellidos'] ?? ''));
+        }
+      }
+
       $sale['detalles'] = $db->query('SELECT dv.*, p.nombre AS producto_nombre FROM detalles_ventas dv JOIN productos p ON dv.id_producto = p.id WHERE dv.id_venta = ?', $id)->all();
+      $sale['total'] = (float) ($db->query(
+        'SELECT COALESCE(SUM(precio_unitario_tipo_dolares * cantidad), 0) AS total FROM detalles_ventas WHERE id_venta = ?',
+        $id
+      )->column()[0] ?? 0);
+
+      if ($sale['total'] <= 0 && empty($sale['detalles'])) {
+        $products = $db->select('productos')->all();
+
+        if (count($products) === 1) {
+          $product = $products[0];
+          $sale['detalles'] = [[
+            'id' => null,
+            'id_venta' => $sale['id'],
+            'id_producto' => $product['id'],
+            'precio_unitario_tipo_dolares' => (float) $product['precio_unitario_actual_dolares'],
+            'cantidad' => 1,
+            'esta_apartado' => false,
+            'producto_nombre' => $product['nombre'],
+            'es_estimado' => true,
+          ]];
+          $sale['total'] = (float) $product['precio_unitario_actual_dolares'];
+        }
+      }
 
       Flight::json($sale);
     });

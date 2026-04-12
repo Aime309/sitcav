@@ -919,13 +919,14 @@ async function loadVentas() {
             const fecha = new Date(venta.fecha_creacion).toLocaleDateString('es-VE');
             const clienteNombre = venta.cliente ? `${venta.cliente.nombre} ${venta.cliente.apellidos || ''}`.trim() : 'Cliente General';
 
-            // Calculate total from detalles
-            let total = 0;
-            if (venta.detalles && venta.detalles.length > 0) {
+            let total = parseFloat(venta.total);
+            if (Number.isNaN(total) && venta.detalles && venta.detalles.length > 0) {
+                total = 0;
                 venta.detalles.forEach(d => {
                     total += (parseFloat(d.precio_unitario_tipo_dolares) || 0) * (d.cantidad || 0);
                 });
             }
+            if (Number.isNaN(total)) total = 0;
 
             tr.innerHTML = `
                 <td>${venta.id}</td>
