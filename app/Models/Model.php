@@ -35,10 +35,14 @@ abstract class Model extends \Leaf\Auth\Model implements JsonSerializable
       ->query("SELECT * FROM $this->table")
       ->all();
 
-    return array_map(function (array $rows): static {
+    if (empty($rows)) {
+      return [];
+    }
+
+    return array_map(function (array $row): static {
       $model = new static;
 
-      foreach ($rows as $column => $value) {
+      foreach ($row as $column => $value) {
         $model->$column = $value;
       }
 
