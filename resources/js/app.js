@@ -1,7 +1,7 @@
 // =====================================================
 // CONFIGURATION
 // =====================================================
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = '.';
 let currentUser = null;
 let currentCarouselPosition = 0;
 let productsData = [];
