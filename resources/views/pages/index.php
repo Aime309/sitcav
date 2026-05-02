@@ -371,7 +371,7 @@
             <div class="user-avatar" id="user-avatar">U</div>
             <div class="user-details">
               <h4 id="user-name">Usuario</h4>
-              <p id="user-role">Rol</p>
+              <p id="user-role">Roles</p>
             </div>
 
             <!-- Profile Dropdown Panel -->
@@ -379,7 +379,7 @@
               <div class="profile-dropdown-header">
                 <div class="avatar-large" id="profile-avatar-large">U</div>
                 <h4 id="profile-dropdown-name">Usuario</h4>
-                <span class="role-badge" id="profile-dropdown-role">Rol</span>
+                <span class="role-badge" id="profile-dropdown-role">Roles</span>
               </div>
               <div class="profile-dropdown-menu">
                 <button
@@ -964,7 +964,7 @@
                   <th>ID</th>
                   <th>Nombre</th>
                   <th>Cédula</th>
-                  <th>Rol</th>
+                  <th>Roles</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -1573,8 +1573,8 @@
               style="background-color: #f5f5f5;">
           </div>
           <div class="form-group">
-            <label>Rol <span class="required-asterisk">*</span></label>
-            <select id="empleado-rol" required>
+            <label>Roles <span class="required-asterisk">*</span></label>
+            <select id="empleado-roles" required>
               <option value="Vendedor">Vendedor</option>
               <option value="Empleado Superior">Empleado Superior
               </option>

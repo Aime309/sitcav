@@ -73,7 +73,7 @@ async function handleLogin(event) {
             currentUser = {
                 id: data.usuario_id,
                 nombre: data.nombre,
-                rol: data.rol,
+                roles: data.roles,
                 cedula: data.cedula,
                 foto_url: data.foto_url
             };
@@ -151,7 +151,7 @@ function loginAsAnonymous() {
     currentUser = {
         id: null,
         nombre: 'Invitado',
-        rol: 'Anónimo'
+        roles: 'Anónimo'
     };
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
     loadDashboard();
@@ -175,7 +175,7 @@ function loadDashboard() {
 
     // Set user info
     document.getElementById('user-name').textContent = currentUser.nombre;
-    document.getElementById('user-role').textContent = currentUser.rol;
+    document.getElementById('user-role').textContent = currentUser.roles;
 
     // Set avatar with photo or initial
     if (currentUser.foto_url) {
@@ -196,7 +196,7 @@ function loadDashboard() {
 }
 
 function setupRolePermissions() {
-    const rol = currentUser.rol;
+    const rol = currentUser.roles;
     console.log('Current role:', rol);
     // alert('Debug: Role is ' + rol); // Temporary debug
 
@@ -542,7 +542,7 @@ async function loadProducts() {
                 <td>${stockBadge}</td>
                 <td>
                     <div class="action-btns">
-                        ${currentUser.rol !== 'Anónimo' ? `
+                        ${currentUser.roles !== 'Anónimo' ? `
                             <button class="action-btn edit" onclick="editProduct(${product.id})" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -788,7 +788,7 @@ async function loadClients() {
                 <td>${client.telefono || 'N/A'}</td>
                 <td>
                     <div class="action-btns">
-                        ${currentUser.rol !== 'Anónimo' ? `
+                        ${currentUser.roles !== 'Anónimo' ? `
                             <button class="action-btn edit" onclick="editClient(${client.id})" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -1180,10 +1180,10 @@ async function loadEmpleados() {
                 <td>${emp.id}</td>
                 <td>${emp.nombre}</td>
                 <td>${emp.cedula}</td>
-                <td><span class="badge">${emp.rol || 'Empleado'}</span></td>
+                <td><span class="badge">${emp.roles || 'Empleado'}</span></td>
                 <td>
                     <div class="action-btns">
-                        ${currentUser.rol === 'Encargado' ? `
+                        ${currentUser.roles === 'Encargado' ? `
                             <button class="action-btn edit" onclick="editEmpleado(${emp.id})" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -1251,7 +1251,7 @@ async function loadProveedores() {
                 <td>${prov.telefono || 'N/A'}</td>
                 <td>
                     <div class="action-btns">
-                        ${currentUser.rol !== 'Anónimo' ? `
+                        ${currentUser.roles !== 'Anónimo' ? `
                             <button class="action-btn edit" onclick="editProveedor(${prov.id})" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -1897,7 +1897,7 @@ async function loadEmpleados() {
                 <td>${emp.id}</td>
                 <td>${emp.nombre}</td>
                 <td>${emp.cedula}</td>
-                <td><span class="badge ${getRoleBadgeClass(emp.rol)}">${emp.rol}</span></td>
+                <td><span class="badge ${getRoleBadgeClass(emp.roles)}">${emp.roles}</span></td>
                 <td>
                     <div class="action-btns">
                         <button class="btn-icon edit" onclick="editEmpleado(${emp.id})" title="Editar Rol">
@@ -1917,8 +1917,8 @@ async function loadEmpleados() {
     }
 }
 
-function getRoleBadgeClass(rol) {
-    switch (rol) {
+function getRoleBadgeClass(roles) {
+    switch (roles) {
         case 'Encargado': return 'primary';
         case 'Empleado Superior': return 'warning';
         case 'Vendedor': return 'success';
@@ -1936,7 +1936,7 @@ async function editEmpleado(id) {
             document.getElementById('empleado-id').value = user.id;
             document.getElementById('empleado-nombre').value = user.nombre;
             document.getElementById('empleado-cedula').value = user.cedula;
-            document.getElementById('empleado-rol').value = user.rol;
+            document.getElementById('empleado-roles').value = user.roles;
 
             document.getElementById('empleado-modal').classList.add('active');
         }
@@ -1953,17 +1953,17 @@ async function saveEmpleado(event) {
     event.preventDefault();
 
     const id = document.getElementById('empleado-id').value;
-    const rol = document.getElementById('empleado-rol').value;
+    const roles = document.getElementById('empleado-roles').value;
 
     try {
         const response = await fetch(`${API_BASE_URL}/api/usuarios/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ rol: rol })
+            body: JSON.stringify({ roles: roles })
         });
 
         if (response.ok) {
-            alert('Rol de empleado actualizado exitosamente');
+            alert('Roles de empleado actualizado exitosamente');
             closeEmpleadoModal();
             loadEmpleados();
         } else {
@@ -3253,7 +3253,7 @@ function toggleProfileDropdown(event) {
     event.stopPropagation();
 
     // Check if user is 'Anónimo' - don't show dropdown for anonymous users
-    if (currentUser && currentUser.rol === 'Anónimo') {
+    if (currentUser && currentUser.roles === 'Anónimo') {
         return;
     }
 
@@ -3284,7 +3284,7 @@ function updateProfileDropdownInfo() {
         }
     }
     if (dropdownName) dropdownName.textContent = currentUser.nombre || 'Usuario';
-    if (dropdownRole) dropdownRole.textContent = currentUser.rol || 'Rol';
+    if (dropdownRole) dropdownRole.textContent = currentUser.roles || 'Rol';
 }
 
 // Close dropdown when clicking outside
@@ -3301,7 +3301,7 @@ document.addEventListener('click', function (event) {
 function openProfileEditModal(event) {
     event.stopPropagation();
 
-    if (currentUser && currentUser.rol === 'Anónimo') {
+    if (currentUser && currentUser.roles === 'Anónimo') {
         alert('El usuario anónimo no puede editar su perfil.');
         return;
     }
@@ -3529,7 +3529,7 @@ function updateUserAvatarUI(nombre, fotoUrl) {
 function openChangePasswordModal(event) {
     event.stopPropagation();
 
-    if (currentUser && currentUser.rol === 'Anónimo') {
+    if (currentUser && currentUser.roles === 'Anónimo') {
         alert('El usuario anónimo no puede cambiar su contraseña.');
         return;
     }
@@ -3640,7 +3640,7 @@ async function saveNewPassword(event) {
 function openSecurityQuestionsModal(event) {
     event.stopPropagation();
 
-    if (currentUser && currentUser.rol === 'Anónimo') {
+    if (currentUser && currentUser.roles === 'Anónimo') {
         alert('El usuario anónimo no puede configurar preguntas de seguridad.');
         return;
     }

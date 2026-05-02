@@ -284,7 +284,7 @@ Flight::group('/api', static function () use ($loadBusiness, $hydrateSale, $hydr
         'cedula' => $data->cedula,
         'nombre' => $data->nombre,
         'contrasena' => $data->contrasena ?? '123456',
-        'rol' => $data->rol ?? 'Vendedor',
+        'roles' => $data->roles ?? 'Vendedor',
         'activo' => true,
       ]);
 
@@ -314,7 +314,7 @@ Flight::group('/api', static function () use ($loadBusiness, $hydrateSale, $hydr
         $data = Flight::request()->data;
         $user['nombre'] = $data->nombre ?? $user['nombre'];
         $user['cedula'] = $data->cedula ?? $user['cedula'];
-        $user['rol'] = $data->rol ?? $user['rol'];
+        $user['roles'] = $data->roles ?? $user['roles'];
         $user['activo'] = filter_var($data->activo ?? $user['activo'], FILTER_VALIDATE_BOOL);
         $user['apellidos'] = $data->apellidos ?? $user['apellidos'];
         $user['direccion'] = $data->direccion ?? $user['direccion'];
@@ -1609,7 +1609,7 @@ Flight::route('POST /login', static function (): void {
     Flight::json([
       'success' => true,
       'message' => 'Autenticación exitosa',
-      'rol' => $user->rol,
+      'roles' => $user->roles,
       'usuario_id' => $user->id,
       'nombre' => $user->nombre,
       'cedula' => $user->cedula,
@@ -1631,7 +1631,7 @@ Flight::route('POST /register', static function (): void {
     'cedula' => $data->cedula,
     'nombre' => $data->nombre,
     'contrasena' => $data->contrasena ?? '',
-    'rol' => 'Vendedor',
+    'roles' => 'Vendedor',
     'activo' => true,
     'pregunta_1' => $data->pregunta_1,
     'pregunta_2' => $data->pregunta_2,

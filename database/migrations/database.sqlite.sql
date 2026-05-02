@@ -199,7 +199,7 @@ CREATE TABLE IF NOT EXISTS "usuarios" (
 	"id"	INTEGER NOT NULL,
 	"cedula"	VARCHAR(20) NOT NULL,
 	"contrasena"	VARCHAR(255) NOT NULL,
-	"rol"	VARCHAR(50) NOT NULL,
+	"roles"	VARCHAR(50) NOT NULL,
 	"activo"	BOOLEAN,
 	"nombre"	VARCHAR(100) NOT NULL,
 	"apellidos"	VARCHAR(100),
