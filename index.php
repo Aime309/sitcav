@@ -20,13 +20,16 @@ const ROOT_DIR = __DIR__;
 
 require_once ROOT_DIR . '/vendor/autoload.php';
 
+/** Por ejemplo sería: `"/sitcav"` en XAMPP y `""` en `composer serve` */
+define('BASE_URL', str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']));
+
 /** Por ejemplo sería: `http://localhost/sitcav` **NO INCLUYE `/` al FINAL** */
 define(
   'FULL_BASE_URL',
   Flight::request()->getScheme()
     . '://'
     . Flight::request()->host
-    . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']),
+    . BASE_URL,
 );
 
 ////////////////////////////////////////////////////////
@@ -49,7 +52,7 @@ define(
   $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '',
 );
 
-define('BASE_HREF', str_replace('index.php', '', $_SERVER['SCRIPT_NAME']));
+const BASE_HREF = BASE_URL . '/';
 
 ////////////////////////////////////////////////////
 // CONFIGURAR LEAF AUTH (módulo de autenticación) //
@@ -117,11 +120,7 @@ $guzzleConfigProperty->setValue(
 ///////////////////////
 // CONFIGURAR FLIGHT //
 ///////////////////////
-Flight::set(
-  'flight.base_url',
-  str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']),
-);
-
+Flight::set('flight.base_url', BASE_URL);
 Flight::set('flight.case_sensitive', false);
 Flight::set('flight.handle_errors', false);
 Flight::set('flight.log_errors', false);
