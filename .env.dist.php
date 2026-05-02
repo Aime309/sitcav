@@ -13,25 +13,25 @@ return [
 
   'TOKEN_SECRET' => '{token-secret}',
 
-  # ======================================================================================
-  # =           Credenciales de Google (https://console.cloud.google.com/auth)           =
-  # ======================================================================================
+  # ==================================================================
+  # = Credenciales de Google (https://console.cloud.google.com/auth) =
+  # ==================================================================
   'GOOGLE_AUTH_CLIENT_ID' => '{google-client-id}',
   'GOOGLE_AUTH_CLIENT_SECRET' => '{google-client-secret}',
 
-  # ==============================================================================================
-  # =           Credenciales de Google reCAPTCHA v2 Checkbox (https://www.google.com/recaptcha) =
-  # ==============================================================================================
-  'RECAPTCHA_SITE_KEY' => '',
-  'RECAPTCHA_SECRET_KEY' => '',
+  # ===================================================================================
+  # = Credenciales de Google reCAPTCHA v2 Checkbox (https://www.google.com/recaptcha) =
+  # ===================================================================================
+  'RECAPTCHA_SITE_KEY' => '{recaptcha-site-key}',
+  'RECAPTCHA_SECRET_KEY' => '{recaptcha-secret-key}',
 
-  # =========================================================================================
-  # =           Credenciales de Gemini (https://aistudio.google.com/app/api-keys)           =
-  # =========================================================================================
-  'GEMINI_API_KEY' => 'YOUR_API_KEY',
+  # =====================================================================
+  # = Credenciales de Gemini (https://aistudio.google.com/app/api-keys) =
+  # =====================================================================
+  'GEMINI_API_KEY' => '{gemini-api-key}',
 
   'PHPMAILER_HOST' => 'smtp.gmail.com',
-  'PHPMAILER_USERNAME' => '<usuario>@gmail.com',
+  'PHPMAILER_USERNAME' => '<username>@gmail.com',
 
   # ============================================================================================================
   # =           Contraseña para PHPMailer, se obtiene de (https://myaccount.google.com/apppasswords)           =
