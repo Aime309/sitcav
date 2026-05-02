@@ -116,6 +116,13 @@
             placeholder="Ej: 12345678" />
         </div>
         <div class="form-group">
+          <label for="register-email">Correo Electrónico</label>
+          <input
+            type="email"
+            id="register-email"
+            placeholder="Ej: usuario@empresa.com" />
+        </div>
+        <div class="form-group">
           <label for="register-password">Contraseña <span class="required-asterisk">*</span></label>
           <div class="password-wrapper">
             <input
@@ -1569,13 +1576,17 @@
               style="background-color: #f5f5f5;">
           </div>
           <div class="form-group">
-            <label>Cédula</label>
-            <input type="text" id="empleado-cedula" readonly
-              style="background-color: #f5f5f5;">
-          </div>
-          <div class="form-group">
-            <label>Roles <span class="required-asterisk">*</span></label>
-            <select id="empleado-roles" required>
+            <div class="form-group">
+              <label>Cédula</label>
+              <input type="text" id="empleado-cedula" readonly style="background: #f5f5f5;">
+            </div>
+            <div class="form-group">
+              <label>Correo Electrónico</label>
+              <input type="email" id="empleado-email" placeholder="usuario@empresa.com">
+            </div>
+            <div class="form-group">
+              <label>Roles <span class="required-asterisk">*</span></label>
+              <select id="empleado-roles" required>
               <option value="Vendedor">Vendedor</option>
               <option value="Empleado Superior">Empleado Superior
               </option>
@@ -2162,6 +2173,10 @@
           <div class="form-group">
             <label>Cédula <span class="required-asterisk">*</span></label>
             <input type="text" id="profile-cedula" required>
+          </div>
+          <div class="form-group">
+            <label>Correo Electrónico</label>
+            <input type="email" id="profile-email">
           </div>
           <div class="form-group">
             <label>Dirección</label>

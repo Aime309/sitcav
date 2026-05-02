@@ -282,6 +282,7 @@ Flight::group('/api', static function () use ($loadBusiness, $hydrateSale, $hydr
 
       $user = $auth->createUserFor([
         'cedula' => $data->cedula,
+        'email' => $data->email ?? null,
         'nombre' => $data->nombre,
         'contrasena' => $data->contrasena ?? '123456',
         'roles' => $data->roles ?? 'Vendedor',
@@ -314,6 +315,7 @@ Flight::group('/api', static function () use ($loadBusiness, $hydrateSale, $hydr
         $data = Flight::request()->data;
         $user['nombre'] = $data->nombre ?? $user['nombre'];
         $user['cedula'] = $data->cedula ?? $user['cedula'];
+        $user['email'] = $data->email ?? $user['email'];
         $user['roles'] = $data->roles ?? $user['roles'];
         $user['activo'] = filter_var($data->activo ?? $user['activo'], FILTER_VALIDATE_BOOL);
         $user['apellidos'] = $data->apellidos ?? $user['apellidos'];
@@ -1613,6 +1615,7 @@ Flight::route('POST /login', static function (): void {
       'usuario_id' => $user->id,
       'nombre' => $user->nombre,
       'cedula' => $user->cedula,
+      'email' => $user->email,
       'foto_url' => $user->foto_url,
     ]);
   } else {
@@ -1629,6 +1632,7 @@ Flight::route('POST /register', static function (): void {
 
   $userWasRegisteredSuccessfully = $auth->register([
     'cedula' => $data->cedula,
+    'email' => $data->email ?? null,
     'nombre' => $data->nombre,
     'contrasena' => $data->contrasena ?? '',
     'roles' => 'Vendedor',

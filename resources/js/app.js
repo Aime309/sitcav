@@ -23,6 +23,44 @@ function handleImageError(img) {
     img.style.display = 'block'; // Asegurar que sea visible
 }
 
+function isAuthenticatedClientUser(user = currentUser) {
+    if (!user) {
+        return false;
+    }
+
+    if (user.isAuthenticatedClient === true) {
+        return true;
+    }
+
+    if (Array.isArray(user.roles)) {
+        return user.roles.includes('CLIENT') || user.roles.includes('Cliente');
+    }
+
+    return user.roles === 'CLIENT'
+        || user.roles === 'Cliente'
+        || user.roles === '["CLIENT"]';
+}
+
+function isAnonymousUser(user = currentUser) {
+    return !user || user.roles === 'Anónimo';
+}
+
+function updateEcommerceAuthLink() {
+    const authLink = document.getElementById('ecommerce-auth-link');
+
+    if (!authLink) {
+        return;
+    }
+
+    if (isAuthenticatedClientUser()) {
+        authLink.href = 'salir';
+        authLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> Cerrar Sesión';
+    } else {
+        authLink.href = 'oauth2/google';
+        authLink.innerHTML = '<i class="fab fa-google"></i> Iniciar Sesión';
+    }
+}
+
 // =======================================================================
 // AUTHENTICATION & NAVIGATION
 // =====================================================
@@ -75,6 +113,7 @@ async function handleLogin(event) {
                 nombre: data.nombre,
                 roles: data.roles,
                 cedula: data.cedula,
+                email: data.email,
                 foto_url: data.foto_url
             };
             console.log('currentUser set to:', JSON.stringify(currentUser));
@@ -95,6 +134,7 @@ async function handleRegister(event) {
 
     const nombre = document.getElementById('register-nombre').value;
     const cedula = document.getElementById('register-cedula').value;
+    const email = document.getElementById('register-email').value;
     const password = document.getElementById('register-password').value;
     const passwordConfirm = document.getElementById('register-password-confirm').value;
 
@@ -117,6 +157,7 @@ async function handleRegister(event) {
             body: JSON.stringify({
                 nombre,
                 cedula,
+                email,
                 contrasena: password,
                 pregunta_1: document.getElementById('register-pregunta-1').value,
                 respuesta_1: document.getElementById('register-respuesta-1').value,
@@ -148,8 +189,16 @@ async function handleRegister(event) {
 }
 
 function handleLogout() {
+    const shouldRedirectToLogout = !isAnonymousUser();
     currentUser = null;
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentSection');
+
+    if (shouldRedirectToLogout) {
+        window.location.href = 'salir';
+        return;
+    }
+
     showWelcome();
 }
 
@@ -168,10 +217,13 @@ function loadDashboard() {
     document.getElementById('user-role').textContent = currentUser.roles;
 
     // Toggle guest login button
-    const isGuest = currentUser.roles === 'Anónimo';
-    document.getElementById('guest-login-container').style.display = isGuest ? 'block' : 'none';
-    document.getElementById('user-details-container').style.display = isGuest ? 'none' : 'block';
-    document.getElementById('user-avatar').style.display = isGuest ? 'none' : 'block';
+    const isGuest = isAnonymousUser();
+    const isAuthenticatedClient = isAuthenticatedClientUser();
+    const showGuestLoginContainer = isGuest || isAuthenticatedClient;
+    document.getElementById('guest-login-container').style.display = showGuestLoginContainer ? 'block' : 'none';
+    document.getElementById('user-details-container').style.display = showGuestLoginContainer ? 'none' : 'block';
+    document.getElementById('user-avatar').style.display = showGuestLoginContainer ? 'none' : 'block';
+    updateEcommerceAuthLink();
 
     // Set avatar with photo or initial
     if (currentUser.foto_url) {
@@ -197,7 +249,7 @@ function setupRolePermissions() {
     // alert('Debug: Role is ' + rol); // Temporary debug
 
     // Anónimo solo puede ver Dashboard
-    if (rol === 'Anónimo') {
+    if (rol === 'Anónimo' || rol === 'Cliente') {
         const navIds = [
             'nav-empleados', 'nav-proveedores', 'nav-compras', 'nav-backup',
             'nav-productos', 'nav-clientes', 'nav-ventas', 'nav-consultas',
@@ -1416,10 +1468,20 @@ async function createBackup() {
 window.addEventListener('DOMContentLoaded', () => {
     // Check if user is already logged in
     const savedUser = localStorage.getItem('currentUser');
+    const serverAuthenticatedUser = window.ECOMMERCE_AUTH_USER ?? null;
     const path = window.location.pathname;
     const isDashboardPath = path.includes('/dashboard');
 
-    if (savedUser) {
+    if (serverAuthenticatedUser) {
+        currentUser = serverAuthenticatedUser;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        loadDashboard();
+
+        const lastSection = localStorage.getItem('currentSection');
+        if (lastSection && lastSection !== 'dashboard') {
+            showSection(lastSection);
+        }
+    } else if (savedUser) {
         currentUser = JSON.parse(savedUser);
         loadDashboard();
 
@@ -1946,6 +2008,7 @@ async function editEmpleado(id) {
             document.getElementById('empleado-id').value = user.id;
             document.getElementById('empleado-nombre').value = user.nombre;
             document.getElementById('empleado-cedula').value = user.cedula;
+            document.getElementById('empleado-email').value = user.email || '';
             document.getElementById('empleado-roles').value = user.roles;
 
             document.getElementById('empleado-modal').classList.add('active');
@@ -1964,12 +2027,16 @@ async function saveEmpleado(event) {
 
     const id = document.getElementById('empleado-id').value;
     const roles = document.getElementById('empleado-roles').value;
+    const email = document.getElementById('empleado-email').value;
 
     try {
         const response = await fetch(`${API_BASE_URL}/api/usuarios/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ roles: roles })
+            body: JSON.stringify({ 
+                roles: roles,
+                email: email
+            })
         });
 
         if (response.ok) {
@@ -3263,7 +3330,7 @@ function toggleProfileDropdown(event) {
     event.stopPropagation();
 
     // Check if user is 'Anónimo' - don't show dropdown for anonymous users
-    if (currentUser && currentUser.roles === 'Anónimo') {
+    if (isAnonymousUser() || isAuthenticatedClientUser()) {
         return;
     }
 
@@ -3424,6 +3491,7 @@ async function saveProfileChanges(event) {
     const nombre = document.getElementById('profile-nombre').value;
     const apellidos = document.getElementById('profile-apellidos').value;
     const cedula = document.getElementById('profile-cedula').value;
+    const email = document.getElementById('profile-email').value;
     const direccion = document.getElementById('profile-direccion').value;
     const fotoUrl = document.getElementById('profile-foto-url').value;
     const fotoFile = document.getElementById('profile-foto-file').files[0];
