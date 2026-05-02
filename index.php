@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 use App\Enums\FormRule;
 use App\Enums\Role;
-use App\Enums\SessionKey;
 use flight\Container;
 use Leaf\Auth;
 use Leaf\Auth\User;
 use Leaf\Db;
-use Leaf\Flash;
 use Leaf\Form;
 use Leaf\Helpers\Password;
 
@@ -200,14 +198,13 @@ Flight::map('error', static function (Throwable $error): never {
   }
 
   http_response_code(500);
-
-  Flash::set(
-    ['Ha ocurrido un error inesperado. Por favor intente nuevamente más tarde.'],
-    SessionKey::ERROR_MESSAGES->name,
-  );
-
   error_log($error->__toString());
-  Flight::redirect('/');
+
+  Flight::render('pages/500', key: 'slot');
+
+  Flight::render('layouts/layout', [
+    'title' => 'Error interno del servidor',
+  ]);
 
   exit;
 });
