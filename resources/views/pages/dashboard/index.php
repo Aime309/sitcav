@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width" />
     <title>Sistema de Gestión Administrativo</title>
     <base href="<?= BASE_HREF ?>" />
+    <link rel="icon" type="image/png" href="./resources/images/favicon.png" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -19,8 +20,8 @@
     <div id="welcome-screen" class="welcome-screen">
       <div
         class="logo-icon"
-        style="margin: 0 auto 20px; width: 80px; height: 80px; font-size: 2.5em;">
-        <i class="fas fa-store"></i>
+        style="margin: 0 auto 20px; width: 220px; height: 80px;">
+        <img src="./resources/images/logo-horizontal.png" alt="SITCAV" />
       </div>
       <h1>Sistema de Gestión</h1>
       <p>
@@ -253,7 +254,7 @@
       <aside class="sidebar">
         <div class="logo">
           <div class="logo-icon">
-            <i class="fas fa-store"></i>
+            <img src="./resources/images/favicon.png" alt="SITCAV" />
           </div>
           <div class="logo-text">
             <h2>SGAdmin</h2>

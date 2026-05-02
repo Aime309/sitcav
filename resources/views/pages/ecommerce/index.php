@@ -44,6 +44,7 @@ if ($authenticatedUser !== null) {
     <meta name="color-scheme" content="light dark" />
     <title>SITCAV Ecommerce</title>
     <base href="<?= BASE_HREF ?>" />
+    <link rel="icon" type="image/png" href="./resources/images/favicon.png" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -396,7 +397,7 @@ if ($authenticatedUser !== null) {
       <header class="storefront-header">
         <div class="storefront-brand">
           <div class="logo-icon">
-            <i class="fas fa-store"></i>
+            <img src="./resources/images/favicon.png" alt="SITCAV" />
           </div>
           <div class="storefront-brand-copy">
             <h1>SITCAV Ecommerce</h1>
