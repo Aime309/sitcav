@@ -118,7 +118,13 @@ namespace {
       return ['success' => false, 'message' => 'Debes ingresar un correo electrónico válido.'];
     }
 
-    if (!preg_match(FormRule::PASSWORD->getPattern(), $password)) {
+    $passwordRule = FormRule::PASSWORD->getHandler();
+
+    if (!is_string($passwordRule)) {
+      throw new LogicException('La regla PASSWORD debe usar una expresión regular.');
+    }
+
+    if (!preg_match($passwordRule, $password)) {
       return ['success' => false, 'message' => FormRule::PASSWORD->getMessage()];
     }
 
