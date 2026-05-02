@@ -90,7 +90,7 @@ if ($dashboardAuthenticatedUser !== null) {
       <div
         class="logo-icon logo-icon--plain"
         style="margin: 0 auto 20px; width: 220px; height: 80px;">
-        <img src="./resources/images/logo-horizontal.png" alt="SITCAV" />
+        <span class="logo-image" role="img" aria-label="SITCAV"></span>
       </div>
       <h1>Sistema de Gestión</h1>
       <p>
