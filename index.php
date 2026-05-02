@@ -76,17 +76,17 @@ $auth->config(
 $auth->config('password.verify', Password::verify(...));
 $auth->config('password.key', 'password');
 $auth->config('unique', ['email']);
-$auth->config('hidden', []);
+$auth->config('hidden', ['field.id', 'field.password']);
 $auth->config('session', true);
-$auth->config('session.lifetime', 0);
+$auth->config('session.lifetime', 60 * 60 * 24); // 1 día
 
 $auth->config('session.cookie', [
-  'secure' => false,
+  'secure' => true,
   'httponly' => true,
-  'samesite' => 'Lax',
+  'samesite' => 'lax',
 ]);
 
-$auth->config('token.lifetime', null);
+$auth->config('token.lifetime', $auth->config('session.lifetime'));
 $auth->config('token.secret', $_ENV['TOKEN_SECRET']);
 
 $auth->config('messages.loginParamsError', 'Cédula o contraseña incorrecta');
