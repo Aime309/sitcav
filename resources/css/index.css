@@ -136,6 +136,11 @@ body {
   margin-bottom: 20px;
 }
 
+.form-group--recaptcha {
+  display: flex;
+  justify-content: center;
+}
+
 .form-group label {
   display: block;
   margin-bottom: 8px;

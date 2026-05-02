@@ -1,3 +1,9 @@
+<?php
+
+declare(strict_types=1);
+
+$dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
+?>
 <!doctype html>
 <html lang="es">
 
@@ -12,6 +18,9 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <?php if ($dashboardRecaptchaSiteKey !== ''): ?>
+      <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+    <?php endif; ?>
     <link rel="stylesheet" href="./resources/css/index.css?id=<?= RESOURCES_ID ?>" />
   </head>
 
@@ -77,6 +86,14 @@
             ¿Olvidaste tu contraseña?
           </a>
         </div>
+        <?php if ($dashboardRecaptchaSiteKey !== ''): ?>
+          <div class="form-group form-group--recaptcha">
+            <div
+              class="g-recaptcha"
+              data-sitekey="<?= htmlspecialchars($dashboardRecaptchaSiteKey, ENT_QUOTES, 'UTF-8') ?>"
+              data-dashboard-widget="login"></div>
+          </div>
+        <?php endif; ?>
         <div class="form-actions">
           <button type="button" class="btn btn-outline" onclick="showWelcome()">
             <i class="fas fa-arrow-left"></i>
@@ -231,6 +248,14 @@
               placeholder="Respuesta"
               style="margin-top: 5px;" />
           </div>
+          <?php if ($dashboardRecaptchaSiteKey !== ''): ?>
+            <div class="form-group form-group--recaptcha">
+              <div
+                class="g-recaptcha"
+                data-sitekey="<?= htmlspecialchars($dashboardRecaptchaSiteKey, ENT_QUOTES, 'UTF-8') ?>"
+                data-dashboard-widget="register"></div>
+            </div>
+          <?php endif; ?>
           <div class="form-actions">
             <button
               type="button"

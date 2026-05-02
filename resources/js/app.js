@@ -5,6 +5,7 @@ const API_BASE_URL = ".";
 let currentUser = null;
 let currentCarouselPosition = 0;
 let productsData = [];
+const recaptchaWidgetIds = {};
 
 // Placeholder SVG para imágenes rotas (data URI)
 const PLACEHOLDER_IMAGE =
@@ -65,6 +66,89 @@ function updateEcommerceAuthLink() {
   }
 }
 
+function renderDashboardRecaptchaWidgets() {
+  if (typeof grecaptcha === "undefined") {
+    return;
+  }
+
+  document
+    .querySelectorAll(".g-recaptcha[data-dashboard-widget]")
+    .forEach((container) => {
+      if (container.dataset.widgetRendered === "true" || !container.dataset.sitekey) {
+        return;
+      }
+
+      recaptchaWidgetIds[container.dataset.dashboardWidget] = grecaptcha.render(
+        container,
+        {
+          sitekey: container.dataset.sitekey,
+        },
+      );
+
+      container.dataset.widgetRendered = "true";
+    });
+}
+
+function getDashboardRecaptchaToken(widgetName) {
+  const container = document.querySelector(
+    `.g-recaptcha[data-dashboard-widget="${widgetName}"]`,
+  );
+
+  if (!container) {
+    return null;
+  }
+
+  if (typeof grecaptcha === "undefined") {
+    return "";
+  }
+
+  const widgetId = recaptchaWidgetIds[widgetName];
+
+  if (widgetId === undefined) {
+    return "";
+  }
+
+  return grecaptcha.getResponse(widgetId);
+}
+
+function resetDashboardRecaptcha(widgetName) {
+  if (typeof grecaptcha === "undefined") {
+    return;
+  }
+
+  const widgetId = recaptchaWidgetIds[widgetName];
+
+  if (widgetId !== undefined) {
+    grecaptcha.reset(widgetId);
+  }
+}
+
+function validateDashboardRecaptcha(widgetName, errorDiv) {
+  const container = document.querySelector(
+    `.g-recaptcha[data-dashboard-widget="${widgetName}"]`,
+  );
+
+  if (!container) {
+    return true;
+  }
+
+  if (typeof grecaptcha === "undefined") {
+    errorDiv.textContent = "El reCAPTCHA aún se está cargando.";
+    errorDiv.style.display = "block";
+    return false;
+  }
+
+  const token = getDashboardRecaptchaToken(widgetName);
+
+  if (!token) {
+    errorDiv.textContent = "Debes completar el reCAPTCHA.";
+    errorDiv.style.display = "block";
+    return false;
+  }
+
+  return true;
+}
+
 // =======================================================================
 // AUTHENTICATION & NAVIGATION
 // =====================================================
@@ -79,12 +163,14 @@ function showLogin() {
   document.getElementById("welcome-screen").classList.add("hidden");
   document.getElementById("login-form").classList.remove("hidden");
   document.getElementById("register-form").classList.add("hidden");
+  renderDashboardRecaptchaWidgets();
 }
 
 function showRegister() {
   document.getElementById("welcome-screen").classList.add("hidden");
   document.getElementById("login-form").classList.add("hidden");
   document.getElementById("register-form").classList.remove("hidden");
+  renderDashboardRecaptchaWidgets();
 }
 
 async function handleLogin(event) {
@@ -94,6 +180,14 @@ async function handleLogin(event) {
   const password = document.getElementById("login-password").value;
   const errorDiv = document.getElementById("login-error");
 
+  errorDiv.style.display = "none";
+
+  if (!validateDashboardRecaptcha("login", errorDiv)) {
+    return;
+  }
+
+  const recaptchaToken = getDashboardRecaptchaToken("login");
+
   try {
     const response = await fetch(`${API_BASE_URL}/login`, {
       method: "POST",
@@ -101,6 +195,7 @@ async function handleLogin(event) {
       body: JSON.stringify({
         usuario: cedula,
         contrasena: password,
+        recaptcha_token: recaptchaToken,
       }),
     });
 
@@ -126,10 +221,12 @@ async function handleLogin(event) {
     } else {
       errorDiv.textContent = data.message;
       errorDiv.style.display = "block";
+      resetDashboardRecaptcha("login");
     }
   } catch (error) {
     errorDiv.textContent = "Error de conexión con el servidor";
     errorDiv.style.display = "block";
+    resetDashboardRecaptcha("login");
   }
 }
 
@@ -156,6 +253,12 @@ async function handleRegister(event) {
     return;
   }
 
+  if (!validateDashboardRecaptcha("register", errorDiv)) {
+    return;
+  }
+
+  const recaptchaToken = getDashboardRecaptchaToken("register");
+
   try {
     const response = await fetch(`${API_BASE_URL}/register`, {
       method: "POST",
@@ -171,6 +274,7 @@ async function handleRegister(event) {
         respuesta_2: document.getElementById("register-respuesta-2").value,
         pregunta_3: document.getElementById("register-pregunta-3").value,
         respuesta_3: document.getElementById("register-respuesta-3").value,
+        recaptcha_token: recaptchaToken,
       }),
     });
 
@@ -180,6 +284,7 @@ async function handleRegister(event) {
       successDiv.textContent = "Registro exitoso! Redirigiendo al login...";
       successDiv.style.display = "block";
       document.getElementById("register-form").querySelector("form").reset();
+      resetDashboardRecaptcha("register");
       setTimeout(() => {
         showLogin();
         document.getElementById("login-cedula").value = cedula;
@@ -187,10 +292,12 @@ async function handleRegister(event) {
     } else {
       errorDiv.textContent = data.message;
       errorDiv.style.display = "block";
+      resetDashboardRecaptcha("register");
     }
   } catch (error) {
     errorDiv.textContent = "Error de conexión con el servidor";
     errorDiv.style.display = "block";
+    resetDashboardRecaptcha("register");
   }
 }
 
@@ -1649,6 +1756,7 @@ async function createBackup() {
 // INITIALIZATION
 // =====================================================
 window.addEventListener("DOMContentLoaded", () => {
+  renderDashboardRecaptchaWidgets();
   // Check if user is already logged in
   const savedUser = localStorage.getItem("currentUser");
   const serverAuthenticatedUser = window.ECOMMERCE_AUTH_USER ?? null;
@@ -1685,6 +1793,10 @@ window.addEventListener("DOMContentLoaded", () => {
     // Show welcome screen on /dashboard if not logged in
     showWelcome();
   }
+});
+
+window.addEventListener("load", () => {
+  renderDashboardRecaptchaWidgets();
 });
 
 // Password Toggle Function

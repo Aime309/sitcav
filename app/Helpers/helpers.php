@@ -42,4 +42,70 @@ namespace Leaf {
 }
 
 namespace {
+  function verifyRecaptchaToken(?string $token, ?string $remoteIp = null): array
+  {
+    $siteKey = trim(strval(\Leaf\_env('RECAPTCHA_SITE_KEY', '')));
+    $secretKey = trim(strval(\Leaf\_env('RECAPTCHA_SECRET_KEY', '')));
+
+    if ($siteKey === '' || $secretKey === '') {
+      return [
+        'success' => true,
+        'skipped' => true,
+      ];
+    }
+
+    if ($token === null || trim($token) === '') {
+      return [
+        'success' => false,
+        'message' => 'Debes completar el reCAPTCHA.',
+      ];
+    }
+
+    $client = new \GuzzleHttp\Client([
+      'base_uri' => 'https://www.google.com',
+      'timeout' => 10,
+    ]);
+
+    try {
+      $response = $client->post('/recaptcha/api/siteverify', [
+        'form_params' => [
+          'secret' => $secretKey,
+          'response' => $token,
+          'remoteip' => $remoteIp,
+        ],
+      ]);
+    } catch (\GuzzleHttp\Exception\GuzzleException $exception) {
+      error_log("Error al validar reCAPTCHA: {$exception->getMessage()}");
+
+      return [
+        'success' => false,
+        'message' => 'No se pudo validar el reCAPTCHA.',
+      ];
+    }
+
+    $payload = json_decode(strval($response->getBody()), true);
+
+    if (!is_array($payload)) {
+      error_log('La respuesta de reCAPTCHA no se pudo decodificar.');
+
+      return [
+        'success' => false,
+        'message' => 'No se pudo validar el reCAPTCHA.',
+      ];
+    }
+
+    if (($payload['success'] ?? false) !== true) {
+      error_log('reCAPTCHA inválido: ' . json_encode($payload));
+
+      return [
+        'success' => false,
+        'message' => 'La validación de reCAPTCHA falló.',
+      ];
+    }
+
+    return [
+      'success' => true,
+      'skipped' => false,
+    ];
+  }
 }

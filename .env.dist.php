@@ -22,6 +22,12 @@ return [
   'GOOGLE_AUTH_CLIENT_ID' => '{google-client-id}',
   'GOOGLE_AUTH_CLIENT_SECRET' => '{google-client-secret}',
 
+  # ==============================================================================================
+  # =           Credenciales de Google reCAPTCHA v2 Checkbox (https://www.google.com/recaptcha) =
+  # ==============================================================================================
+  'RECAPTCHA_SITE_KEY' => '',
+  'RECAPTCHA_SECRET_KEY' => '',
+
   # =========================================================================================
   # =           Credenciales de Gemini (https://aistudio.google.com/app/api-keys)           =
   # =========================================================================================

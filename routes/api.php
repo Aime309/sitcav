@@ -1600,10 +1600,24 @@ Flight::group('/api', static function () use ($loadBusiness, $hydrateSale, $hydr
 
 Flight::route('POST /login', static function (): void {
   $data = Flight::request()->data;
+  $auth = Container::getInstance()->get(Auth::class);
+
+  if (!$auth->user()) {
+    $recaptchaValidation = verifyRecaptchaToken(
+      $data->recaptcha_token ?? null,
+      $_SERVER['REMOTE_ADDR'] ?? null,
+    );
+
+    if (!$recaptchaValidation['success']) {
+      Flight::jsonHalt([
+        'success' => false,
+        'message' => $recaptchaValidation['message'],
+      ], 400);
+    }
+  }
+
   $idCard = $data->usuario;
   $password = $data->contrasena;
-
-  $auth = Container::getInstance()->get(Auth::class);
   $auth->login(['cedula' => $idCard, 'contrasena' => $password, 'activo' => true]);
   $user = $auth->user();
 
@@ -1628,6 +1642,18 @@ Flight::route('POST /login', static function (): void {
 
 Flight::route('POST /register', static function (): void {
   $data = Flight::request()->data;
+  $recaptchaValidation = verifyRecaptchaToken(
+    $data->recaptcha_token ?? null,
+    $_SERVER['REMOTE_ADDR'] ?? null,
+  );
+
+  if (!$recaptchaValidation['success']) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => $recaptchaValidation['message'],
+    ], 400);
+  }
+
   $auth = Container::getInstance()->get(Auth::class);
 
   $userWasRegisteredSuccessfully = $auth->register([
