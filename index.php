@@ -21,16 +21,13 @@ const ROOT_DIR = __DIR__;
 require_once ROOT_DIR . '/vendor/autoload.php';
 
 /** Por ejemplo sería: `"/sitcav"` en XAMPP y `""` en `composer serve` */
-define('BASE_URL', str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']));
+define('BASE_URL', Flight::request()->base === '/' ? '' : Flight::request()->base);
 
 /** Por ejemplo sería: `http://localhost/sitcav` **NO INCLUYE `/` al FINAL** */
-define(
-  'FULL_BASE_URL',
-  Flight::request()->getScheme()
-    . '://'
-    . Flight::request()->host
-    . BASE_URL,
-);
+define('FULL_BASE_URL', Flight::request()->getBaseUrl() . BASE_URL);
+
+/** @var 'development'|'production' */
+define('ENVIRONMENT', str_starts_with(Flight::request()->host, 'localhost') ? 'development' : 'production');
 
 ////////////////////////////////////////////////////////
 // CARGAR VARIABLES DE ENTORNO - ver archivo .env.php //
@@ -49,7 +46,7 @@ $_ENV['APP_URL'] = FULL_BASE_URL;
 ////////////////////////////
 define(
   'RESOURCES_ID',
-  $_ENV['ENVIRONMENT'] === 'development' ? uniqid() : '',
+  ENVIRONMENT === 'development' ? uniqid() : '',
 );
 
 const BASE_HREF = BASE_URL . '/';
@@ -164,13 +161,13 @@ Flight::registerContainerHandler($container);
 // CONFIGURAR CONTROL DE ERRORES //
 ///////////////////////////////////
 error_reporting(
-  $_ENV['ENVIRONMENT'] === 'development'
+  ENVIRONMENT === 'development'
     ? E_ALL
     : E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED & ~E_STRICT,
 );
 
-ini_set('display_errors', $_ENV['ENVIRONMENT'] === 'development');
-ini_set('display_startup_errors', $_ENV['ENVIRONMENT'] === 'development');
+ini_set('display_errors', ENVIRONMENT === 'development');
+ini_set('display_startup_errors', ENVIRONMENT === 'development');
 ini_set('html_errors', true);
 ini_set('log_errors', true);
 ini_set('ignore_repeated_source', true);
@@ -217,7 +214,7 @@ Flight::map('notFound', static function (): void {
 /////////////////////////////////////
 // CONFIGURAR GENERACIÓN DE FECHAS //
 /////////////////////////////////////
-date_default_timezone_set($_ENV['TIMEZONE']);
+date_default_timezone_set('America/Caracas');
 
 //////////////////
 // CARGAR RUTAS //

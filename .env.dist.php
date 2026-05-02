@@ -12,8 +12,6 @@ return [
   'DB_DATABASE' => __DIR__ . '/database/database.sqlite',
 
   'TOKEN_SECRET' => '{token-secret}',
-  'ENVIRONMENT' => 'development',
-  'TIMEZONE' => 'America/Caracas',
 
   # ======================================================================================
   # =           Credenciales de Google (https://console.cloud.google.com/auth)           =
