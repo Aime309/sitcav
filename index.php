@@ -56,9 +56,9 @@ define('BASE_HREF', str_replace('index.php', '', $_SERVER['SCRIPT_NAME']));
 ////////////////////////////////////////////////////
 $auth = Container::getInstance()->singleton(Auth::class)->get(Auth::class);
 $auth->config('id.key', 'id');
-$auth->config('db.table', 'usuarios');
+$auth->config('db.table', 'users');
 $auth->config('roles.key', 'roles');
-$auth->config('timestamps', false);
+$auth->config('timestamps', true);
 $auth->config('timestamps.format', 'YYYY-MM-DD HH:mm:ss');
 
 $auth->config(
@@ -71,7 +71,7 @@ $auth->config(
 );
 
 $auth->config('password.verify', Password::verify(...));
-$auth->config('password.key', 'contrasena');
+$auth->config('password.key', 'password');
 $auth->config('unique', ['cedula']);
 $auth->config('hidden', []);
 $auth->config('session', true);

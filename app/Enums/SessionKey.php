@@ -7,4 +7,5 @@ namespace App\Enums;
 enum SessionKey
 {
   case ERROR_MESSAGES;
+  case OAUTH2_STATE;
 }
