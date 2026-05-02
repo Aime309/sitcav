@@ -136,6 +136,8 @@ Flight::set('flight.views.path', ROOT_DIR . '/resources/views');
 Flight::set('flight.views.extension', '.php');
 Flight::set('flight.content_length', true);
 Flight::set('flight.v2.output_buffering', false);
+Flight::set('flight.debug', true);
+Flight::set('flight.allow_method_override', true);
 Flight::view()->preserveVars = false;
 
 //////////////////////////////
@@ -159,15 +161,28 @@ foreach (glob(ROOT_DIR . '/database/migrations/*.sql') as $sqlFilePath) {
 error_reporting(
   ENVIRONMENT === 'development'
     ? E_ALL
-    : E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED & ~E_STRICT,
+    : E_ALL & ~E_DEPRECATED & ~E_STRICT,
 );
 
 ini_set('display_errors', ENVIRONMENT === 'development');
 ini_set('display_startup_errors', ENVIRONMENT === 'development');
-ini_set('html_errors', true);
 ini_set('log_errors', true);
+ini_set('ignore_repeated_errors', true);
 ini_set('ignore_repeated_source', true);
+ini_set('report_memleaks', true);
+ini_set('report_zend_debug', false);
+ini_set('xmlrpc_errors', false);
+ini_set('xmlrpc_error_number', false);
+ini_set('html_errors', true);
+ini_set('docref_root', '/phpmanual/');
+ini_set('docref_ext', '.html');
+ini_set('error_prepend_string', '<span style="color: #ff0000">');
+ini_set('error_append_string', '</span>');
 ini_set('error_log', ROOT_DIR . '/storage/logs/php_errors.log');
+ini_set('syslog.ident', 'php');
+ini_set('syslog.facility', 'user');
+ini_set('syslog.filter', 'ascii');
+ini_set('windows.show_crt_warning', false);
 
 Flight::map('error', static function (Throwable $error): never {
   if (str_contains($error->getPrevious()?->getMessage() ?: $error->getMessage(), User::class)) {
@@ -178,8 +193,8 @@ Flight::map('error', static function (Throwable $error): never {
   }
 
   if (str_contains($error->getMessage(), 'Template file not found')) {
-    Flight::notFound();
     error_log($error->__toString());
+    Flight::notFound();
 
     exit;
   }
