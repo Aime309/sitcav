@@ -72,7 +72,7 @@ $auth->config(
 
 $auth->config('password.verify', Password::verify(...));
 $auth->config('password.key', 'password');
-$auth->config('unique', ['cedula']);
+$auth->config('unique', ['email']);
 $auth->config('hidden', []);
 $auth->config('session', true);
 $auth->config('session.lifetime', 0);
@@ -141,7 +141,10 @@ if ($pdo instanceof PDO) {
   $auth->dbConnection($pdo);
 }
 
-foreach (glob(__DIR__ . '/database/migrations/*.sql') as $sqlFilePath) {
+//////////////////////////////
+// EJECUTAR LAS MIGRACIONES //
+//////////////////////////////
+foreach (glob(ROOT_DIR . '/database/migrations/*.sql') as $sqlFilePath) {
   $sql = file_get_contents($sqlFilePath);
 
   if ($sql === false) {
@@ -179,6 +182,7 @@ ini_set('error_log', ROOT_DIR . '/storage/logs/php_errors.log');
 
 Flight::map('error', static function (Throwable $error): never {
   if (str_contains($error->getPrevious()?->getMessage() ?: $error->getMessage(), User::class)) {
+    error_log($error->__toString());
     Flight::redirect('/salir');
 
     exit;
