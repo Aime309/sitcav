@@ -100,8 +100,45 @@ $auth->createRoles([
 // CONFIGURAR LEAF FORM (módulo de validaciones) //
 ///////////////////////////////////////////////////
 $form = Container::getInstance()->singleton(Form::class)->get(Form::class);
-$form->rule('password', passwordPolicyPattern(), passwordPolicyMessage());
-$form->message('min', 'El campo {Field} debe tener al menos %s caracteres.');
+$form->addRule('password', passwordPolicyPattern(), passwordPolicyMessage());
+$form->message([
+  'required' => 'El campo {Field} es obligatorio.',
+  'email' => 'El campo {Field} debe ser un correo electrónico válido.',
+  'alpha' => 'El campo {Field} solo debe contener letras y espacios.',
+  'text' => 'El campo {Field} solo debe contener letras y espacios.',
+  'string' => 'El campo {Field} solo debe contener letras y espacios.',
+  'textonly' => 'El campo {Field} solo debe contener letras.',
+  'alphanum' => 'El campo {Field} solo debe contener letras, números y espacios.',
+  'alphadash' => 'El campo {Field} solo debe contener letras, números, guiones y guiones bajos.',
+  'username' => 'El campo {Field} solo debe contener letras, números y guiones bajos.',
+  'number' => 'El campo {Field} solo debe contener números.',
+  'numeric' => 'El campo {Field} debe ser numérico.',
+  'float' => 'El campo {Field} solo debe contener números decimales.',
+  'hardfloat' => 'El campo {Field} solo debe contener números decimales.',
+  'date' => 'El campo {Field} debe ser una fecha válida.',
+  'min' => 'El campo {Field} debe tener al menos %s caracteres.',
+  'max' => 'El campo {Field} no debe exceder %s caracteres.',
+  'between' => 'El campo {Field} debe tener entre %s y %s caracteres.',
+  'match' => 'El campo {Field} debe coincidir con el campo %s.',
+  'matchesvalueof' => 'El campo {Field} debe coincidir con el valor de %s.',
+  'contains' => 'El campo {Field} debe contener %s.',
+  'boolean' => 'El campo {Field} debe ser un valor booleano.',
+  'truefalse' => 'El campo {Field} debe ser un valor booleano.',
+  'in' => 'El campo {Field} debe ser uno de los siguientes: %s.',
+  'notin' => 'El campo {Field} no debe ser uno de los siguientes: %s.',
+  'ip' => 'El campo {Field} debe ser una dirección IP válida.',
+  'ipv4' => 'El campo {Field} debe ser una dirección IPv4 válida.',
+  'ipv6' => 'El campo {Field} debe ser una dirección IPv6 válida.',
+  'url' => 'El campo {Field} debe ser una URL válida.',
+  'domain' => 'El campo {Field} debe ser un dominio válido.',
+  'creditcard' => 'El campo {Field} debe ser un número de tarjeta válido.',
+  'phone' => 'El campo {Field} debe ser un número de teléfono válido.',
+  'uuid' => 'El campo {Field} debe ser un UUID válido.',
+  'slug' => 'El campo {Field} debe ser un slug válido.',
+  'json' => 'El campo {Field} debe ser una cadena JSON válida.',
+  'regex' => 'El campo {Field} debe coincidir con el patrón %s.',
+  'array' => 'El campo {Field} debe ser un arreglo.',
+]);
 
 // DESACTIVAR LA VERIFICACIÓN SSL DE GUZZLE (CLIENTE HTTP)
 $guzzle = $auth->client('google')->getHttpClient();
