@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\FormRule;
 use App\Enums\Role;
 use App\Enums\SessionKey;
 use flight\Container;
@@ -100,46 +101,10 @@ $auth->createRoles([
 // CONFIGURAR LEAF FORM (módulo de validaciones) //
 ///////////////////////////////////////////////////
 $form = Container::getInstance()->singleton(Form::class)->get(Form::class);
-$form->addRule('password', passwordPolicyPattern(), passwordPolicyMessage());
 
-$form->addMessage([
-  'required' => '{Field} es obligatorio.',
-  'email' => '{Field} debe ser un correo electrónico válido.',
-  'alpha' => '{Field} solo debe contener letras y espacios.',
-  'text' => '{Field} solo debe contener letras y espacios.',
-  'string' => '{Field} solo debe contener letras y espacios.',
-  'textonly' => '{Field} solo debe contener letras.',
-  'alphanum' => '{Field} solo debe contener letras, números y espacios.',
-  'alphadash' => '{Field} solo debe contener letras, números, guiones y guiones bajos.',
-  'username' => '{Field} solo debe contener letras, números y guiones bajos.',
-  'number' => '{Field} solo debe contener números.',
-  'numeric' => '{Field} debe ser numérico.',
-  'float' => '{Field} solo debe contener números decimales.',
-  'hardfloat' => '{Field} solo debe contener números decimales.',
-  'date' => '{Field} debe ser una fecha válida.',
-  'min' => '{Field} debe tener al menos %s caracteres.',
-  'max' => '{Field} no debe exceder %s caracteres.',
-  'between' => '{Field} debe tener entre %s y %s caracteres.',
-  'match' => '{Field} debe coincidir con el campo %s.',
-  'matchesvalueof' => '{Field} debe coincidir con el valor de %s.',
-  'contains' => '{Field} debe contener %s.',
-  'boolean' => '{Field} debe ser un valor booleano.',
-  'truefalse' => '{Field} debe ser un valor booleano.',
-  'in' => '{Field} debe ser uno de los siguientes: %s.',
-  'notin' => '{Field} no debe ser uno de los siguientes: %s.',
-  'ip' => '{Field} debe ser una dirección IP válida.',
-  'ipv4' => '{Field} debe ser una dirección IPv4 válida.',
-  'ipv6' => '{Field} debe ser una dirección IPv6 válida.',
-  'url' => '{Field} debe ser una URL válida.',
-  'domain' => '{Field} debe ser un dominio válido.',
-  'creditcard' => '{Field} debe ser un número de tarjeta válido.',
-  'phone' => '{Field} debe ser un número de teléfono válido.',
-  'uuid' => '{Field} debe ser un UUID válido.',
-  'slug' => '{Field} debe ser un slug válido.',
-  'json' => '{Field} debe ser una cadena JSON válida.',
-  'regex' => '{Field} debe coincidir con el patrón %s.',
-  'array' => '{Field} debe ser un arreglo.',
-]);
+foreach (FormRule::cases() as $rule) {
+  $form->addRule($rule->getName(), $rule->getHandler(), $rule->getMessage());
+}
 
 // DESACTIVAR LA VERIFICACIÓN SSL DE GUZZLE (CLIENTE HTTP)
 $guzzle = $auth->client('google')->getHttpClient();

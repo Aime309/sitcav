@@ -42,6 +42,8 @@ namespace Leaf {
 }
 
 namespace {
+  use App\Enums\FormRule;
+
   function normalizeSpanishName(string $value): string
   {
     $value = preg_replace('/[^A-Za-zÁÉÍÓÚáéíóúÑñ ]/u', '', $value) ?? '';
@@ -58,16 +60,6 @@ namespace {
   function spanishNameMessage(string $fieldLabel): string
   {
     return "El campo {$fieldLabel} solo puede contener letras, espacios, la letra ñ y vocales con tilde.";
-  }
-
-  function passwordPolicyPattern(): string
-  {
-    return '/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/';
-  }
-
-  function passwordPolicyMessage(): string
-  {
-    return 'La contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 número y 1 símbolo.';
   }
 
   function normalizeSecretAnswer(string $value): string
@@ -126,8 +118,8 @@ namespace {
       return ['success' => false, 'message' => 'Debes ingresar un correo electrónico válido.'];
     }
 
-    if (!preg_match(passwordPolicyPattern(), $password)) {
-      return ['success' => false, 'message' => passwordPolicyMessage()];
+    if (!preg_match(FormRule::PASSWORD->getPattern(), $password)) {
+      return ['success' => false, 'message' => FormRule::PASSWORD->getMessage()];
     }
 
     if ($secretQuestion === '') {
