@@ -4,8 +4,64 @@
     "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
     "This file is @generated automatically"
   ],
-  "content-hash": "d09b9e1c1271c7b33e41c78c4be72918",
+  "content-hash": "e9bdb8a2b55a3403324928ed98f85f55",
   "packages": [
+    {
+      "name": "bjeavons/zxcvbn-php",
+      "version": "1.4.2",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/bjeavons/zxcvbn-php.git",
+        "reference": "426f664501a0747beb8f3ee17ac30c7dd6327ffa"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/bjeavons/zxcvbn-php/zipball/426f664501a0747beb8f3ee17ac30c7dd6327ffa",
+        "reference": "426f664501a0747beb8f3ee17ac30c7dd6327ffa",
+        "shasum": ""
+      },
+      "require": {
+        "ext-json": "*",
+        "php": "^7.2 | ^8.0 | ^8.1",
+        "symfony/polyfill-mbstring": ">=1.3.1"
+      },
+      "require-dev": {
+        "php-coveralls/php-coveralls": "*",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^8.5",
+        "squizlabs/php_codesniffer": "3.*"
+      },
+      "suggest": {
+        "ext-gmp": "Required for optimized binomial calculations (also requires PHP >= 7.3)"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "ZxcvbnPhp\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "See contributors",
+          "homepage": "https://github.com/bjeavons/zxcvbn-php"
+        }
+      ],
+      "description": "Realistic password strength estimation PHP library based on Zxcvbn JS",
+      "homepage": "https://github.com/bjeavons/zxcvbn-php",
+      "keywords": [
+        "password",
+        "zxcvbn"
+      ],
+      "support": {
+        "issues": "https://github.com/bjeavons/zxcvbn-php/issues",
+        "source": "https://github.com/bjeavons/zxcvbn-php/tree/1.4.2"
+      },
+      "time": "2025-02-24T16:47:20+00:00"
+    },
     {
       "name": "dompdf/dompdf",
       "version": "v3.1.5",
@@ -347,6 +403,164 @@
         "source": "https://github.com/flightphp/core/tree/v3.18.1"
       },
       "time": "2026-04-22T13:21:39+00:00"
+    },
+    {
+      "name": "giggsey/libphonenumber-for-php-lite",
+      "version": "9.0.29",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/giggsey/libphonenumber-for-php-lite.git",
+        "reference": "d64c0c05a5ff4591e6d8421a17764802e2c14733"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php-lite/zipball/d64c0c05a5ff4591e6d8421a17764802e2c14733",
+        "reference": "d64c0c05a5ff4591e6d8421a17764802e2c14733",
+        "shasum": ""
+      },
+      "require": {
+        "php": "^8.1",
+        "symfony/polyfill-mbstring": "^1.17"
+      },
+      "conflict": {
+        "giggsey/libphonenumber-for-php": "*"
+      },
+      "require-dev": {
+        "ext-dom": "*",
+        "friendsofphp/php-cs-fixer": "^3.71",
+        "infection/infection": "^0.29|^0.31.0",
+        "nette/php-generator": "^4.1",
+        "php-coveralls/php-coveralls": "^2.7",
+        "phpstan/extension-installer": "^1.4.3",
+        "phpstan/phpstan": "^2.1.7",
+        "phpstan/phpstan-deprecation-rules": "^2.0.1",
+        "phpstan/phpstan-phpunit": "^2.0.4",
+        "phpstan/phpstan-strict-rules": "^2.0.3",
+        "phpunit/phpunit": "^10.5.45",
+        "symfony/console": "^6.4",
+        "symfony/filesystem": "^6.4",
+        "symfony/process": "^6.4"
+      },
+      "suggest": {
+        "giggsey/libphonenumber-for-php": "Use libphonenumber-for-php for geocoding, carriers, timezones and matching"
+      },
+      "type": "library",
+      "extra": {
+        "branch-alias": {
+          "dev-master": "9.x-dev"
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "libphonenumber\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "Apache-2.0"
+      ],
+      "authors": [
+        {
+          "name": "Joshua Gigg",
+          "email": "giggsey@gmail.com",
+          "homepage": "https://giggsey.com/"
+        }
+      ],
+      "description": "A lite version of giggsey/libphonenumber-for-php, which is a PHP Port of Google's libphonenumber",
+      "homepage": "https://github.com/giggsey/libphonenumber-for-php-lite",
+      "keywords": [
+        "geocoding",
+        "geolocation",
+        "libphonenumber",
+        "mobile",
+        "phonenumber",
+        "validation"
+      ],
+      "support": {
+        "issues": "https://github.com/giggsey/libphonenumber-for-php-lite/issues",
+        "source": "https://github.com/giggsey/libphonenumber-for-php-lite"
+      },
+      "time": "2026-04-24T11:10:08+00:00"
+    },
+    {
+      "name": "google-gemini-php/client",
+      "version": "2.7.4",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/google-gemini-php/client.git",
+        "reference": "d61ebe8e8f7acc2aa66ce2e8a57c23bf32e1e340"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/google-gemini-php/client/zipball/d61ebe8e8f7acc2aa66ce2e8a57c23bf32e1e340",
+        "reference": "d61ebe8e8f7acc2aa66ce2e8a57c23bf32e1e340",
+        "shasum": ""
+      },
+      "require": {
+        "php": "^8.1.0",
+        "php-http/discovery": "^1.19.2",
+        "psr/http-client-implementation": "*",
+        "psr/http-factory-implementation": "*"
+      },
+      "require-dev": {
+        "guzzlehttp/guzzle": "^7.8.1",
+        "guzzlehttp/psr7": "^2.6.2",
+        "laravel/pint": "^1.18.1",
+        "mockery/mockery": "^1.6.7",
+        "pestphp/pest": "^2.32.3",
+        "phpstan/phpstan": "^2.1.32"
+      },
+      "suggest": {
+        "ext-fileinfo": "Reads upload file size and mime type if not provided"
+      },
+      "type": "library",
+      "autoload": {
+        "files": [
+          "src/Gemini.php"
+        ],
+        "psr-4": {
+          "Gemini\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Fatih AYDIN",
+          "email": "aydinfatih52@gmail.com"
+        }
+      ],
+      "description": "Gemini API is a supercharged PHP API client that allows you to interact with the Gemini API",
+      "keywords": [
+        "Gemini",
+        "banana",
+        "client",
+        "gemini-pro",
+        "google",
+        "language",
+        "natural",
+        "nlp",
+        "php",
+        "processing",
+        "sdk"
+      ],
+      "support": {
+        "issues": "https://github.com/google-gemini-php/client/issues",
+        "source": "https://github.com/google-gemini-php/client/tree/2.7.4"
+      },
+      "funding": [
+        {
+          "url": "https://github.com/Plytas",
+          "type": "github"
+        },
+        {
+          "url": "https://github.com/aydinfatih",
+          "type": "github"
+        }
+      ],
+      "time": "2025-12-29T17:51:16+00:00"
     },
     {
       "name": "guzzlehttp/guzzle",
@@ -1456,6 +1670,167 @@
       "time": "2025-07-25T09:04:22+00:00"
     },
     {
+      "name": "php-http/discovery",
+      "version": "1.20.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/php-http/discovery.git",
+        "reference": "82fe4c73ef3363caed49ff8dd1539ba06044910d"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/php-http/discovery/zipball/82fe4c73ef3363caed49ff8dd1539ba06044910d",
+        "reference": "82fe4c73ef3363caed49ff8dd1539ba06044910d",
+        "shasum": ""
+      },
+      "require": {
+        "composer-plugin-api": "^1.0|^2.0",
+        "php": "^7.1 || ^8.0"
+      },
+      "conflict": {
+        "nyholm/psr7": "<1.0",
+        "zendframework/zend-diactoros": "*"
+      },
+      "provide": {
+        "php-http/async-client-implementation": "*",
+        "php-http/client-implementation": "*",
+        "psr/http-client-implementation": "*",
+        "psr/http-factory-implementation": "*",
+        "psr/http-message-implementation": "*"
+      },
+      "require-dev": {
+        "composer/composer": "^1.0.2|^2.0",
+        "graham-campbell/phpspec-skip-example-extension": "^5.0",
+        "php-http/httplug": "^1.0 || ^2.0",
+        "php-http/message-factory": "^1.0",
+        "phpspec/phpspec": "^5.1 || ^6.1 || ^7.3",
+        "sebastian/comparator": "^3.0.5 || ^4.0.8",
+        "symfony/phpunit-bridge": "^6.4.4 || ^7.0.1"
+      },
+      "type": "composer-plugin",
+      "extra": {
+        "class": "Http\\Discovery\\Composer\\Plugin",
+        "plugin-optional": true
+      },
+      "autoload": {
+        "psr-4": {
+          "Http\\Discovery\\": "src/"
+        },
+        "exclude-from-classmap": [
+          "src/Composer/Plugin.php"
+        ]
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Márk Sági-Kazár",
+          "email": "mark.sagikazar@gmail.com"
+        }
+      ],
+      "description": "Finds and installs PSR-7, PSR-17, PSR-18 and HTTPlug implementations",
+      "homepage": "http://php-http.org",
+      "keywords": [
+        "adapter",
+        "client",
+        "discovery",
+        "factory",
+        "http",
+        "message",
+        "psr17",
+        "psr7"
+      ],
+      "support": {
+        "issues": "https://github.com/php-http/discovery/issues",
+        "source": "https://github.com/php-http/discovery/tree/1.20.0"
+      },
+      "time": "2024-10-02T11:20:13+00:00"
+    },
+    {
+      "name": "phpmailer/phpmailer",
+      "version": "v7.0.2",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/PHPMailer/PHPMailer.git",
+        "reference": "ebf1655bd5b99b3f97e1a3ec0a69e5f4cd7ea088"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/ebf1655bd5b99b3f97e1a3ec0a69e5f4cd7ea088",
+        "reference": "ebf1655bd5b99b3f97e1a3ec0a69e5f4cd7ea088",
+        "shasum": ""
+      },
+      "require": {
+        "ext-ctype": "*",
+        "ext-filter": "*",
+        "ext-hash": "*",
+        "php": ">=5.5.0"
+      },
+      "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "doctrine/annotations": "^1.2.6 || ^1.13.3",
+        "php-parallel-lint/php-console-highlighter": "^1.0.0",
+        "php-parallel-lint/php-parallel-lint": "^1.3.2",
+        "phpcompatibility/php-compatibility": "^10.0.0@dev",
+        "squizlabs/php_codesniffer": "^3.13.5",
+        "yoast/phpunit-polyfills": "^1.0.4"
+      },
+      "suggest": {
+        "decomplexity/SendOauth2": "Adapter for using XOAUTH2 authentication",
+        "directorytree/imapengine": "For uploading sent messages via IMAP, see gmail example",
+        "ext-imap": "Needed to support advanced email address parsing according to RFC822",
+        "ext-mbstring": "Needed to send email in multibyte encoding charset or decode encoded addresses",
+        "ext-openssl": "Needed for secure SMTP sending and DKIM signing",
+        "greew/oauth2-azure-provider": "Needed for Microsoft Azure XOAUTH2 authentication",
+        "hayageek/oauth2-yahoo": "Needed for Yahoo XOAUTH2 authentication",
+        "league/oauth2-google": "Needed for Google XOAUTH2 authentication",
+        "psr/log": "For optional PSR-3 debug logging",
+        "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)",
+        "thenetworg/oauth2-azure": "Needed for Microsoft XOAUTH2 authentication"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "PHPMailer\\PHPMailer\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "LGPL-2.1-only"
+      ],
+      "authors": [
+        {
+          "name": "Marcus Bointon",
+          "email": "phpmailer@synchromedia.co.uk"
+        },
+        {
+          "name": "Jim Jagielski",
+          "email": "jimjag@gmail.com"
+        },
+        {
+          "name": "Andy Prevost",
+          "email": "codeworxtech@users.sourceforge.net"
+        },
+        {
+          "name": "Brent R. Matzelle"
+        }
+      ],
+      "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
+      "support": {
+        "issues": "https://github.com/PHPMailer/PHPMailer/issues",
+        "source": "https://github.com/PHPMailer/PHPMailer/tree/v7.0.2"
+      },
+      "funding": [
+        {
+          "url": "https://github.com/Synchro",
+          "type": "github"
+        }
+      ],
+      "time": "2026-01-09T18:02:33+00:00"
+    },
+    {
       "name": "psr/container",
       "version": "2.0.2",
       "source": {
@@ -1858,6 +2233,251 @@
         }
       ],
       "time": "2024-09-25T14:21:43+00:00"
+    },
+    {
+      "name": "symfony/polyfill-mbstring",
+      "version": "v1.37.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/symfony/polyfill-mbstring.git",
+        "reference": "6a21eb99c6973357967f6ce3708cd55a6bec6315"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/6a21eb99c6973357967f6ce3708cd55a6bec6315",
+        "reference": "6a21eb99c6973357967f6ce3708cd55a6bec6315",
+        "shasum": ""
+      },
+      "require": {
+        "ext-iconv": "*",
+        "php": ">=7.2"
+      },
+      "provide": {
+        "ext-mbstring": "*"
+      },
+      "suggest": {
+        "ext-mbstring": "For best performance"
+      },
+      "type": "library",
+      "extra": {
+        "thanks": {
+          "url": "https://github.com/symfony/polyfill",
+          "name": "symfony/polyfill"
+        }
+      },
+      "autoload": {
+        "files": [
+          "bootstrap.php"
+        ],
+        "psr-4": {
+          "Symfony\\Polyfill\\Mbstring\\": ""
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Nicolas Grekas",
+          "email": "p@tchwork.com"
+        },
+        {
+          "name": "Symfony Community",
+          "homepage": "https://symfony.com/contributors"
+        }
+      ],
+      "description": "Symfony polyfill for the Mbstring extension",
+      "homepage": "https://symfony.com",
+      "keywords": [
+        "compatibility",
+        "mbstring",
+        "polyfill",
+        "portable",
+        "shim"
+      ],
+      "support": {
+        "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.37.0"
+      },
+      "funding": [
+        {
+          "url": "https://symfony.com/sponsor",
+          "type": "custom"
+        },
+        {
+          "url": "https://github.com/fabpot",
+          "type": "github"
+        },
+        {
+          "url": "https://github.com/nicolas-grekas",
+          "type": "github"
+        },
+        {
+          "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+          "type": "tidelift"
+        }
+      ],
+      "time": "2026-04-10T17:25:58+00:00"
+    },
+    {
+      "name": "symfony/polyfill-php84",
+      "version": "v1.37.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/symfony/polyfill-php84.git",
+        "reference": "88486db2c389b290bf87ff1de7ebc1e13e42bb06"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/symfony/polyfill-php84/zipball/88486db2c389b290bf87ff1de7ebc1e13e42bb06",
+        "reference": "88486db2c389b290bf87ff1de7ebc1e13e42bb06",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=7.2"
+      },
+      "type": "library",
+      "extra": {
+        "thanks": {
+          "url": "https://github.com/symfony/polyfill",
+          "name": "symfony/polyfill"
+        }
+      },
+      "autoload": {
+        "files": [
+          "bootstrap.php"
+        ],
+        "psr-4": {
+          "Symfony\\Polyfill\\Php84\\": ""
+        },
+        "classmap": [
+          "Resources/stubs"
+        ]
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Nicolas Grekas",
+          "email": "p@tchwork.com"
+        },
+        {
+          "name": "Symfony Community",
+          "homepage": "https://symfony.com/contributors"
+        }
+      ],
+      "description": "Symfony polyfill backporting some PHP 8.4+ features to lower PHP versions",
+      "homepage": "https://symfony.com",
+      "keywords": [
+        "compatibility",
+        "polyfill",
+        "portable",
+        "shim"
+      ],
+      "support": {
+        "source": "https://github.com/symfony/polyfill-php84/tree/v1.37.0"
+      },
+      "funding": [
+        {
+          "url": "https://symfony.com/sponsor",
+          "type": "custom"
+        },
+        {
+          "url": "https://github.com/fabpot",
+          "type": "github"
+        },
+        {
+          "url": "https://github.com/nicolas-grekas",
+          "type": "github"
+        },
+        {
+          "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+          "type": "tidelift"
+        }
+      ],
+      "time": "2026-04-10T18:47:49+00:00"
+    },
+    {
+      "name": "symfony/polyfill-php85",
+      "version": "v1.37.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/symfony/polyfill-php85.git",
+        "reference": "fcfa4973a9917cef23f2e38774da74a2b7d115ee"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/symfony/polyfill-php85/zipball/fcfa4973a9917cef23f2e38774da74a2b7d115ee",
+        "reference": "fcfa4973a9917cef23f2e38774da74a2b7d115ee",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=7.2"
+      },
+      "type": "library",
+      "extra": {
+        "thanks": {
+          "url": "https://github.com/symfony/polyfill",
+          "name": "symfony/polyfill"
+        }
+      },
+      "autoload": {
+        "files": [
+          "bootstrap.php"
+        ],
+        "psr-4": {
+          "Symfony\\Polyfill\\Php85\\": ""
+        },
+        "classmap": [
+          "Resources/stubs"
+        ]
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Nicolas Grekas",
+          "email": "p@tchwork.com"
+        },
+        {
+          "name": "Symfony Community",
+          "homepage": "https://symfony.com/contributors"
+        }
+      ],
+      "description": "Symfony polyfill backporting some PHP 8.5+ features to lower PHP versions",
+      "homepage": "https://symfony.com",
+      "keywords": [
+        "compatibility",
+        "polyfill",
+        "portable",
+        "shim"
+      ],
+      "support": {
+        "source": "https://github.com/symfony/polyfill-php85/tree/v1.37.0"
+      },
+      "funding": [
+        {
+          "url": "https://symfony.com/sponsor",
+          "type": "custom"
+        },
+        {
+          "url": "https://github.com/fabpot",
+          "type": "github"
+        },
+        {
+          "url": "https://github.com/nicolas-grekas",
+          "type": "github"
+        },
+        {
+          "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+          "type": "tidelift"
+        }
+      ],
+      "time": "2026-04-26T13:10:57+00:00"
     },
     {
       "name": "thecodingmachine/safe",
@@ -3623,91 +4243,6 @@
         }
       ],
       "time": "2024-10-20T05:08:20+00:00"
-    },
-    {
-      "name": "symfony/polyfill-mbstring",
-      "version": "v1.37.0",
-      "source": {
-        "type": "git",
-        "url": "https://github.com/symfony/polyfill-mbstring.git",
-        "reference": "6a21eb99c6973357967f6ce3708cd55a6bec6315"
-      },
-      "dist": {
-        "type": "zip",
-        "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/6a21eb99c6973357967f6ce3708cd55a6bec6315",
-        "reference": "6a21eb99c6973357967f6ce3708cd55a6bec6315",
-        "shasum": ""
-      },
-      "require": {
-        "ext-iconv": "*",
-        "php": ">=7.2"
-      },
-      "provide": {
-        "ext-mbstring": "*"
-      },
-      "suggest": {
-        "ext-mbstring": "For best performance"
-      },
-      "type": "library",
-      "extra": {
-        "thanks": {
-          "url": "https://github.com/symfony/polyfill",
-          "name": "symfony/polyfill"
-        }
-      },
-      "autoload": {
-        "files": [
-          "bootstrap.php"
-        ],
-        "psr-4": {
-          "Symfony\\Polyfill\\Mbstring\\": ""
-        }
-      },
-      "notification-url": "https://packagist.org/downloads/",
-      "license": [
-        "MIT"
-      ],
-      "authors": [
-        {
-          "name": "Nicolas Grekas",
-          "email": "p@tchwork.com"
-        },
-        {
-          "name": "Symfony Community",
-          "homepage": "https://symfony.com/contributors"
-        }
-      ],
-      "description": "Symfony polyfill for the Mbstring extension",
-      "homepage": "https://symfony.com",
-      "keywords": [
-        "compatibility",
-        "mbstring",
-        "polyfill",
-        "portable",
-        "shim"
-      ],
-      "support": {
-        "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.37.0"
-      },
-      "funding": [
-        {
-          "url": "https://symfony.com/sponsor",
-          "type": "custom"
-        },
-        {
-          "url": "https://github.com/fabpot",
-          "type": "github"
-        },
-        {
-          "url": "https://github.com/nicolas-grekas",
-          "type": "github"
-        },
-        {
-          "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-          "type": "tidelift"
-        }
-      ],
-      "time": "2026-04-10T17:25:58+00:00"
     },
     {
       "name": "symfony/var-dumper",
