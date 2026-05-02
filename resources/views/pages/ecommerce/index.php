@@ -68,6 +68,7 @@ if ($authenticatedUser !== null) {
         --storefront-logout-bg: #ef4444;
         --storefront-logout-hover-bg: #dc2626;
         --storefront-logout-text: #ffffff;
+        --storefront-modal-backdrop: rgba(15, 23, 42, 0.55);
       }
 
       @media (prefers-color-scheme: dark) {
@@ -89,6 +90,7 @@ if ($authenticatedUser !== null) {
           --storefront-logout-bg: #ef4444;
           --storefront-logout-hover-bg: #f87171;
           --storefront-logout-text: #ffffff;
+          --storefront-modal-backdrop: rgba(2, 6, 23, 0.78);
         }
       }
 
@@ -317,6 +319,55 @@ if ($authenticatedUser !== null) {
         padding: 32px 16px;
       }
 
+      .storefront-modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: var(--storefront-modal-backdrop);
+        z-index: 100;
+      }
+
+      .storefront-modal.is-open {
+        display: flex;
+      }
+
+      .storefront-modal__card {
+        width: 100%;
+        max-width: 640px;
+        background: var(--storefront-surface);
+        color: var(--storefront-text);
+        border: 1px solid var(--storefront-border);
+        border-radius: 20px;
+        box-shadow: var(--storefront-shadow);
+        padding: 24px;
+      }
+
+      .storefront-modal__title {
+        margin: 0 0 12px;
+        font-size: 1.4rem;
+      }
+
+      .storefront-modal__text,
+      .storefront-modal__list {
+        color: var(--storefront-muted);
+      }
+
+      .storefront-modal__list {
+        margin: 16px 0 0;
+        padding-left: 20px;
+        line-height: 1.6;
+      }
+
+      .storefront-modal__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
       @media (max-width: 900px) {
         .storefront-hero {
           grid-template-columns: 1fr;
@@ -361,10 +412,11 @@ if ($authenticatedUser !== null) {
           <?php endif; ?>
 
           <a
-            href="<?= $ecommerceAuthenticatedUser !== null ? 'salir' : 'oauth2/google' ?>"
+            href="<?= $ecommerceAuthenticatedUser !== null ? 'salir' : '#' ?>"
+            <?= $ecommerceAuthenticatedUser === null ? 'data-google-login-trigger="true"' : '' ?>
             class="btn <?= $ecommerceAuthenticatedUser !== null ? 'storefront-logout-btn' : 'btn-primary' ?>">
             <i class="<?= $ecommerceAuthenticatedUser !== null ? 'fas fa-sign-out-alt' : 'fab fa-google' ?>"></i>
-            <?= $ecommerceAuthenticatedUser !== null ? 'Cerrar Sesion' : 'Iniciar Sesion' ?>
+            <?= $ecommerceAuthenticatedUser !== null ? 'Cerrar Sesión' : 'Iniciar Sesión' ?>
           </a>
         </div>
       </header>
@@ -447,10 +499,31 @@ if ($authenticatedUser !== null) {
       </main>
     </div>
 
+    <div id="terms-modal" class="storefront-modal" aria-hidden="true">
+      <div class="storefront-modal__card" role="dialog" aria-modal="true" aria-labelledby="terms-modal-title">
+        <h2 id="terms-modal-title" class="storefront-modal__title">Términos y condiciones de SITCAV</h2>
+        <p class="storefront-modal__text">
+          Antes de iniciar sesión, confirma que aceptas las condiciones básicas de uso de SITCAV:
+        </p>
+        <ul class="storefront-modal__list">
+          <li>Usarás la plataforma de forma lícita y con información veraz.</li>
+          <li>Tu acceso como cliente es personal y no debe compartirse con terceros.</li>
+          <li>SITCAV puede actualizar productos, precios y disponibilidad sin previo aviso.</li>
+          <li>El uso continuo del acceso implica aceptación de estas condiciones.</li>
+        </ul>
+
+        <div class="storefront-modal__actions">
+          <button type="button" class="btn btn-outline" id="terms-cancel-btn">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="terms-accept-btn">Aceptar y continuar</button>
+        </div>
+      </div>
+    </div>
+
     <script>
       window.ECOMMERCE_AUTH_USER = <?= json_encode($ecommerceAuthenticatedUser, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 
       const API_BASE_URL = '.';
+      const GOOGLE_LOGIN_URL = 'oauth2/google';
       let productsData = [];
       let currentCarouselPosition = 0;
 
@@ -464,6 +537,29 @@ if ($authenticatedUser !== null) {
       function handleImageError(img) {
         img.onerror = null;
         img.src = PLACEHOLDER_IMAGE;
+      }
+
+      function openTermsModal() {
+        const modal = document.getElementById('terms-modal');
+
+        if (!modal) {
+          window.location.href = GOOGLE_LOGIN_URL;
+          return;
+        }
+
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeTermsModal() {
+        const modal = document.getElementById('terms-modal');
+
+        if (!modal) {
+          return;
+        }
+
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
       }
 
       function renderCarousel() {
@@ -536,6 +632,27 @@ if ($authenticatedUser !== null) {
       }
 
       window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[data-google-login-trigger="true"]').forEach((link) => {
+          link.addEventListener('click', (event) => {
+            event.preventDefault();
+            openTermsModal();
+          });
+        });
+
+        document.getElementById('terms-cancel-btn')?.addEventListener('click', () => {
+          closeTermsModal();
+        });
+
+        document.getElementById('terms-accept-btn')?.addEventListener('click', () => {
+          window.location.href = GOOGLE_LOGIN_URL;
+        });
+
+        document.getElementById('terms-modal')?.addEventListener('click', (event) => {
+          if (event.target.id === 'terms-modal') {
+            closeTermsModal();
+          }
+        });
+
         loadProductCarousel();
       });
 

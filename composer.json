@@ -14,7 +14,8 @@
     "sort-packages": true,
     "allow-plugins": {
       "php-http/discovery": true
-    }
+    },
+    "process-timeout": 0
   },
   "require": {
     "php": ">=8.3",
