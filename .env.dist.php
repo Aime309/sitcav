@@ -33,13 +33,13 @@ return [
   'PHPMAILER_HOST' => 'smtp.gmail.com',
   'PHPMAILER_USERNAME' => '<username>@gmail.com',
 
-  # ============================================================================================================
-  # =           Contraseña para PHPMailer, se obtiene de (https://myaccount.google.com/apppasswords)           =
-  # ============================================================================================================
+  # ========================================================================================
+  # = Contraseña para PHPMailer, se obtiene de (https://myaccount.google.com/apppasswords) =
+  # ========================================================================================
   'PHPMAILER_PASSWORD' => '{google-app-password}',
 
-  # ==========================================================================================================================
-  # =           Credenciales para la API de consulta de las tasas de cambio https://www.dolarvzla.com/settings/api           =
-  # ==========================================================================================================================
-  'TASA_BCV_API_KEY' => '{tasa-bcv-api-key}',
+  # ======================================================================================================
+  # = Credenciales para la API de consulta de las tasas de cambio https://www.dolarvzla.com/settings/api =
+  # ======================================================================================================
+  'BCV_EXCHANGE_RATE_API_KEY' => '{bcv-exchange-rate-api-key}',
 ];

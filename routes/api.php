@@ -239,7 +239,7 @@ Flight::group('/api', static function () use ($loadBusiness, $hydrateSale, $hydr
     try {
       $dollarsFromApi = (new GuzzleHttpClient())->get('https://api.dolarvzla.com/public/bcv/exchange-rate', [
         'headers' => [
-          'x-dolarvzla-key' => $_ENV['TASA_BCV_API_KEY'],
+          'x-dolarvzla-key' => $_ENV['BCV_EXCHANGE_RATE_API_KEY'],
         ],
       ])->getBody()->getContents();
 
