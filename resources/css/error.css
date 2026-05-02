@@ -1,16 +1,19 @@
 :root {
   color-scheme: light dark;
-  --error-page-background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
-  --error-page-card-background: #ffffff;
-  --error-page-card-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  --error-page-icon-background: #dbeafe;
-  --error-page-icon-color: #1d4ed8;
-  --error-page-code-color: #1d4ed8;
-  --error-page-title-color: #1f2937;
-  --error-page-text-color: #6b7280;
-  --error-page-link-background: #1d4ed8;
-  --error-page-link-hover-background: #1e40af;
-  --error-page-link-color: #ffffff;
+  --error-page-background: light-dark(
+    linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%),
+    linear-gradient(135deg, #020617 0%, #0f172a 55%, #1e3a8a 100%)
+  );
+  --error-page-card-background: light-dark(#ffffff, rgba(15, 23, 42, 0.92));
+  --error-page-card-shadow: light-dark(0 20px 60px rgba(0, 0, 0, 0.25), 0 20px 60px rgba(0, 0, 0, 0.45));
+  --error-page-icon-background: light-dark(#dbeafe, rgba(96, 165, 250, 0.16));
+  --error-page-icon-color: light-dark(#1d4ed8, #93c5fd);
+  --error-page-code-color: light-dark(#1d4ed8, #93c5fd);
+  --error-page-title-color: light-dark(#1f2937, #f8fafc);
+  --error-page-text-color: light-dark(#6b7280, #cbd5e1);
+  --error-page-link-background: light-dark(#1d4ed8, #2563eb);
+  --error-page-link-hover-background: light-dark(#1e40af, #3b82f6);
+  --error-page-link-color: light-dark(#ffffff, #eff6ff);
 }
 
 * {
@@ -94,20 +97,4 @@ body {
 
 .error-page__link:hover {
   background: var(--error-page-link-hover-background);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --error-page-background: linear-gradient(135deg, #020617 0%, #0f172a 55%, #1e3a8a 100%);
-    --error-page-card-background: rgba(15, 23, 42, 0.92);
-    --error-page-card-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
-    --error-page-icon-background: rgba(96, 165, 250, 0.16);
-    --error-page-icon-color: #93c5fd;
-    --error-page-code-color: #93c5fd;
-    --error-page-title-color: #f8fafc;
-    --error-page-text-color: #cbd5e1;
-    --error-page-link-background: #2563eb;
-    --error-page-link-hover-background: #3b82f6;
-    --error-page-link-color: #eff6ff;
-  }
 }
