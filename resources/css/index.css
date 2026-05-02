@@ -85,10 +85,6 @@
     linear-gradient(135deg, var(--primary), #00c6fb),
     linear-gradient(135deg, var(--primary), #38bdf8)
   );
-  --logo-horizontal-image: light-dark(
-    url("../images/logo-horizontal.png"),
-    url("../images/logo-horizontal-dark.png")
-  );
   --shadow-sm: light-dark(0 2px 4px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.28));
   --shadow-md: light-dark(0 4px 12px rgba(74, 144, 226, 0.3), 0 4px 12px rgba(96, 165, 250, 0.25));
   --shadow-dropdown: light-dark(0 10px 40px rgba(0, 0, 0, 0.15), 0 10px 40px rgba(0, 0, 0, 0.4));
@@ -487,10 +483,13 @@ input::-ms-clear {
   width: 100%;
   height: 100%;
   display: block;
-  background-image: var(--logo-horizontal-image);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
+}
+
+.logo-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .logo-icon--plain {
