@@ -146,11 +146,6 @@ if ($pdo instanceof PDO) {
 //////////////////////////////
 foreach (glob(ROOT_DIR . '/database/migrations/*.sql') as $sqlFilePath) {
   $sql = file_get_contents($sqlFilePath);
-
-  if ($sql === false) {
-    throw new RuntimeException("No se pudo leer el archivo SQL: $sqlFilePath");
-  }
-
   $pdo->exec($sql);
 }
 
