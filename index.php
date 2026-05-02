@@ -8,6 +8,7 @@ use App\Enums\SessionKey;
 use flight\Container;
 use Leaf\Auth;
 use Leaf\Auth\User;
+use Leaf\Db;
 use Leaf\Flash;
 use Leaf\Form;
 use Leaf\Helpers\Password;
@@ -122,23 +123,20 @@ $guzzleConfigProperty->setValue(
 ///////////////////////
 Flight::set('flight.base_url', BASE_URL);
 Flight::set('flight.case_sensitive', false);
-Flight::set('flight.handle_errors', false);
-Flight::set('flight.log_errors', false);
+Flight::set('flight.handle_errors', true);
+Flight::set('flight.log_errors', true);
 Flight::set('flight.views.path', ROOT_DIR . '/resources/views');
 Flight::set('flight.views.extension', '.php');
 Flight::set('flight.content_length', true);
 Flight::set('flight.v2.output_buffering', false);
 Flight::view()->preserveVars = false;
 
-////////////////////////////////////////////////
-// CONFIGURAR CONEXIÓN COMPARTIDA (Singleton) //
-////////////////////////////////////////////////
+//////////////////////////////
+// CONFIGURAR BASE DE DATOS //
+//////////////////////////////
 $auth->autoConnect();
-$pdo = $auth->db()->connection();
-
-if ($pdo instanceof PDO) {
-  $auth->dbConnection($pdo);
-}
+$db = Container::getInstance()->singleton($auth->db())->get(Db::class);
+$pdo = Container::getInstance()->singleton($db->connection())->get(PDO::class);
 
 //////////////////////////////
 // EJECUTAR LAS MIGRACIONES //
