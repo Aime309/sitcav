@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS "categorias" (
 	"nombre"	VARCHAR(100) NOT NULL,
 	PRIMARY KEY("id"),
 	UNIQUE("nombre"),
-	FOREIGN KEY("id_usuario") REFERENCES "usuarios"("id")
+	FOREIGN KEY("id_usuario") REFERENCES "users"("id")
 );
 CREATE TABLE IF NOT EXISTS "clientes" (
 	"id"	INTEGER NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS "cotizaciones" (
 	"fecha_hora"	DATETIME NOT NULL,
 	"tasa_dolar_bolivares"	NUMERIC(10, 2) NOT NULL,
 	PRIMARY KEY("id"),
-	FOREIGN KEY("id_usuario") REFERENCES "usuarios"("id")
+	FOREIGN KEY("id_usuario") REFERENCES "users"("id")
 );
 CREATE TABLE IF NOT EXISTS "detalles_apartados" (
 	"id"	INTEGER NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS "estados" (
 	"id_usuario"	INTEGER NOT NULL,
 	"nombre"	VARCHAR(100) NOT NULL,
 	PRIMARY KEY("id"),
-	FOREIGN KEY("id_usuario") REFERENCES "usuarios"("id")
+	FOREIGN KEY("id_usuario") REFERENCES "users"("id")
 );
 CREATE TABLE IF NOT EXISTS "localidades" (
 	"id"	INTEGER NOT NULL,
@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS "reembolsos" (
 	"motivo"	VARCHAR(255),
 	"fecha"	DATETIME NOT NULL,
 	PRIMARY KEY("id"),
-	FOREIGN KEY("id_usuario") REFERENCES "usuarios"("id"),
+	FOREIGN KEY("id_usuario") REFERENCES "users"("id"),
 	FOREIGN KEY("id_venta") REFERENCES "ventas"("id")
 );
 CREATE TABLE IF NOT EXISTS "sectores" (
@@ -193,28 +193,18 @@ CREATE TABLE IF NOT EXISTS "tipos_pago" (
 	"id_usuario"	INTEGER NOT NULL,
 	"nombre"	VARCHAR(100) NOT NULL,
 	PRIMARY KEY("id"),
-	FOREIGN KEY("id_usuario") REFERENCES "usuarios"("id")
+	FOREIGN KEY("id_usuario") REFERENCES "users"("id")
 );
-CREATE TABLE IF NOT EXISTS "usuarios" (
-	"id"	INTEGER NOT NULL,
-	"cedula"	VARCHAR(20) NOT NULL,
-	"contrasena"	VARCHAR(255) NOT NULL,
-	"roles"	VARCHAR(50) NOT NULL,
-	"activo"	BOOLEAN,
-	"nombre"	VARCHAR(100) NOT NULL,
-	"apellidos"	VARCHAR(100),
-	"direccion"	VARCHAR(300),
-	"foto_url"	VARCHAR(500),
-	"pregunta_1"	VARCHAR(255),
-	"respuesta_1"	VARCHAR(255),
-	"pregunta_2"	VARCHAR(255),
-	"respuesta_2"	VARCHAR(255),
-	"pregunta_3"	VARCHAR(255),
-	"respuesta_3"	VARCHAR(255),
-	"admin_id"	INTEGER,
-	UNIQUE("cedula"),
-	PRIMARY KEY("id"),
-	FOREIGN KEY("admin_id") REFERENCES "usuarios"("id")
+CREATE TABLE IF NOT EXISTS "users" (
+	"id"	VARCHAR(255) PRIMARY KEY,
+	"names"	VARCHAR(255) NOT NULL CHECK (LENGTH(names) > 0),
+	"lastnames"	VARCHAR(255) NOT NULL CHECK (LENGTH(lastnames) > 0),
+	"avatar"	BLOB NOT NULL,
+	"email"	VARCHAR(255) NOT NULL UNIQUE CHECK (email LIKE '%@%'),
+	"password"	VARCHAR(255),
+	"roles"	VARCHAR(255) NOT NULL CHECK (roles LIKE '["%"]'),
+	"created_at"	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	"updated_at"	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS "ventas" (
 	"id"	INTEGER NOT NULL,
@@ -224,5 +214,5 @@ CREATE TABLE IF NOT EXISTS "ventas" (
 	"cotizacion_dolar_bolivares"	NUMERIC(10, 2),
 	PRIMARY KEY("id"),
 	FOREIGN KEY("id_cliente") REFERENCES "clientes"("id"),
-	FOREIGN KEY("id_vendedor") REFERENCES "usuarios"("id")
+	FOREIGN KEY("id_vendedor") REFERENCES "users"("id")
 );
