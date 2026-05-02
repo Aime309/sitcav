@@ -53,10 +53,17 @@ define(
 
 const BASE_HREF = BASE_URL . '/';
 
+///////////////////////////////////////////
+// CONFIGURAR CONTENEDOR DE DEPENDENCIAS //
+///////////////////////////////////////////
+$container = Container::getInstance();
+
+Flight::registerContainerHandler($container);
+
 ////////////////////////////////////////////////////
 // CONFIGURAR LEAF AUTH (módulo de autenticación) //
 ////////////////////////////////////////////////////
-$auth = Container::getInstance()->singleton(Auth::class)->get(Auth::class);
+$auth = $container->singleton(Auth::class)->get(Auth::class);
 $auth->config('id.key', 'id');
 $auth->config('db.table', 'users');
 $auth->config('roles.key', 'roles');
@@ -101,7 +108,7 @@ $auth->createRoles([
 ///////////////////////////////////////////////////
 // CONFIGURAR LEAF FORM (módulo de validaciones) //
 ///////////////////////////////////////////////////
-$form = Container::getInstance()->singleton(Form::class)->get(Form::class);
+$form = $container->singleton(Form::class)->get(Form::class);
 
 foreach (FormRule::cases() as $rule) {
   $form->addRule($rule->getName(), $rule->getHandler(), $rule->getMessage());
@@ -135,8 +142,8 @@ Flight::view()->preserveVars = false;
 // CONFIGURAR BASE DE DATOS //
 //////////////////////////////
 $auth->autoConnect();
-$db = Container::getInstance()->singleton($auth->db())->get(Db::class);
-$pdo = Container::getInstance()->singleton($db->connection())->get(PDO::class);
+$db = $container->singleton($auth->db())->get(Db::class);
+$pdo = $container->singleton($db->connection())->get(PDO::class);
 
 //////////////////////////////
 // EJECUTAR LAS MIGRACIONES //
@@ -145,16 +152,6 @@ foreach (glob(ROOT_DIR . '/database/migrations/*.sql') as $sqlFilePath) {
   $sql = file_get_contents($sqlFilePath);
   $pdo->exec($sql);
 }
-
-///////////////////////////////////////////
-// CONFIGURAR CONTENEDOR DE DEPENDENCIAS //
-///////////////////////////////////////////
-$container = Container::getInstance();
-
-$container->singleton($pdo);
-$container->singleton(User::class, static fn(): User => $auth->user());
-
-Flight::registerContainerHandler($container);
 
 ///////////////////////////////////
 // CONFIGURAR CONTROL DE ERRORES //
