@@ -237,30 +237,6 @@ namespace {
     return $options;
   }
 
-  function syncUsersTableSchema(\PDO $pdo): void
-  {
-    $columns = $pdo
-      ->query('PRAGMA table_info(users)')
-      ?->fetchAll(\PDO::FETCH_COLUMN, 1);
-
-    if (!is_array($columns) || $columns === []) {
-      return;
-    }
-
-    $requiredColumns = [
-      'secret_question' => 'VARCHAR(255)',
-      'secret_answer' => 'VARCHAR(255)',
-    ];
-
-    foreach ($requiredColumns as $columnName => $columnDefinition) {
-      if (in_array($columnName, $columns, true)) {
-        continue;
-      }
-
-      $pdo->exec("ALTER TABLE users ADD COLUMN {$columnName} {$columnDefinition}");
-    }
-  }
-
   function isRecaptchaEnabled(): bool
   {
     return recaptchaSiteKey() !== '' && recaptchaSecretKey() !== '';

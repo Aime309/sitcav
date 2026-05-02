@@ -148,8 +148,6 @@ foreach (glob(ROOT_DIR . '/database/migrations/*.sql') as $sqlFilePath) {
   $pdo->exec($sql);
 }
 
-syncUsersTableSchema($pdo);
-
 ///////////////////////////////////////////
 // CONFIGURAR CONTENEDOR DE DEPENDENCIAS //
 ///////////////////////////////////////////
