@@ -3,11 +3,17 @@
 declare(strict_types=1);
 
 use App\Enums\Role;
+use App\Enums\SessionKey;
 use flight\Container;
 use Leaf\Auth;
+use Leaf\Flash;
 
 $authenticatedUser = Container::getInstance()->get(Auth::class)->user();
 $ecommerceAuthenticatedUser = null;
+$ecommerceFlashMessages = Flash::display(SessionKey::ERROR_MESSAGES->name);
+$ecommerceFlashError = is_array($ecommerceFlashMessages)
+  ? strval($ecommerceFlashMessages[0] ?? '')
+  : strval($ecommerceFlashMessages ?? '');
 
 if ($authenticatedUser !== null) {
   $rawRoles = $authenticatedUser->roles ?? null;
@@ -423,6 +429,12 @@ if ($authenticatedUser !== null) {
       </header>
 
       <main class="storefront-main">
+        <?php if ($ecommerceFlashError !== ''): ?>
+          <div class="error-message" style="display: block; max-width: 1200px; margin: 0 auto 24px;">
+            <?= htmlspecialchars($ecommerceFlashError, ENT_QUOTES, 'UTF-8') ?>
+          </div>
+        <?php endif; ?>
+
         <section class="storefront-hero">
           <article class="storefront-hero-card">
             <h2>Encuentra tecnologia, accesorios y equipos listos para entrega.</h2>

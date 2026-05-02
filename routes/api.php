@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Enums\Role;
+use App\Http\Middlewares\OnlyOneAdmin;
 use App\Models\Category;
 use App\Models\Client;
 use App\Models\ExchangeRate;
@@ -1561,27 +1563,30 @@ Flight::group('/api', static function () use ($loadBusiness, $hydrateSale, $hydr
     Flight::route('POST /check', static function (): void {
       $data = Flight::request()->data;
       $db = Container::getInstance()->get(Auth::class)->db();
-      $user = $db->select('usuarios')->where('cedula', $data->cedula)->first();
+      $user = $db->select('users')->where('id', $data->cedula)->orWhere('email', $data->cedula)->first();
 
       if (!$user) Flight::halt(404);
 
       Flight::json([
         'success' => true,
         'user_id' => $user['id'],
-        'preguntas' => [$user['pregunta_1'], $user['pregunta_2'], $user['pregunta_3']],
+        'secret_question' => $user['secret_question'],
       ]);
     });
 
     Flight::route('POST /verify', static function (): void {
       $data = Flight::request()->data;
-      $db = Container::getInstance()->get(Auth::class)->db();
-      $user = $db->select('usuarios')->find($data->user_id);
+      $auth = Container::getInstance()->get(Auth::class);
+      $db = $auth->db();
+      $user = $db->select('users')->find($data->user_id);
 
-      $r1 = strtolower(trim($data->respuestas[0])) === strtolower(trim($user['respuesta_1']));
-      $r2 = strtolower(trim($data->respuestas[1])) === strtolower(trim($user['respuesta_2']));
-      $r3 = strtolower(trim($data->respuestas[2])) === strtolower(trim($user['respuesta_3']));
-
-      Flight::json(['success' => $r1 && $r2 && $r3]);
+      Flight::json([
+        'success' => verifyStoredSecretAnswer(
+          strval($data->secret_answer ?? ''),
+          strval($user['secret_answer'] ?? ''),
+          $auth->config('password.verify'),
+        ),
+      ]);
     });
 
     Flight::route('POST /reset', static function (): void {
@@ -1589,8 +1594,8 @@ Flight::group('/api', static function () use ($loadBusiness, $hydrateSale, $hydr
       $auth = Container::getInstance()->get(Auth::class);
       $db = $auth->db();
 
-      $db->update('usuarios')->params([
-        'contrasena' => $auth->config('password.encode')($data->new_password),
+      $db->update('users')->params([
+        'password' => $auth->config('password.encode')($data->new_password),
       ])->where('id', $data->user_id)->execute();
 
       Flight::json(['success' => true]);
@@ -1640,8 +1645,19 @@ Flight::route('POST /login', static function (): void {
   }
 });
 
-Flight::route('POST /register', static function (): void {
+Flight::route('POST /dashboard/register', static function (): void {
+  (new OnlyOneAdmin)->handle();
+
   $data = Flight::request()->data;
+  $payloadValidation = validateAdminRegisterPayload($data);
+
+  if (!$payloadValidation['success']) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => $payloadValidation['message'],
+    ], 400);
+  }
+
   $recaptchaValidation = verifyRecaptchaToken(
     $data->recaptcha_token ?? null,
     $_SERVER['REMOTE_ADDR'] ?? null,
@@ -1655,33 +1671,83 @@ Flight::route('POST /register', static function (): void {
   }
 
   $auth = Container::getInstance()->get(Auth::class);
+  $encodedSecretAnswer = $auth->config('password.encode')(normalizeSecretAnswer(strval($data->secret_answer ?? '')));
+
+  $email = trim(strval($data->email ?? ''));
+  $existingUser = $auth->db()->select('users')->where('email', $email)->first();
+
+  if ($existingUser) {
+    $decodedRoles = json_decode(strval($existingUser['roles'] ?? ''), true);
+    $roles = is_array($decodedRoles) ? $decodedRoles : [strval($existingUser['roles'] ?? '')];
+    $roles = array_values(array_filter(array_map('strval', $roles)));
+
+    if (in_array(Role::CLIENT->name, $roles, true) && !in_array(Role::ADMIN->name, $roles, true)) {
+      $roles[] = Role::ADMIN->name;
+      $updatedUser = $existingUser;
+      $plainPassword = strval($data->contrasena ?? '');
+      $updatedUser['names'] = normalizeSpanishName(strval($data->names ?? $existingUser['names'] ?? ''));
+      $updatedUser['lastnames'] = normalizeSpanishName(strval($data->lastnames ?? $existingUser['lastnames'] ?? ''));
+      $updatedUser['password'] = $auth->config('password.encode')($plainPassword);
+      $updatedUser['roles'] = json_encode(array_values(array_unique($roles)), JSON_UNESCAPED_UNICODE);
+      $updatedUser['secret_question'] = $data->secret_question;
+      $updatedUser['secret_answer'] = $encodedSecretAnswer;
+      $updatedUser['updated_at'] = date('Y-m-d H:i:s');
+
+      $auth->db()->update('users')->params($updatedUser)->where('id', $existingUser['id'])->execute();
+
+      if ($auth->db()->errors()) {
+        Flight::jsonHalt([
+          'success' => false,
+          'message' => 'No se pudo actualizar el usuario existente.',
+        ], 400);
+      }
+
+      if (!$auth->login([
+        'email' => $email,
+        'password' => $plainPassword,
+      ])) {
+        Flight::jsonHalt([
+          'success' => false,
+          'message' => 'El usuario fue actualizado, pero no se pudo iniciar sesión automáticamente.',
+        ], 500);
+      }
+
+      Flight::jsonHalt([
+        'success' => true,
+        'message' => 'Usuario actualizado con rol administrador',
+        'usuario' => (array) $auth->data()->user,
+      ], 200);
+    }
+
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'El correo ya está registrado',
+    ], 400);
+  }
 
   $userWasRegisteredSuccessfully = $auth->register([
-    'cedula' => $data->cedula,
-    'email' => $data->email ?? null,
-    'nombre' => $data->nombre,
-    'contrasena' => $data->contrasena ?? '',
-    'roles' => 'Vendedor',
-    'activo' => true,
-    'pregunta_1' => $data->pregunta_1,
-    'pregunta_2' => $data->pregunta_2,
-    'pregunta_3' => $data->pregunta_3,
-    'respuesta_1' => $data->respuesta_1,
-    'respuesta_2' => $data->respuesta_2,
-    'respuesta_3' => $data->respuesta_3,
+    'id' => 'user_' . bin2hex(random_bytes(16)),
+    'names' => normalizeSpanishName(strval($data->names ?? '')),
+    'lastnames' => normalizeSpanishName(strval($data->lastnames ?? '')),
+    'avatar' => '',
+    'email' => $email,
+    'password' => $data->contrasena ?? '',
+    'roles' => json_encode([Role::ADMIN->name], JSON_UNESCAPED_UNICODE),
+    'secret_question' => $data->secret_question,
+    'secret_answer' => $encodedSecretAnswer,
   ]);
 
   if ($userWasRegisteredSuccessfully) {
     Flight::jsonHalt([
       'success' => true,
       'message' => 'Usuario registrado exitosamente',
-      'usuario' => ['activo' => filter_var($auth->user()->activo, FILTER_VALIDATE_BOOL)] + (array) $auth->data()->user,
+      'usuario' => (array) $auth->data()->user,
       'errors' => $auth->errors(),
     ], 201);
-  } elseif (key_exists('cedula', $auth->errors())) {
+  } elseif (key_exists('email', $auth->errors())) {
     Flight::jsonHalt([
       'success' => false,
-      'message' => 'La cédula ya está registrada',
+      'message' => 'El correo ya está registrado',
     ], 400);
   } else {
     Flight::jsonHalt([
@@ -1696,7 +1762,7 @@ Flight::route('POST /check-user-recovery', static function (): void {
   $auth = Container::getInstance()->get(Auth::class);
   $db = $auth->db();
 
-  $usuario = $db->select('usuarios')->where('cedula', $data->cedula)->first();
+  $usuario = $db->select('users')->where('id', $data->cedula)->orWhere('email', $data->cedula)->first();
 
   if (!$usuario) {
     Flight::jsonHalt([
@@ -1705,18 +1771,17 @@ Flight::route('POST /check-user-recovery', static function (): void {
     ], 404);
   }
 
-  // Verificar si tiene preguntas configuradas
-  if (empty($usuario['pregunta_1']) || empty($usuario['pregunta_2']) || empty($usuario['pregunta_3'])) {
+  if (empty($usuario['secret_question']) || empty($usuario['secret_answer'])) {
     Flight::jsonHalt([
       'success' => false,
-      'message' => 'El usuario no tiene preguntas de seguridad configuradas. Contacte al administrador.',
+      'message' => 'El usuario no tiene pregunta secreta configurada. Contacte al administrador.',
     ], 400);
   }
 
   Flight::json([
     'success' => true,
     'user_id' => $usuario['id'],
-    'preguntas' => [$usuario['pregunta_1'], $usuario['pregunta_2'], $usuario['pregunta_3']],
+    'secret_question' => $usuario['secret_question'],
   ]);
 });
 
@@ -1726,16 +1791,16 @@ Flight::route('POST /verify-security-answers', static function (): void {
   $db = $auth->db();
 
   $user_id = $data->user_id;
-  $respuestas = $data->respuestas; // Lista de 3 respuestas
+  $secretAnswer = trim(strval($data->secret_answer ?? ''));
 
-  if (!$user_id || !$respuestas || count($respuestas) !== 3) {
+  if (!$user_id || $secretAnswer === '') {
     Flight::jsonHalt([
       'success' => false,
       'message' => 'Datos incompletos',
     ], 400);
   }
 
-  $usuario = $db->select('usuarios')->find($user_id);
+  $usuario = $db->select('users')->find($user_id);
 
   if (!$usuario) {
     Flight::jsonHalt([
@@ -1744,19 +1809,67 @@ Flight::route('POST /verify-security-answers', static function (): void {
     ], 404);
   }
 
-  // Verificar respuestas (ignorando mayúsculas/minúsculas)
-  $r1_ok = strtolower(trim($usuario['respuesta_1'])) === strtolower(trim($respuestas[0]));
-  $r2_ok = strtolower(trim($usuario['respuesta_2'])) === strtolower(trim($respuestas[1]));
-  $r3_ok = strtolower(trim($usuario['respuesta_3'])) === strtolower(trim($respuestas[2]));
-
-  if ($r1_ok && $r2_ok && $r3_ok) {
+  if (verifyStoredSecretAnswer(
+    $secretAnswer,
+    strval($usuario['secret_answer'] ?? ''),
+    $auth->config('password.verify'),
+  )) {
     Flight::json(['success' => true]);
   } else {
     Flight::jsonHalt([
       'success' => false,
-      'message' => 'Una o más respuestas son incorrectas',
+      'message' => 'La respuesta es incorrecta',
     ], 400);
   }
+});
+
+Flight::route('POST /user-security-question', static function (): void {
+  $data = Flight::request()->data;
+  $db = Container::getInstance()->get(Auth::class)->db();
+  $usuario = $db->select('users')->find($data->user_id);
+
+  if (!$usuario) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'Usuario no encontrado',
+    ], 404);
+  }
+
+  Flight::json([
+    'success' => true,
+    'secret_question' => $usuario['secret_question'] ?? null,
+  ]);
+});
+
+Flight::route('POST /save-user-security-question', static function (): void {
+  $data = Flight::request()->data;
+  $auth = Container::getInstance()->get(Auth::class);
+  $db = $auth->db();
+  $usuario = $db->select('users')->find($data->user_id);
+
+  if (!$usuario) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'Usuario no encontrado',
+    ], 404);
+  }
+
+  $db->update('users')->params([
+    'secret_question' => $data->secret_question,
+    'secret_answer' => $auth->config('password.encode')(normalizeSecretAnswer(strval($data->secret_answer ?? ''))),
+  ])->where('id', $data->user_id)->execute();
+
+  if ($db->errors()) {
+    Flight::jsonHalt([
+      'success' => false,
+      'message' => 'No se pudo actualizar la pregunta secreta',
+    ], 400);
+  }
+
+  Flight::json([
+    'success' => true,
+    'message' => 'Pregunta secreta actualizada correctamente',
+  ]);
 });
 
 Flight::route('POST /reset-password-recovery', static function (): void {
@@ -1774,7 +1887,7 @@ Flight::route('POST /reset-password-recovery', static function (): void {
     ], 400);
   }
 
-  $usuario = $db->select('usuarios')->find($user_id);
+  $usuario = $db->select('users')->find($user_id);
 
   if (!$usuario) {
     Flight::jsonHalt([
@@ -1786,8 +1899,8 @@ Flight::route('POST /reset-password-recovery', static function (): void {
   try {
     $hashedPassword = \Leaf\Helpers\Password::hash($new_password, \Leaf\Helpers\Password::BCRYPT, ['cost' => 10]);
 
-    $db->update('usuarios')
-      ->params(['contrasena' => $hashedPassword])
+    $db->update('users')
+      ->params(['password' => $hashedPassword])
       ->where('id', $user_id)
       ->execute();
 

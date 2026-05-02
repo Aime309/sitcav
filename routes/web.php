@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Enums\Role;
 use App\Enums\SessionKey;
+use App\Http\Middlewares\OnlyOneAdmin;
 use flight\Container;
 use Leaf\Auth;
 use Leaf\Flash;
@@ -78,6 +79,11 @@ Flight::route('GET /salir', static function (): void {
   $auth->logout();
   Session::remove(SessionKey::OAUTH2_STATE->name);
   Flight::redirect('/');
+});
+
+Flight::route('GET /dashboard/register', static function (): void {
+  (new OnlyOneAdmin)->handle();
+  Flight::render('pages/register');
 });
 
 Flight::route('GET /', static fn() => Flight::render('pages/ecommerce/index'));

@@ -2,7 +2,54 @@
 
 declare(strict_types=1);
 
-$dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
+use App\Enums\Role;
+use App\Enums\SessionKey;
+use flight\Container;
+use Leaf\Auth;
+use Leaf\Flash;
+
+$dashboardRecaptchaEnabled = isRecaptchaEnabled();
+$dashboardRecaptchaSiteKey = recaptchaSiteKey();
+$dashboardAuth = Container::getInstance()->get(Auth::class);
+$dashboardAuthenticatedUser = $dashboardAuth->user();
+$dashboardHasAdmin = false;
+$dashboardAuthUserPayload = null;
+$dashboardFlashMessages = Flash::display(SessionKey::ERROR_MESSAGES->name);
+$dashboardFlashError = is_array($dashboardFlashMessages)
+  ? strval($dashboardFlashMessages[0] ?? '')
+  : strval($dashboardFlashMessages ?? '');
+
+foreach ($dashboardAuth->db()->select('users')->all() as $dashboardUser) {
+  if (!str_contains(strval($dashboardUser['roles'] ?? ''), Role::ADMIN->name)) {
+    continue;
+  }
+
+  $dashboardHasAdmin = true;
+  break;
+}
+
+if ($dashboardAuthenticatedUser !== null) {
+  $rawRoles = $dashboardAuthenticatedUser->roles ?? null;
+  $roles = [];
+
+  if (is_string($rawRoles) && $rawRoles !== '') {
+    $decodedRoles = json_decode($rawRoles, true);
+    $roles = is_array($decodedRoles) ? $decodedRoles : [$rawRoles];
+  }
+
+  $names = trim(strval($dashboardAuthenticatedUser->names ?? $dashboardAuthenticatedUser->nombre ?? ''));
+  $lastnames = trim(strval($dashboardAuthenticatedUser->lastnames ?? ''));
+  $fullName = trim("$names $lastnames");
+  $avatar = $dashboardAuthenticatedUser->avatar ?? $dashboardAuthenticatedUser->foto_url ?? null;
+
+  $dashboardAuthUserPayload = [
+    'id' => strval($dashboardAuthenticatedUser->id ?? ''),
+    'nombre' => $fullName !== '' ? $fullName : 'Usuario',
+    'roles' => in_array(Role::ADMIN->name, $roles, true) ? 'Encargado' : implode(', ', $roles),
+    'email' => $dashboardAuthenticatedUser->email ?? null,
+    'foto_url' => is_string($avatar) && $avatar !== '' ? $avatar : null,
+  ];
+}
 ?>
 <!doctype html>
 <html lang="es">
@@ -18,8 +65,21 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <?php if ($dashboardRecaptchaSiteKey !== ''): ?>
-      <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+    <?php if ($dashboardRecaptchaEnabled): ?>
+      <script>
+        window.__dashboardRecaptchaReady = false;
+        window.onDashboardRecaptchaLoad = function () {
+          window.__dashboardRecaptchaReady = true;
+
+          if (typeof window.renderDashboardRecaptchaWidgets === "function") {
+            window.renderDashboardRecaptchaWidgets();
+          }
+        };
+      </script>
+      <script
+        src="https://www.google.com/recaptcha/api.js?onload=onDashboardRecaptchaLoad&render=explicit"
+        async
+        defer></script>
     <?php endif; ?>
     <link rel="stylesheet" href="./resources/css/index.css?id=<?= RESOURCES_ID ?>" />
   </head>
@@ -28,7 +88,7 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
     <!-- WELCOME SCREEN -->
     <div id="welcome-screen" class="welcome-screen">
       <div
-        class="logo-icon"
+        class="logo-icon logo-icon--plain"
         style="margin: 0 auto 20px; width: 220px; height: 80px;">
         <img src="./resources/images/logo-horizontal.png" alt="SITCAV" />
       </div>
@@ -36,16 +96,25 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
       <p>
         Bienvenido al sistema administrativo. Elige una opción para continuar.
       </p>
+      <?php if ($dashboardFlashError !== ''): ?>
+        <div id="welcome-error" class="error-message" style="display: block;">
+          <?= htmlspecialchars($dashboardFlashError, ENT_QUOTES, 'UTF-8') ?>
+        </div>
+      <?php else: ?>
+        <div id="welcome-error" class="error-message"></div>
+      <?php endif; ?>
 
       <div class="welcome-buttons">
         <button class="btn btn-primary" onclick="showLogin()">
           <i class="fas fa-sign-in-alt"></i>
           Iniciar Sesión
         </button>
-        <button class="btn btn-secondary" onclick="showRegister()">
-          <i class="fas fa-user-plus"></i>
-          Registrarse
-        </button>
+        <?php if (!$dashboardHasAdmin): ?>
+          <a href="dashboard/register" class="btn btn-secondary">
+            <i class="fas fa-user-plus"></i>
+            Registrarse
+          </a>
+        <?php endif; ?>
       </div>
     </div>
 
@@ -72,6 +141,7 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
             <input type="password" id="login-password" required />
             <button
               type="button"
+              tabindex="-1"
               class="toggle-password"
               onclick="togglePassword('login-password', this)">
               <i class="fas fa-eye"></i>
@@ -86,7 +156,7 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
             ¿Olvidaste tu contraseña?
           </a>
         </div>
-        <?php if ($dashboardRecaptchaSiteKey !== ''): ?>
+        <?php if ($dashboardRecaptchaEnabled): ?>
           <div class="form-group form-group--recaptcha">
             <div
               class="g-recaptcha"
@@ -103,172 +173,6 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
             <i class="fas fa-sign-in-alt"></i>
             Entrar
           </button>
-        </div>
-      </form>
-    </div>
-
-    <!-- REGISTER FORM -->
-    <div id="register-form" class="auth-container hidden">
-      <h2>
-        <i class="fas fa-user-plus"></i>
-        Registro de Usuario
-      </h2>
-      <div id="register-error" class="error-message"></div>
-      <div id="register-success" class="success-message"></div>
-
-      <form onsubmit="handleRegister(event)">
-        <div class="form-group">
-          <label for="register-nombre">Nombre Completo <span class="required-asterisk">*</span></label>
-          <input
-            type="text"
-            id="register-nombre"
-            required
-            placeholder="Ej: Juan Pérez" />
-        </div>
-        <div class="form-group">
-          <label for="register-cedula">Cédula de Identidad <span class="required-asterisk">*</span></label>
-          <input
-            type="text"
-            id="register-cedula"
-            required
-            placeholder="Ej: 12345678" />
-        </div>
-        <div class="form-group">
-          <label for="register-email">Correo Electrónico</label>
-          <input
-            type="email"
-            id="register-email"
-            placeholder="Ej: usuario@empresa.com" />
-        </div>
-        <div class="form-group">
-          <label for="register-password">Contraseña <span class="required-asterisk">*</span></label>
-          <div class="password-wrapper">
-            <input
-              type="password"
-              id="register-password"
-              required
-              minlength="4" />
-            <button
-              type="button"
-              class="toggle-password"
-              onclick="togglePassword('register-password', this)">
-              <i class="fas fa-eye"></i>
-            </button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="register-password-confirm">Confirmar Contraseña <span class="required-asterisk">*</span></label>
-          <div class="password-wrapper">
-            <input
-              type="password"
-              id="register-password-confirm"
-              required
-              minlength="4" />
-            <button
-              type="button"
-              class="toggle-password"
-              onclick="togglePassword('register-password-confirm', this)">
-              <i class="fas fa-eye"></i>
-            </button>
-          </div>
-        </div>
-
-        <div
-          style="margin: 20px 0; border-top: 1px solid #eee; padding-top: 20px;">
-          <h4 style="color: var(--dark); margin-bottom: 15px;">
-            Preguntas de Seguridad
-          </h4>
-          <p style="font-size: 0.85em; color: #666; margin-bottom: 15px;">
-            Necesarias para recuperar tu contraseña si la olvidas.
-          </p>
-
-          <!-- Pregunta 1 -->
-          <div class="form-group">
-            <label>Pregunta 1 <span class="required-asterisk">*</span></label>
-            <select id="register-pregunta-1" required>
-              <option value="">Seleccione una pregunta...</option>
-              <option value="nombre_mascota">
-                ¿Cuál es el nombre de tu primera mascota?
-              </option>
-              <option value="ciudad_nacimiento">¿En qué ciudad naciste?</option>
-              <option value="apellido_madre">
-                ¿Cuál es el primer apellido de tu madre?
-              </option>
-            </select>
-            <input
-              type="text"
-              id="register-respuesta-1"
-              required
-              placeholder="Respuesta"
-              style="margin-top: 5px;" />
-          </div>
-
-          <!-- Pregunta 2 -->
-          <div class="form-group">
-            <label>Pregunta 2 <span class="required-asterisk">*</span></label>
-            <select id="register-pregunta-2" required>
-              <option value="">Seleccione una pregunta...</option>
-              <option value="escuela_primaria">
-                ¿Cómo se llamaba tu escuela primaria?
-              </option>
-              <option value="mejor_amigo">
-                ¿Cuál es el nombre de tu mejor amigo de la infancia?
-              </option>
-              <option value="pelicula_favorita">
-                ¿Cuál es tu película favorita?
-              </option>
-            </select>
-            <input
-              type="text"
-              id="register-respuesta-2"
-              required
-              placeholder="Respuesta"
-              style="margin-top: 5px;" />
-          </div>
-
-          <!-- Pregunta 3 -->
-          <div class="form-group">
-            <label>Pregunta 3 <span class="required-asterisk">*</span></label>
-            <select id="register-pregunta-3" required>
-              <option value="">Seleccione una pregunta...</option>
-              <option value="comida_favorita">
-                ¿Cuál es tu comida favorita?
-              </option>
-              <option value="primer_trabajo">
-                ¿Cuál fue tu primer trabajo?
-              </option>
-              <option value="color_favorito">
-                ¿Cuál es tu color favorito?
-              </option>
-            </select>
-            <input
-              type="text"
-              id="register-respuesta-3"
-              required
-              placeholder="Respuesta"
-              style="margin-top: 5px;" />
-          </div>
-          <?php if ($dashboardRecaptchaSiteKey !== ''): ?>
-            <div class="form-group form-group--recaptcha">
-              <div
-                class="g-recaptcha"
-                data-sitekey="<?= htmlspecialchars($dashboardRecaptchaSiteKey, ENT_QUOTES, 'UTF-8') ?>"
-                data-dashboard-widget="register"></div>
-            </div>
-          <?php endif; ?>
-          <div class="form-actions">
-            <button
-              type="button"
-              class="btn btn-outline"
-              onclick="showWelcome()">
-              <i class="fas fa-arrow-left"></i>
-              Volver
-            </button>
-            <button type="submit" class="btn btn-secondary">
-              <i class="fas fa-user-plus"></i>
-              Registrarse
-            </button>
-          </div>
         </div>
       </form>
     </div>
@@ -378,11 +282,8 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
               <span>Backup</span>
             </a>
           </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              onclick="handleLogout()"
-              style="color: var(--danger);">
+          <li class="nav-item nav-item--logout">
+            <a class="nav-link nav-link-danger" onclick="handleLogout()">
               <i class="fas fa-sign-out-alt"></i>
               <span>Cerrar Sesión</span>
             </a>
@@ -1740,26 +1641,14 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
 
         <!-- Step 2: Answer Questions -->
         <div id="recovery-step-2" style="display: none;">
-          <p style="margin-bottom: 20px; color: #666;">Responde las
-            preguntas de seguridad
+          <p style="margin-bottom: 20px; color: #666;">Responde la
+            pregunta de seguridad
             para verificar tu
             identidad.</p>
 
           <div class="form-group">
-            <label id="label-pregunta-1">Pregunta 1 <span class="required-asterisk">*</span></label>
-            <input type="text" id="recovery-respuesta-1" required
-              placeholder="Tu respuesta">
-          </div>
-
-          <div class="form-group">
-            <label id="label-pregunta-2">Pregunta 2 <span class="required-asterisk">*</span></label>
-            <input type="text" id="recovery-respuesta-2" required
-              placeholder="Tu respuesta">
-          </div>
-
-          <div class="form-group">
-            <label id="label-pregunta-3">Pregunta 3 <span class="required-asterisk">*</span></label>
-            <input type="text" id="recovery-respuesta-3" required
+            <label id="label-secret-question">Pregunta <span class="required-asterisk">*</span></label>
+            <input type="text" id="recovery-secret-answer" required
               placeholder="Tu respuesta">
           </div>
 
@@ -1784,6 +1673,7 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
               <input type="password" id="recovery-password"
                 required minlength="4">
               <button type="button" class="toggle-password"
+                tabindex="-1"
                 onclick="togglePassword('recovery-password', this)">
                 <i class="fas fa-eye"></i>
               </button>
@@ -1796,6 +1686,7 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
               <input type="password" id="recovery-confirm"
                 required minlength="4">
               <button type="button" class="toggle-password"
+                tabindex="-1"
                 onclick="togglePassword('recovery-confirm', this)">
                 <i class="fas fa-eye"></i>
               </button>
@@ -2236,6 +2127,7 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
               <input type="password" id="current-password"
                 required>
               <button type="button" class="toggle-password"
+                tabindex="-1"
                 onclick="togglePassword('current-password', this)">
                 <i class="fas fa-eye"></i>
               </button>
@@ -2247,6 +2139,7 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
               <input type="password" id="new-password" required
                 minlength="4">
               <button type="button" class="toggle-password"
+                tabindex="-1"
                 onclick="togglePassword('new-password', this)">
                 <i class="fas fa-eye"></i>
               </button>
@@ -2258,6 +2151,7 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
               <input type="password" id="confirm-new-password"
                 required minlength="4">
               <button type="button" class="toggle-password"
+                tabindex="-1"
                 onclick="togglePassword('confirm-new-password', this)">
                 <i class="fas fa-eye"></i>
               </button>
@@ -2287,57 +2181,26 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
         <form onsubmit="saveSecurityQuestions(event)">
           <p
             style="color: #6b7280; margin-bottom: 20px; font-size: 0.9em;">
-            Estas preguntas te ayudarán a recuperar tu cuenta si
+            Esta pregunta te ayudará a recuperar tu cuenta si
             olvidas tu contraseña.
           </p>
           <div class="form-group">
-            <label>Pregunta 1 <span class="required-asterisk">*</span></label>
-            <select id="security-pregunta-1" required>
+            <label for="security-secret-question">Pregunta <span class="required-asterisk">*</span></label>
+            <select id="security-secret-question" required>
               <option value="">Seleccione una pregunta...</option>
-              <option
-                value="¿Cuál es el nombre de tu primera mascota?">
-                ¿Cuál es el nombre de tu primera
-                mascota?</option>
+              <option value="¿Cuál es el nombre de tu primera mascota?">¿Cuál es el nombre de tu primera mascota?</option>
               <option value="¿En qué ciudad naciste?">¿En qué
                 ciudad naciste?</option>
-              <option
-                value="¿Cuál es el nombre de tu mejor amigo de la infancia?">
-                ¿Cuál es el nombre de tu
-                mejor amigo de la infancia?</option>
-            </select>
-            <input type="text" id="security-respuesta-1"
-              placeholder="Tu respuesta" required
-              style="margin-top: 8px;">
-          </div>
-          <div class="form-group">
-            <label>Pregunta 2 <span class="required-asterisk">*</span></label>
-            <select id="security-pregunta-2" required>
-              <option value="">Seleccione una pregunta...</option>
+              <option value="¿Cuál es el primer apellido de tu madre?">¿Cuál es el primer apellido de tu madre?</option>
+              <option value="¿Cómo se llamaba tu escuela primaria?">¿Cómo se llamaba tu escuela primaria?</option>
+              <option value="¿Cuál es el nombre de tu mejor amigo de la infancia?">¿Cuál es el nombre de tu mejor amigo de la infancia?</option>
+              <option value="¿Cuál es tu película favorita?">¿Cuál es tu película favorita?</option>
               <option value="¿Cuál es tu comida favorita?">¿Cuál
                 es tu comida favorita?</option>
-              <option
-                value="¿Cuál es el nombre de tu escuela primaria?">
-                ¿Cuál es el nombre de tu escuela
-                primaria?</option>
-              <option value="¿Cuál es tu película favorita?">¿Cuál
-                es tu película favorita?</option>
+              <option value="¿Cuál fue tu primer trabajo?">¿Cuál fue tu primer trabajo?</option>
+              <option value="¿Cuál es tu color favorito?">¿Cuál es tu color favorito?</option>
             </select>
-            <input type="text" id="security-respuesta-2"
-              placeholder="Tu respuesta" required
-              style="margin-top: 8px;">
-          </div>
-          <div class="form-group">
-            <label>Pregunta 3 <span class="required-asterisk">*</span></label>
-            <select id="security-pregunta-3" required>
-              <option value="">Seleccione una pregunta...</option>
-              <option value="¿Cuál es el nombre de tu madre?">
-                ¿Cuál es el nombre de tu madre?</option>
-              <option value="¿Cuál es tu deporte favorito?">¿Cuál
-                es tu deporte favorito?</option>
-              <option value="¿En qué año te graduaste?">¿En qué
-                año te graduaste?</option>
-            </select>
-            <input type="text" id="security-respuesta-3"
+            <input type="text" id="security-secret-answer"
               placeholder="Tu respuesta" required
               style="margin-top: 8px;">
           </div>
@@ -2345,12 +2208,16 @@ $dashboardRecaptchaSiteKey = trim(strval($_ENV['RECAPTCHA_SITE_KEY'] ?? ''));
             <button type="button" class="btn btn-outline"
               onclick="closeSecurityQuestionsModal()">Cancelar</button>
             <button type="submit" class="btn btn-primary">Guardar
-              Preguntas</button>
+              pregunta</button>
           </div>
         </form>
       </div>
     </div>
 
+    <script>
+      window.DASHBOARD_FLASH_ERROR = <?= json_encode($dashboardFlashError, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+      window.DASHBOARD_AUTH_USER = <?= json_encode($dashboardAuthUserPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+    </script>
     <script src="./resources/js/app.js?id=<?= RESOURCES_ID ?>"></script>
   </body>
 

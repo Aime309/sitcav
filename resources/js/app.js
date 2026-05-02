@@ -66,7 +66,7 @@ function updateEcommerceAuthLink() {
   }
 }
 
-function renderDashboardRecaptchaWidgets() {
+window.renderDashboardRecaptchaWidgets = function renderDashboardRecaptchaWidgets() {
   if (typeof grecaptcha === "undefined") {
     return;
   }
@@ -87,7 +87,7 @@ function renderDashboardRecaptchaWidgets() {
 
       container.dataset.widgetRendered = "true";
     });
-}
+};
 
 function getDashboardRecaptchaToken(widgetName) {
   const container = document.querySelector(
@@ -155,22 +155,13 @@ function validateDashboardRecaptcha(widgetName, errorDiv) {
 function showWelcome() {
   document.getElementById("welcome-screen").classList.remove("hidden");
   document.getElementById("login-form").classList.add("hidden");
-  document.getElementById("register-form").classList.add("hidden");
   document.getElementById("app-container").classList.remove("active");
 }
 
 function showLogin() {
   document.getElementById("welcome-screen").classList.add("hidden");
   document.getElementById("login-form").classList.remove("hidden");
-  document.getElementById("register-form").classList.add("hidden");
-  renderDashboardRecaptchaWidgets();
-}
-
-function showRegister() {
-  document.getElementById("welcome-screen").classList.add("hidden");
-  document.getElementById("login-form").classList.add("hidden");
-  document.getElementById("register-form").classList.remove("hidden");
-  renderDashboardRecaptchaWidgets();
+  window.renderDashboardRecaptchaWidgets();
 }
 
 async function handleLogin(event) {
@@ -230,76 +221,6 @@ async function handleLogin(event) {
   }
 }
 
-async function handleRegister(event) {
-  event.preventDefault();
-
-  const nombre = document.getElementById("register-nombre").value;
-  const cedula = document.getElementById("register-cedula").value;
-  const email = document.getElementById("register-email").value;
-  const password = document.getElementById("register-password").value;
-  const passwordConfirm = document.getElementById(
-    "register-password-confirm",
-  ).value;
-
-  const errorDiv = document.getElementById("register-error");
-  const successDiv = document.getElementById("register-success");
-
-  errorDiv.style.display = "none";
-  successDiv.style.display = "none";
-
-  if (password !== passwordConfirm) {
-    errorDiv.textContent = "Las contraseñas no coinciden";
-    errorDiv.style.display = "block";
-    return;
-  }
-
-  if (!validateDashboardRecaptcha("register", errorDiv)) {
-    return;
-  }
-
-  const recaptchaToken = getDashboardRecaptchaToken("register");
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nombre,
-        cedula,
-        email,
-        contrasena: password,
-        pregunta_1: document.getElementById("register-pregunta-1").value,
-        respuesta_1: document.getElementById("register-respuesta-1").value,
-        pregunta_2: document.getElementById("register-pregunta-2").value,
-        respuesta_2: document.getElementById("register-respuesta-2").value,
-        pregunta_3: document.getElementById("register-pregunta-3").value,
-        respuesta_3: document.getElementById("register-respuesta-3").value,
-        recaptcha_token: recaptchaToken,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      successDiv.textContent = "Registro exitoso! Redirigiendo al login...";
-      successDiv.style.display = "block";
-      document.getElementById("register-form").querySelector("form").reset();
-      resetDashboardRecaptcha("register");
-      setTimeout(() => {
-        showLogin();
-        document.getElementById("login-cedula").value = cedula;
-      }, 2000);
-    } else {
-      errorDiv.textContent = data.message;
-      errorDiv.style.display = "block";
-      resetDashboardRecaptcha("register");
-    }
-  } catch (error) {
-    errorDiv.textContent = "Error de conexión con el servidor";
-    errorDiv.style.display = "block";
-    resetDashboardRecaptcha("register");
-  }
-}
 
 function handleLogout() {
   const shouldRedirectToLogout = !isAnonymousUser();
@@ -318,7 +239,6 @@ function handleLogout() {
 function loadDashboard() {
   document.getElementById("welcome-screen").classList.add("hidden");
   document.getElementById("login-form").classList.add("hidden");
-  document.getElementById("register-form").classList.add("hidden");
   document.getElementById("app-container").classList.add("active");
 
   console.log("=== DEBUG loadDashboard ===");
@@ -1759,7 +1679,9 @@ window.addEventListener("DOMContentLoaded", () => {
   renderDashboardRecaptchaWidgets();
   // Check if user is already logged in
   const savedUser = localStorage.getItem("currentUser");
-  const serverAuthenticatedUser = window.ECOMMERCE_AUTH_USER ?? null;
+  const serverAuthenticatedUser =
+    window.DASHBOARD_AUTH_USER ?? window.ECOMMERCE_AUTH_USER ?? null;
+  const serverFlashError = window.DASHBOARD_FLASH_ERROR ?? "";
   const path = window.location.pathname;
   const isDashboardPath = path.includes("/dashboard");
 
@@ -1792,6 +1714,12 @@ window.addEventListener("DOMContentLoaded", () => {
   } else {
     // Show welcome screen on /dashboard if not logged in
     showWelcome();
+  }
+
+  if (serverFlashError && serverAuthenticatedUser) {
+    window.setTimeout(() => {
+      window.alert(serverFlashError);
+    }, 0);
   }
 });
 
@@ -1830,9 +1758,7 @@ function closeRecoveryModal() {
   document.getElementById("welcome-screen").classList.remove("hidden");
   // Reset forms
   document.getElementById("recovery-cedula").value = "";
-  document.getElementById("recovery-respuesta-1").value = "";
-  document.getElementById("recovery-respuesta-2").value = "";
-  document.getElementById("recovery-respuesta-3").value = "";
+  document.getElementById("recovery-secret-answer").value = "";
   document.getElementById("recovery-password").value = "";
   document.getElementById("recovery-confirm").value = "";
   document
@@ -1858,19 +1784,16 @@ async function checkUserForRecovery() {
   }
 
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/security-questions/${cedula}`,
-    );
+    const response = await fetch(`${API_BASE_URL}/check-user-recovery`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cedula }),
+    });
     const data = await response.json();
 
     if (data.success) {
-      // Populate questions
-      document.getElementById("label-pregunta-1").innerHTML =
-        `${formatQuestion(data.preguntas[0])} <span class="required-asterisk">*</span>`;
-      document.getElementById("label-pregunta-2").innerHTML =
-        `${formatQuestion(data.preguntas[1])} <span class="required-asterisk">*</span>`;
-      document.getElementById("label-pregunta-3").innerHTML =
-        `${formatQuestion(data.preguntas[2])} <span class="required-asterisk">*</span>`;
+      document.getElementById("label-secret-question").innerHTML =
+        `${data.secret_question} <span class="required-asterisk">*</span>`;
 
       errorDiv.textContent = "";
       showRecoveryStep(2);
@@ -1898,14 +1821,11 @@ function formatQuestion(key) {
 }
 
 async function verifyAnswers() {
-  const cedula = document.getElementById("recovery-cedula").value;
-  const r1 = document.getElementById("recovery-respuesta-1").value;
-  const r2 = document.getElementById("recovery-respuesta-2").value;
-  const r3 = document.getElementById("recovery-respuesta-3").value;
+  const secretAnswer = document.getElementById("recovery-secret-answer").value;
   const errorDiv = document.getElementById("recovery-error-2");
 
-  if (!r1 || !r2 || !r3) {
-    errorDiv.textContent = "Por favor responde todas las preguntas";
+  if (!secretAnswer) {
+    errorDiv.textContent = "Por favor responde la pregunta";
     errorDiv.style.display = "block";
     return;
   }
@@ -1915,8 +1835,8 @@ async function verifyAnswers() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        cedula,
-        respuestas: [r1, r2, r3],
+        user_id: recoveryUserId,
+        secret_answer: secretAnswer,
       }),
     });
     const data = await response.json();
@@ -2413,9 +2333,7 @@ function showRecovery() {
 function closeRecoveryModal() {
   document.getElementById("recovery-modal").classList.remove("active");
   document.getElementById("recovery-cedula").value = "";
-  document.getElementById("recovery-respuesta-1").value = "";
-  document.getElementById("recovery-respuesta-2").value = "";
-  document.getElementById("recovery-respuesta-3").value = "";
+  document.getElementById("recovery-secret-answer").value = "";
   document.getElementById("recovery-password").value = "";
   document.getElementById("recovery-confirm").value = "";
   document
@@ -2454,13 +2372,8 @@ async function checkUserForRecovery() {
 
     if (data.success) {
       recoveryUserId = data.user_id;
-      // Set questions
-      document.getElementById("label-pregunta-1").textContent =
-        data.preguntas[0];
-      document.getElementById("label-pregunta-2").textContent =
-        data.preguntas[1];
-      document.getElementById("label-pregunta-3").textContent =
-        data.preguntas[2];
+      document.getElementById("label-secret-question").innerHTML =
+        `${data.secret_question} <span class="required-asterisk">*</span>`;
       showRecoveryStep(2);
     } else {
       errorDiv.textContent = data.message || "Usuario no encontrado";
@@ -2473,13 +2386,11 @@ async function checkUserForRecovery() {
 }
 
 async function verifyAnswers() {
-  const r1 = document.getElementById("recovery-respuesta-1").value;
-  const r2 = document.getElementById("recovery-respuesta-2").value;
-  const r3 = document.getElementById("recovery-respuesta-3").value;
+  const secretAnswer = document.getElementById("recovery-secret-answer").value;
   const errorDiv = document.getElementById("recovery-error-2");
 
-  if (!r1 || !r2 || !r3) {
-    errorDiv.textContent = "Por favor responda todas las preguntas";
+  if (!secretAnswer) {
+    errorDiv.textContent = "Por favor responda la pregunta";
     errorDiv.style.display = "block";
     return;
   }
@@ -2490,7 +2401,7 @@ async function verifyAnswers() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         user_id: recoveryUserId,
-        respuestas: [r1, r2, r3],
+        secret_answer: secretAnswer,
       }),
     });
 
@@ -4233,30 +4144,20 @@ function closeSecurityQuestionsModal() {
 
 async function loadSecurityQuestions() {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/usuarios`);
-    const usuarios = await response.json();
+    const response = await fetch(`${API_BASE_URL}/user-security-question`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: currentUser.id }),
+    });
+    const usuario = await response.json();
 
-    const usuario = usuarios.find((u) => u.id === currentUser.id);
-
-    if (usuario) {
-      // Set questions and answers if they exist
-      if (usuario.pregunta_1) {
-        document.getElementById("security-pregunta-1").value =
-          usuario.pregunta_1;
-      }
-      if (usuario.pregunta_2) {
-        document.getElementById("security-pregunta-2").value =
-          usuario.pregunta_2;
-      }
-      if (usuario.pregunta_3) {
-        document.getElementById("security-pregunta-3").value =
-          usuario.pregunta_3;
+    if (response.ok) {
+      if (usuario.secret_question) {
+        document.getElementById("security-secret-question").value =
+          usuario.secret_question;
       }
 
-      // Note: We don't show answers for security
-      document.getElementById("security-respuesta-1").value = "";
-      document.getElementById("security-respuesta-2").value = "";
-      document.getElementById("security-respuesta-3").value = "";
+      document.getElementById("security-secret-answer").value = "";
     }
   } catch (error) {
     console.error("Error loading security questions:", error);
@@ -4266,18 +4167,13 @@ async function loadSecurityQuestions() {
 async function saveSecurityQuestions(event) {
   event.preventDefault();
 
-  const pregunta1 = document.getElementById("security-pregunta-1").value;
-  const respuesta1 = document.getElementById("security-respuesta-1").value;
-  const pregunta2 = document.getElementById("security-pregunta-2").value;
-  const respuesta2 = document.getElementById("security-respuesta-2").value;
-  const pregunta3 = document.getElementById("security-pregunta-3").value;
-  const respuesta3 = document.getElementById("security-respuesta-3").value;
+  const secretQuestion = document.getElementById("security-secret-question")
+    .value;
+  const secretAnswer = document.getElementById("security-secret-answer").value;
 
   console.log("=== DEBUG saveSecurityQuestions ===");
   console.log("currentUser.id:", currentUser?.id);
-  console.log("Pregunta 1:", pregunta1, "Respuesta 1:", respuesta1);
-  console.log("Pregunta 2:", pregunta2, "Respuesta 2:", respuesta2);
-  console.log("Pregunta 3:", pregunta3, "Respuesta 3:", respuesta3);
+  console.log("Pregunta:", secretQuestion, "Respuesta:", secretAnswer);
 
   if (!currentUser || !currentUser.id) {
     alert(
@@ -4287,33 +4183,27 @@ async function saveSecurityQuestions(event) {
   }
 
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/usuarios/${currentUser.id}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          pregunta_1: pregunta1,
-          respuesta_1: respuesta1,
-          pregunta_2: pregunta2,
-          respuesta_2: respuesta2,
-          pregunta_3: pregunta3,
-          respuesta_3: respuesta3,
-        }),
-      },
-    );
+    const response = await fetch(`${API_BASE_URL}/save-user-security-question`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: currentUser.id,
+        secret_question: secretQuestion,
+        secret_answer: secretAnswer,
+      }),
+    });
 
     console.log("Response status:", response.status);
     const result = await response.json();
     console.log("Response result:", result);
 
     if (response.ok) {
-      alert("Preguntas de seguridad actualizadas correctamente");
+      alert("Pregunta secreta actualizada correctamente");
       closeSecurityQuestionsModal();
     } else {
       alert(
         "Error: " +
-          (result.message || "No se pudieron actualizar las preguntas"),
+          (result.message || "No se pudo actualizar la pregunta"),
       );
     }
   } catch (error) {

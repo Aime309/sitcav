@@ -80,7 +80,7 @@ $auth->config('session.lifetime', 0);
 $auth->config('session.cookie', [
   'secure' => false,
   'httponly' => true,
-  'samesite' => 'Strict',
+  'samesite' => 'Lax',
 ]);
 
 $auth->config('token.lifetime', null);
@@ -100,7 +100,7 @@ $auth->createRoles([
 // CONFIGURAR LEAF FORM (módulo de validaciones) //
 ///////////////////////////////////////////////////
 $form = Container::getInstance()->singleton(Form::class)->get(Form::class);
-$form->rule('password', '/^.{8,}$/', 'La contraseña debe tener al menos 8 caracteres.');
+$form->rule('password', passwordPolicyPattern(), passwordPolicyMessage());
 $form->message('min', 'El campo {Field} debe tener al menos %s caracteres.');
 
 // DESACTIVAR LA VERIFICACIÓN SSL DE GUZZLE (CLIENTE HTTP)
@@ -148,6 +148,8 @@ foreach (glob(ROOT_DIR . '/database/migrations/*.sql') as $sqlFilePath) {
   $sql = file_get_contents($sqlFilePath);
   $pdo->exec($sql);
 }
+
+syncUsersTableSchema($pdo);
 
 ///////////////////////////////////////////
 // CONFIGURAR CONTENEDOR DE DEPENDENCIAS //
