@@ -16,6 +16,8 @@ use App\Models\Purchase;
 use App\Models\Refund;
 use App\Models\Sale;
 use flight\Container;
+use GuzzleHttp\Client as GuzzleHttpClient;
+use GuzzleHttp\Exception\GuzzleException;
 use Leaf\Auth;
 use Leaf\FS\Storage;
 
@@ -216,6 +218,39 @@ $buildConsultationSales = static function ($db, array $filters = []) use ($hydra
 };
 
 Flight::group('/api', static function () use ($loadBusiness, $hydrateSale, $hydratePurchase, $hydrateLayaway, $buildConsultationSales): void {
+  Flight::route('/gemini', static function (): void {
+    $request = Flight::request();
+    $prompt = ($request->data->prompt ?: $request->query->prompt) ?: 'Hola';
+    $apiKey = $_ENV['GEMINI_API_KEY'];
+
+    $gemini = Gemini::factory()
+      ->withApiKey($apiKey)
+      ->withHttpClient(new GuzzleHttpClient(['verify' => false]))
+      ->make();
+
+    $response = $gemini
+      ->generativeModel('gemini-3-flash-preview')
+      ->generateContent($prompt);
+
+    echo $response->text();
+  });
+
+  Flight::route('/bcv/exchange-rate', static function (): void {
+    try {
+      $dollarsFromApi = (new GuzzleHttpClient())->get('https://api.dolarvzla.com/public/bcv/exchange-rate', [
+        'headers' => [
+          'x-dolarvzla-key' => $_ENV['TASA_BCV_API_KEY'],
+        ],
+      ])->getBody()->getContents();
+
+      Flight::json(json_decode($dollarsFromApi));
+    } catch (GuzzleException $error) {
+      error_log($error->__toString());
+
+      Flight::halt(503);
+    }
+  });
+
   Flight::route('GET /status', static fn() => Flight::json(['status' => 'ok']));
 
   Flight::route('GET /dashboard/stats', static function (): void {
