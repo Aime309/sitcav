@@ -1,9 +1,9 @@
 <?php
 
 return [
-  # ========================================================================================================
-  # = Variables de conexión a la base de datos (requeridas por illuminate/database, leafs/db y leafs/auth) =
-  # ========================================================================================================
+  # ======================================================================
+  # = Variables de conexión a la base de datos (requeridas por leafs/db) =
+  # ======================================================================
   'DB_CONNECTION' => 'sqlite',
   // 'DB_HOST' => '127.0.0.1',
   // 'DB_PORT' => '3306',
@@ -11,7 +11,6 @@ return [
   // 'DB_PASSWORD' => null,
   'DB_DATABASE' => __DIR__ . '/database/database.sqlite',
 
-  'TEST_URL' => 'http://localhost:8080',
   'TOKEN_SECRET' => '{token-secret}',
   'ENVIRONMENT' => 'development',
   'TIMEZONE' => 'America/Caracas',
