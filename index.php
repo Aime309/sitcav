@@ -183,35 +183,26 @@ ini_set('syslog.filter', 'ascii');
 ini_set('windows.show_crt_warning', false);
 
 Flight::map('error', static function (Throwable $error): never {
+  error_log($error->__toString());
+
   if (str_contains($error->getPrevious()?->getMessage() ?: $error->getMessage(), User::class)) {
-    error_log($error->__toString());
     Flight::redirect('/salir');
 
     exit;
   }
 
   if (str_contains($error->getMessage(), 'Template file not found')) {
-    error_log($error->__toString());
     Flight::notFound();
 
     exit;
   }
 
-  http_response_code(500);
-  error_log($error->__toString());
-  Flight::render('pages/500', ['title' => 'Error interno del servidor'], 'slot');
-  Flight::render('layouts/layout');
+  Flight::render('pages/500');
 
   exit;
 });
 
-Flight::map('notFound', static function (): void {
-  http_response_code(404);
-  Flight::render('pages/404', ['title' => 'Página no encontrada'], 'slot');
-  Flight::render('layouts/layout');
-
-  exit;
-});
+Flight::map('notFound', static fn () => Flight::render('pages/404'));
 
 /////////////////////////////////////
 // CONFIGURAR GENERACIÓN DE FECHAS //

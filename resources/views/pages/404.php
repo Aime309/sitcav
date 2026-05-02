@@ -1,6 +1,8 @@
-$title ??= 'Error 404';
-$errorCode = '404';
-$errorTitle = 'Pagina no encontrada';
-$errorText = 'La ruta que intentaste abrir no existe o ya no esta disponible.';
+<?php
 
-require ROOT_DIR . '/resources/views/layouts/error.php';
+http_response_code(404);
+
+Flight::render('layouts/error', [
+  'title' => 'Página no encontrada',
+  'errorText' => 'La ruta que intentaste abrir no existe o ya no esta disponible.',
+]);

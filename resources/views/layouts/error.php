@@ -4,19 +4,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <meta name="color-scheme" content="light dark">
-    <title><?= $title ?></title>
+    <title><?= $title ?? '' ?></title>
     <base href="<?= BASE_HREF ?>" />
     <link rel="icon" href="./resources/images/favicon.png" />
-    <link rel="stylesheet" href="./resources/css/500.css" />
+    <link rel="stylesheet" href="./resources/css/error.css" />
   </head>
   <body>
     <section class="error-page">
       <div class="error-page__card">
         <div class="error-page__icon">!</div>
-        <p class="error-page__code"><?= $errorCode ?></p>
-        <h1 class="error-page__title"><?= $errorTitle ?></h1>
+        <p class="error-page__code"><?= http_response_code() ?></p>
+        <h1 class="error-page__title"><?= $title ?? '' ?></h1>
         <p class="error-page__text">
-          <?= $errorText ?>
+          <?= $errorText ?? '' ?>
         </p>
 
         <div class="error-page__actions">
@@ -25,6 +25,6 @@
       </div>
     </section>
 
-    <script src="./resources/js/500.js"></script>
+    <script src="./resources/js/error.js"></script>
   </body>
 </html>
