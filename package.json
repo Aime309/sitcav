@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.14"
+  },
+  "scripts": {
+    "format": "biome format . --write",
+    "ci": "biome ci ."
+  }
+}
