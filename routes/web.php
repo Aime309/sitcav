@@ -86,5 +86,10 @@ Flight::route('GET /dashboard/register', static function (): void {
   Flight::render('pages/register');
 });
 
-Flight::route('GET /', static fn() => Flight::render('pages/ecommerce/index'));
+Flight::route('GET /', static function (): void {
+  throw new Error('Página no encontrada');
+
+  Flight::render('pages/ecommerce/index');
+});
+
 Flight::route('GET /dashboard', static fn() => Flight::render('pages/dashboard/index'));

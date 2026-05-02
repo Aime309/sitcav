@@ -1,99 +1,31 @@
-<style>
-  * {
-    box-sizing: border-box;
-  }
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="color-scheme" content="light dark">
+    <title><?= $title ?? 'Error 500' ?></title>
+    <base href="<?= BASE_HREF ?>" />
+    <link rel="icon" href="./resources/images/favicon.png" />
+    <link rel="stylesheet" href="./resources/css/500.css" />
+  </head>
+  <body>
+    <section class="error-page">
+      <div class="error-page__card">
+        <div class="error-page__icon">!</div>
+        <p class="error-page__code">500</p>
+        <h1 class="error-page__title">Error interno del servidor</h1>
+        <p class="error-page__text">
+          Ocurrio un error inesperado mientras procesabamos tu solicitud. Intenta nuevamente en unos minutos.
+        </p>
 
-  body {
-    margin: 0;
-  }
+        <div class="error-page__actions">
+          <a class="error-page__link" href="./">Volver al inicio</a>
+        </div>
+      </div>
+    </section>
 
-  .error-page {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  }
+    <script src="./resources/js/500.js"></script>
+  </body>
+</html>
 
-  .error-page__card {
-    width: 100%;
-    max-width: 560px;
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 48px 36px;
-    text-align: center;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  }
-
-  .error-page__icon {
-    width: 84px;
-    height: 84px;
-    margin: 0 auto 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #dbeafe;
-    color: #1d4ed8;
-    font-size: 2rem;
-    font-weight: 700;
-  }
-
-  .error-page__code {
-    margin: 0 0 8px;
-    color: #1d4ed8;
-    font-size: 3rem;
-    line-height: 1;
-  }
-
-  .error-page__title {
-    margin: 0 0 12px;
-    color: #1f2937;
-    font-size: 1.8rem;
-  }
-
-  .error-page__text {
-    margin: 0 0 28px;
-    color: #6b7280;
-    font-size: 1rem;
-    line-height: 1.6;
-  }
-
-  .error-page__actions {
-    display: flex;
-    justify-content: center;
-  }
-
-  .error-page__link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 14px 24px;
-    border-radius: 10px;
-    background: #1d4ed8;
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: 600;
-  }
-
-  .error-page__link:hover {
-    background: #1e40af;
-  }
-</style>
-
-<section class="error-page">
-  <div class="error-page__card">
-    <div class="error-page__icon">!</div>
-    <p class="error-page__code">500</p>
-    <h1 class="error-page__title">Error interno del servidor</h1>
-    <p class="error-page__text">
-      Ocurrio un error inesperado mientras procesabamos tu solicitud. Intenta nuevamente en unos minutos.
-    </p>
-
-    <div class="error-page__actions">
-      <a class="error-page__link" href="<?= BASE_HREF ?>">Volver al inicio</a>
-    </div>
-  </div>
-</section>

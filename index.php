@@ -129,7 +129,7 @@ $guzzleConfigProperty->setValue(
 Flight::set('flight.base_url', BASE_URL);
 Flight::set('flight.case_sensitive', false);
 Flight::set('flight.handle_errors', true);
-Flight::set('flight.log_errors', true);
+Flight::set('flight.log_errors', false);
 Flight::set('flight.views.path', ROOT_DIR . '/resources/views');
 Flight::set('flight.views.extension', '.php');
 Flight::set('flight.content_length', true);
@@ -199,24 +199,18 @@ Flight::map('error', static function (Throwable $error): never {
 
   http_response_code(500);
   error_log($error->__toString());
-
-  Flight::render('pages/500', key: 'slot');
-
-  Flight::render('layouts/layout', [
-    'title' => 'Error interno del servidor',
-  ]);
+  Flight::render('pages/500', ['title' => 'Error interno del servidor'], 'slot');
+  Flight::render('layouts/layout');
 
   exit;
 });
 
 Flight::map('notFound', static function (): void {
   http_response_code(404);
+  Flight::render('pages/404', ['title' => 'Página no encontrada'], 'slot');
+  Flight::render('layouts/layout');
 
-  Flight::render('pages/404', key: 'slot');
-
-  Flight::render('layouts/layout', [
-    'title' => 'Página no encontrada',
-  ]);
+  exit;
 });
 
 /////////////////////////////////////
