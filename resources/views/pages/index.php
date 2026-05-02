@@ -36,10 +36,6 @@
           <i class="fas fa-user-plus"></i>
           Registrarse
         </button>
-        <button class="btn btn-outline" onclick="loginAsAnonymous()">
-          <i class="fas fa-user-secret"></i>
-          Entrar como Invitado
-        </button>
       </div>
     </div>
 
@@ -369,9 +365,14 @@
           </div>
           <div class="user-info" onclick="toggleProfileDropdown(event)">
             <div class="user-avatar" id="user-avatar">U</div>
-            <div class="user-details">
+            <div class="user-details" id="user-details-container">
               <h4 id="user-name">Usuario</h4>
               <p id="user-role">Roles</p>
+            </div>
+            <div id="guest-login-container" style="display: none;">
+                <a href="dashboard" class="btn btn-primary btn-sm">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </a>
             </div>
 
             <!-- Profile Dropdown Panel -->

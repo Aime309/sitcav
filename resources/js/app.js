@@ -147,16 +147,6 @@ async function handleRegister(event) {
     }
 }
 
-function loginAsAnonymous() {
-    currentUser = {
-        id: null,
-        nombre: 'Invitado',
-        roles: 'Anónimo'
-    };
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-    loadDashboard();
-}
-
 function handleLogout() {
     currentUser = null;
     localStorage.removeItem('currentUser');
@@ -176,6 +166,12 @@ function loadDashboard() {
     // Set user info
     document.getElementById('user-name').textContent = currentUser.nombre;
     document.getElementById('user-role').textContent = currentUser.roles;
+
+    // Toggle guest login button
+    const isGuest = currentUser.roles === 'Anónimo';
+    document.getElementById('guest-login-container').style.display = isGuest ? 'block' : 'none';
+    document.getElementById('user-details-container').style.display = isGuest ? 'none' : 'block';
+    document.getElementById('user-avatar').style.display = isGuest ? 'none' : 'block';
 
     // Set avatar with photo or initial
     if (currentUser.foto_url) {
@@ -1420,6 +1416,9 @@ async function createBackup() {
 window.addEventListener('DOMContentLoaded', () => {
     // Check if user is already logged in
     const savedUser = localStorage.getItem('currentUser');
+    const path = window.location.pathname;
+    const isDashboardPath = path.includes('/dashboard');
+
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
         loadDashboard();
@@ -1429,6 +1428,17 @@ window.addEventListener('DOMContentLoaded', () => {
         if (lastSection && lastSection !== 'dashboard') {
             showSection(lastSection);
         }
+    } else if (!isDashboardPath) {
+        // Auto-login as guest on root if not logged in
+        currentUser = {
+            id: null,
+            nombre: 'Invitado',
+            roles: 'Anónimo'
+        };
+        loadDashboard();
+    } else {
+        // Show welcome screen on /dashboard if not logged in
+        showWelcome();
     }
 });
 
