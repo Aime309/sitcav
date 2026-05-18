@@ -12,9 +12,9 @@ def create_app(
     test_config: Mapping[str, Any] | None = None,
 ) -> Flask:
     # En Vercel, el sistema de archivos es de solo lectura excepto /tmp
-    is_vercel = os.environ.get("VERCEL") == "1"
+    IS_VERCEL = os.environ.get("VERCEL") == "1"
 
-    if is_vercel:
+    if IS_VERCEL:
         app = Flask(__name__, instance_path="/tmp")
     else:
         app = Flask(__name__)
@@ -35,7 +35,7 @@ def create_app(
         return render_template("index.html")
 
     # Configuración de rutas para base de datos y archivos
-    if not is_vercel:
+    if not IS_VERCEL:
         # En desarrollo local, aseguramos que exista la carpeta instance
         if not os.path.exists(app.instance_path):
             os.makedirs(app.instance_path, exist_ok=True)
