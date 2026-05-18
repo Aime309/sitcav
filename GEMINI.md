@@ -1,86 +1,68 @@
-# Gemini CLI Context: Sistema de Gestión Administrativo
+# GEMINI.md - Sistema de Gestión Administrativo (SITCAV)
+
+Este documento proporciona el contexto necesario para trabajar en el proyecto SITCAV, un sistema de gestión administrativo desarrollado con Python/Flask y un frontend dinámico en Vanilla JS.
 
 ## Project Overview
-This is a comprehensive administrative management system designed for small businesses (like tech stores). It features a Python (Flask) backend and a Vanilla JavaScript frontend.
 
-### Core Technologies
-- **Backend:** Python 3.8+, Flask, Flask-SQLAlchemy (SQLite), Flask-CORS.
-- **Frontend:** HTML5, CSS3, Vanilla JavaScript (Modular).
-- **PDF Generation:** ReportLab.
-- **Security:** Werkzeug (Password hashing), Security Questions for recovery.
-- **Database:** SQLite (ORM via SQLAlchemy).
+SITCAV es una herramienta diseñada para la gestión de inventario, ventas, compras, clientes y proveedores. El sistema incluye funcionalidades avanzadas como:
+- **Gestión de Usuarios:** Autenticación basada en roles (Encargado, Empleado Superior, Vendedor).
+- **Módulos Administrativos:** Dashboard estadístico, productos, categorías, clientes, proveedores.
+- **Operaciones Comerciales:** Ventas (con facturación PDF), compras, apartados (sistema de layaway), reembolsos.
+- **Inventario:** Control de stock y seguimiento de movimientos.
+- **Utilidades:** Generación de reportes PDF, backups de base de datos y gestión de tasa de cambio (Dólar/Bolívar).
 
-### Key Modules
-- **Dashboard:** Real-time statistics and stock alerts.
-- **Security:** User roles (Encargado, Empleado Superior, Vendedor), Profile management with photos.
-- **Inventory:** CRUD for products with category management, IMEI tracking, and image support.
-- **CRM/SRM:** Customer and Supplier management with geographic context (State/City/Sector).
-- **Sales & Purchases:** Transaction history, invoices (PDF), and stock synchronization.
-- **Layaway System (Apartados):** Reservations with multiple payments/installments.
-- **Financials:** Currency exchange rates (Bolívares/USD), multiple payment types.
-- **Reports:** Professional PDF generation for invoices, receipts, and sales reports.
-- **Utilities:** Database backup and restoration.
+### Technology Stack
+- **Backend:** Python 3.12, Flask, Flask-SQLAlchemy (SQLite).
+- **Frontend:** HTML5, Jinja2, Vanilla JavaScript, Vanilla CSS.
+- **Generación de Documentos:** ReportLab (para facturas y reportes PDF).
+- **Gestión de Dependencias:** `uv`.
+- **Despliegue:** Vercel (Configurado para servir Flask como Serverless Functions).
 
----
+## Building and Running
 
-## Development Environment
+### Requisitos previos
+- [uv](https://github.com/astral-sh/uv) instalado.
+- [Vercel CLI](https://vercel.com/docs/cli) (para desarrollo local simulando el entorno de producción).
 
-### Prerequisites
-- Python 3.8+
-- Modern Web Browser
+### Comandos Clave
 
-### Key Files
-- `src/app.py`: Main Flask application server.
-- `src/models.py`: Database schema (16 tables).
-- `src/pdf_generator.py`: Logic for creating PDFs using ReportLab.
-- `src/templates/index.html`: Frontend entry point (rendered by Flask).
-- `src/static/app.js`: Main frontend logic.
-- `pyproject.toml`: Project dependencies and editable install metadata.
+| Acción | Comando |
+| :--- | :--- |
+| Instalar dependencias | `uv sync` |
+| Ejecutar servidor de desarrollo | `vercel dev` (Recomendado) o `python main.py` |
+| Ejecutar pruebas | `uv run pytest` |
+| Acceder a la app | `http://localhost:3000` (con `vercel dev`) |
 
-### Running the Project
-The application now runs as a single process:
+### Configuración de Base de Datos
+- La base de datos local se guarda en `instance/system_data.db`.
+- Se inicializa automáticamente al arrancar la app usando `schema.sql` y `db.py`.
+- En Vercel, la base de datos es de solo lectura (usando SQLite efímero o configuración específica); localmente es persistente en la carpeta `instance/`.
 
-1.  **Start the Server:**
-    ```bash
-    python src/app.py
-    ```
-    Runs on `http://localhost:5000`. Access the application by visiting `http://localhost:5000` in your browser.
+## Development Conventions
 
----
+### Arquitectura de Archivos
+- `main.py`: Punto de entrada y configuración de la aplicación (App Factory).
+- `models.py`: Definición de modelos SQLAlchemy.
+- `api.py`: Rutas principales de la lógica de negocio (Blueprint `api`).
+- `auth.py`: Autenticación, registro y recuperación de contraseñas (Blueprint `auth`).
+- `db.py`: Utilidades para inicialización y migración ligera de la base de datos.
+- `static/app.js`: Lógica del frontend (SPA-like) que consume la API.
+- `templates/index.html`: Plantilla base única para la interfaz.
 
-## Architecture & Conventions
+### Estilo de Código y Patrones
+- **Backend (Python):** Sigue PEP 8. Las respuestas de la API deben ser consistentes (JSON con campos `success` y `message` cuando sea necesario).
+- **Frontend (JS):** Uso extensivo de `fetch` para peticiones asíncronas. La manipulación del DOM es directa (Vanilla JS).
+- **Base de Datos:** Los modelos incluyen un método `to_dict()` para facilitar la serialización a JSON.
+- **Seguridad:** Las contraseñas se almacenan hasheadas con `werkzeug.security`.
 
-### Database Schema (SQLAlchemy Models)
-The system uses a highly normalized schema with relationships for:
-- **Users (`Usuario`):** Roles, profile data, and security questions.
-- **Location:** `Estado` -> `Localidad` -> `Sector`.
-- **Products:** Linked to `Categoria` and `Proveedor`. Supports `imei` and `imagen_url`.
-- **Transactions:** `Venta`, `DetalleVenta`, `Compra`, `DetalleCompra`, `Reembolso`.
-- **Layaway:** `Apartado`, `DetalleApartado`, `PagoApartado`.
-- **Inventory History:** `MovimientoInventario`.
+### Pruebas
+- Las pruebas se encuentran en la carpeta `tests/` y utilizan `pytest`.
+- Al añadir nuevas funcionalidades, crear el test correspondiente y verificar con `uv run pytest`.
 
-### API Design
-- **Base URL:** `http://localhost:5000` (Unified Frontend and API)
-- **Authentication:** Cédula-based login (`/login`). Uses `localStorage` for session persistence.
-- **Data Format:** JSON for requests and responses.
-- **Media Handling:** Images are uploaded to `instance/uploads/` and served via static routes.
-
-### PDF Workflow
-PDFs are generated on-the-fly on the backend and sent to the client as attachments.
-- **Storage:** Generated PDFs are temporarily stored in `instance/facturas/`, `instance/reportes/`, etc.
-
-### Coding Style
-- **Python:** PEP 8, Docstrings for modules and complex functions.
-- **JavaScript:** ES6+, uses `async/await` for fetch calls, DOM manipulation via vanilla JS.
-- **Styles:** Custom CSS with a modern, responsive look (using Bootstrap-like patterns but mostly custom).
+## Credenciales de Prueba (Local)
+- **Encargado:** `12345678` / `test1`
+- **Empleado Superior:** `87654321` / `test1`
+- **Vendedor:** `11223344` / `test1`
 
 ---
-
-## Common Tasks & Maintenance
-
-- **Reset Database:** Delete `instance/system_data.db` and restart `src/app.py`. Initial seed data will be recreated automatically.
-- **Backups:** Triggered via the UI, backups are saved as `.sql` (SQL dump) or `.db` copies in `instance/`.
-- **Debugging:**
-    - Check browser console (F12) for frontend errors.
-    - Check terminal output of `src/app.py` for backend/SQL errors.
-    - Use `/api/debug/uploads` to verify file system access.
+*Este archivo es una guía viva y debe actualizarse ante cambios significativos en la arquitectura o el flujo de trabajo del proyecto.*

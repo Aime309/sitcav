@@ -1,50 +1,26 @@
 # Sistema de Gestión Administrativo
 
-Guía unificada de instalación e inicio para ejecutar el proyecto localmente.
+Guía de instalación e inicio para ejecutar el proyecto localmente.
 
 ## Requisitos previos
 
-- Python 3.8 o superior (recomendado 3.12)
+- Python 3.12.x (requerido)
 - Navegador web moderno (Chrome, Firefox, Edge)
 - Conexión a internet (solo para instalar dependencias)
+- uv (para gestión de dependencias Python)
+- vercel CLI (para entorno de desarrollo)
 
 ## Instalación
 
 En PowerShell, dentro de `<ruta-del-proyecto>`:
 
 ```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -e .
+uv sync
+vercel dev
 ```
 
-Si prefieres sin entorno virtual:
+Acceso: `http://localhost:3000`
 
-```powershell
-pip install -e .
-```
-
-## Inicio rápido (sin CORS)
-
-No abras `index.html` con doble clic (`file://`), eso genera errores de CORS.
-
-Ejecuta **dos terminales**:
-### Ejecución local
-
-### Terminal 1: Servidor Flask (Backend y Frontend)
-
-```powershell
-cd <ruta-del-proyecto>
-py src\app.py
-```
-
-Acceso: `http://localhost:5000`
-
-### Abrir en el navegador
-
-```text
-http://localhost:5000
-```
 
 ## Credenciales de prueba
 
@@ -56,19 +32,26 @@ http://localhost:5000
 
 ```text
 <ruta-del-proyecto>/
-├── src/
-│   ├── app.py
-│   ├── models.py
-│   ├── pdf_generator.py
-│   ├── fix_broken_images.py
-│   ├── reset_password.py
-│   ├── templates/
-│   │   └── index.html
-│   └── static/
-│       └── app.js
-├── pyproject.toml
-└── instance/
+├── static/            # Archivos estáticos (CSS, íconos)
+├── app.js             # Lógica principal del frontend (antes en static/)
+├── templates/         # Plantillas HTML (principalmente index.html)
+├── tests/             # Pruebas automáticas y utilidades de test
+├── instance/          # Datos locales: base de datos y uploads
+├── .venv/             # Entorno virtual local (ignorado en git)
+├── main.py            # Punto de entrada principal de la app Flask
+├── models.py          # Definición de modelos y base de datos
+├── pdf_generator.py   # Lógica para generación de PDFs
+├── uploads.py         # Rutas para servir archivos subidos
+├── api.py             # Rutas y lógica de la API principal
+├── auth.py            # Autenticación y rutas de login
+├── db.py              # Inicialización y utilidades de base de datos
+├── pyproject.toml     # Configuración de dependencias y Python
+├── schema.sql         # Esquema SQL inicial de la base de datos
+├── uv.lock            # Lockfile de dependencias Python (uv)
+└── vercel.json        # Configuración de despliegue Vercel
 ```
+* El contenido de las carpetas static/, templates/, tests/ e instance/ está oculto para simplificar la vista.
+
 ## Módulos disponibles (según rol)
 
 - Dashboard
@@ -87,52 +70,47 @@ http://localhost:5000
 - Estadísticas
 - Backup
 
-La visibilidad por rol se controla en `setupRolePermissions()` de `src\static\app.js`.
+La visibilidad por rol se controla en `setupRolePermissions()` de `static/app.js`.
 
 ## Pruebas rápidas de API
 
 ```powershell
-curl http://localhost:5000/api/productos
-curl http://localhost:5000/api/cotizacion/actual
+curl http://localhost:3000/api/productos
+curl http://localhost:3000/api/cotizacion/actual
 ```
 
-## Ejecutar pruebas (pytest)
-
-Instala dependencias de desarrollo:
-
-```powershell
-pip install -e ".[dev]"
-```
+## Ejecutar pruebas
 
 Ejecuta todas las pruebas:
 
 ```powershell
-pytest
+uv run pytest
 ```
 
 ## Troubleshooting
 
 ### Error: `No module named ...`
 
+Asegúrate de haber ejecutado:
 ```powershell
-pip install -e .
+uv sync
 ```
 
-### Error de CORS
+### Puerto 3000 en uso
 
-1. Verifica que `py src\app.py` esté corriendo.
-2. Usa `http://localhost:5000` para acceder a la aplicación.
-
-### Puerto 5000 en uso
-
-Cierra el proceso que ocupa el puerto o cambia el puerto del backend en `src\app.py` y ajusta la URL API en `src\static\app.js`.
+Cierra el proceso que ocupa el puerto o cambia el puerto de vercel dev.
 
 ### Reiniciar base de datos local
 
-Detén backend, elimina `instance\system_data.db` y ejecuta `py src\app.py` nuevamente.
+Detén el backend, elimina `instance\system_data.db` y ejecuta nuevamente:
+```powershell
+vercel dev
+```
 
 ## Notas importantes
 
-- Backend en Flask + SQLite local (`instance\system_data.db`).
-- El arranque de `src\app.py` ejecuta migración ligera e inicialización de datos.
-- Uploads, backups y PDFs se guardan en `instance\`.
+- El backend corre sobre Flask y la base de datos local es SQLite (`instance\system_data.db`).
+- El arranque de `main.py` realiza migración ligera e inicialización de datos.
+- Todos los archivos subidos, backups y PDFs se almacenan en la carpeta `instance/`.
+- El frontend se sirve dinámicamente como plantilla Jinja2, no abrir index.html directo.
+- Usa siempre `uv sync` y `vercel dev` para desarrollo local.
