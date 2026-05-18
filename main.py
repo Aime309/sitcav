@@ -23,7 +23,7 @@ def create_app(
     UPLOADS_ROOT = os.path.join(app.instance_path, "uploads")
 
     app.config["DATABASE"] = os.path.join(
-        app.instance_path, "sitcav.db"
+        app.instance_path, "system_data.db"
     ).replace("\\", "/")
 
     app.config.from_mapping(
