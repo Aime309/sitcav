@@ -1,4 +1,6 @@
 import os
+from collections.abc import Mapping
+from typing import Any
 
 from flask import Flask, render_template
 
@@ -6,7 +8,9 @@ from db import init_db
 from models import db
 
 
-def create_app(test_config=None) -> Flask:
+def create_app(
+    test_config: Mapping[str, Any] | None = None,
+) -> Flask:
     # En Vercel, el sistema de archivos es de solo lectura excepto /tmp
     is_vercel = os.environ.get("VERCEL") == "1"
 
