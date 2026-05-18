@@ -22,6 +22,18 @@ def create_app(
     if test_config is not None:
         app.config.from_mapping(test_config)
 
+    UPLOADS_ROOT = os.path.join(app.instance_path, "uploads")
+
+    app.config["DATABASE"] = os.path.join(
+        app.instance_path, "sitcav.db"
+    ).replace("\\", "/")
+
+    app.config.from_mapping(
+        PRODUCTS_UPLOAD_FOLDER=os.path.join(UPLOADS_ROOT, "products"),
+        PROFILE_UPLOAD_FOLDER=os.path.join(UPLOADS_ROOT, "profiles"),
+        SQLALCHEMY_DATABASE_URI=f"sqlite:///{app.config['DATABASE']}",
+    )
+
     from api import api_bp
     from auth import auth_bp
     from uploads import uploads_bp
@@ -39,37 +51,15 @@ def create_app(
         # En desarrollo local, aseguramos que exista la carpeta instance
         if not os.path.exists(app.instance_path):
             os.makedirs(app.instance_path, exist_ok=True)
+            os.makedirs(app.config["PRODUCTS_UPLOAD_FOLDER"], exist_ok=True)
+            os.makedirs(app.config["PROFILE_UPLOAD_FOLDER"], exist_ok=True)
 
-    app.config["DATABASE"] = os.path.join(
-        app.instance_path, "system_data.db"
-    ).replace("\\", "/")
-
-    UPLOADS_ROOT = os.path.join(app.instance_path, "uploads")
-
-    app.config["PRODUCTS_UPLOAD_FOLDER"] = os.path.join(
-        UPLOADS_ROOT, "products"
-    )
-
-    app.config["PROFILE_UPLOAD_FOLDER"] = os.path.join(UPLOADS_ROOT, "profiles")
-    app.config["SCHEMA_SQL_PATH"] = os.path.join(app.root_path, "schema.sql")
-
-    app.config["SQLALCHEMY_DATABASE_URI"] = (
-        f"sqlite:///{app.config['DATABASE']}"
-    )
-
-    os.makedirs(app.config["PRODUCTS_UPLOAD_FOLDER"], exist_ok=True)
-    os.makedirs(app.config["PROFILE_UPLOAD_FOLDER"], exist_ok=True)
-
-    db.init_app(app)
+    init_db(app, db)
 
     return app
 
 
 app = create_app()
-
-
-with app.app_context():
-    init_db(app)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5001)
