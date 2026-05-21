@@ -1,10 +1,7 @@
 from flask import Blueprint, jsonify, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
-try:
-    from .models import Usuario, db
-except ImportError:
-    from models import Usuario, db
+from models import Usuario, db
 
 
 auth_bp = Blueprint("auth", __name__)

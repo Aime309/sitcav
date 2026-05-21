@@ -15,58 +15,31 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 
-try:
-    from .models import (
-        Apartado,
-        Categoria,
-        Cliente,
-        Compra,
-        Cotizacion,
-        DetalleApartado,
-        DetalleCompra,
-        DetalleVenta,
-        Estado,
-        Localidad,
-        MovimientoInventario,
-        Negocio,
-        Pago,
-        PagoApartado,
-        Producto,
-        Proveedor,
-        Reembolso,
-        Sector,
-        TipoPago,
-        Usuario,
-        Venta,
-        db,
-    )
-    from .pdf_generator import generar_factura_pdf, generar_reporte_ventas_pdf
-except ImportError:
-    from models import (
-        Apartado,
-        Categoria,
-        Cliente,
-        Compra,
-        Cotizacion,
-        DetalleApartado,
-        DetalleCompra,
-        DetalleVenta,
-        Estado,
-        Localidad,
-        MovimientoInventario,
-        Negocio,
-        Pago,
-        PagoApartado,
-        Producto,
-        Proveedor,
-        Reembolso,
-        Sector,
-        TipoPago,
-        Usuario,
-        Venta,
-        db,
-    )
-    from pdf_generator import generar_factura_pdf, generar_reporte_ventas_pdf
+from models import (
+    Apartado,
+    Categoria,
+    Cliente,
+    Compra,
+    Cotizacion,
+    DetalleApartado,
+    DetalleCompra,
+    DetalleVenta,
+    Estado,
+    Localidad,
+    MovimientoInventario,
+    Negocio,
+    Pago,
+    PagoApartado,
+    Producto,
+    Proveedor,
+    Reembolso,
+    Sector,
+    TipoPago,
+    Usuario,
+    Venta,
+    db,
+)
+from pdf_generator import generar_factura_pdf, generar_reporte_ventas_pdf
 
 
 api_bp = Blueprint("api", __name__)
@@ -979,10 +952,7 @@ def get_compra_pdf(id):
             if prod:
                 detalle["producto"] = {"nombre": prod.nombre}
 
-        try:
-            from .pdf_generator import generar_factura_compra_pdf
-        except ImportError:
-            from pdf_generator import generar_factura_compra_pdf
+        from pdf_generator import generar_factura_compra_pdf
         pdf_path = generar_factura_compra_pdf(compra_data, negocio_data)
 
         return send_file(pdf_path, as_attachment=True)
@@ -1748,10 +1718,7 @@ def generar_pdf_apartado(id):
             "telefono": negocio.telefono,
         }
 
-        try:
-            from .pdf_generator import generar_apartado_pdf
-        except ImportError:
-            from pdf_generator import generar_apartado_pdf
+        from pdf_generator import generar_apartado_pdf
         pdf_path = generar_apartado_pdf(apartado_data, negocio_data)
 
         return send_file(
@@ -2012,10 +1979,7 @@ def exportar_consultas_pdf():
                 }
             )
 
-        try:
-            from .pdf_generator import generar_reporte_consultas_pdf
-        except ImportError:
-            from pdf_generator import generar_reporte_consultas_pdf
+        from pdf_generator import generar_reporte_consultas_pdf
         pdf_path = generar_reporte_consultas_pdf(datos_reporte, filtros_texto)
 
         return send_file(
