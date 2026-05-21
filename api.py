@@ -155,7 +155,7 @@ def create_usuario():
 
 
 @api_bp.put("/usuarios/<int:id>")
-def update_usuario(id):
+def update_usuario(id: int):
     """Actualiza la información de un usuario"""
     usuario = Usuario.query.get_or_404(id)
     data = request.get_json()
@@ -205,7 +205,7 @@ def update_usuario(id):
 
 
 @api_bp.post("/usuarios/<int:id>/foto")
-def upload_usuario_foto(id):
+def upload_usuario_foto(id: int):
     """Sube una foto de perfil para un usuario"""
     usuario = Usuario.query.get_or_404(id)
 
@@ -262,7 +262,7 @@ def upload_usuario_foto(id):
 
 
 @api_bp.delete("/usuarios/<int:id>")
-def delete_usuario(id):
+def delete_usuario(id: int):
     """Elimina un usuario"""
     usuario = Usuario.query.get(id)
     if usuario is None:
@@ -324,7 +324,7 @@ def create_cliente():
 
 
 @api_bp.put("/clientes/<int:id>")
-def update_cliente(id):
+def update_cliente(id: int):
     cliente = Cliente.query.get_or_404(id)
     data = request.get_json()
     try:
@@ -348,7 +348,7 @@ def update_cliente(id):
 
 
 @api_bp.delete("/clientes/<int:id>")
-def delete_cliente(id):
+def delete_cliente(id: int):
     cliente = Cliente.query.get(id)
     if cliente is None:
         return jsonify({"message": "Cliente no encontrado"}), 404
@@ -404,7 +404,7 @@ def create_categoria():
 
 
 @api_bp.delete("/categorias/<int:id>")
-def delete_categoria(id):
+def delete_categoria(id: int):
     """Elimina una categoría si no tiene productos asociados."""
     try:
         categoria = Categoria.query.get_or_404(id)
@@ -503,7 +503,7 @@ def list_productos():
 
 
 @api_bp.put("/productos/<int:id>")
-def update_producto(id):
+def update_producto(id: int):
     producto = Producto.query.get_or_404(id)
 
     try:
@@ -562,7 +562,7 @@ def update_producto(id):
 
 
 @api_bp.delete("/productos/<int:id>")
-def delete_producto(id):
+def delete_producto(id: int):
     producto = Producto.query.get(id)
     if producto is None:
         return jsonify({"message": "Producto no encontrado"}), 404
@@ -637,7 +637,7 @@ def create_proveedor():
 
 
 @api_bp.put("/proveedores/<int:id>")
-def update_proveedor(id):
+def update_proveedor(id: int):
     proveedor = Proveedor.query.get_or_404(id)
     data = request.get_json()
     try:
@@ -659,7 +659,7 @@ def update_proveedor(id):
 
 
 @api_bp.delete("/proveedores/<int:id>")
-def delete_proveedor(id):
+def delete_proveedor(id: int):
     proveedor = Proveedor.query.get(id)
     if proveedor is None:
         return jsonify({"message": "Proveedor no encontrado"}), 404
@@ -777,7 +777,7 @@ def create_venta():
 
 
 @api_bp.get("/ventas/<int:id>")
-def get_venta(id):
+def get_venta(id: int):
     venta = db.session.get(Venta, id)
     if not venta:
         return jsonify(
@@ -787,7 +787,7 @@ def get_venta(id):
 
 
 @api_bp.delete("/ventas/<int:id>")
-def delete_venta(id):
+def delete_venta(id: int):
     try:
         venta = db.session.get(Venta, id)
         if not venta:
@@ -893,7 +893,7 @@ def create_compra():
 
 
 @api_bp.delete("/compras/<int:id>")
-def delete_compra(id):
+def delete_compra(id: int):
     try:
         compra = Compra.query.get_or_404(id)
 
@@ -917,7 +917,7 @@ def delete_compra(id):
 
 
 @api_bp.get("/compras/<int:id>/pdf")
-def get_compra_pdf(id):
+def get_compra_pdf(id: int):
     try:
         compra = Compra.query.get_or_404(id)
         negocio = Negocio.query.first()
@@ -958,13 +958,13 @@ def get_compra_pdf(id):
 
 
 @api_bp.get("/compras/<int:id>")
-def get_compra(id):
+def get_compra(id: int):
     compra = Compra.query.get_or_404(id)
     return jsonify(compra.to_dict())
 
 
 @api_bp.get("/pagos/venta/<int:venta_id>")
-def list_pagos_venta(venta_id):
+def list_pagos_venta(venta_id: int):
     venta = Venta.query.get_or_404(venta_id)
     pagos = []
     for detalle in venta.detalles:
@@ -1015,13 +1015,13 @@ def list_estados():
 
 
 @api_bp.get("/localidades/<int:estado_id>")
-def list_localidades(estado_id):
+def list_localidades(estado_id: int):
     localidades = Localidad.query.filter_by(id_estado=estado_id).all()
     return jsonify([{"id": l.id, "nombre": l.nombre} for l in localidades])
 
 
 @api_bp.get("/sectores/<int:localidad_id>")
-def list_sectores(localidad_id):
+def list_sectores(localidad_id: int):
     sectores = Sector.query.filter_by(id_localidad=localidad_id).all()
     return jsonify([{"id": s.id, "nombre": s.nombre} for s in sectores])
 
@@ -1230,7 +1230,7 @@ def update_negocio():
 
 
 @api_bp.get("/factura/<int:venta_id>")
-def generar_factura(venta_id):
+def generar_factura(venta_id: int):
     """Genera un PDF de factura para una venta específica"""
     try:
         # Obtener la venta con todos sus datos
@@ -1334,7 +1334,7 @@ def list_empleados():
 
 
 @api_bp.delete("/empleados/<int:id>")
-def delete_empleado(id):
+def delete_empleado(id: int):
     empleado = Usuario.query.get(id)
     if empleado is None:
         return jsonify({"message": "Empleado no encontrado"}), 404
@@ -1513,14 +1513,14 @@ def create_apartado():
 
 
 @api_bp.get("/apartados/<int:id>")
-def get_apartado(id):
+def get_apartado(id: int):
     """Obtiene un apartado específico con todos sus detalles"""
     apartado = Apartado.query.get_or_404(id)
     return jsonify(apartado.to_dict())
 
 
 @api_bp.post("/apartados/<int:id>/pago")
-def registrar_pago_apartado(id):
+def registrar_pago_apartado(id: int):
     """Registra un pago/abono a un apartado"""
     apartado = Apartado.query.get_or_404(id)
 
@@ -1571,7 +1571,7 @@ def registrar_pago_apartado(id):
 
 
 @api_bp.post("/apartados/<int:id>/completar")
-def completar_apartado(id):
+def completar_apartado(id: int):
     """Completa un apartado y genera una venta"""
     apartado = Apartado.query.get_or_404(id)
 
@@ -1640,7 +1640,7 @@ def completar_apartado(id):
 
 
 @api_bp.post("/apartados/<int:id>/cancelar")
-def cancelar_apartado(id):
+def cancelar_apartado(id: int):
     """Cancela un apartado y devuelve productos al inventario"""
     apartado = Apartado.query.get_or_404(id)
 
@@ -1690,7 +1690,7 @@ def cancelar_apartado(id):
 
 
 @api_bp.get("/apartados/<int:id>/pdf")
-def generar_pdf_apartado(id):
+def generar_pdf_apartado(id: int):
     """Genera un PDF del apartado"""
     try:
         apartado = Apartado.query.get_or_404(id)
@@ -1728,7 +1728,7 @@ def generar_pdf_apartado(id):
 
 
 @api_bp.delete("/apartados/<int:id>")
-def delete_apartado(id):
+def delete_apartado(id: int):
     """Elimina un apartado (solo si está cancelado)"""
     apartado = Apartado.query.get_or_404(id)
 
@@ -2132,7 +2132,7 @@ def create_reembolso():
 
 
 @api_bp.delete("/reembolsos/<int:id>")
-def delete_reembolso(id):
+def delete_reembolso(id: int):
     try:
         reembolso = db.session.get(Reembolso, id)
         if not reembolso:
@@ -2155,7 +2155,7 @@ def delete_reembolso(id):
 
 
 @api_bp.get("/reembolsos/<int:id>/pdf")
-def get_reembolso_pdf(id):
+def get_reembolso_pdf(id: int):
     try:
         reembolso = db.session.get(Reembolso, id)
         if not reembolso:
