@@ -1,0 +1,74 @@
+from datetime import datetime
+
+from flask import Blueprint, jsonify, request
+
+from models import Cotizacion, db
+
+cotizacion_bp = Blueprint("cotizacion", __name__, url_prefix="/cotizacion")
+
+
+@cotizacion_bp.get("/actual")
+def get_cotizacion_actual():
+    """Obtiene la cotización más reciente"""
+    try:
+        cotizacion = Cotizacion.query.order_by(Cotizacion.fecha_hora.desc()).first()
+        if cotizacion:
+            return jsonify(cotizacion.to_dict())
+        else:
+            # Si no hay cotización, retornar un valor por defecto (ej: 1.0)
+            return jsonify(
+                {
+                    "tasa_dolar_bolivares": 1.0,
+                    "fecha_hora": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "mensaje": "No hay cotizaciones registradas, usando valor por defecto",
+                }
+            )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@cotizacion_bp.get("/")
+def list_cotizaciones():
+    """Lista el historial de cotizaciones"""
+    try:
+        # Limitar a las últimas 50 para no sobrecargar
+        cotizaciones = (
+            Cotizacion.query.order_by(Cotizacion.fecha_hora.desc()).limit(50).all()
+        )
+        return jsonify([c.to_dict() for c in cotizaciones])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@cotizacion_bp.post("/")
+def create_cotizacion():
+    """Registra una nueva cotización"""
+    data = request.get_json()
+    try:
+        usuario_id = data.get("usuario_id")
+        tasa = data.get("tasa")
+
+        if not usuario_id or not tasa:
+            return jsonify(
+                {"success": False, "message": "Faltan datos requeridos"}
+            ), 400
+
+        nueva_cotizacion = Cotizacion(
+            id_usuario=usuario_id,
+            tasa_dolar_bolivares=tasa,
+            fecha_hora=datetime.now(),
+        )
+
+        db.session.add(nueva_cotizacion)
+        db.session.commit()
+
+        return jsonify(
+            {
+                "success": True,
+                "message": "Cotización actualizada correctamente",
+                "cotizacion": nueva_cotizacion.to_dict(),
+            }
+        ), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "message": str(e)}), 500
