@@ -1,8 +1,3 @@
-"""
-Generador de PDFs para Facturas - Sistema de Gestión Administrativo
-Usa ReportLab para crear facturas profesionales en PDF
-"""
-
 import os
 from datetime import datetime
 from decimal import Decimal
@@ -23,18 +18,6 @@ from reportlab.platypus import (
 
 
 def generar_factura_pdf(venta_data, negocio_data, cotizacion_bs):
-    """
-    Genera un PDF de factura para una venta
-
-    Args:
-        venta_data: Diccionario con datos de la venta (incluyendo cliente y detalles)
-        negocio_data: Diccionario con datos del negocio
-        cotizacion_bs: Tasa de cambio bolívares/dólar
-
-    Returns:
-        str: Ruta al archivo PDF generado
-    """
-
     # Crear carpeta de facturas si no existe
     facturas_dir = os.path.join(current_app.instance_path, "facturas")
     os.makedirs(facturas_dir, exist_ok=True)
@@ -272,18 +255,6 @@ def generar_factura_pdf(venta_data, negocio_data, cotizacion_bs):
 
 
 def generar_reporte_ventas_pdf(ventas_data, fecha_desde=None, fecha_hasta=None):
-    """
-    Genera un PDF con reporte de ventas
-
-    Args:
-        ventas_data: Lista de ventas con sus datos
-        fecha_desde: Fecha de inicio del reporte (opcional)
-        fecha_hasta: Fecha de fin del reporte (opcional)
-
-    Returns:
-        str: Ruta al archivo PDF generado
-    """
-
     # Crear carpeta de reportes si no existe
     reportes_dir = os.path.join(current_app.instance_path, "reportes")
     os.makedirs(reportes_dir, exist_ok=True)
@@ -401,17 +372,6 @@ def generar_reporte_ventas_pdf(ventas_data, fecha_desde=None, fecha_hasta=None):
 
 
 def generar_factura_compra_pdf(compra_data, negocio_data):
-    """
-    Genera un PDF de factura/orden para una compra
-
-    Args:
-        compra_data: Diccionario con datos de la compra (incluyendo proveedor y detalles)
-        negocio_data: Diccionario con datos del negocio
-
-    Returns:
-        str: Ruta al archivo PDF generado
-    """
-
     # Crear carpeta de facturas si no existe
     facturas_dir = os.path.join(current_app.instance_path, "facturas_compras")
     os.makedirs(facturas_dir, exist_ok=True)
@@ -636,17 +596,6 @@ def generar_factura_compra_pdf(compra_data, negocio_data):
 
 
 def generar_apartado_pdf(apartado_data, negocio_data):
-    """
-    Genera un PDF de comprobante para un apartado
-
-    Args:
-        apartado_data: Diccionario con datos del apartado
-        negocio_data: Diccionario con datos del negocio
-
-    Returns:
-        str: Ruta al archivo PDF generado
-    """
-
     # Crear carpeta de apartados si no existe
     apartados_dir = os.path.join(current_app.instance_path, "apartados_pdf")
     os.makedirs(apartados_dir, exist_ok=True)
@@ -907,17 +856,6 @@ def generar_apartado_pdf(apartado_data, negocio_data):
 
 
 def generar_reporte_consultas_pdf(ventas_data, filtros_texto):
-    """
-    Genera un PDF con reporte de consultas de ventas
-
-    Args:
-        ventas_data: Lista de diccionarios con datos de ventas
-        filtros_texto: Lista de strings describiendo los filtros aplicados
-
-    Returns:
-        str: Ruta al archivo PDF generado
-    """
-
     # Crear carpeta de reportes si no existe
     reportes_dir = os.path.join(current_app.instance_path, "reportes")
     os.makedirs(reportes_dir, exist_ok=True)

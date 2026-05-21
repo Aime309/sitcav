@@ -30,7 +30,6 @@ def create_categoria():
 
 @categorias_bp.delete("/<int:id>")
 def delete_categoria(id: int):
-    """Elimina una categoría si no tiene productos asociados."""
     try:
         categoria = Categoria.query.get_or_404(id)
 

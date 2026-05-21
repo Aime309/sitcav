@@ -7,7 +7,6 @@ inventario_bp = Blueprint("inventario", __name__, url_prefix="/inventario")
 
 @inventario_bp.get("/")
 def list_inventario():
-    """Lista productos con información de stock"""
     productos = Producto.query.all()
     resultado = []
 
@@ -30,7 +29,6 @@ def list_inventario():
 
 @inventario_bp.get("/movimientos")
 def list_movimientos():
-    """Lista el historial de movimientos de inventario"""
     id_producto = request.args.get("id_producto", None)
     tipo = request.args.get("tipo", None)
 
@@ -47,7 +45,6 @@ def list_movimientos():
 
 @inventario_bp.post("/ajuste")
 def ajuste_inventario():
-    """Realiza un ajuste manual de inventario"""
     data = request.get_json()
 
     id_producto = data.get("id_producto")

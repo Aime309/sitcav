@@ -9,7 +9,6 @@ auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/login", methods=["POST", "OPTIONS"])
 def login():
-    """Ruta para la autenticación de usuarios"""
     if request.method == "OPTIONS":
         return "", 204
 
@@ -44,7 +43,6 @@ def logout():
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
-    """Registro público de nuevos usuarios"""
     data = request.get_json()
     try:
         # Verificar si la cédula ya existe

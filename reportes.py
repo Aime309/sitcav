@@ -118,7 +118,6 @@ def reporte_ventas():
 
 @reportes_bp.get("/ventas/pdf")
 def generar_reporte_ventas_pdf_endpoint():
-    """Genera un PDF con reporte de ventas"""
     try:
         fecha_desde = request.args.get("desde")
         fecha_hasta = request.args.get("hasta")

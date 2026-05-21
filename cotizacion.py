@@ -9,7 +9,6 @@ cotizacion_bp = Blueprint("cotizacion", __name__, url_prefix="/cotizacion")
 
 @cotizacion_bp.get("/actual")
 def get_cotizacion_actual():
-    """Obtiene la cotización más reciente"""
     try:
         cotizacion = Cotizacion.query.order_by(Cotizacion.fecha_hora.desc()).first()
         if cotizacion:
@@ -29,7 +28,6 @@ def get_cotizacion_actual():
 
 @cotizacion_bp.get("/")
 def list_cotizaciones():
-    """Lista el historial de cotizaciones"""
     try:
         # Limitar a las últimas 50 para no sobrecargar
         cotizaciones = (
@@ -42,7 +40,6 @@ def list_cotizaciones():
 
 @cotizacion_bp.post("/")
 def create_cotizacion():
-    """Registra una nueva cotización"""
     data = request.get_json()
     try:
         usuario_id = data.get("usuario_id")

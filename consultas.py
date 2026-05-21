@@ -7,7 +7,6 @@ consultas_bp = Blueprint("consultas", __name__, url_prefix="/consultas")
 
 @consultas_bp.get("/ventas")
 def consultar_ventas():
-    """Consulta avanzada de ventas con filtros"""
     try:
         id_vendedor = request.args.get("id_vendedor")
         id_cliente = request.args.get("id_cliente")
@@ -57,7 +56,6 @@ def consultar_ventas():
 
 @consultas_bp.get("/ventas/pdf")
 def exportar_consultas_pdf():
-    """Genera PDF de la consulta actual"""
     try:
         # Reutilizar lógica de filtros
         id_vendedor = request.args.get("id_vendedor")

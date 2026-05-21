@@ -20,7 +20,6 @@ dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 
 @dashboard_bp.get("/stats")
 def get_dashboard_stats():
-    """Retorna estadísticas generales para el dashboard (contadores)"""
     try:
         hoy = datetime.now()
         inicio_mes = datetime(hoy.year, hoy.month, 1)

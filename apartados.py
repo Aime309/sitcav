@@ -22,7 +22,6 @@ apartados_bp = Blueprint("apartados", __name__, url_prefix="/apartados")
 
 @apartados_bp.get("/")
 def list_apartados():
-    """Lista todos los apartados con filtro opcional por estado"""
     estado = request.args.get("estado", None)
     query = Apartado.query
     if estado:
@@ -33,7 +32,6 @@ def list_apartados():
 
 @apartados_bp.post("/")
 def create_apartado():
-    """Crea un nuevo apartado con múltiples productos"""
     data = request.get_json()
     try:
         id_cliente = data.get("id_cliente")
@@ -144,14 +142,12 @@ def create_apartado():
 
 @apartados_bp.get("/<int:id>")
 def get_apartado(id: int):
-    """Obtiene un apartado específico con todos sus detalles"""
     apartado = Apartado.query.get_or_404(id)
     return jsonify(apartado.to_dict())
 
 
 @apartados_bp.post("/<int:id>/pago")
 def registrar_pago_apartado(id: int):
-    """Registra un pago/abono a un apartado"""
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado != "activo":
@@ -200,7 +196,6 @@ def registrar_pago_apartado(id: int):
 
 @apartados_bp.post("/<int:id>/completar")
 def completar_apartado(id: int):
-    """Completa un apartado y genera una venta"""
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado != "activo":
@@ -263,7 +258,6 @@ def completar_apartado(id: int):
 
 @apartados_bp.post("/<int:id>/cancelar")
 def cancelar_apartado(id: int):
-    """Cancela un apartado y devuelve productos al inventario"""
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado != "activo":
@@ -311,7 +305,6 @@ def cancelar_apartado(id: int):
 
 @apartados_bp.get("/<int:id>/pdf")
 def generar_pdf_apartado(id: int):
-    """Genera un PDF del apartado"""
     try:
         apartado = Apartado.query.get_or_404(id)
         apartado_data = apartado.to_dict()
@@ -350,7 +343,6 @@ def generar_pdf_apartado(id: int):
 
 @apartados_bp.delete("/<int:id>")
 def delete_apartado(id: int):
-    """Elimina un apartado (solo si está cancelado)"""
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado not in ["cancelado", "completado"]:

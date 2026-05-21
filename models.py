@@ -1,8 +1,3 @@
-"""
-Modelos de Base de Datos - Sistema de Gestión Administrativo
-Basado en el Diagrama Entidad-Relación del proyecto
-"""
-
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
@@ -12,7 +7,6 @@ db = SQLAlchemy()
 
 # Helper function to get local time instead of UTC
 def local_now():
-    """Returns current local time (not UTC) for database timestamps"""
     return datetime.now()
 
 
@@ -212,8 +206,6 @@ class Proveedor(db.Model):
 # MODELO: Productos
 # =====================================================================
 class Producto(db.Model):
-    """Modelo para la tabla de Productos."""
-
     __tablename__ = "productos"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -340,7 +332,6 @@ class DetalleVenta(db.Model):
         }
 
     def to_dict_with_product(self):
-        """Versión extendida que incluye información del producto"""
         result = self.to_dict()
         if self.producto:
             result["producto"] = self.producto.to_dict()

@@ -9,7 +9,6 @@ estadisticas_bp = Blueprint("estadisticas", __name__, url_prefix="/estadisticas"
 
 @estadisticas_bp.get("/resumen")
 def get_estadisticas_resumen():
-    """Retorna KPIs del día actual"""
     try:
         hoy = datetime.now().date()
         inicio_dia = datetime.combine(hoy, datetime.min.time())
@@ -62,7 +61,6 @@ def get_estadisticas_resumen():
 
 @estadisticas_bp.get("/historico")
 def get_estadisticas_historico():
-    """Retorna datos para gráficas (últimos 7 días)"""
     try:
         hoy = datetime.now().date()
         dias = []

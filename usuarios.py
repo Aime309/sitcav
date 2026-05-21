@@ -11,14 +11,12 @@ usuarios_bp = Blueprint("usuarios", __name__, url_prefix="/usuarios")
 
 @usuarios_bp.get("/")
 def list_usuarios():
-    """Obtiene la lista de todos los usuarios"""
     usuarios = Usuario.query.all()
     return jsonify([user.to_dict() for user in usuarios])
 
 
 @usuarios_bp.post("/")
 def create_usuario():
-    """Crea un nuevo usuario"""
     data = request.get_json()
     try:
         hashed_password = generate_password_hash(data.get("contrasena", "123456"))
@@ -42,7 +40,6 @@ def create_usuario():
 
 @usuarios_bp.put("/<int:id>")
 def update_usuario(id: int):
-    """Actualiza la información de un usuario"""
     usuario = Usuario.query.get_or_404(id)
     data = request.get_json()
     try:
@@ -92,7 +89,6 @@ def update_usuario(id: int):
 
 @usuarios_bp.post("/<int:id>/foto")
 def upload_usuario_foto(id: int):
-    """Sube una foto de perfil para un usuario"""
     usuario = Usuario.query.get_or_404(id)
 
     if "foto" not in request.files:
@@ -147,7 +143,6 @@ def upload_usuario_foto(id: int):
 
 @usuarios_bp.delete("/<int:id>")
 def delete_usuario(id: int):
-    """Elimina un usuario"""
     usuario = Usuario.query.get(id)
     if usuario is None:
         return jsonify({"message": "Usuario no encontrado"}), 404
