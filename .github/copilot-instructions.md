@@ -1,51 +1,52 @@
-# Copilot Instructions for this Repository
+# Instrucciones de Copilot para este repositorio
 
-## Build, Test, and Lint Commands
+## Comandos de Construcción, Prueba y Lint
 
-- **Install dependencies:**
+- **Instalar dependencias:**
   ```powershell
   uv sync
   ```
-- **Start development server:**
+- **Iniciar servidor de desarrollo:**
   ```powershell
   vercel dev
   ```
-  Access at: http://localhost:3000
-- **Run all tests:**
+  Acceso en: http://localhost:3000
+- **Ejecutar todas las pruebas:**
   ```powershell
   uv run pytest
   ```
-- **Run a single test:**
+- **Ejecutar una sola prueba:**
   ```powershell
   uv run pytest tests/test_user_data.py
   ```
-- **Quick API checks:**
+- **Chequeos rápidos de API:**
   ```powershell
   curl http://localhost:3000/api/productos
   curl http://localhost:3000/api/cotizacion/actual
   ```
 
-## High-Level Architecture
+## Arquitectura de Alto Nivel
 
-- **Backend:** Python 3.12.x, Flask, SQLAlchemy (SQLite). Entry point: `app.py`.
-- **Frontend:** Served via Jinja2 templates (`templates/index.html`), main logic in `static/app.js`.
-- **PDF Generation:** `pdf_generator.py` uses ReportLab to create invoices in `instance/facturas/`.
-- **Database:** SQLite file at `instance/system_data.db`, initialized via `db.py` and `schema.sql`.
-- **API:** Main routes in `api.py`, authentication in `auth.py`, file uploads in `uploads.py`.
-- **Role-based UI:** Module visibility is controlled by `setupRolePermissions()` in `static/app.js`.
-- **Testing:** Pytest-based, with fixtures in `tests/conftest.py` and sample tests in `tests/`.
-- **Deployment:** Vercel config in `vercel.json`.
+- **Backend:** Python 3.12.x, Flask, SQLAlchemy (SQLite). Punto de entrada: `app.py`.
+- **Frontend:** Servido a través de plantillas Jinja2 (`templates/index.html`), lógica principal en `static/app.js`.
+- **Generación de PDF:** `pdf_generator.py` usa ReportLab para crear facturas en `instance/facturas/`.
+- **Base de Datos:** Archivo SQLite en `instance/system_data.db`, inicializado mediante `db.py` y `schema.sql`.
+- **API:** Centralizada en `api.py`. Lógica dividida en modelos (nombres de archivo en singular, ej. `producto.py`) y blueprints (nombres de archivo en plural, ej. `productos.py`).
+- **Autenticación:** Gestionada en `auth.py`.
+- **UI basada en roles:** La visibilidad de los módulos se controla mediante `setupRolePermissions()` en `static/app.js`.
+- **Pruebas:** Basadas en Pytest, con fixtures en `tests/conftest.py` y pruebas de ejemplo en `tests/`.
+- **Despliegue:** Configuración de Vercel en `vercel.json`.
 
-## Key Conventions
+## Convenciones Clave
 
-- **Language:** Use Spanish for model, route, and variable names.
-- **Python:** Follow PEP 8. Use clear, descriptive names.
-- **JavaScript:** Use ES6+, async/await, and descriptive names.
-- **Data:** All local data (uploads, PDFs, DB) is stored in `instance/` (never commit these files).
-- **Frontend:** Never open `index.html` directly; always use the dev server.
-- **Database:** On first run, `app.py` auto-migrates and seeds the DB if needed.
-- **Sensitive Data:** Never commit credentials or local data.
+- **Idioma:** Usar español para los nombres de modelos, rutas y variables.
+- **Python:** Seguir PEP 8. Usar nombres claros y descriptivos.
+- **JavaScript:** Usar ES6+, async/await y nombres descriptivos.
+- **Datos:** Todos los datos locales (cargas, PDFs, BD) se almacenan en `instance/` (nunca confirmar estos archivos).
+- **Frontend:** Nunca abrir `index.html` directamente; usar siempre el servidor de desarrollo.
+- **Base de Datos:** En la primera ejecución, `app.py` realiza la migración automática y siembra la BD si es necesario.
+- **Datos Sensibles:** Nunca confirmar credenciales o datos locales.
 
 ---
 
-This file summarizes build/test commands, architecture, and conventions for Copilot and future contributors. Would you like to adjust anything or add coverage for other areas (e.g., advanced testing, CI, or deployment)?
+Este archivo resume los comandos de construcción/prueba, la arquitectura y las convenciones para Copilot y futuros colaboradores. ¿Te gustaría ajustar algo o añadir cobertura para otras áreas (ej. pruebas avanzadas, CI o despliegue)?

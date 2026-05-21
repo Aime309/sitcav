@@ -12,6 +12,7 @@
 .venv/
 .vercel
 .vercel/
+.antigravitycli/
 __pycache__/
 build/
 dist/

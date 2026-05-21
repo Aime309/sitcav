@@ -2,7 +2,7 @@
 
 Este documento proporciona el contexto necesario para trabajar en el proyecto SITCAV, un sistema de gestión administrativo desarrollado con Python/Flask y un frontend dinámico en Vanilla JS.
 
-## Project Overview
+## Descripción del Proyecto
 
 SITCAV es una herramienta diseñada para la gestión de inventario, ventas, compras, clientes y proveedores. El sistema incluye funcionalidades avanzadas como:
 - **Gestión de Usuarios:** Autenticación basada en roles (Encargado, Empleado Superior, Vendedor).
@@ -11,14 +11,14 @@ SITCAV es una herramienta diseñada para la gestión de inventario, ventas, comp
 - **Inventario:** Control de stock y seguimiento de movimientos.
 - **Utilidades:** Generación de reportes PDF, backups de base de datos y gestión de tasa de cambio (Dólar/Bolívar).
 
-### Technology Stack
+### Stack Tecnológico
 - **Backend:** Python 3.12, Flask, Flask-SQLAlchemy (SQLite).
 - **Frontend:** HTML5, Jinja2, Vanilla JavaScript, Vanilla CSS.
 - **Generación de Documentos:** ReportLab (para facturas y reportes PDF).
 - **Gestión de Dependencias:** `uv`.
 - **Despliegue:** Vercel (Configurado para servir Flask como Serverless Functions).
 
-## Building and Running
+## Construcción y Ejecución
 
 ### Requisitos previos
 - [uv](https://github.com/astral-sh/uv) instalado.
@@ -38,16 +38,18 @@ SITCAV es una herramienta diseñada para la gestión de inventario, ventas, comp
 - Se inicializa automáticamente al arrancar la app usando `schema.sql` y `db.py`.
 - En Vercel, la base de datos es de solo lectura (usando SQLite efímero o configuración específica); localmente es persistente en la carpeta `instance/`.
 
-## Development Conventions
+## Convenciones de Desarrollo
 
 ### Arquitectura de Archivos
 - `app.py`: Punto de entrada y configuración de la aplicación (App Factory).
-- `models.py`: Definición de modelos SQLAlchemy.
-- `api.py`: Rutas principales de la lógica de negocio (Blueprint `api`).
-- `auth.py`: Autenticación, registro y recuperación de contraseñas (Blueprint `auth`).
-- `db.py`: Utilidades para inicialización y migración ligera de la base de datos.
+- `api.py`: Registro centralizado de todos los Blueprints de la API.
+- `db.py`: Utilidades para inicialización, configuración de SQLAlchemy y migración ligera.
+- `auth.py`: Autenticación, registro y recuperación de contraseñas.
+- `[modelo].py`: Definición de modelos SQLAlchemy (usando nombre en singular, ej: `producto.py`).
+- `[blueprint].py`: Rutas y lógica de negocio para cada módulo (usando nombre en plural, ej: `productos.py`).
 - `static/app.js`: Lógica del frontend (SPA-like) que consume la API.
 - `templates/index.html`: Plantilla base única para la interfaz.
+- `pdf_generator.py`: Motor de generación de documentos PDF (ReportLab).
 
 ### Estilo de Código y Patrones
 - **Backend (Python):** Sigue PEP 8. Las respuestas de la API deben ser consistentes (JSON con campos `success` y `message` cuando sea necesario).

@@ -32,25 +32,25 @@ Acceso: `http://localhost:3000`
 
 ```text
 <ruta-del-proyecto>/
-├── static/            # Archivos estáticos (CSS, íconos)
-├── app.js             # Lógica principal del frontend (antes en static/)
-├── templates/         # Plantillas HTML (principalmente index.html)
-├── tests/             # Pruebas automáticas y utilidades de test
-├── instance/          # Datos locales: base de datos y uploads
-├── .venv/             # Entorno virtual local (ignorado en git)
-├── app.py             # Punto de entrada principal de la app Flask
-├── models.py          # Definición de modelos y base de datos
-├── pdf_generator.py   # Lógica para generación de PDFs
-├── uploads.py         # Rutas para servir archivos subidos
-├── api.py             # Rutas y lógica de la API principal
-├── auth.py            # Autenticación y rutas de login
-├── db.py              # Inicialización y utilidades de base de datos
-├── pyproject.toml     # Configuración de dependencias y Python
-├── schema.sql         # Esquema SQL inicial de la base de datos
-├── uv.lock            # Lockfile de dependencias Python (uv)
-└── vercel.json        # Configuración de despliegue Vercel
+├── static/                # Archivos estáticos (app.js, CSS, íconos)
+│   ├── app.js             # Lógica principal del frontend
+│   └── index.css          # Estilos globales
+├── templates/             # Plantillas HTML
+│   └── index.html         # Plantilla base (SPA)
+├── tests/                 # Pruebas automáticas (pytest)
+├── instance/              # Datos locales (BD SQLite, uploads, facturas)
+├── app.py                 # Punto de entrada y App Factory
+├── api.py                 # Registro central de Blueprints
+├── db.py                  # Configuración de SQLAlchemy y utilidades
+├── auth.py                # Lógica de autenticación
+├── pdf_generator.py       # Generación de reportes y facturas PDF
+├── schema.sql             # Esquema SQL para inicialización
+├── [modelo].py            # Modelos SQLAlchemy (ej. producto.py, venta.py)
+├── [blueprint].py         # Blueprints de la API (ej. productos.py, ventas.py)
+├── pyproject.toml         # Dependencias (uv)
+└── vercel.json            # Configuración de despliegue
 ```
-* El contenido de las carpetas static/, templates/, tests/ e instance/ está oculto para simplificar la vista.
+* Cada entidad principal tiene un archivo para su modelo (singular) y otro para sus rutas API (plural).
 
 ## Módulos disponibles (según rol)
 
@@ -87,7 +87,7 @@ Ejecuta todas las pruebas:
 uv run pytest
 ```
 
-## Troubleshooting
+## Resolución de Problemas
 
 ### Error: `No module named ...`
 
