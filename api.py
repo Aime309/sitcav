@@ -41,10 +41,10 @@ from models import (
 from pdf_generator import generar_factura_pdf, generar_reporte_ventas_pdf
 
 
-api_bp = Blueprint("api", __name__)
+api_bp = Blueprint("api", __name__, url_prefix="/api")
 
 
-@api_bp.route("/api/debug/uploads", methods=["GET"])
+@api_bp.route("/debug/uploads", methods=["GET"])
 def list_uploaded_files():
     upload_folder = current_app.config["PRODUCTS_UPLOAD_FOLDER"]
     try:
@@ -60,7 +60,7 @@ def list_uploaded_files():
         return jsonify({"error": str(e)})
 
 
-@api_bp.route("/api/dashboard/stats", methods=["GET"])
+@api_bp.route("/dashboard/stats", methods=["GET"])
 def get_dashboard_stats():
     """Retorna estadísticas generales para el dashboard (contadores)"""
     try:
@@ -121,14 +121,14 @@ def get_dashboard_stats():
         ), 500
 
 
-@api_bp.route("/api/usuarios", methods=["GET"])
+@api_bp.route("/usuarios", methods=["GET"])
 def list_usuarios():
     """Obtiene la lista de todos los usuarios"""
     usuarios = Usuario.query.all()
     return jsonify([user.to_dict() for user in usuarios])
 
 
-@api_bp.route("/api/usuarios", methods=["POST"])
+@api_bp.route("/usuarios", methods=["POST"])
 def create_usuario():
     """Crea un nuevo usuario"""
     data = request.get_json()
@@ -154,7 +154,7 @@ def create_usuario():
         ), 400
 
 
-@api_bp.route("/api/usuarios/<int:id>", methods=["PUT"])
+@api_bp.route("/usuarios/<int:id>", methods=["PUT"])
 def update_usuario(id):
     """Actualiza la información de un usuario"""
     usuario = Usuario.query.get_or_404(id)
@@ -204,7 +204,7 @@ def update_usuario(id):
         ), 400
 
 
-@api_bp.route("/api/usuarios/<int:id>/foto", methods=["POST"])
+@api_bp.route("/usuarios/<int:id>/foto", methods=["POST"])
 def upload_usuario_foto(id):
     """Sube una foto de perfil para un usuario"""
     usuario = Usuario.query.get_or_404(id)
@@ -261,7 +261,7 @@ def upload_usuario_foto(id):
     ), 400
 
 
-@api_bp.route("/api/usuarios/<int:id>", methods=["DELETE"])
+@api_bp.route("/usuarios/<int:id>", methods=["DELETE"])
 def delete_usuario(id):
     """Elimina un usuario"""
     usuario = Usuario.query.get(id)
@@ -284,13 +284,13 @@ def delete_usuario(id):
         ), 500
 
 
-@api_bp.route("/api/clientes", methods=["GET"])
+@api_bp.route("/clientes", methods=["GET"])
 def list_clientes():
     clientes = Cliente.query.all()
     return jsonify([cliente.to_dict() for cliente in clientes])
 
 
-@api_bp.route("/api/clientes", methods=["POST"])
+@api_bp.route("/clientes", methods=["POST"])
 def create_cliente():
     data = request.get_json()
     if not data:
@@ -323,7 +323,7 @@ def create_cliente():
         ), 400
 
 
-@api_bp.route("/api/clientes/<int:id>", methods=["PUT"])
+@api_bp.route("/clientes/<int:id>", methods=["PUT"])
 def update_cliente(id):
     cliente = Cliente.query.get_or_404(id)
     data = request.get_json()
@@ -347,7 +347,7 @@ def update_cliente(id):
         ), 400
 
 
-@api_bp.route("/api/clientes/<int:id>", methods=["DELETE"])
+@api_bp.route("/clientes/<int:id>", methods=["DELETE"])
 def delete_cliente(id):
     cliente = Cliente.query.get(id)
     if cliente is None:
@@ -369,7 +369,7 @@ def delete_cliente(id):
         ), 500
 
 
-@api_bp.route("/api/clientes/buscar", methods=["GET"])
+@api_bp.route("/clientes/buscar", methods=["GET"])
 def search_clientes():
     query = request.args.get("q", "")
     clientes = Cliente.query.filter(
@@ -380,13 +380,13 @@ def search_clientes():
     return jsonify([c.to_dict() for c in clientes])
 
 
-@api_bp.route("/api/categorias", methods=["GET"])
+@api_bp.route("/categorias", methods=["GET"])
 def list_categorias():
     categorias = Categoria.query.all()
     return jsonify([cat.to_dict() for cat in categorias])
 
 
-@api_bp.route("/api/categorias", methods=["POST"])
+@api_bp.route("/categorias", methods=["POST"])
 def create_categoria():
     data = request.get_json()
     try:
@@ -403,7 +403,7 @@ def create_categoria():
         ), 400
 
 
-@api_bp.route("/api/categorias/<int:id>", methods=["DELETE"])
+@api_bp.route("/categorias/<int:id>", methods=["DELETE"])
 def delete_categoria(id):
     """Elimina una categoría si no tiene productos asociados."""
     try:
@@ -434,7 +434,7 @@ def delete_categoria(id):
         ), 400
 
 
-@api_bp.route("/api/productos", methods=["GET", "POST"])
+@api_bp.route("/productos", methods=["GET", "POST"])
 def list_productos():
     """Lista todos los productos o crea uno nuevo"""
     if request.method == "GET":
@@ -502,7 +502,7 @@ def list_productos():
         ), 400
 
 
-@api_bp.route("/api/productos/<int:id>", methods=["PUT"])
+@api_bp.route("/productos/<int:id>", methods=["PUT"])
 def update_producto(id):
     producto = Producto.query.get_or_404(id)
 
@@ -561,7 +561,7 @@ def update_producto(id):
         ), 400
 
 
-@api_bp.route("/api/productos/<int:id>", methods=["DELETE"])
+@api_bp.route("/productos/<int:id>", methods=["DELETE"])
 def delete_producto(id):
     producto = Producto.query.get(id)
     if producto is None:
@@ -591,7 +591,7 @@ def delete_producto(id):
         ), 500
 
 
-@api_bp.route("/api/productos/buscar", methods=["GET"])
+@api_bp.route("/productos/buscar", methods=["GET"])
 def search_productos():
     query = request.args.get("q", "")
     productos = Producto.query.filter(
@@ -601,19 +601,19 @@ def search_productos():
     return jsonify([p.to_dict() for p in productos])
 
 
-@api_bp.route("/api/productos/stock-bajo", methods=["GET"])
+@api_bp.route("/productos/stock-bajo", methods=["GET"])
 def productos_stock_bajo():
     productos = Producto.query.filter(Producto.cantidad_disponible < 10).all()
     return jsonify([p.to_dict() for p in productos])
 
 
-@api_bp.route("/api/proveedores", methods=["GET"])
+@api_bp.route("/proveedores", methods=["GET"])
 def list_proveedores():
     proveedores = Proveedor.query.all()
     return jsonify([prov.to_dict() for prov in proveedores])
 
 
-@api_bp.route("/api/proveedores", methods=["POST"])
+@api_bp.route("/proveedores", methods=["POST"])
 def create_proveedor():
     data = request.get_json()
     try:
@@ -636,7 +636,7 @@ def create_proveedor():
         ), 400
 
 
-@api_bp.route("/api/proveedores/<int:id>", methods=["PUT"])
+@api_bp.route("/proveedores/<int:id>", methods=["PUT"])
 def update_proveedor(id):
     proveedor = Proveedor.query.get_or_404(id)
     data = request.get_json()
@@ -658,7 +658,7 @@ def update_proveedor(id):
         ), 400
 
 
-@api_bp.route("/api/proveedores/<int:id>", methods=["DELETE"])
+@api_bp.route("/proveedores/<int:id>", methods=["DELETE"])
 def delete_proveedor(id):
     proveedor = Proveedor.query.get(id)
     if proveedor is None:
@@ -680,13 +680,13 @@ def delete_proveedor(id):
         ), 500
 
 
-@api_bp.route("/api/ventas", methods=["GET"])
+@api_bp.route("/ventas", methods=["GET"])
 def list_ventas():
     ventas = Venta.query.order_by(Venta.fecha_creacion.desc()).all()
     return jsonify([venta.to_dict() for venta in ventas])
 
 
-@api_bp.route("/api/ventas", methods=["POST"])
+@api_bp.route("/ventas", methods=["POST"])
 def create_venta():
     data = request.get_json()
     try:
@@ -776,7 +776,7 @@ def create_venta():
         ), 500
 
 
-@api_bp.route("/api/ventas/<int:id>", methods=["GET"])
+@api_bp.route("/ventas/<int:id>", methods=["GET"])
 def get_venta(id):
     venta = db.session.get(Venta, id)
     if not venta:
@@ -786,7 +786,7 @@ def get_venta(id):
     return jsonify(venta.to_dict())
 
 
-@api_bp.route("/api/ventas/<int:id>", methods=["DELETE"])
+@api_bp.route("/ventas/<int:id>", methods=["DELETE"])
 def delete_venta(id):
     try:
         venta = db.session.get(Venta, id)
@@ -825,13 +825,13 @@ def delete_venta(id):
         ), 500
 
 
-@api_bp.route("/api/compras", methods=["GET"])
+@api_bp.route("/compras", methods=["GET"])
 def list_compras():
     compras = Compra.query.order_by(Compra.fecha_creacion.desc()).all()
     return jsonify([compra.to_dict() for compra in compras])
 
 
-@api_bp.route("/api/compras", methods=["POST"])
+@api_bp.route("/compras", methods=["POST"])
 def create_compra():
     data = request.get_json()
     try:
@@ -892,7 +892,7 @@ def create_compra():
         ), 500
 
 
-@api_bp.route("/api/compras/<int:id>", methods=["DELETE"])
+@api_bp.route("/compras/<int:id>", methods=["DELETE"])
 def delete_compra(id):
     try:
         compra = Compra.query.get_or_404(id)
@@ -916,7 +916,7 @@ def delete_compra(id):
         ), 500
 
 
-@api_bp.route("/api/compras/<int:id>/pdf", methods=["GET"])
+@api_bp.route("/compras/<int:id>/pdf", methods=["GET"])
 def get_compra_pdf(id):
     try:
         compra = Compra.query.get_or_404(id)
@@ -957,13 +957,13 @@ def get_compra_pdf(id):
         ), 500
 
 
-@api_bp.route("/api/compras/<int:id>", methods=["GET"])
+@api_bp.route("/compras/<int:id>", methods=["GET"])
 def get_compra(id):
     compra = Compra.query.get_or_404(id)
     return jsonify(compra.to_dict())
 
 
-@api_bp.route("/api/pagos/venta/<int:venta_id>", methods=["GET"])
+@api_bp.route("/pagos/venta/<int:venta_id>", methods=["GET"])
 def list_pagos_venta(venta_id):
     venta = Venta.query.get_or_404(venta_id)
     pagos = []
@@ -973,7 +973,7 @@ def list_pagos_venta(venta_id):
     return jsonify(pagos)
 
 
-@api_bp.route("/api/pagos", methods=["POST"])
+@api_bp.route("/pagos", methods=["POST"])
 def create_pago():
     data = request.get_json()
     try:
@@ -1002,31 +1002,31 @@ def create_pago():
         ), 400
 
 
-@api_bp.route("/api/tipos-pago", methods=["GET"])
+@api_bp.route("/tipos-pago", methods=["GET"])
 def list_tipos_pago():
     tipos = TipoPago.query.all()
     return jsonify([tipo.to_dict() for tipo in tipos])
 
 
-@api_bp.route("/api/estados", methods=["GET"])
+@api_bp.route("/estados", methods=["GET"])
 def list_estados():
     estados = Estado.query.all()
     return jsonify([{"id": e.id, "nombre": e.nombre} for e in estados])
 
 
-@api_bp.route("/api/localidades/<int:estado_id>", methods=["GET"])
+@api_bp.route("/localidades/<int:estado_id>", methods=["GET"])
 def list_localidades(estado_id):
     localidades = Localidad.query.filter_by(id_estado=estado_id).all()
     return jsonify([{"id": l.id, "nombre": l.nombre} for l in localidades])
 
 
-@api_bp.route("/api/sectores/<int:localidad_id>", methods=["GET"])
+@api_bp.route("/sectores/<int:localidad_id>", methods=["GET"])
 def list_sectores(localidad_id):
     sectores = Sector.query.filter_by(id_localidad=localidad_id).all()
     return jsonify([{"id": s.id, "nombre": s.nombre} for s in sectores])
 
 
-@api_bp.route("/api/reportes/estadisticas", methods=["GET"])
+@api_bp.route("/reportes/estadisticas", methods=["GET"])
 def get_estadisticas():
     try:
         hoy = datetime.now().date()
@@ -1088,7 +1088,7 @@ def get_estadisticas():
         ), 500
 
 
-@api_bp.route("/api/reportes/ventas", methods=["GET"])
+@api_bp.route("/reportes/ventas", methods=["GET"])
 def reporte_ventas():
     fecha_desde = request.args.get("desde")
     fecha_hasta = request.args.get("hasta")
@@ -1129,7 +1129,7 @@ def reporte_ventas():
     )
 
 
-@api_bp.route("/api/backup/crear", methods=["POST"])
+@api_bp.route("/backup/crear", methods=["POST"])
 def crear_backup():
     try:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -1156,7 +1156,7 @@ def crear_backup():
         ), 500
 
 
-@api_bp.route("/api/backup/historial", methods=["GET"])
+@api_bp.route("/backup/historial", methods=["GET"])
 def historial_backups():
     try:
         backup_dir = current_app.instance_path
@@ -1184,7 +1184,7 @@ def historial_backups():
         ), 500
 
 
-@api_bp.route("/api/negocio", methods=["GET"])
+@api_bp.route("/negocio", methods=["GET"])
 def get_negocio():
     negocio = Negocio.query.first()
     if negocio:
@@ -1200,7 +1200,7 @@ def get_negocio():
     return jsonify({"message": "No hay datos del negocio"}), 404
 
 
-@api_bp.route("/api/negocio", methods=["PUT"])
+@api_bp.route("/negocio", methods=["PUT"])
 def update_negocio():
     negocio = Negocio.query.first()
     data = request.get_json()
@@ -1229,7 +1229,7 @@ def update_negocio():
         return jsonify({"message": f"Error: {str(e)}", "success": False}), 400
 
 
-@api_bp.route("/api/factura/<int:venta_id>", methods=["GET"])
+@api_bp.route("/factura/<int:venta_id>", methods=["GET"])
 def generar_factura(venta_id):
     """Genera un PDF de factura para una venta específica"""
     try:
@@ -1278,7 +1278,7 @@ def generar_factura(venta_id):
         ), 500
 
 
-@api_bp.route("/api/reportes/ventas/pdf", methods=["GET"])
+@api_bp.route("/reportes/ventas/pdf", methods=["GET"])
 def generar_reporte_ventas_pdf_endpoint():
     """Genera un PDF con reporte de ventas"""
     try:
@@ -1314,7 +1314,7 @@ def generar_reporte_ventas_pdf_endpoint():
         ), 500
 
 
-@api_bp.route("/api/empleados", methods=["GET"])
+@api_bp.route("/empleados", methods=["GET"])
 def list_empleados():
     try:
         empleados = Usuario.query.all()
@@ -1333,7 +1333,7 @@ def list_empleados():
         return jsonify([])
 
 
-@api_bp.route("/api/empleados/<int:id>", methods=["DELETE"])
+@api_bp.route("/empleados/<int:id>", methods=["DELETE"])
 def delete_empleado(id):
     empleado = Usuario.query.get(id)
     if empleado is None:
@@ -1355,7 +1355,7 @@ def delete_empleado(id):
         ), 500
 
 
-@api_bp.route("/api/backup", methods=["POST"])
+@api_bp.route("/backup", methods=["POST"])
 def create_backup():
     import shutil
     from datetime import datetime
@@ -1387,7 +1387,7 @@ def create_backup():
         ), 500
 
 
-@api_bp.route("/api/apartados", methods=["GET"])
+@api_bp.route("/apartados", methods=["GET"])
 def list_apartados():
     """Lista todos los apartados con filtro opcional por estado"""
     estado = request.args.get("estado", None)
@@ -1398,7 +1398,7 @@ def list_apartados():
     return jsonify([a.to_dict() for a in apartados])
 
 
-@api_bp.route("/api/apartados", methods=["POST"])
+@api_bp.route("/apartados", methods=["POST"])
 def create_apartado():
     """Crea un nuevo apartado con múltiples productos"""
     data = request.get_json()
@@ -1512,14 +1512,14 @@ def create_apartado():
         ), 500
 
 
-@api_bp.route("/api/apartados/<int:id>", methods=["GET"])
+@api_bp.route("/apartados/<int:id>", methods=["GET"])
 def get_apartado(id):
     """Obtiene un apartado específico con todos sus detalles"""
     apartado = Apartado.query.get_or_404(id)
     return jsonify(apartado.to_dict())
 
 
-@api_bp.route("/api/apartados/<int:id>/pago", methods=["POST"])
+@api_bp.route("/apartados/<int:id>/pago", methods=["POST"])
 def registrar_pago_apartado(id):
     """Registra un pago/abono a un apartado"""
     apartado = Apartado.query.get_or_404(id)
@@ -1570,7 +1570,7 @@ def registrar_pago_apartado(id):
         ), 500
 
 
-@api_bp.route("/api/apartados/<int:id>/completar", methods=["POST"])
+@api_bp.route("/apartados/<int:id>/completar", methods=["POST"])
 def completar_apartado(id):
     """Completa un apartado y genera una venta"""
     apartado = Apartado.query.get_or_404(id)
@@ -1639,7 +1639,7 @@ def completar_apartado(id):
         ), 500
 
 
-@api_bp.route("/api/apartados/<int:id>/cancelar", methods=["POST"])
+@api_bp.route("/apartados/<int:id>/cancelar", methods=["POST"])
 def cancelar_apartado(id):
     """Cancela un apartado y devuelve productos al inventario"""
     apartado = Apartado.query.get_or_404(id)
@@ -1689,7 +1689,7 @@ def cancelar_apartado(id):
         ), 500
 
 
-@api_bp.route("/api/apartados/<int:id>/pdf", methods=["GET"])
+@api_bp.route("/apartados/<int:id>/pdf", methods=["GET"])
 def generar_pdf_apartado(id):
     """Genera un PDF del apartado"""
     try:
@@ -1727,7 +1727,7 @@ def generar_pdf_apartado(id):
         ), 500
 
 
-@api_bp.route("/api/apartados/<int:id>", methods=["DELETE"])
+@api_bp.route("/apartados/<int:id>", methods=["DELETE"])
 def delete_apartado(id):
     """Elimina un apartado (solo si está cancelado)"""
     apartado = Apartado.query.get_or_404(id)
@@ -1753,7 +1753,7 @@ def delete_apartado(id):
         ), 500
 
 
-@api_bp.route("/api/inventario", methods=["GET"])
+@api_bp.route("/inventario", methods=["GET"])
 def list_inventario():
     """Lista productos con información de stock"""
     productos = Producto.query.all()
@@ -1778,7 +1778,7 @@ def list_inventario():
     return jsonify(resultado)
 
 
-@api_bp.route("/api/inventario/movimientos", methods=["GET"])
+@api_bp.route("/inventario/movimientos", methods=["GET"])
 def list_movimientos():
     """Lista el historial de movimientos de inventario"""
     id_producto = request.args.get("id_producto", None)
@@ -1797,7 +1797,7 @@ def list_movimientos():
     return jsonify([m.to_dict() for m in movimientos])
 
 
-@api_bp.route("/api/inventario/ajuste", methods=["POST"])
+@api_bp.route("/inventario/ajuste", methods=["POST"])
 def ajuste_inventario():
     """Realiza un ajuste manual de inventario"""
     data = request.get_json()
@@ -1858,7 +1858,7 @@ def ajuste_inventario():
         return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
 
 
-@api_bp.route("/api/consultas/ventas", methods=["GET"])
+@api_bp.route("/consultas/ventas", methods=["GET"])
 def consultar_ventas():
     """Consulta avanzada de ventas con filtros"""
     try:
@@ -1912,7 +1912,7 @@ def consultar_ventas():
         ), 500
 
 
-@api_bp.route("/api/consultas/ventas/pdf", methods=["GET"])
+@api_bp.route("/consultas/ventas/pdf", methods=["GET"])
 def exportar_consultas_pdf():
     """Genera PDF de la consulta actual"""
     try:
@@ -1986,7 +1986,7 @@ def exportar_consultas_pdf():
         ), 500
 
 
-@api_bp.route("/api/cotizacion/actual", methods=["GET"])
+@api_bp.route("/cotizacion/actual", methods=["GET"])
 def get_cotizacion_actual():
     """Obtiene la cotización más reciente"""
     try:
@@ -2008,7 +2008,7 @@ def get_cotizacion_actual():
         return jsonify({"error": str(e)}), 500
 
 
-@api_bp.route("/api/cotizacion", methods=["GET"])
+@api_bp.route("/cotizacion", methods=["GET"])
 def list_cotizaciones():
     """Lista el historial de cotizaciones"""
     try:
@@ -2023,7 +2023,7 @@ def list_cotizaciones():
         return jsonify({"error": str(e)}), 500
 
 
-@api_bp.route("/api/cotizacion", methods=["POST"])
+@api_bp.route("/cotizacion", methods=["POST"])
 def create_cotizacion():
     """Registra una nueva cotización"""
     data = request.get_json()
@@ -2057,7 +2057,7 @@ def create_cotizacion():
         return jsonify({"success": False, "message": str(e)}), 500
 
 
-@api_bp.route("/api/reembolsos", methods=["GET"])
+@api_bp.route("/reembolsos", methods=["GET"])
 def get_reembolsos():
     try:
         reembolsos = Reembolso.query.order_by(Reembolso.fecha.desc()).all()
@@ -2071,7 +2071,7 @@ def get_reembolsos():
         ), 500
 
 
-@api_bp.route("/api/reembolsos", methods=["POST"])
+@api_bp.route("/reembolsos", methods=["POST"])
 def create_reembolso():
     data = request.get_json()
     try:
@@ -2131,7 +2131,7 @@ def create_reembolso():
         ), 500
 
 
-@api_bp.route("/api/reembolsos/<int:id>", methods=["DELETE"])
+@api_bp.route("/reembolsos/<int:id>", methods=["DELETE"])
 def delete_reembolso(id):
     try:
         reembolso = db.session.get(Reembolso, id)
@@ -2154,7 +2154,7 @@ def delete_reembolso(id):
         ), 500
 
 
-@api_bp.route("/api/reembolsos/<int:id>/pdf", methods=["GET"])
+@api_bp.route("/reembolsos/<int:id>/pdf", methods=["GET"])
 def get_reembolso_pdf(id):
     try:
         reembolso = db.session.get(Reembolso, id)
@@ -2260,7 +2260,7 @@ def get_reembolso_pdf(id):
         ), 500
 
 
-@api_bp.route("/api/estadisticas/resumen", methods=["GET"])
+@api_bp.route("/estadisticas/resumen", methods=["GET"])
 def get_estadisticas_resumen():
     """Retorna KPIs del día actual"""
     try:
@@ -2315,7 +2315,7 @@ def get_estadisticas_resumen():
         ), 500
 
 
-@api_bp.route("/api/estadisticas/historico", methods=["GET"])
+@api_bp.route("/estadisticas/historico", methods=["GET"])
 def get_estadisticas_historico():
     """Retorna datos para gráficas (últimos 7 días)"""
     try:
