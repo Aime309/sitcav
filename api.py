@@ -7,7 +7,6 @@ from flask import (
     Blueprint,
     current_app,
     jsonify,
-    render_template,
     request,
     send_file,
 )
@@ -43,11 +42,6 @@ from pdf_generator import generar_factura_pdf, generar_reporte_ventas_pdf
 
 
 api_bp = Blueprint("api", __name__)
-
-
-@api_bp.route("/")
-def index():
-    return render_template("index.html")
 
 
 @api_bp.route("/api/debug/uploads", methods=["GET"])
