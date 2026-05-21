@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from flask.testing import FlaskClient
 import pytest
+from flask.testing import FlaskClient
 
 from models import Cliente, Negocio, Producto
 
@@ -56,7 +56,9 @@ def test_flujo_venta_y_reembolso(client: FlaskClient):
                 "telefono": negocio_original["telefono"],
                 "direccion": "Calle Verificacion 123",
             }
-            update_response = client.put("/api/negocio", json=negocio_update)
+            update_response = client.put(
+                "/api/negocio", json=negocio_update, follow_redirects=True
+            )
             assert update_response.status_code == 200
 
         venta_response = client.post(
@@ -66,6 +68,7 @@ def test_flujo_venta_y_reembolso(client: FlaskClient):
                 "id_vendedor": user_id,
                 "detalles": [{"id_producto": producto_id, "cantidad": 1}],
             },
+            follow_redirects=True,
         )
         assert venta_response.status_code == 201
 
@@ -81,13 +84,14 @@ def test_flujo_venta_y_reembolso(client: FlaskClient):
                 "monto_dolares": 5.0,
                 "motivo": "Verification Test",
             },
+            follow_redirects=True,
         )
         assert reembolso_response.status_code == 201
 
         reembolso_data = reembolso_response.get_json()["reembolso"]
         reembolso_id = reembolso_data["id"]
 
-        list_response = client.get("/api/reembolsos")
+        list_response = client.get("/api/reembolsos", follow_redirects=True)
         assert list_response.status_code == 200
         reembolsos = list_response.get_json()
         assert any(r["id"] == reembolso_id for r in reembolsos)

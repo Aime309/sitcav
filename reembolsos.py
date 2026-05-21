@@ -9,7 +9,7 @@ from models import Cotizacion, Negocio, Reembolso, Usuario, Venta, db
 reembolsos_bp = Blueprint("reembolsos", __name__, url_prefix="/reembolsos")
 
 
-@reembolsos_bp.get("/reembolsos")
+@reembolsos_bp.get("/")
 def get_reembolsos():
     try:
         reembolsos = Reembolso.query.order_by(Reembolso.fecha.desc()).all()
@@ -21,7 +21,7 @@ def get_reembolsos():
         }, 500
 
 
-@reembolsos_bp.post("/reembolsos")
+@reembolsos_bp.post("/")
 def create_reembolso():
     data = request.get_json()
     try:
@@ -75,7 +75,7 @@ def create_reembolso():
         }, 500
 
 
-@reembolsos_bp.delete("/reembolsos/<int:id>")
+@reembolsos_bp.delete("/<int:id>")
 def delete_reembolso(id: int):
     try:
         reembolso = db.session.get(Reembolso, id)
@@ -92,7 +92,7 @@ def delete_reembolso(id: int):
         }, 500
 
 
-@reembolsos_bp.get("/reembolsos/<int:id>/pdf")
+@reembolsos_bp.get("/<int:id>/pdf")
 def get_reembolso_pdf(id: int):
     try:
         reembolso = db.session.get(Reembolso, id)
