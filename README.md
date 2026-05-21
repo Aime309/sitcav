@@ -38,7 +38,7 @@ Acceso: `http://localhost:3000`
 ├── tests/             # Pruebas automáticas y utilidades de test
 ├── instance/          # Datos locales: base de datos y uploads
 ├── .venv/             # Entorno virtual local (ignorado en git)
-├── main.py            # Punto de entrada principal de la app Flask
+├── app.py             # Punto de entrada principal de la app Flask
 ├── models.py          # Definición de modelos y base de datos
 ├── pdf_generator.py   # Lógica para generación de PDFs
 ├── uploads.py         # Rutas para servir archivos subidos
@@ -110,7 +110,8 @@ vercel dev
 ## Notas importantes
 
 - El backend corre sobre Flask y la base de datos local es SQLite (`instance\system_data.db`).
-- El arranque de `main.py` realiza migración ligera e inicialización de datos.
+- El arranque de `app.py` realiza migración ligera e inicialización de datos.
 - Todos los archivos subidos, backups y PDFs se almacenan en la carpeta `instance/`.
 - El frontend se sirve dinámicamente como plantilla Jinja2, no abrir index.html directo.
 - Usa siempre `uv sync` y `vercel dev` para desarrollo local.
+

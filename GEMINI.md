@@ -29,7 +29,7 @@ SITCAV es una herramienta diseñada para la gestión de inventario, ventas, comp
 | Acción | Comando |
 | :--- | :--- |
 | Instalar dependencias | `uv sync` |
-| Ejecutar servidor de desarrollo | `vercel dev` (Recomendado) o `python main.py` |
+| Ejecutar servidor de desarrollo | `vercel dev` (Recomendado) o `python app.py` |
 | Ejecutar pruebas | `uv run pytest` |
 | Acceder a la app | `http://localhost:3000` (con `vercel dev`) |
 
@@ -41,7 +41,7 @@ SITCAV es una herramienta diseñada para la gestión de inventario, ventas, comp
 ## Development Conventions
 
 ### Arquitectura de Archivos
-- `main.py`: Punto de entrada y configuración de la aplicación (App Factory).
+- `app.py`: Punto de entrada y configuración de la aplicación (App Factory).
 - `models.py`: Definición de modelos SQLAlchemy.
 - `api.py`: Rutas principales de la lógica de negocio (Blueprint `api`).
 - `auth.py`: Autenticación, registro y recuperación de contraseñas (Blueprint `auth`).

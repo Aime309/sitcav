@@ -27,7 +27,7 @@
 
 ## High-Level Architecture
 
-- **Backend:** Python 3.12.x, Flask, SQLAlchemy (SQLite). Entry point: `main.py`.
+- **Backend:** Python 3.12.x, Flask, SQLAlchemy (SQLite). Entry point: `app.py`.
 - **Frontend:** Served via Jinja2 templates (`templates/index.html`), main logic in `static/app.js`.
 - **PDF Generation:** `pdf_generator.py` uses ReportLab to create invoices in `instance/facturas/`.
 - **Database:** SQLite file at `instance/system_data.db`, initialized via `db.py` and `schema.sql`.
@@ -43,7 +43,7 @@
 - **JavaScript:** Use ES6+, async/await, and descriptive names.
 - **Data:** All local data (uploads, PDFs, DB) is stored in `instance/` (never commit these files).
 - **Frontend:** Never open `index.html` directly; always use the dev server.
-- **Database:** On first run, `main.py` auto-migrates and seeds the DB if needed.
+- **Database:** On first run, `app.py` auto-migrates and seeds the DB if needed.
 - **Sensitive Data:** Never commit credentials or local data.
 
 ---
