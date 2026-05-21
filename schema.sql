@@ -258,4 +258,56 @@ INSERT INTO "usuarios" VALUES (1,'12345678','scrypt:32768:8:1$lHBAWMFWJ2IidHB7$b
  (2,'87654321','scrypt:32768:8:1$tYME3wHYSCjJs1fg$f060029bf3f4cbb29b253eb6ffde11666127bc8e391ff4d7fcc606078e9673467aeb5dfb8a6f4aabee1e77b94fdb20b2ac0472529e8446dcd3530b6f126766e1','Empleado Superior',1,'María García (Emp. Superior)',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
  (3,'11223344','scrypt:32768:8:1$EooCC6xwJ0QEFaHa$be2650e9c8ca8c617490009ad519803c52464b3080427388ebea6dbb5ed665dad4107a6b37f9f135ecff216f8e629e7f36a676984dca843b06bd8e2297386ec6','Vendedor',1,'Carlos López (Vendedor)',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO "ventas" VALUES (1,1,NULL,'2026-05-14 13:24:54.498822',35.5);
+
+-- TABLAS ADICIONALES PARA AUDITORIA --
+CREATE TABLE IF NOT EXISTS "historial_precios" (
+    "id" INTEGER NOT NULL,
+    "id_producto" INTEGER NOT NULL,
+    "precio_anterior" NUMERIC(10, 2) NOT NULL,
+    "precio_nuevo" NUMERIC(10, 2) NOT NULL,
+    "fecha" DATETIME NOT NULL,
+    PRIMARY KEY("id"),
+    FOREIGN KEY("id_producto") REFERENCES "productos"("id")
+);
+
+-- TRIGGERS DE BASE DE DATOS --
+
+-- 1. Auditoría de cambio de precio
+CREATE TRIGGER IF NOT EXISTS audit_cambio_precio
+AFTER UPDATE OF precio_unitario_actual_dolares ON productos
+FOR EACH ROW
+WHEN OLD.precio_unitario_actual_dolares <> NEW.precio_unitario_actual_dolares
+BEGIN
+    INSERT INTO historial_precios (id_producto, precio_anterior, precio_nuevo, fecha)
+    VALUES (OLD.id, OLD.precio_unitario_actual_dolares, NEW.precio_unitario_actual_dolares, DATETIME('now'));
+END;
+
+-- 2. Prevención de stock negativo
+CREATE TRIGGER IF NOT EXISTS prevent_negativo_stock
+BEFORE UPDATE OF cantidad_disponible ON productos
+FOR EACH ROW
+WHEN NEW.cantidad_disponible < 0
+BEGIN
+    SELECT RAISE(ROLLBACK, 'Error: No hay suficiente stock para realizar esta operación.');
+END;
+
+-- 3. Sincronización automática de monto pagado en apartados
+CREATE TRIGGER IF NOT EXISTS sync_pago_apartado
+AFTER INSERT ON pagos_apartados
+FOR EACH ROW
+BEGIN
+    UPDATE apartados 
+    SET monto_pagado = monto_pagado + NEW.monto
+    WHERE id = NEW.id_apartado;
+END;
+
+-- 4. Completado automático de apartado al alcanzar el monto total
+CREATE TRIGGER IF NOT EXISTS check_apartado_completado
+AFTER UPDATE OF monto_pagado ON apartados
+FOR EACH ROW
+WHEN NEW.monto_pagado >= NEW.monto_total AND OLD.estado = 'activo'
+BEGIN
+    UPDATE apartados SET estado = 'completado' WHERE id = NEW.id;
+END;
+
 COMMIT;

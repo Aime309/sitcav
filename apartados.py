@@ -112,9 +112,9 @@ def create_apartado():
                 observacion="Abono inicial",
             )
             db.session.add(pago)
-            nuevo_apartado.monto_pagado = Decimal(str(abono_inicial))
 
         db.session.commit()
+        db.session.refresh(nuevo_apartado)
 
         return {
             "success": True,
@@ -155,14 +155,8 @@ def registrar_pago_apartado(id: int):
         )
         db.session.add(pago)
 
-        # Actualizar monto pagado
-        apartado.monto_pagado += monto
-
-        # Verificar si está completamente pagado
-        if apartado.monto_pagado >= apartado.monto_total:
-            apartado.estado = "completado"
-
         db.session.commit()
+        db.session.refresh(apartado)
 
         return {
             "success": True,
