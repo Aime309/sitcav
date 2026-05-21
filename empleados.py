@@ -1,6 +1,7 @@
 from flask import Blueprint
 
-from models import Usuario, db
+from db import db
+from usuario import Usuario
 
 empleados_bp = Blueprint("empleados", __name__, url_prefix="/empleados")
 

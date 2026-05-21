@@ -2,18 +2,16 @@ from datetime import datetime
 
 from flask import Blueprint
 
-from models import (
-    Apartado,
-    Cliente,
-    Compra,
-    Cotizacion,
-    MovimientoInventario,
-    Producto,
-    Proveedor,
-    Reembolso,
-    Usuario,
-    Venta,
-)
+from apartado import Apartado
+from cliente import Cliente
+from compra import Compra
+from cotizacion_model import Cotizacion
+from movimiento_inventario import MovimientoInventario
+from producto import Producto
+from proveedor import Proveedor
+from reembolso import Reembolso
+from usuario import Usuario
+from venta import Venta
 
 dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 

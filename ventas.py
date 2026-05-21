@@ -2,7 +2,13 @@ from decimal import Decimal
 
 from flask import Blueprint, request
 
-from models import Cliente, Cotizacion, DetalleVenta, Producto, Reembolso, Venta, db
+from cliente import Cliente
+from cotizacion_model import Cotizacion
+from db import db
+from detalle_venta import DetalleVenta
+from producto import Producto
+from reembolso import Reembolso
+from venta import Venta
 
 ventas_bp = Blueprint("ventas", __name__, url_prefix="/ventas")
 

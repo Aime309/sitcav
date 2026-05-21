@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from models import Estado
+from estado import Estado
 
 estados_bp = Blueprint("estados", __name__, url_prefix="/estados")
 

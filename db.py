@@ -1,8 +1,15 @@
 import os
+from datetime import datetime
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
+
+db = SQLAlchemy()
+
+
+def local_now():
+    return datetime.now()
 
 
 def init_db(app: Flask, db: SQLAlchemy) -> None:

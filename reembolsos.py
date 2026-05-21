@@ -4,7 +4,12 @@ from decimal import Decimal
 
 from flask import Blueprint, current_app, request, send_file
 
-from models import Cotizacion, Negocio, Reembolso, Usuario, Venta, db
+from cotizacion_model import Cotizacion
+from db import db
+from negocio_model import Negocio
+from reembolso import Reembolso
+from usuario import Usuario
+from venta import Venta
 
 reembolsos_bp = Blueprint("reembolsos", __name__, url_prefix="/reembolsos")
 

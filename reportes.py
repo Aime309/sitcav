@@ -3,20 +3,18 @@ from decimal import Decimal
 
 from flask import Blueprint, request, send_file
 
-from models import (
-    Apartado,
-    Cliente,
-    Compra,
-    Cotizacion,
-    MovimientoInventario,
-    Producto,
-    Proveedor,
-    Reembolso,
-    Usuario,
-    Venta,
-    db,
-)
+from apartado import Apartado
+from cliente import Cliente
+from compra import Compra
+from cotizacion_model import Cotizacion
+from db import db
+from movimiento_inventario import MovimientoInventario
 from pdf_generator import generar_reporte_ventas_pdf
+from producto import Producto
+from proveedor import Proveedor
+from reembolso import Reembolso
+from usuario import Usuario
+from venta import Venta
 
 reportes_bp = Blueprint("reportes", __name__, url_prefix="/reportes")
 

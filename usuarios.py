@@ -1,10 +1,11 @@
 import os
 
 from flask import Blueprint, current_app, request
+from usuario import Usuario
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 
-from models import Usuario, db
+from db import db
 
 usuarios_bp = Blueprint("usuarios", __name__, url_prefix="/usuarios")
 

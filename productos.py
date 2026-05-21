@@ -3,10 +3,11 @@ from datetime import datetime
 from decimal import Decimal
 
 from flask import Blueprint, current_app, request
+from producto import Producto
 from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
 
-from models import Producto, db
+from db import db
 
 productos_bp = Blueprint("productos", __name__, url_prefix="/productos")
 

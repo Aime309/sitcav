@@ -4,8 +4,7 @@ from typing import Any
 
 from flask import Flask, render_template
 
-from db import init_db
-from models import db
+from db import db, init_db
 
 
 def create_app(

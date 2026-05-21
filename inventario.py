@@ -1,6 +1,8 @@
 from flask import Blueprint, request
 
-from models import MovimientoInventario, Producto, db
+from db import db
+from movimiento_inventario import MovimientoInventario
+from producto import Producto
 
 inventario_bp = Blueprint("inventario", __name__, url_prefix="/inventario")
 

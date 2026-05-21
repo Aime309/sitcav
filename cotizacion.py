@@ -2,7 +2,8 @@ from datetime import datetime
 
 from flask import Blueprint, request
 
-from models import Cotizacion, db
+from cotizacion_model import Cotizacion
+from db import db
 
 cotizacion_bp = Blueprint("cotizacion", __name__, url_prefix="/cotizacion")
 
