@@ -1,6 +1,6 @@
 import os
 
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, current_app, request
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 
@@ -12,7 +12,7 @@ usuarios_bp = Blueprint("usuarios", __name__, url_prefix="/usuarios")
 @usuarios_bp.get("/")
 def list_usuarios():
     usuarios = Usuario.query.all()
-    return jsonify([user.to_dict() for user in usuarios])
+    return [user.to_dict() for user in usuarios]
 
 
 @usuarios_bp.post("/")
@@ -30,12 +30,10 @@ def create_usuario():
         )
         db.session.add(nuevo_usuario)
         db.session.commit()
-        return jsonify(nuevo_usuario.to_dict()), 201
+        return nuevo_usuario.to_dict(), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {"message": f"Error al crear usuario: {str(e)}", "success": False}
-        ), 400
+        return {"message": f"Error al crear usuario: {str(e)}", "success": False}, 400
 
 
 @usuarios_bp.put("/<int:id>")
@@ -76,15 +74,13 @@ def update_usuario(id: int):
             usuario.respuesta_3 = data.get("respuesta_3")
 
         db.session.commit()
-        return jsonify(usuario.to_dict())
+        return usuario.to_dict()
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "message": f"Error al actualizar usuario: {str(e)}",
-                "success": False,
-            }
-        ), 400
+        return {
+            "message": f"Error al actualizar usuario: {str(e)}",
+            "success": False,
+        }, 400
 
 
 @usuarios_bp.post("/<int:id>/foto")
@@ -92,15 +88,11 @@ def upload_usuario_foto(id: int):
     usuario = Usuario.query.get_or_404(id)
 
     if "foto" not in request.files:
-        return jsonify(
-            {"success": False, "message": "No se recibió ningún archivo"}
-        ), 400
+        return {"success": False, "message": "No se recibió ningún archivo"}, 400
 
     file = request.files["foto"]
     if file.filename == "":
-        return jsonify(
-            {"success": False, "message": "No se seleccionó ningún archivo"}
-        ), 400
+        return {"success": False, "message": "No se seleccionó ningún archivo"}, 400
 
     if file:
         try:
@@ -122,40 +114,34 @@ def upload_usuario_foto(id: int):
             usuario.foto_url = foto_url
             db.session.commit()
 
-            return jsonify(
-                {
-                    "success": True,
-                    "message": "Foto actualizada correctamente",
-                    "foto_url": foto_url,
-                }
-            )
+            return {
+                "success": True,
+                "message": "Foto actualizada correctamente",
+                "foto_url": foto_url,
+            }
         except Exception as e:
             db.session.rollback()
-            return jsonify(
-                {
-                    "success": False,
-                    "message": f"Error al guardar foto: {str(e)}",
-                }
-            ), 500
+            return {
+                "success": False,
+                "message": f"Error al guardar foto: {str(e)}",
+            }, 500
 
-    return jsonify({"success": False, "message": "Error al procesar archivo"}), 400
+    return {"success": False, "message": "Error al procesar archivo"}, 400
 
 
 @usuarios_bp.delete("/<int:id>")
 def delete_usuario(id: int):
     usuario = Usuario.query.get(id)
     if usuario is None:
-        return jsonify({"message": "Usuario no encontrado"}), 404
+        return {"message": "Usuario no encontrado"}, 404
 
     try:
         db.session.delete(usuario)
         db.session.commit()
-        return jsonify({"message": "Usuario eliminado con éxito", "success": True})
+        return {"message": "Usuario eliminado con éxito", "success": True}
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "message": f"Error al eliminar usuario: {str(e)}",
-                "success": False,
-            }
-        ), 500
+        return {
+            "message": f"Error al eliminar usuario: {str(e)}",
+            "success": False,
+        }, 500

@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from models import MovimientoInventario, Producto, db
 
@@ -24,7 +24,7 @@ def list_inventario():
             prod_dict["categoria_nombre"] = prod.categoria.nombre
         resultado.append(prod_dict)
 
-    return jsonify(resultado)
+    return resultado
 
 
 @inventario_bp.get("/movimientos")
@@ -40,7 +40,7 @@ def list_movimientos():
         query = query.filter_by(tipo=tipo)
 
     movimientos = query.order_by(MovimientoInventario.fecha.desc()).limit(100).all()
-    return jsonify([m.to_dict() for m in movimientos])
+    return [m.to_dict() for m in movimientos]
 
 
 @inventario_bp.post("/ajuste")
@@ -53,26 +53,24 @@ def ajuste_inventario():
     observacion = data.get("observacion", "Ajuste manual")
 
     if not id_producto or not tipo or cantidad <= 0:
-        return jsonify({"success": False, "message": "Datos incompletos"}), 400
+        return {"success": False, "message": "Datos incompletos"}, 400
 
     producto = Producto.query.get(id_producto)
     if not producto:
-        return jsonify({"success": False, "message": "Producto no encontrado"}), 404
+        return {"success": False, "message": "Producto no encontrado"}, 404
 
     try:
         if tipo == "entrada":
             producto.cantidad_disponible += cantidad
         elif tipo == "salida":
             if producto.cantidad_disponible < cantidad:
-                return jsonify({"success": False, "message": "Stock insuficiente"}), 400
+                return {"success": False, "message": "Stock insuficiente"}, 400
             producto.cantidad_disponible -= cantidad
         else:
-            return jsonify(
-                {
-                    "success": False,
-                    "message": "Tipo debe ser 'entrada' o 'salida'",
-                }
-            ), 400
+            return {
+                "success": False,
+                "message": "Tipo debe ser 'entrada' o 'salida'",
+            }, 400
 
         # Registrar movimiento
         movimiento = MovimientoInventario(
@@ -85,15 +83,13 @@ def ajuste_inventario():
         db.session.add(movimiento)
         db.session.commit()
 
-        return jsonify(
-            {
-                "success": True,
-                "message": "Ajuste realizado exitosamente",
-                "producto": producto.to_dict(),
-                "movimiento": movimiento.to_dict(),
-            }
-        )
+        return {
+            "success": True,
+            "message": "Ajuste realizado exitosamente",
+            "producto": producto.to_dict(),
+            "movimiento": movimiento.to_dict(),
+        }
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
+        return {"success": False, "message": f"Error: {str(e)}"}, 500

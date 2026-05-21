@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from models import Cliente, Cotizacion, DetalleVenta, Producto, Reembolso, Venta, db
 
@@ -10,7 +10,7 @@ ventas_bp = Blueprint("ventas", __name__, url_prefix="/ventas")
 @ventas_bp.get("/")
 def list_ventas():
     ventas = Venta.query.order_by(Venta.fecha_creacion.desc()).all()
-    return jsonify([venta.to_dict() for venta in ventas])
+    return [venta.to_dict() for venta in ventas]
 
 
 @ventas_bp.post("/")
@@ -30,9 +30,7 @@ def create_venta():
                 db.session.flush()
                 id_cliente = nuevo_cliente.id
             else:
-                return jsonify(
-                    {"message": "Se requiere un cliente", "success": False}
-                ), 400
+                return {"message": "Se requiere un cliente", "success": False}, 400
 
         # Obtener cotización actual
         cotizacion_actual = Cotizacion.query.order_by(
@@ -83,32 +81,28 @@ def create_venta():
 
         db.session.commit()
 
-        return jsonify(
-            {
-                "success": True,
-                "message": "Venta creada exitosamente",
-                "venta": nueva_venta.to_dict(),
-                "total": float(total_venta),
-                "tasa_cambio": float(tasa_cambio),
-            }
-        ), 201
+        return {
+            "success": True,
+            "message": "Venta creada exitosamente",
+            "venta": nueva_venta.to_dict(),
+            "total": float(total_venta),
+            "tasa_cambio": float(tasa_cambio),
+        }, 201
 
     except ValueError as ve:
         db.session.rollback()
-        return jsonify({"message": str(ve), "success": False}), 400
+        return {"message": str(ve), "success": False}, 400
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {"message": f"Error al crear venta: {str(e)}", "success": False}
-        ), 500
+        return {"message": f"Error al crear venta: {str(e)}", "success": False}, 500
 
 
 @ventas_bp.get("/<int:id>")
 def get_venta(id: int):
     venta = db.session.get(Venta, id)
     if not venta:
-        return jsonify({"message": "Venta no encontrada", "success": False}), 404
-    return jsonify(venta.to_dict())
+        return {"message": "Venta no encontrada", "success": False}, 404
+    return venta.to_dict()
 
 
 @ventas_bp.delete("/<int:id>")
@@ -116,18 +110,16 @@ def delete_venta(id: int):
     try:
         venta = db.session.get(Venta, id)
         if not venta:
-            return jsonify({"message": "Venta no encontrada", "success": False}), 404
+            return {"message": "Venta no encontrada", "success": False}, 404
 
         # Check for associated refunds
         reembolsos = Reembolso.query.filter_by(id_venta=id).count()
         if reembolsos > 0:
-            return jsonify(
-                {
-                    "success": False,
-                    "message": f"Esta venta tiene {reembolsos} reembolso(s) asociado(s). Debe eliminar los reembolsos primero antes de eliminar la venta.",
-                    "has_refunds": True,
-                }
-            ), 400
+            return {
+                "success": False,
+                "message": f"Esta venta tiene {reembolsos} reembolso(s) asociado(s). Debe eliminar los reembolsos primero antes de eliminar la venta.",
+                "has_refunds": True,
+            }, 400
 
         # Restore stock for each product in the sale
         for detalle in venta.detalles:
@@ -138,11 +130,7 @@ def delete_venta(id: int):
         db.session.delete(venta)
         db.session.commit()
 
-        return jsonify(
-            {"success": True, "message": "Venta eliminada y stock restaurado"}
-        )
+        return {"success": True, "message": "Venta eliminada y stock restaurado"}
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {"message": f"Error al eliminar venta: {str(e)}", "success": False}
-        ), 500
+        return {"message": f"Error al eliminar venta: {str(e)}", "success": False}, 500

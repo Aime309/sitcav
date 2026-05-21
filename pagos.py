@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from models import Cotizacion, Pago, Venta, db
 
@@ -12,7 +12,7 @@ def list_pagos_venta(venta_id: int):
     for detalle in venta.detalles:
         for pago in detalle.pagos:
             pagos.append(pago.to_dict())
-    return jsonify(pagos)
+    return pagos
 
 
 @pagos_bp.post("/")
@@ -23,9 +23,7 @@ def create_pago():
             Cotizacion.fecha_hora.desc()
         ).first()
         if not cotizacion_actual:
-            return jsonify(
-                {"message": "No hay cotización registrada", "success": False}
-            ), 400
+            return {"message": "No hay cotización registrada", "success": False}, 400
 
         nuevo_pago = Pago(
             id_tipo_pago=data["id_tipo_pago"],
@@ -36,9 +34,7 @@ def create_pago():
         db.session.add(nuevo_pago)
         db.session.commit()
 
-        return jsonify(nuevo_pago.to_dict()), 201
+        return nuevo_pago.to_dict(), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {"message": f"Error al registrar pago: {str(e)}", "success": False}
-        ), 400
+        return {"message": f"Error al registrar pago: {str(e)}", "success": False}, 400

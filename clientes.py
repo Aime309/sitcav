@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from models import Cliente, db
 
@@ -8,20 +8,18 @@ clientes_bp = Blueprint("clientes", __name__, url_prefix="/clientes")
 @clientes_bp.get("/")
 def list_clientes():
     clientes = Cliente.query.all()
-    return jsonify([cliente.to_dict() for cliente in clientes])
+    return [cliente.to_dict() for cliente in clientes]
 
 
 @clientes_bp.post("/")
 def create_cliente():
     data = request.get_json()
     if not data:
-        return jsonify({"message": "No se recibieron datos", "success": False}), 400
+        return {"message": "No se recibieron datos", "success": False}, 400
 
     # Validar campos requeridos
     if not data.get("nombre") or not data.get("cedula"):
-        return jsonify(
-            {"message": "Nombre y cédula son requeridos", "success": False}
-        ), 400
+        return {"message": "Nombre y cédula son requeridos", "success": False}, 400
 
     try:
         nuevo_cliente = Cliente(
@@ -34,12 +32,10 @@ def create_cliente():
         )
         db.session.add(nuevo_cliente)
         db.session.commit()
-        return jsonify(nuevo_cliente.to_dict()), 201
+        return nuevo_cliente.to_dict(), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {"message": f"Error al crear cliente: {str(e)}", "success": False}
-        ), 400
+        return {"message": f"Error al crear cliente: {str(e)}", "success": False}, 400
 
 
 @clientes_bp.put("/<int:id>")
@@ -55,35 +51,31 @@ def update_cliente(id: int):
         cliente.id_localidad = data.get("id_localidad", cliente.id_localidad)
 
         db.session.commit()
-        return jsonify(cliente.to_dict())
+        return cliente.to_dict()
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "message": f"Error al actualizar cliente: {str(e)}",
-                "success": False,
-            }
-        ), 400
+        return {
+            "message": f"Error al actualizar cliente: {str(e)}",
+            "success": False,
+        }, 400
 
 
 @clientes_bp.delete("/<int:id>")
 def delete_cliente(id: int):
     cliente = Cliente.query.get(id)
     if cliente is None:
-        return jsonify({"message": "Cliente no encontrado"}), 404
+        return {"message": "Cliente no encontrado"}, 404
 
     try:
         db.session.delete(cliente)
         db.session.commit()
-        return jsonify({"message": "Cliente eliminado con éxito", "success": True})
+        return {"message": "Cliente eliminado con éxito", "success": True}
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "message": f"Error al eliminar cliente: {str(e)}",
-                "success": False,
-            }
-        ), 500
+        return {
+            "message": f"Error al eliminar cliente: {str(e)}",
+            "success": False,
+        }, 500
 
 
 @clientes_bp.get("/buscar")
@@ -94,4 +86,4 @@ def search_clientes():
         | (Cliente.apellidos.ilike(f"%{query}%"))
         | (Cliente.cedula.ilike(f"%{query}%"))
     ).all()
-    return jsonify([c.to_dict() for c in clientes])
+    return [c.to_dict() for c in clientes]

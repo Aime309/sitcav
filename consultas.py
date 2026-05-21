@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, send_file
+from flask import Blueprint, request, send_file
 
 from models import Cliente, Usuario, Venta
 
@@ -47,11 +47,9 @@ def consultar_ventas():
 
             resultado.append(v_dict)
 
-        return jsonify(resultado)
+        return resultado
     except Exception as e:
-        return jsonify(
-            {"success": False, "message": f"Error al consultar: {str(e)}"}
-        ), 500
+        return {"success": False, "message": f"Error al consultar: {str(e)}"}, 500
 
 
 @consultas_bp.get("/ventas/pdf")
@@ -115,6 +113,4 @@ def exportar_consultas_pdf():
         )
 
     except Exception as e:
-        return jsonify(
-            {"success": False, "message": f"Error al generar PDF: {str(e)}"}
-        ), 500
+        return {"success": False, "message": f"Error al generar PDF: {str(e)}"}, 500

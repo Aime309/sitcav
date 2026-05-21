@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from decimal import Decimal
 
-from flask import Blueprint, current_app, jsonify, request, send_file
+from flask import Blueprint, current_app, request, send_file
 
 from models import Cotizacion, Negocio, Reembolso, Usuario, Venta, db
 
@@ -13,14 +13,12 @@ reembolsos_bp = Blueprint("reembolsos", __name__, url_prefix="/reembolsos")
 def get_reembolsos():
     try:
         reembolsos = Reembolso.query.order_by(Reembolso.fecha.desc()).all()
-        return jsonify([r.to_dict() for r in reembolsos])
+        return [r.to_dict() for r in reembolsos]
     except Exception as e:
-        return jsonify(
-            {
-                "message": f"Error al obtener reembolsos: {str(e)}",
-                "success": False,
-            }
-        ), 500
+        return {
+            "message": f"Error al obtener reembolsos: {str(e)}",
+            "success": False,
+        }, 500
 
 
 @reembolsos_bp.post("/reembolsos")
@@ -34,7 +32,7 @@ def create_reembolso():
 
         venta = db.session.get(Venta, id_venta)
         if not venta:
-            return jsonify({"message": "Venta no encontrada", "success": False}), 404
+            return {"message": "Venta no encontrada", "success": False}, 404
 
         # Usar la tasa histórica de la venta
         tasa_cambio = venta.cotizacion_dolar_bolivares
@@ -63,22 +61,18 @@ def create_reembolso():
         db.session.add(nuevo_reembolso)
         db.session.commit()
 
-        return jsonify(
-            {
-                "success": True,
-                "message": "Reembolso procesado exitosamente",
-                "reembolso": nuevo_reembolso.to_dict(),
-            }
-        ), 201
+        return {
+            "success": True,
+            "message": "Reembolso procesado exitosamente",
+            "reembolso": nuevo_reembolso.to_dict(),
+        }, 201
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "message": f"Error al procesar reembolso: {str(e)}",
-                "success": False,
-            }
-        ), 500
+        return {
+            "message": f"Error al procesar reembolso: {str(e)}",
+            "success": False,
+        }, 500
 
 
 @reembolsos_bp.delete("/reembolsos/<int:id>")
@@ -86,22 +80,16 @@ def delete_reembolso(id: int):
     try:
         reembolso = db.session.get(Reembolso, id)
         if not reembolso:
-            return jsonify(
-                {"message": "Reembolso no encontrado", "success": False}
-            ), 404
+            return {"message": "Reembolso no encontrado", "success": False}, 404
         db.session.delete(reembolso)
         db.session.commit()
-        return jsonify(
-            {"success": True, "message": "Reembolso eliminado correctamente"}
-        )
+        return {"success": True, "message": "Reembolso eliminado correctamente"}
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "message": f"Error al eliminar reembolso: {str(e)}",
-                "success": False,
-            }
-        ), 500
+        return {
+            "message": f"Error al eliminar reembolso: {str(e)}",
+            "success": False,
+        }, 500
 
 
 @reembolsos_bp.get("/reembolsos/<int:id>/pdf")
@@ -109,19 +97,15 @@ def get_reembolso_pdf(id: int):
     try:
         reembolso = db.session.get(Reembolso, id)
         if not reembolso:
-            return jsonify(
-                {"message": "Reembolso no encontrado", "success": False}
-            ), 404
+            return {"message": "Reembolso no encontrado", "success": False}, 404
 
         venta = db.session.get(Venta, reembolso.id_venta)
         usuario = db.session.get(Usuario, reembolso.id_usuario)
         if not venta or not usuario:
-            return jsonify(
-                {
-                    "message": "Datos asociados al reembolso no encontrados",
-                    "success": False,
-                }
-            ), 404
+            return {
+                "message": "Datos asociados al reembolso no encontrados",
+                "success": False,
+            }, 404
         negocio = Negocio.query.first()
 
         # Create a simple PDF receipt for the refund
@@ -203,6 +187,4 @@ def get_reembolso_pdf(id: int):
         )
 
     except Exception as e:
-        return jsonify(
-            {"message": f"Error al generar PDF: {str(e)}", "success": False}
-        ), 500
+        return {"message": f"Error al generar PDF: {str(e)}", "success": False}, 500

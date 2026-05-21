@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timedelta
 from decimal import Decimal
 
-from flask import Blueprint, jsonify, request, send_file
+from flask import Blueprint, request, send_file
 
 from models import (
     Apartado,
@@ -27,7 +27,7 @@ def list_apartados():
     if estado:
         query = query.filter_by(estado=estado)
     apartados = query.order_by(Apartado.fecha_creacion.desc()).all()
-    return jsonify([a.to_dict() for a in apartados])
+    return [a.to_dict() for a in apartados]
 
 
 @apartados_bp.post("/")
@@ -36,35 +36,29 @@ def create_apartado():
     try:
         id_cliente = data.get("id_cliente")
         if not id_cliente:
-            return jsonify({"success": False, "message": "Se requiere un cliente"}), 400
+            return {"success": False, "message": "Se requiere un cliente"}, 400
 
         productos = data.get("productos", [])
         if not productos:
-            return jsonify(
-                {
-                    "success": False,
-                    "message": "Se requiere al menos un producto",
-                }
-            ), 400
+            return {
+                "success": False,
+                "message": "Se requiere al menos un producto",
+            }, 400
 
         # Calcular monto total y validar stock
         monto_total = Decimal("0")
         for item in productos:
             producto = Producto.query.get(item["id_producto"])
             if not producto:
-                return jsonify(
-                    {
-                        "success": False,
-                        "message": f"Producto {item['id_producto']} no encontrado",
-                    }
-                ), 404
+                return {
+                    "success": False,
+                    "message": f"Producto {item['id_producto']} no encontrado",
+                }, 404
             if producto.cantidad_disponible < item["cantidad"]:
-                return jsonify(
-                    {
-                        "success": False,
-                        "message": f"Stock insuficiente para {producto.nombre}",
-                    }
-                ), 400
+                return {
+                    "success": False,
+                    "message": f"Stock insuficiente para {producto.nombre}",
+                }, 400
             monto_total += (
                 Decimal(str(producto.precio_unitario_actual_dolares)) * item["cantidad"]
             )
@@ -125,25 +119,21 @@ def create_apartado():
 
         db.session.commit()
 
-        return jsonify(
-            {
-                "success": True,
-                "message": "Apartado creado exitosamente",
-                "apartado": nuevo_apartado.to_dict(),
-            }
-        ), 201
+        return {
+            "success": True,
+            "message": "Apartado creado exitosamente",
+            "apartado": nuevo_apartado.to_dict(),
+        }, 201
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {"success": False, "message": f"Error al crear apartado: {str(e)}"}
-        ), 500
+        return {"success": False, "message": f"Error al crear apartado: {str(e)}"}, 500
 
 
 @apartados_bp.get("/<int:id>")
 def get_apartado(id: int):
     apartado = Apartado.query.get_or_404(id)
-    return jsonify(apartado.to_dict())
+    return apartado.to_dict()
 
 
 @apartados_bp.post("/<int:id>/pago")
@@ -151,15 +141,13 @@ def registrar_pago_apartado(id: int):
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado != "activo":
-        return jsonify({"success": False, "message": "El apartado no está activo"}), 400
+        return {"success": False, "message": "El apartado no está activo"}, 400
 
     data = request.get_json()
     monto = Decimal(str(data.get("monto", 0)))
 
     if monto <= 0:
-        return jsonify(
-            {"success": False, "message": "El monto debe ser mayor a 0"}
-        ), 400
+        return {"success": False, "message": "El monto debe ser mayor a 0"}, 400
 
     try:
         # Registrar pago
@@ -179,19 +167,15 @@ def registrar_pago_apartado(id: int):
 
         db.session.commit()
 
-        return jsonify(
-            {
-                "success": True,
-                "message": "Pago registrado exitosamente",
-                "apartado": apartado.to_dict(),
-            }
-        )
+        return {
+            "success": True,
+            "message": "Pago registrado exitosamente",
+            "apartado": apartado.to_dict(),
+        }
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {"success": False, "message": f"Error al registrar pago: {str(e)}"}
-        ), 500
+        return {"success": False, "message": f"Error al registrar pago: {str(e)}"}, 500
 
 
 @apartados_bp.post("/<int:id>/completar")
@@ -199,15 +183,13 @@ def completar_apartado(id: int):
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado != "activo":
-        return jsonify({"success": False, "message": "El apartado no está activo"}), 400
+        return {"success": False, "message": "El apartado no está activo"}, 400
 
     if apartado.monto_pagado < apartado.monto_total:
-        return jsonify(
-            {
-                "success": False,
-                "message": "El apartado no está completamente pagado",
-            }
-        ), 400
+        return {
+            "success": False,
+            "message": "El apartado no está completamente pagado",
+        }, 400
 
     try:
         # Obtener tasa actual
@@ -237,23 +219,19 @@ def completar_apartado(id: int):
         apartado.estado = "completado"
         db.session.commit()
 
-        return jsonify(
-            {
-                "success": True,
-                "message": "Apartado completado y venta generada",
-                "venta_id": venta.id,
-                "apartado": apartado.to_dict(),
-            }
-        )
+        return {
+            "success": True,
+            "message": "Apartado completado y venta generada",
+            "venta_id": venta.id,
+            "apartado": apartado.to_dict(),
+        }
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "success": False,
-                "message": f"Error al completar apartado: {str(e)}",
-            }
-        ), 500
+        return {
+            "success": False,
+            "message": f"Error al completar apartado: {str(e)}",
+        }, 500
 
 
 @apartados_bp.post("/<int:id>/cancelar")
@@ -261,7 +239,7 @@ def cancelar_apartado(id: int):
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado != "activo":
-        return jsonify({"success": False, "message": "El apartado no está activo"}), 400
+        return {"success": False, "message": "El apartado no está activo"}, 400
 
     try:
         # Devolver productos al inventario
@@ -285,22 +263,18 @@ def cancelar_apartado(id: int):
         apartado.estado = "cancelado"
         db.session.commit()
 
-        return jsonify(
-            {
-                "success": True,
-                "message": "Apartado cancelado. Productos devueltos al inventario.",
-                "apartado": apartado.to_dict(),
-            }
-        )
+        return {
+            "success": True,
+            "message": "Apartado cancelado. Productos devueltos al inventario.",
+            "apartado": apartado.to_dict(),
+        }
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "success": False,
-                "message": f"Error al cancelar apartado: {str(e)}",
-            }
-        ), 500
+        return {
+            "success": False,
+            "message": f"Error al cancelar apartado: {str(e)}",
+        }, 500
 
 
 @apartados_bp.get("/<int:id>/pdf")
@@ -312,12 +286,10 @@ def generar_pdf_apartado(id: int):
         # Obtener datos del negocio
         negocio = Negocio.query.first()
         if not negocio:
-            return jsonify(
-                {
-                    "success": False,
-                    "message": "No hay datos del negocio configurados",
-                }
-            ), 400
+            return {
+                "success": False,
+                "message": "No hay datos del negocio configurados",
+            }, 400
 
         negocio_data = {
             "nombre": negocio.nombre,
@@ -336,9 +308,7 @@ def generar_pdf_apartado(id: int):
         )
 
     except Exception as e:
-        return jsonify(
-            {"success": False, "message": f"Error al generar PDF: {str(e)}"}
-        ), 500
+        return {"success": False, "message": f"Error al generar PDF: {str(e)}"}, 500
 
 
 @apartados_bp.delete("/<int:id>")
@@ -346,19 +316,15 @@ def delete_apartado(id: int):
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado not in ["cancelado", "completado"]:
-        return jsonify(
-            {
-                "success": False,
-                "message": "Solo se pueden eliminar apartados cancelados o completados",
-            }
-        ), 400
+        return {
+            "success": False,
+            "message": "Solo se pueden eliminar apartados cancelados o completados",
+        }, 400
 
     try:
         db.session.delete(apartado)
         db.session.commit()
-        return jsonify({"success": True, "message": "Apartado eliminado correctamente"})
+        return {"success": True, "message": "Apartado eliminado correctamente"}
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {"success": False, "message": f"Error al eliminar: {str(e)}"}
-        ), 500
+        return {"success": False, "message": f"Error al eliminar: {str(e)}"}, 500

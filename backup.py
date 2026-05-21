@@ -2,7 +2,7 @@ import os
 import sqlite3
 from datetime import datetime
 
-from flask import Blueprint, current_app, jsonify
+from flask import Blueprint, current_app
 
 backup_bp = Blueprint("backup", __name__, url_prefix="/backup")
 
@@ -20,18 +20,14 @@ def crear_backup():
             for line in sqlite3.connect(db_path).iterdump():
                 f.write("%s\n" % line)
 
-        return jsonify(
-            {
-                "success": True,
-                "message": "Backup creado exitosamente",
-                "filename": backup_filename,
-                "path": backup_path,
-            }
-        )
+        return {
+            "success": True,
+            "message": "Backup creado exitosamente",
+            "filename": backup_filename,
+            "path": backup_path,
+        }
     except Exception as e:
-        return jsonify(
-            {"success": False, "message": f"Error al crear backup: {str(e)}"}
-        ), 500
+        return {"success": False, "message": f"Error al crear backup: {str(e)}"}, 500
 
 
 @backup_bp.get("/historial")
@@ -55,11 +51,9 @@ def historial_backups():
                         }
                     )
 
-        return jsonify(backups)
+        return backups
     except Exception as e:
-        return jsonify(
-            {"success": False, "message": f"Error al listar backups: {str(e)}"}
-        ), 500
+        return {"success": False, "message": f"Error al listar backups: {str(e)}"}, 500
 
 
 @backup_bp.post("/")
@@ -81,14 +75,10 @@ def create_backup():
         db_path = current_app.config["DATABASE"]
         shutil.copy2(db_path, backup_path)
 
-        return jsonify(
-            {
-                "success": True,
-                "message": "Backup creado exitosamente",
-                "filename": backup_filename,
-            }
-        )
+        return {
+            "success": True,
+            "message": "Backup creado exitosamente",
+            "filename": backup_filename,
+        }
     except Exception as e:
-        return jsonify(
-            {"success": False, "message": f"Error al crear backup: {str(e)}"}
-        ), 500
+        return {"success": False, "message": f"Error al crear backup: {str(e)}"}, 500

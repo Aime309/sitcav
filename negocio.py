@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from models import Negocio, db
 
@@ -9,16 +9,14 @@ negocio_bp = Blueprint("negocio", __name__, url_prefix="/negocio")
 def get_negocio():
     negocio = Negocio.query.first()
     if negocio:
-        return jsonify(
-            {
-                "id": negocio.id,
-                "nombre": negocio.nombre,
-                "rif": negocio.rif,
-                "telefono": negocio.telefono,
-                "direccion": negocio.direccion,
-            }
-        )
-    return jsonify({"message": "No hay datos del negocio"}), 404
+        return {
+            "id": negocio.id,
+            "nombre": negocio.nombre,
+            "rif": negocio.rif,
+            "telefono": negocio.telefono,
+            "direccion": negocio.direccion,
+        }
+    return {"message": "No hay datos del negocio"}, 404
 
 
 @negocio_bp.put("/")
@@ -44,7 +42,7 @@ def update_negocio():
             db.session.add(negocio)
 
         db.session.commit()
-        return jsonify({"success": True, "message": "Datos actualizados"})
+        return {"success": True, "message": "Datos actualizados"}
     except Exception as e:
         db.session.rollback()
-        return jsonify({"message": f"Error: {str(e)}", "success": False}), 400
+        return {"message": f"Error: {str(e)}", "success": False}, 400

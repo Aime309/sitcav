@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from decimal import Decimal
 
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, current_app, request
 from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
 
@@ -21,7 +21,7 @@ def list_productos():
         if prod.categoria:
             prod_dict["categoria_nombre"] = prod.categoria.nombre
         resultado.append(prod_dict)
-    return jsonify(resultado)
+    return resultado
 
 
 @productos_bp.post("/")
@@ -64,12 +64,10 @@ def create_product():
         )
         db.session.add(nuevo_producto)
         db.session.commit()
-        return jsonify({"success": True, "producto": nuevo_producto.to_dict()}), 201
+        return {"success": True, "producto": nuevo_producto.to_dict()}, 201
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {"message": f"Error al crear producto: {str(e)}", "success": False}
-        ), 400
+        return {"message": f"Error al crear producto: {str(e)}", "success": False}, 400
 
 
 @productos_bp.put("/<int:id>")
@@ -117,43 +115,37 @@ def update_producto(id: int):
             producto.imagen_url = data.get("imagen_url")
 
         db.session.commit()
-        return jsonify(producto.to_dict())
+        return producto.to_dict()
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "message": f"Error al actualizar producto: {str(e)}",
-                "success": False,
-            }
-        ), 400
+        return {
+            "message": f"Error al actualizar producto: {str(e)}",
+            "success": False,
+        }, 400
 
 
 @productos_bp.delete("/<int:id>")
 def delete_producto(id: int):
     producto = Producto.query.get(id)
     if producto is None:
-        return jsonify({"message": "Producto no encontrado"}), 404
+        return {"message": "Producto no encontrado"}, 404
 
     try:
         db.session.delete(producto)
         db.session.commit()
-        return jsonify({"message": "Producto eliminado con éxito", "success": True})
+        return {"message": "Producto eliminado con éxito", "success": True}
     except IntegrityError:
         db.session.rollback()
-        return jsonify(
-            {
-                "message": "No se puede eliminar el producto porque tiene historial (ventas, apartados o movimientos). Considere desactivarlo o dejar el stock en 0.",
-                "success": False,
-            }
-        ), 400
+        return {
+            "message": "No se puede eliminar el producto porque tiene historial (ventas, apartados o movimientos). Considere desactivarlo o dejar el stock en 0.",
+            "success": False,
+        }, 400
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "message": f"Error al eliminar producto: {str(e)}",
-                "success": False,
-            }
-        ), 500
+        return {
+            "message": f"Error al eliminar producto: {str(e)}",
+            "success": False,
+        }, 500
 
 
 @productos_bp.get("/buscar")
@@ -162,10 +154,10 @@ def search_productos():
     productos = Producto.query.filter(
         (Producto.nombre.ilike(f"%{query}%")) | (Producto.codigo.ilike(f"%{query}%"))
     ).all()
-    return jsonify([p.to_dict() for p in productos])
+    return [p.to_dict() for p in productos]
 
 
 @productos_bp.get("/stock-bajo")
 def productos_stock_bajo():
     productos = Producto.query.filter(Producto.cantidad_disponible < 10).all()
-    return jsonify([p.to_dict() for p in productos])
+    return [p.to_dict() for p in productos]

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, jsonify
+from flask import Blueprint
 
 from models import (
     Apartado,
@@ -47,22 +47,20 @@ def get_dashboard_stats():
             float(cotizacion_actual.tasa_dolar_bolivares) if cotizacion_actual else 0.0
         )
 
-        return jsonify(
-            {
-                "total_productos": total_productos,
-                "stock_bajo": stock_bajo,
-                "total_clientes": total_clientes,
-                "total_ventas": total_ventas,
-                "ventas_mes": ventas_mes,
-                "total_empleados": total_empleados,
-                "total_proveedores": total_proveedores,
-                "total_compras": total_compras,
-                "total_apartados_activos": total_apartados_activos,
-                "total_reembolsos": total_reembolsos,
-                "total_inventario": total_inventario_movs,
-                "total_cotizacion": tasa_actual,
-            }
-        )
+        return {
+            "total_productos": total_productos,
+            "stock_bajo": stock_bajo,
+            "total_clientes": total_clientes,
+            "total_ventas": total_ventas,
+            "ventas_mes": ventas_mes,
+            "total_empleados": total_empleados,
+            "total_proveedores": total_proveedores,
+            "total_compras": total_compras,
+            "total_apartados_activos": total_apartados_activos,
+            "total_reembolsos": total_reembolsos,
+            "total_inventario": total_inventario_movs,
+            "total_cotizacion": tasa_actual,
+        }
     except Exception as e:
         print(f"Error dashboard stats: {e}")
-        return jsonify({"message": f"Error: {str(e)}", "total_productos": 0}), 500
+        return {"message": f"Error: {str(e)}", "total_productos": 0}, 500

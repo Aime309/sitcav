@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 
-from flask import Blueprint, jsonify, request, send_file
+from flask import Blueprint, request, send_file
 
 from models import (
     Apartado,
@@ -54,25 +54,23 @@ def get_estadisticas():
             float(cotizacion_actual.tasa_dolar_bolivares) if cotizacion_actual else 0.0
         )
 
-        return jsonify(
-            {
-                "total_productos": total_productos,
-                "stock_bajo": stock_bajo,
-                "total_clientes": total_clientes,
-                "total_ventas": total_ventas,
-                "ventas_mes": ventas_mes,
-                # Nuevos campos
-                "total_empleados": total_empleados,
-                "total_proveedores": total_proveedores,
-                "total_compras": total_compras,
-                "total_apartados_activos": total_apartados_activos,
-                "total_reembolsos": total_reembolsos,
-                "total_inventario": total_inventario_movs,
-                "total_cotizacion": tasa_actual,
-            }
-        )
+        return {
+            "total_productos": total_productos,
+            "stock_bajo": stock_bajo,
+            "total_clientes": total_clientes,
+            "total_ventas": total_ventas,
+            "ventas_mes": ventas_mes,
+            # Nuevos campos
+            "total_empleados": total_empleados,
+            "total_proveedores": total_proveedores,
+            "total_compras": total_compras,
+            "total_apartados_activos": total_apartados_activos,
+            "total_reembolsos": total_reembolsos,
+            "total_inventario": total_inventario_movs,
+            "total_cotizacion": tasa_actual,
+        }
     except Exception as e:
-        return jsonify({"message": f"Error al obtener estadísticas: {str(e)}"}), 500
+        return {"message": f"Error al obtener estadísticas: {str(e)}"}, 500
 
 
 @reportes_bp.get("/ventas")
@@ -107,13 +105,11 @@ def reporte_ventas():
             }
         )
 
-    return jsonify(
-        {
-            "ventas": reporte,
-            "total_general": float(total_general),
-            "cantidad_ventas": len(reporte),
-        }
-    )
+    return {
+        "ventas": reporte,
+        "total_general": float(total_general),
+        "cantidad_ventas": len(reporte),
+    }
 
 
 @reportes_bp.get("/ventas/pdf")
@@ -144,6 +140,4 @@ def generar_reporte_ventas_pdf_endpoint():
         )
 
     except Exception as e:
-        return jsonify(
-            {"success": False, "message": f"Error al generar reporte: {str(e)}"}
-        ), 500
+        return {"success": False, "message": f"Error al generar reporte: {str(e)}"}, 500

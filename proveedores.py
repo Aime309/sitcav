@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from models import Proveedor, db
 
@@ -8,7 +8,7 @@ proveedores_bp = Blueprint("proveedores", __name__, url_prefix="/proveedores")
 @proveedores_bp.get("/")
 def list_proveedores():
     proveedores = Proveedor.query.all()
-    return jsonify([prov.to_dict() for prov in proveedores])
+    return [prov.to_dict() for prov in proveedores]
 
 
 @proveedores_bp.post("/")
@@ -26,12 +26,10 @@ def create_proveedor():
         )
         db.session.add(nuevo_proveedor)
         db.session.commit()
-        return jsonify(nuevo_proveedor.to_dict()), 201
+        return nuevo_proveedor.to_dict(), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {"message": f"Error al crear proveedor: {str(e)}", "success": False}
-        ), 400
+        return {"message": f"Error al crear proveedor: {str(e)}", "success": False}, 400
 
 
 @proveedores_bp.put("/<int:id>")
@@ -45,32 +43,28 @@ def update_proveedor(id: int):
         proveedor.direccion = data.get("direccion", proveedor.direccion)
 
         db.session.commit()
-        return jsonify(proveedor.to_dict())
+        return proveedor.to_dict()
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "message": f"Error al actualizar proveedor: {str(e)}",
-                "success": False,
-            }
-        ), 400
+        return {
+            "message": f"Error al actualizar proveedor: {str(e)}",
+            "success": False,
+        }, 400
 
 
 @proveedores_bp.delete("/<int:id>")
 def delete_proveedor(id: int):
     proveedor = Proveedor.query.get(id)
     if proveedor is None:
-        return jsonify({"message": "Proveedor no encontrado"}), 404
+        return {"message": "Proveedor no encontrado"}, 404
 
     try:
         db.session.delete(proveedor)
         db.session.commit()
-        return jsonify({"message": "Proveedor eliminado con éxito", "success": True})
+        return {"message": "Proveedor eliminado con éxito", "success": True}
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "message": f"Error al eliminar proveedor: {str(e)}",
-                "success": False,
-            }
-        ), 500
+        return {
+            "message": f"Error al eliminar proveedor: {str(e)}",
+            "success": False,
+        }, 500

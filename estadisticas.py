@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from flask import Blueprint, jsonify
+from flask import Blueprint
 
 from models import Apartado, Categoria, Compra, DetalleVenta, Producto, Venta, db
 
@@ -43,20 +43,16 @@ def get_estadisticas_resumen():
         # 5. Apartados Activos
         apartados_activos = Apartado.query.filter_by(estado="activo").count()
 
-        return jsonify(
-            {
-                "ventas_hoy_monto": float(total_ventas_hoy),
-                "ventas_hoy_cantidad": cantidad_ventas_hoy,
-                "compras_hoy_monto": float(total_compras_hoy),
-                "stock_bajo_count": stock_bajo,
-                "beneficio_hoy": float(beneficio_hoy),
-                "apartados_activos": apartados_activos,
-            }
-        )
+        return {
+            "ventas_hoy_monto": float(total_ventas_hoy),
+            "ventas_hoy_cantidad": cantidad_ventas_hoy,
+            "compras_hoy_monto": float(total_compras_hoy),
+            "stock_bajo_count": stock_bajo,
+            "beneficio_hoy": float(beneficio_hoy),
+            "apartados_activos": apartados_activos,
+        }
     except Exception as e:
-        return jsonify(
-            {"message": f"Error calculando resumen: {str(e)}", "success": False}
-        ), 500
+        return {"message": f"Error calculando resumen: {str(e)}", "success": False}, 500
 
 
 @estadisticas_bp.get("/historico")
@@ -134,24 +130,20 @@ def get_estadisticas_historico():
             "data": [int(c[1] or 0) for c in ventas_categoria_query],
         }
 
-        return jsonify(
-            {
-                "fechas": dias,
-                "ventas": ventas_data,
-                "compras": compras_data,
-                "top_productos": top_productos,
-                "ventas_por_categoria": ventas_por_categoria,
-            }
-        )
+        return {
+            "fechas": dias,
+            "ventas": ventas_data,
+            "compras": compras_data,
+            "top_productos": top_productos,
+            "ventas_por_categoria": ventas_por_categoria,
+        }
 
     except Exception as e:
         print(f"Error en historico: {str(e)}")
         import traceback
 
         traceback.print_exc()
-        return jsonify(
-            {
-                "message": f"Error calculando histórico: {str(e)}",
-                "success": False,
-            }
-        ), 500
+        return {
+            "message": f"Error calculando histórico: {str(e)}",
+            "success": False,
+        }, 500

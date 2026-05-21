@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, send_file
+from flask import Blueprint, send_file
 
 from models import Negocio, Venta
 from pdf_generator import generar_factura_pdf
@@ -16,12 +16,10 @@ def generar_factura(venta_id: int):
         # Obtener datos del negocio
         negocio = Negocio.query.first()
         if not negocio:
-            return jsonify(
-                {
-                    "success": False,
-                    "message": "No hay datos del negocio configurados",
-                }
-            ), 400
+            return {
+                "success": False,
+                "message": "No hay datos del negocio configurados",
+            }, 400
 
         negocio_data = {
             "nombre": negocio.nombre,
@@ -49,6 +47,4 @@ def generar_factura(venta_id: int):
         )
 
     except Exception as e:
-        return jsonify(
-            {"success": False, "message": f"Error al generar factura: {str(e)}"}
-        ), 500
+        return {"success": False, "message": f"Error al generar factura: {str(e)}"}, 500
