@@ -434,21 +434,21 @@ def delete_categoria(id: int):
         ), 400
 
 
-@api_bp.route("/productos", methods=["GET", "POST"])
+@api_bp.get("/productos")
 def list_productos():
-    """Lista todos los productos o crea uno nuevo"""
-    if request.method == "GET":
-        productos = Producto.query.all()
-        resultado = []
-        for prod in productos:
-            prod_dict = prod.to_dict()
-            # Agregar nombre de categoría
-            if prod.categoria:
-                prod_dict["categoria_nombre"] = prod.categoria.nombre
-            resultado.append(prod_dict)
-        return jsonify(resultado)
+    productos = Producto.query.all()
+    resultado = []
+    for prod in productos:
+        prod_dict = prod.to_dict()
+        # Agregar nombre de categoría
+        if prod.categoria:
+            prod_dict["categoria_nombre"] = prod.categoria.nombre
+        resultado.append(prod_dict)
+    return jsonify(resultado)
 
-    # POST - Crear nuevo producto
+
+@api_bp.post("/productos")
+def create_product():
     try:
         # Manejar multipart/form-data o JSON
         if (
