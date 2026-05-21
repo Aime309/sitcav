@@ -25,8 +25,7 @@ def test_flujo_venta_y_reembolso(client: FlaskClient):
     with client.application.app_context():
         cliente = Cliente.query.order_by(Cliente.id.asc()).first()
         producto = (
-            Producto.query
-            .filter(Producto.cantidad_disponible > 0)
+            Producto.query.filter(Producto.cantidad_disponible > 0)
             .order_by(Producto.id.asc())
             .first()
         )

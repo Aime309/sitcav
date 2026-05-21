@@ -93,16 +93,10 @@ def check_user_recovery():
 
     usuario = Usuario.query.filter_by(cedula=cedula).first()
     if not usuario:
-        return jsonify(
-            {"success": False, "message": "Usuario no encontrado"}
-        ), 404
+        return jsonify({"success": False, "message": "Usuario no encontrado"}), 404
 
     # Verificar si tiene preguntas configuradas
-    if (
-        not usuario.pregunta_1
-        or not usuario.pregunta_2
-        or not usuario.pregunta_3
-    ):
+    if not usuario.pregunta_1 or not usuario.pregunta_2 or not usuario.pregunta_3:
         return jsonify(
             {
                 "success": False,
@@ -134,9 +128,7 @@ def verify_security_answers():
 
     usuario = Usuario.query.get(user_id)
     if not usuario:
-        return jsonify(
-            {"success": False, "message": "Usuario no encontrado"}
-        ), 404
+        return jsonify({"success": False, "message": "Usuario no encontrado"}), 404
 
     # Verificar respuestas (ignorando mayúsculas/minúsculas)
     r1_ok = usuario.respuesta_1.lower().strip() == respuestas[0].lower().strip()
@@ -165,9 +157,7 @@ def reset_password_recovery():
 
     usuario = Usuario.query.get(user_id)
     if not usuario:
-        return jsonify(
-            {"success": False, "message": "Usuario no encontrado"}
-        ), 404
+        return jsonify({"success": False, "message": "Usuario no encontrado"}), 404
 
     try:
         usuario.contrasena = generate_password_hash(new_password)

@@ -69,22 +69,16 @@ def get_dashboard_stats():
 
         # Datos Básicos
         total_productos = Producto.query.count()
-        stock_bajo = Producto.query.filter(
-            Producto.cantidad_disponible <= 5
-        ).count()
+        stock_bajo = Producto.query.filter(Producto.cantidad_disponible <= 5).count()
         total_clientes = Cliente.query.count()
         total_ventas = Venta.query.count()
-        ventas_mes = Venta.query.filter(
-            Venta.fecha_creacion >= inicio_mes
-        ).count()
+        ventas_mes = Venta.query.filter(Venta.fecha_creacion >= inicio_mes).count()
 
         # Datos para Tarjetas de Módulos (Nuevos)
         total_empleados = Usuario.query.count()
         total_proveedores = Proveedor.query.count()
         total_compras = Compra.query.count()
-        total_apartados_activos = Apartado.query.filter_by(
-            estado="activo"
-        ).count()
+        total_apartados_activos = Apartado.query.filter_by(estado="activo").count()
         total_reembolsos = Reembolso.query.count()
         total_inventario_movs = MovimientoInventario.query.count()
 
@@ -93,9 +87,7 @@ def get_dashboard_stats():
             Cotizacion.fecha_hora.desc()
         ).first()
         tasa_actual = (
-            float(cotizacion_actual.tasa_dolar_bolivares)
-            if cotizacion_actual
-            else 0.0
+            float(cotizacion_actual.tasa_dolar_bolivares) if cotizacion_actual else 0.0
         )
 
         return jsonify(
@@ -116,9 +108,7 @@ def get_dashboard_stats():
         )
     except Exception as e:
         print(f"Error dashboard stats: {e}")
-        return jsonify(
-            {"message": f"Error: {str(e)}", "total_productos": 0}
-        ), 500
+        return jsonify({"message": f"Error: {str(e)}", "total_productos": 0}), 500
 
 
 @api_bp.get("/usuarios")
@@ -133,9 +123,7 @@ def create_usuario():
     """Crea un nuevo usuario"""
     data = request.get_json()
     try:
-        hashed_password = generate_password_hash(
-            data.get("contrasena", "123456")
-        )
+        hashed_password = generate_password_hash(data.get("contrasena", "123456"))
 
         nuevo_usuario = Usuario(
             cedula=data["cedula"],
@@ -256,9 +244,7 @@ def upload_usuario_foto(id: int):
                 }
             ), 500
 
-    return jsonify(
-        {"success": False, "message": "Error al procesar archivo"}
-    ), 400
+    return jsonify({"success": False, "message": "Error al procesar archivo"}), 400
 
 
 @api_bp.delete("/usuarios/<int:id>")
@@ -271,9 +257,7 @@ def delete_usuario(id: int):
     try:
         db.session.delete(usuario)
         db.session.commit()
-        return jsonify(
-            {"message": "Usuario eliminado con éxito", "success": True}
-        )
+        return jsonify({"message": "Usuario eliminado con éxito", "success": True})
     except Exception as e:
         db.session.rollback()
         return jsonify(
@@ -294,9 +278,7 @@ def list_clientes():
 def create_cliente():
     data = request.get_json()
     if not data:
-        return jsonify(
-            {"message": "No se recibieron datos", "success": False}
-        ), 400
+        return jsonify({"message": "No se recibieron datos", "success": False}), 400
 
     # Validar campos requeridos
     if not data.get("nombre") or not data.get("cedula"):
@@ -356,9 +338,7 @@ def delete_cliente(id: int):
     try:
         db.session.delete(cliente)
         db.session.commit()
-        return jsonify(
-            {"message": "Cliente eliminado con éxito", "success": True}
-        )
+        return jsonify({"message": "Cliente eliminado con éxito", "success": True})
     except Exception as e:
         db.session.rollback()
         return jsonify(
@@ -451,10 +431,7 @@ def list_productos():
 def create_product():
     try:
         # Manejar multipart/form-data o JSON
-        if (
-            request.content_type
-            and "multipart/form-data" in request.content_type
-        ):
+        if request.content_type and "multipart/form-data" in request.content_type:
             data = request.form
             file = request.files.get("imagen_file")
         else:
@@ -481,9 +458,7 @@ def create_product():
             descripcion=data.get("descripcion", ""),
             id_categoria=data["id_categoria"],
             id_proveedor=data.get("id_proveedor"),
-            precio_unitario_actual_dolares=data[
-                "precio_unitario_actual_dolares"
-            ],
+            precio_unitario_actual_dolares=data["precio_unitario_actual_dolares"],
             cantidad_disponible=data.get("cantidad_disponible", 0),
             dias_garantia=data.get("dias_garantia", 0),
             dias_apartado=data.get("dias_apartado", 0),
@@ -492,9 +467,7 @@ def create_product():
         )
         db.session.add(nuevo_producto)
         db.session.commit()
-        return jsonify(
-            {"success": True, "producto": nuevo_producto.to_dict()}
-        ), 201
+        return jsonify({"success": True, "producto": nuevo_producto.to_dict()}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify(
@@ -508,10 +481,7 @@ def update_producto(id: int):
 
     try:
         # Manejar multipart/form-data o JSON
-        if (
-            request.content_type
-            and "multipart/form-data" in request.content_type
-        ):
+        if request.content_type and "multipart/form-data" in request.content_type:
             data = request.form
             file = request.files.get("imagen_file")
         else:
@@ -570,9 +540,7 @@ def delete_producto(id: int):
     try:
         db.session.delete(producto)
         db.session.commit()
-        return jsonify(
-            {"message": "Producto eliminado con éxito", "success": True}
-        )
+        return jsonify({"message": "Producto eliminado con éxito", "success": True})
     except IntegrityError:
         db.session.rollback()
         return jsonify(
@@ -595,8 +563,7 @@ def delete_producto(id: int):
 def search_productos():
     query = request.args.get("q", "")
     productos = Producto.query.filter(
-        (Producto.nombre.ilike(f"%{query}%"))
-        | (Producto.codigo.ilike(f"%{query}%"))
+        (Producto.nombre.ilike(f"%{query}%")) | (Producto.codigo.ilike(f"%{query}%"))
     ).all()
     return jsonify([p.to_dict() for p in productos])
 
@@ -667,9 +634,7 @@ def delete_proveedor(id: int):
     try:
         db.session.delete(proveedor)
         db.session.commit()
-        return jsonify(
-            {"message": "Proveedor eliminado con éxito", "success": True}
-        )
+        return jsonify({"message": "Proveedor eliminado con éxito", "success": True})
     except Exception as e:
         db.session.rollback()
         return jsonify(
@@ -780,9 +745,7 @@ def create_venta():
 def get_venta(id: int):
     venta = db.session.get(Venta, id)
     if not venta:
-        return jsonify(
-            {"message": "Venta no encontrada", "success": False}
-        ), 404
+        return jsonify({"message": "Venta no encontrada", "success": False}), 404
     return jsonify(venta.to_dict())
 
 
@@ -791,9 +754,7 @@ def delete_venta(id: int):
     try:
         venta = db.session.get(Venta, id)
         if not venta:
-            return jsonify(
-                {"message": "Venta no encontrada", "success": False}
-            ), 404
+            return jsonify({"message": "Venta no encontrada", "success": False}), 404
 
         # Check for associated refunds
         reembolsos = Reembolso.query.filter_by(id_venta=id).count()
@@ -923,9 +884,7 @@ def get_compra_pdf(id: int):
         negocio = Negocio.query.first()
 
         if not negocio:
-            return jsonify(
-                {"message": "Datos del negocio no configurados"}
-            ), 400
+            return jsonify({"message": "Datos del negocio no configurados"}), 400
 
         negocio_data = {
             "nombre": negocio.nombre,
@@ -947,6 +906,7 @@ def get_compra_pdf(id: int):
                 detalle["producto"] = {"nombre": prod.nombre}
 
         from pdf_generator import generar_factura_compra_pdf
+
         pdf_path = generar_factura_compra_pdf(compra_data, negocio_data)
 
         return send_file(pdf_path, as_attachment=True)
@@ -1042,17 +1002,13 @@ def get_estadisticas():
 
         # Ventas (Totales y del mes)
         total_ventas = Venta.query.count()
-        ventas_mes = Venta.query.filter(
-            Venta.fecha_creacion >= inicio_mes
-        ).count()
+        ventas_mes = Venta.query.filter(Venta.fecha_creacion >= inicio_mes).count()
 
         # Nuevos Contadores para Tarjetas de Módulos
         total_empleados = Usuario.query.count()
         total_proveedores = Proveedor.query.count()
         total_compras = Compra.query.count()
-        total_apartados_activos = Apartado.query.filter_by(
-            estado="activo"
-        ).count()
+        total_apartados_activos = Apartado.query.filter_by(estado="activo").count()
         total_reembolsos = Reembolso.query.count()
         total_inventario_movs = MovimientoInventario.query.count()
 
@@ -1060,9 +1016,7 @@ def get_estadisticas():
             Cotizacion.fecha_hora.desc()
         ).first()
         tasa_actual = (
-            float(cotizacion_actual.tasa_dolar_bolivares)
-            if cotizacion_actual
-            else 0.0
+            float(cotizacion_actual.tasa_dolar_bolivares) if cotizacion_actual else 0.0
         )
 
         return jsonify(
@@ -1083,9 +1037,7 @@ def get_estadisticas():
             }
         )
     except Exception as e:
-        return jsonify(
-            {"message": f"Error al obtener estadísticas: {str(e)}"}
-        ), 500
+        return jsonify({"message": f"Error al obtener estadísticas: {str(e)}"}), 500
 
 
 @api_bp.get("/reportes/ventas")
@@ -1296,9 +1248,7 @@ def generar_reporte_ventas_pdf_endpoint():
         ventas_data = [v.to_dict() for v in ventas]
 
         # Generar el PDF
-        pdf_path = generar_reporte_ventas_pdf(
-            ventas_data, fecha_desde, fecha_hasta
-        )
+        pdf_path = generar_reporte_ventas_pdf(ventas_data, fecha_desde, fecha_hasta)
 
         # Enviar el archivo
         return send_file(
@@ -1342,9 +1292,7 @@ def delete_empleado(id: int):
     try:
         db.session.delete(empleado)
         db.session.commit()
-        return jsonify(
-            {"message": "Empleado eliminado con éxito", "success": True}
-        )
+        return jsonify({"message": "Empleado eliminado con éxito", "success": True})
     except Exception as e:
         db.session.rollback()
         return jsonify(
@@ -1405,9 +1353,7 @@ def create_apartado():
     try:
         id_cliente = data.get("id_cliente")
         if not id_cliente:
-            return jsonify(
-                {"success": False, "message": "Se requiere un cliente"}
-            ), 400
+            return jsonify({"success": False, "message": "Se requiere un cliente"}), 400
 
         productos = data.get("productos", [])
         if not productos:
@@ -1437,8 +1383,7 @@ def create_apartado():
                     }
                 ), 400
             monto_total += (
-                Decimal(str(producto.precio_unitario_actual_dolares))
-                * item["cantidad"]
+                Decimal(str(producto.precio_unitario_actual_dolares)) * item["cantidad"]
             )
 
         # Calcular fecha límite (3 meses por defecto)
@@ -1525,9 +1470,7 @@ def registrar_pago_apartado(id: int):
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado != "activo":
-        return jsonify(
-            {"success": False, "message": "El apartado no está activo"}
-        ), 400
+        return jsonify({"success": False, "message": "El apartado no está activo"}), 400
 
     data = request.get_json()
     monto = Decimal(str(data.get("monto", 0)))
@@ -1576,9 +1519,7 @@ def completar_apartado(id: int):
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado != "activo":
-        return jsonify(
-            {"success": False, "message": "El apartado no está activo"}
-        ), 400
+        return jsonify({"success": False, "message": "El apartado no está activo"}), 400
 
     if apartado.monto_pagado < apartado.monto_total:
         return jsonify(
@@ -1594,15 +1535,11 @@ def completar_apartado(id: int):
             Cotizacion.fecha_hora.desc()
         ).first()
         tasa = (
-            cotizacion_actual.tasa_dolar_bolivares
-            if cotizacion_actual
-            else Decimal(0)
+            cotizacion_actual.tasa_dolar_bolivares if cotizacion_actual else Decimal(0)
         )
 
         # Crear venta
-        venta = Venta(
-            id_cliente=apartado.id_cliente, cotizacion_dolar_bolivares=tasa
-        )
+        venta = Venta(id_cliente=apartado.id_cliente, cotizacion_dolar_bolivares=tasa)
         db.session.add(venta)
         db.session.flush()
 
@@ -1645,9 +1582,7 @@ def cancelar_apartado(id: int):
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado != "activo":
-        return jsonify(
-            {"success": False, "message": "El apartado no está activo"}
-        ), 400
+        return jsonify({"success": False, "message": "El apartado no está activo"}), 400
 
     try:
         # Devolver productos al inventario
@@ -1713,6 +1648,7 @@ def generar_pdf_apartado(id: int):
         }
 
         from pdf_generator import generar_apartado_pdf
+
         pdf_path = generar_apartado_pdf(apartado_data, negocio_data)
 
         return send_file(
@@ -1743,9 +1679,7 @@ def delete_apartado(id: int):
     try:
         db.session.delete(apartado)
         db.session.commit()
-        return jsonify(
-            {"success": True, "message": "Apartado eliminado correctamente"}
-        )
+        return jsonify({"success": True, "message": "Apartado eliminado correctamente"})
     except Exception as e:
         db.session.rollback()
         return jsonify(
@@ -1768,9 +1702,7 @@ def list_inventario():
 
         prod_dict = prod.to_dict()
         prod_dict["cantidad_apartada"] = cantidad_apartada
-        prod_dict["cantidad_total"] = (
-            prod.cantidad_disponible + cantidad_apartada
-        )
+        prod_dict["cantidad_total"] = prod.cantidad_disponible + cantidad_apartada
         if prod.categoria:
             prod_dict["categoria_nombre"] = prod.categoria.nombre
         resultado.append(prod_dict)
@@ -1791,9 +1723,7 @@ def list_movimientos():
     if tipo:
         query = query.filter_by(tipo=tipo)
 
-    movimientos = (
-        query.order_by(MovimientoInventario.fecha.desc()).limit(100).all()
-    )
+    movimientos = query.order_by(MovimientoInventario.fecha.desc()).limit(100).all()
     return jsonify([m.to_dict() for m in movimientos])
 
 
@@ -1812,18 +1742,14 @@ def ajuste_inventario():
 
     producto = Producto.query.get(id_producto)
     if not producto:
-        return jsonify(
-            {"success": False, "message": "Producto no encontrado"}
-        ), 404
+        return jsonify({"success": False, "message": "Producto no encontrado"}), 404
 
     try:
         if tipo == "entrada":
             producto.cantidad_disponible += cantidad
         elif tipo == "salida":
             if producto.cantidad_disponible < cantidad:
-                return jsonify(
-                    {"success": False, "message": "Stock insuficiente"}
-                ), 400
+                return jsonify({"success": False, "message": "Stock insuficiente"}), 400
             producto.cantidad_disponible -= cantidad
         else:
             return jsonify(
@@ -1877,9 +1803,7 @@ def consultar_ventas():
             query = query.filter(Venta.fecha_creacion >= fecha_desde)
         if fecha_hasta:
             # Ajustar para incluir todo el día hasta
-            query = query.filter(
-                Venta.fecha_creacion <= f"{fecha_hasta} 23:59:59"
-            )
+            query = query.filter(Venta.fecha_creacion <= f"{fecha_hasta} 23:59:59")
 
         ventas = query.order_by(Venta.fecha_creacion.desc()).all()
 
@@ -1898,9 +1822,7 @@ def consultar_ventas():
                 v_dict["vendedor"] = {"id": None, "nombre": "Sin asignar"}
 
             # Calcular total
-            total = sum(
-                d.precio_unitario_tipo_dolares * d.cantidad for d in v.detalles
-            )
+            total = sum(d.precio_unitario_tipo_dolares * d.cantidad for d in v.detalles)
             v_dict["total"] = float(total)
 
             resultado.append(v_dict)
@@ -1928,25 +1850,19 @@ def exportar_consultas_pdf():
         if id_vendedor:
             query = query.filter(Venta.id_vendedor == id_vendedor)
             vend = Usuario.query.get(id_vendedor)
-            filtros_texto.append(
-                f"Vendedor: {vend.nombre if vend else id_vendedor}"
-            )
+            filtros_texto.append(f"Vendedor: {vend.nombre if vend else id_vendedor}")
 
         if id_cliente:
             query = query.filter(Venta.id_cliente == id_cliente)
             cli = Cliente.query.get(id_cliente)
-            filtros_texto.append(
-                f"Cliente: {cli.nombre if cli else id_cliente}"
-            )
+            filtros_texto.append(f"Cliente: {cli.nombre if cli else id_cliente}")
 
         if fecha_desde:
             query = query.filter(Venta.fecha_creacion >= fecha_desde)
             filtros_texto.append(f"Desde: {fecha_desde}")
 
         if fecha_hasta:
-            query = query.filter(
-                Venta.fecha_creacion <= f"{fecha_hasta} 23:59:59"
-            )
+            query = query.filter(Venta.fecha_creacion <= f"{fecha_hasta} 23:59:59")
             filtros_texto.append(f"Hasta: {fecha_hasta}")
 
         ventas = query.order_by(Venta.fecha_creacion.desc()).all()
@@ -1954,9 +1870,7 @@ def exportar_consultas_pdf():
         # Preparar datos para el PDF
         datos_reporte = []
         for v in ventas:
-            total = sum(
-                d.precio_unitario_tipo_dolares * d.cantidad for d in v.detalles
-            )
+            total = sum(d.precio_unitario_tipo_dolares * d.cantidad for d in v.detalles)
             vendedor_nombre = "Sin asignar"
             if v.id_vendedor:
                 vend = Usuario.query.get(v.id_vendedor)
@@ -1974,6 +1888,7 @@ def exportar_consultas_pdf():
             )
 
         from pdf_generator import generar_reporte_consultas_pdf
+
         pdf_path = generar_reporte_consultas_pdf(datos_reporte, filtros_texto)
 
         return send_file(
@@ -1990,9 +1905,7 @@ def exportar_consultas_pdf():
 def get_cotizacion_actual():
     """Obtiene la cotización más reciente"""
     try:
-        cotizacion = Cotizacion.query.order_by(
-            Cotizacion.fecha_hora.desc()
-        ).first()
+        cotizacion = Cotizacion.query.order_by(Cotizacion.fecha_hora.desc()).first()
         if cotizacion:
             return jsonify(cotizacion.to_dict())
         else:
@@ -2014,9 +1927,7 @@ def list_cotizaciones():
     try:
         # Limitar a las últimas 50 para no sobrecargar
         cotizaciones = (
-            Cotizacion.query.order_by(Cotizacion.fecha_hora.desc())
-            .limit(50)
-            .all()
+            Cotizacion.query.order_by(Cotizacion.fecha_hora.desc()).limit(50).all()
         )
         return jsonify([c.to_dict() for c in cotizaciones])
     except Exception as e:
@@ -2082,9 +1993,7 @@ def create_reembolso():
 
         venta = db.session.get(Venta, id_venta)
         if not venta:
-            return jsonify(
-                {"message": "Venta no encontrada", "success": False}
-            ), 404
+            return jsonify({"message": "Venta no encontrada", "success": False}), 404
 
         # Usar la tasa histórica de la venta
         tasa_cambio = venta.cotizacion_dolar_bolivares
@@ -2192,9 +2101,7 @@ def get_reembolso_pdf(id: int):
         reembolsos_dir = os.path.join(current_app.instance_path, "reembolsos_pdf")
         os.makedirs(reembolsos_dir, exist_ok=True)
 
-        filename = (
-            f"reembolso_{id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-        )
+        filename = f"reembolso_{id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
         filepath = os.path.join(reembolsos_dir, filename)
 
         doc = SimpleDocTemplate(filepath, pagesize=letter)
@@ -2289,9 +2196,7 @@ def get_estadisticas_resumen():
         )
 
         # 3. Productos Stock Bajo
-        stock_bajo = Producto.query.filter(
-            Producto.cantidad_disponible <= 5
-        ).count()
+        stock_bajo = Producto.query.filter(Producto.cantidad_disponible <= 5).count()
 
         # 4. Beneficio Estimado (Ventas - Compras)
         beneficio_hoy = total_ventas_hoy - total_compras_hoy
@@ -2331,14 +2236,9 @@ def get_estadisticas_historico():
             fin = datetime.combine(fecha, datetime.max.time())
 
             # Ventas del día
-            ventas = Venta.query.filter(
-                Venta.fecha_creacion.between(inicio, fin)
-            ).all()
+            ventas = Venta.query.filter(Venta.fecha_creacion.between(inicio, fin)).all()
             total_v = sum(
-                sum(
-                    d.precio_unitario_tipo_dolares * d.cantidad
-                    for d in v.detalles
-                )
+                sum(d.precio_unitario_tipo_dolares * d.cantidad for d in v.detalles)
                 for v in ventas
             )
 
@@ -2348,10 +2248,7 @@ def get_estadisticas_historico():
             ).all()
             # Fix: use precio_unitario_tipo_dolares instead of precio_unitario
             total_c = sum(
-                sum(
-                    d.precio_unitario_tipo_dolares * d.cantidad
-                    for d in c.detalles
-                )
+                sum(d.precio_unitario_tipo_dolares * d.cantidad for d in c.detalles)
                 for c in compras
             )
 

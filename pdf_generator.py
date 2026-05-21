@@ -342,9 +342,7 @@ def generar_reporte_ventas_pdf(ventas_data, fecha_desde=None, fecha_hasta=None):
 
         total_general += total_venta
 
-        fecha = datetime.strptime(
-            venta["fecha_creacion"], "%Y-%m-%d %H:%M:%S.%f"
-        )
+        fecha = datetime.strptime(venta["fecha_creacion"], "%Y-%m-%d %H:%M:%S.%f")
 
         data_ventas.append(
             [
@@ -389,9 +387,7 @@ def generar_reporte_ventas_pdf(ventas_data, fecha_desde=None, fecha_hasta=None):
 
     # Estadísticas
     elements.append(Spacer(1, 0.3 * inch))
-    elements.append(
-        Paragraph(f"Total de ventas: {len(ventas_data)}", styles["Normal"])
-    )
+    elements.append(Paragraph(f"Total de ventas: {len(ventas_data)}", styles["Normal"]))
     elements.append(
         Paragraph(
             f"Generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}",
@@ -479,9 +475,7 @@ def generar_factura_compra_pdf(compra_data, negocio_data):
     elements.append(Spacer(1, 0.2 * inch))
 
     # === INFORMACIÓN DE LA COMPRA ===
-    fecha_compra = datetime.strptime(
-        compra_data["fecha_creacion"], "%Y-%m-%d %H:%M:%S"
-    )
+    fecha_compra = datetime.strptime(compra_data["fecha_creacion"], "%Y-%m-%d %H:%M:%S")
 
     # Obtener datos del proveedor (simulado si no vienen completos, aunque deberían)
     # En el modelo actual, compra_data tiene id_proveedor.
@@ -628,9 +622,7 @@ def generar_factura_compra_pdf(compra_data, negocio_data):
         alignment=TA_CENTER,
     )
 
-    elements.append(
-        Paragraph("Comprobante de Compra - Uso Interno", footer_style)
-    )
+    elements.append(Paragraph("Comprobante de Compra - Uso Interno", footer_style))
     elements.append(
         Paragraph(
             f"Generado el {datetime.now().strftime('%d/%m/%Y %H:%M')}",
@@ -719,9 +711,7 @@ def generar_apartado_pdf(apartado_data, negocio_data):
     fecha_creacion = datetime.strptime(
         apartado_data["fecha_creacion"], "%Y-%m-%d %H:%M:%S"
     )
-    fecha_limite = datetime.strptime(
-        apartado_data["fecha_limite"], "%Y-%m-%d %H:%M:%S"
-    )
+    fecha_limite = datetime.strptime(apartado_data["fecha_limite"], "%Y-%m-%d %H:%M:%S")
 
     cliente_nombre = "N/A"
     cliente_cedula = "N/A"
@@ -832,9 +822,7 @@ def generar_apartado_pdf(apartado_data, negocio_data):
 
     if apartado_data.get("pagos"):
         for pago in apartado_data["pagos"]:
-            fecha_pago = datetime.strptime(
-                pago["fecha_pago"], "%Y-%m-%d %H:%M:%S"
-            )
+            fecha_pago = datetime.strptime(pago["fecha_pago"], "%Y-%m-%d %H:%M:%S")
             monto = Decimal(str(pago["monto"]))
             total_pagado += monto
 
@@ -848,9 +836,7 @@ def generar_apartado_pdf(apartado_data, negocio_data):
     else:
         data_pagos.append(["-", "$ 0.00", "Sin pagos registrados"])
 
-    table_pagos = Table(
-        data_pagos, colWidths=[1.5 * inch, 1.5 * inch, 3.5 * inch]
-    )
+    table_pagos = Table(data_pagos, colWidths=[1.5 * inch, 1.5 * inch, 3.5 * inch])
     table_pagos.setStyle(
         TableStyle(
             [
@@ -972,9 +958,7 @@ def generar_reporte_consultas_pdf(ventas_data, filtros_texto):
         for filtro in filtros_texto:
             elements.append(Paragraph(f"• {filtro}", styles["Normal"]))
     else:
-        elements.append(
-            Paragraph("Sin filtros (Todas las ventas)", styles["Normal"])
-        )
+        elements.append(Paragraph("Sin filtros (Todas las ventas)", styles["Normal"]))
 
     elements.append(Spacer(1, 0.3 * inch))
 

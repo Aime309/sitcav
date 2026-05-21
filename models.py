@@ -46,9 +46,7 @@ class Usuario(db.Model):
     pregunta_3 = db.Column(db.String(255), nullable=True)
     respuesta_3 = db.Column(db.String(255), nullable=True)
 
-    admin_id = db.Column(
-        db.Integer, db.ForeignKey("usuarios.id"), nullable=True
-    )
+    admin_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=True)
 
     # Relaciones
     administrados = db.relationship(
@@ -82,9 +80,7 @@ class Estado(db.Model):
     __tablename__ = "estados"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_usuario = db.Column(
-        db.Integer, db.ForeignKey("usuarios.id"), nullable=False
-    )
+    id_usuario = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
     nombre = db.Column(db.String(100), nullable=False)
 
     # Relaciones
@@ -96,9 +92,7 @@ class Localidad(db.Model):
     __tablename__ = "localidades"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_estado = db.Column(
-        db.Integer, db.ForeignKey("estados.id"), nullable=False
-    )
+    id_estado = db.Column(db.Integer, db.ForeignKey("estados.id"), nullable=False)
     nombre = db.Column(db.String(100), nullable=False)
 
     # Relaciones
@@ -132,9 +126,7 @@ class Negocio(db.Model):
     id_localidad = db.Column(
         db.Integer, db.ForeignKey("localidades.id"), nullable=False
     )
-    id_sector = db.Column(
-        db.Integer, db.ForeignKey("sectores.id"), nullable=False
-    )
+    id_sector = db.Column(db.Integer, db.ForeignKey("sectores.id"), nullable=False)
     nombre = db.Column(db.String(200), nullable=False)
     rif = db.Column(db.String(50), nullable=True)
     telefono = db.Column(db.String(20), nullable=True)
@@ -153,9 +145,7 @@ class Cliente(db.Model):
     cedula = db.Column(db.String(20), unique=True, nullable=False)
     telefono = db.Column(db.String(20), nullable=True)
     direccion = db.Column(db.String(300), nullable=True)
-    id_localidad = db.Column(
-        db.Integer, db.ForeignKey("localidades.id"), nullable=True
-    )
+    id_localidad = db.Column(db.Integer, db.ForeignKey("localidades.id"), nullable=True)
 
     # Relaciones
     ventas = db.relationship("Venta", backref="cliente", lazy=True)
@@ -179,9 +169,7 @@ class Categoria(db.Model):
     __tablename__ = "categorias"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_usuario = db.Column(
-        db.Integer, db.ForeignKey("usuarios.id"), nullable=False
-    )
+    id_usuario = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
     nombre = db.Column(db.String(100), unique=True, nullable=False)
 
     # Relaciones
@@ -198,15 +186,9 @@ class Proveedor(db.Model):
     __tablename__ = "proveedores"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_estado = db.Column(
-        db.Integer, db.ForeignKey("estados.id"), nullable=True
-    )
-    id_localidad = db.Column(
-        db.Integer, db.ForeignKey("localidades.id"), nullable=True
-    )
-    id_sector = db.Column(
-        db.Integer, db.ForeignKey("sectores.id"), nullable=True
-    )
+    id_estado = db.Column(db.Integer, db.ForeignKey("estados.id"), nullable=True)
+    id_localidad = db.Column(db.Integer, db.ForeignKey("localidades.id"), nullable=True)
+    id_sector = db.Column(db.Integer, db.ForeignKey("sectores.id"), nullable=True)
     nombre = db.Column(db.String(200), nullable=False)
     rif = db.Column(db.String(50), nullable=True)
     telefono = db.Column(db.String(20), nullable=True)
@@ -239,19 +221,13 @@ class Producto(db.Model):
     descripcion = db.Column(db.Text)
     codigo = db.Column(db.String(100), unique=True, nullable=False)
     imei = db.Column(db.String(50), nullable=True)  # IMEI del dispositivo
-    id_categoria = db.Column(
-        db.Integer, db.ForeignKey("categorias.id"), nullable=False
-    )
+    id_categoria = db.Column(db.Integer, db.ForeignKey("categorias.id"), nullable=False)
     id_proveedor = db.Column(db.Integer, db.ForeignKey("proveedores.id"))
-    precio_unitario_actual_dolares = db.Column(
-        db.Numeric(10, 2), nullable=False
-    )
+    precio_unitario_actual_dolares = db.Column(db.Numeric(10, 2), nullable=False)
     cantidad_disponible = db.Column(db.Integer, default=0)
     dias_garantia = db.Column(db.Integer, default=0)
     dias_apartado = db.Column(db.Integer, default=0)
-    imagen_url = db.Column(
-        db.String(500)
-    )  # Campo para URL de imagen del producto
+    imagen_url = db.Column(db.String(500))  # Campo para URL de imagen del producto
 
     # Relaciones
     detalles_ventas = db.relationship("DetalleVenta", backref="producto")
@@ -266,9 +242,7 @@ class Producto(db.Model):
             "imei": self.imei,
             "id_categoria": self.id_categoria,
             "id_proveedor": self.id_proveedor,
-            "precio_unitario_actual_dolares": str(
-                self.precio_unitario_actual_dolares
-            ),
+            "precio_unitario_actual_dolares": str(self.precio_unitario_actual_dolares),
             "cantidad_disponible": self.cantidad_disponible,
             "dias_garantia": self.dias_garantia,
             "dias_apartado": self.dias_apartado,
@@ -283,12 +257,8 @@ class Venta(db.Model):
     __tablename__ = "ventas"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_cliente = db.Column(
-        db.Integer, db.ForeignKey("clientes.id"), nullable=False
-    )
-    id_vendedor = db.Column(
-        db.Integer, db.ForeignKey("usuarios.id"), nullable=True
-    )
+    id_cliente = db.Column(db.Integer, db.ForeignKey("clientes.id"), nullable=False)
+    id_vendedor = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=True)
     fecha_creacion = db.Column(db.DateTime, default=local_now, nullable=False)
     cotizacion_dolar_bolivares = db.Column(db.Numeric(10, 2), default=0)
 
@@ -304,9 +274,7 @@ class Venta(db.Model):
             "id_cliente": self.id_cliente,
             "id_vendedor": self.id_vendedor,
             "cliente": self.cliente.to_dict() if self.cliente else None,
-            "fecha_creacion": self.fecha_creacion.strftime(
-                "%Y-%m-%d %H:%M:%S.%f"
-            ),
+            "fecha_creacion": self.fecha_creacion.strftime("%Y-%m-%d %H:%M:%S.%f"),
             "cotizacion_dolar_bolivares": float(self.cotizacion_dolar_bolivares)
             if self.cotizacion_dolar_bolivares
             else 0,
@@ -322,9 +290,7 @@ class Reembolso(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     id_venta = db.Column(db.Integer, db.ForeignKey("ventas.id"), nullable=False)
-    id_usuario = db.Column(
-        db.Integer, db.ForeignKey("usuarios.id"), nullable=False
-    )
+    id_usuario = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
     monto_dolares = db.Column(db.Numeric(10, 2), nullable=False)
     monto_bolivares = db.Column(db.Numeric(10, 2), nullable=False)
     tasa_cambio = db.Column(db.Numeric(10, 2), nullable=False)
@@ -332,18 +298,14 @@ class Reembolso(db.Model):
     fecha = db.Column(db.DateTime, default=local_now, nullable=False)
 
     # Relaciones
-    usuario = db.relationship(
-        "Usuario", backref="reembolsos_procesados", lazy=True
-    )
+    usuario = db.relationship("Usuario", backref="reembolsos_procesados", lazy=True)
 
     def to_dict(self):
         return {
             "id": self.id,
             "id_venta": self.id_venta,
             "id_usuario": self.id_usuario,
-            "usuario_nombre": self.usuario.nombre
-            if self.usuario
-            else "Desconocido",
+            "usuario_nombre": self.usuario.nombre if self.usuario else "Desconocido",
             "monto_dolares": float(self.monto_dolares),
             "monto_bolivares": float(self.monto_bolivares),
             "tasa_cambio": float(self.tasa_cambio),
@@ -360,9 +322,7 @@ class DetalleVenta(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     id_venta = db.Column(db.Integer, db.ForeignKey("ventas.id"), nullable=False)
-    id_producto = db.Column(
-        db.Integer, db.ForeignKey("productos.id"), nullable=False
-    )
+    id_producto = db.Column(db.Integer, db.ForeignKey("productos.id"), nullable=False)
     precio_unitario_tipo_dolares = db.Column(db.Numeric(10, 2), nullable=False)
     cantidad = db.Column(db.Integer, nullable=False)
     esta_apartado = db.Column(db.Boolean, default=False)
@@ -375,9 +335,7 @@ class DetalleVenta(db.Model):
             "id": self.id,
             "id_producto": self.id_producto,
             "cantidad": self.cantidad,
-            "precio_unitario_tipo_dolares": str(
-                self.precio_unitario_tipo_dolares
-            ),
+            "precio_unitario_tipo_dolares": str(self.precio_unitario_tipo_dolares),
             "esta_apartado": self.esta_apartado,
         }
 
@@ -416,9 +374,7 @@ class Compra(db.Model):
             "id_proveedor": self.id_proveedor,
             "proveedor": self.proveedor.to_dict() if self.proveedor else None,
             "fecha_creacion": self.fecha_creacion.strftime("%Y-%m-%d %H:%M:%S"),
-            "cotizacion_dolar_bolivares": float(
-                self.cotizacion_dolar_bolivares
-            ),
+            "cotizacion_dolar_bolivares": float(self.cotizacion_dolar_bolivares),
             "detalles": [d.to_dict() for d in self.detalles],
         }
 
@@ -430,12 +386,8 @@ class DetalleCompra(db.Model):
     __tablename__ = "detalles_compras"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_compra = db.Column(
-        db.Integer, db.ForeignKey("compras.id"), nullable=False
-    )
-    id_producto = db.Column(
-        db.Integer, db.ForeignKey("productos.id"), nullable=False
-    )
+    id_compra = db.Column(db.Integer, db.ForeignKey("compras.id"), nullable=False)
+    id_producto = db.Column(db.Integer, db.ForeignKey("productos.id"), nullable=False)
     precio_unitario_tipo_dolares = db.Column(db.Numeric(10, 2), nullable=False)
     cantidad = db.Column(db.Integer, nullable=False)
 
@@ -445,9 +397,7 @@ class DetalleCompra(db.Model):
             "id_producto": self.id_producto,
             "cantidad": self.cantidad,
             "precio_unitario": float(self.precio_unitario_tipo_dolares),
-            "subtotal": float(
-                self.precio_unitario_tipo_dolares * self.cantidad
-            ),
+            "subtotal": float(self.precio_unitario_tipo_dolares * self.cantidad),
         }
 
 
@@ -458,9 +408,7 @@ class TipoPago(db.Model):
     __tablename__ = "tipos_pago"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_usuario = db.Column(
-        db.Integer, db.ForeignKey("usuarios.id"), nullable=False
-    )
+    id_usuario = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
     nombre = db.Column(
         db.String(100), nullable=False
     )  # Ej: Efectivo, Transferencia, Tarjeta
@@ -479,9 +427,7 @@ class Pago(db.Model):
     __tablename__ = "pagos"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_tipo_pago = db.Column(
-        db.Integer, db.ForeignKey("tipos_pago.id"), nullable=False
-    )
+    id_tipo_pago = db.Column(db.Integer, db.ForeignKey("tipos_pago.id"), nullable=False)
     id_detalle_venta = db.Column(
         db.Integer, db.ForeignKey("detalles_ventas.id"), nullable=False
     )
@@ -498,9 +444,7 @@ class Pago(db.Model):
             "id_detalle_venta": self.id_detalle_venta,
             "fecha_creacion": self.fecha_creacion.strftime("%Y-%m-%d %H:%M:%S"),
             "monto": float(self.monto),
-            "cotizacion_dolar_bolivares": float(
-                self.cotizacion_dolar_bolivares
-            ),
+            "cotizacion_dolar_bolivares": float(self.cotizacion_dolar_bolivares),
         }
 
 
@@ -511,9 +455,7 @@ class Cotizacion(db.Model):
     __tablename__ = "cotizaciones"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_usuario = db.Column(
-        db.Integer, db.ForeignKey("usuarios.id"), nullable=False
-    )
+    id_usuario = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
     fecha_hora = db.Column(db.DateTime, default=local_now, nullable=False)
     tasa_dolar_bolivares = db.Column(db.Numeric(10, 2), nullable=False)
 
@@ -532,24 +474,16 @@ class Apartado(db.Model):
     __tablename__ = "apartados"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_cliente = db.Column(
-        db.Integer, db.ForeignKey("clientes.id"), nullable=False
-    )
+    id_cliente = db.Column(db.Integer, db.ForeignKey("clientes.id"), nullable=False)
     fecha_creacion = db.Column(db.DateTime, default=local_now, nullable=False)
-    fecha_limite = db.Column(
-        db.DateTime, nullable=False
-    )  # Generalmente 3 meses
+    fecha_limite = db.Column(db.DateTime, nullable=False)  # Generalmente 3 meses
     monto_total = db.Column(db.Numeric(10, 2), nullable=False)
     monto_pagado = db.Column(db.Numeric(10, 2), default=0)
-    estado = db.Column(
-        db.String(20), default="activo"
-    )  # activo, completado, cancelado
+    estado = db.Column(db.String(20), default="activo")  # activo, completado, cancelado
     observaciones = db.Column(db.Text, nullable=True)
 
     # Relaciones
-    cliente = db.relationship(
-        "Cliente", backref=db.backref("apartados", lazy=True)
-    )
+    cliente = db.relationship("Cliente", backref=db.backref("apartados", lazy=True))
     detalles = db.relationship(
         "DetalleApartado",
         backref="apartado",
@@ -572,8 +506,7 @@ class Apartado(db.Model):
             "fecha_limite": self.fecha_limite.strftime("%Y-%m-%d %H:%M:%S"),
             "monto_total": float(self.monto_total),
             "monto_pagado": float(self.monto_pagado),
-            "monto_pendiente": float(self.monto_total)
-            - float(self.monto_pagado),
+            "monto_pendiente": float(self.monto_total) - float(self.monto_pagado),
             "estado": self.estado,
             "observaciones": self.observaciones,
             "detalles": [d.to_dict() for d in self.detalles],
@@ -588,12 +521,8 @@ class DetalleApartado(db.Model):
     __tablename__ = "detalles_apartados"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_apartado = db.Column(
-        db.Integer, db.ForeignKey("apartados.id"), nullable=False
-    )
-    id_producto = db.Column(
-        db.Integer, db.ForeignKey("productos.id"), nullable=False
-    )
+    id_apartado = db.Column(db.Integer, db.ForeignKey("apartados.id"), nullable=False)
+    id_producto = db.Column(db.Integer, db.ForeignKey("productos.id"), nullable=False)
     cantidad = db.Column(db.Integer, nullable=False)
     precio_unitario = db.Column(db.Numeric(10, 2), nullable=False)
 
@@ -620,9 +549,7 @@ class PagoApartado(db.Model):
     __tablename__ = "pagos_apartados"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_apartado = db.Column(
-        db.Integer, db.ForeignKey("apartados.id"), nullable=False
-    )
+    id_apartado = db.Column(db.Integer, db.ForeignKey("apartados.id"), nullable=False)
     monto = db.Column(db.Numeric(10, 2), nullable=False)
     fecha_pago = db.Column(db.DateTime, default=local_now, nullable=False)
     observacion = db.Column(db.String(255), nullable=True)
@@ -644,9 +571,7 @@ class MovimientoInventario(db.Model):
     __tablename__ = "movimientos_inventario"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_producto = db.Column(
-        db.Integer, db.ForeignKey("productos.id"), nullable=False
-    )
+    id_producto = db.Column(db.Integer, db.ForeignKey("productos.id"), nullable=False)
     tipo = db.Column(db.String(20), nullable=False)  # entrada, salida, ajuste
     cantidad = db.Column(db.Integer, nullable=False)
     motivo = db.Column(
@@ -655,9 +580,7 @@ class MovimientoInventario(db.Model):
     referencia_id = db.Column(
         db.Integer, nullable=True
     )  # ID de venta/apartado/compra relacionada
-    referencia_tipo = db.Column(
-        db.String(20), nullable=True
-    )  # venta, apartado, compra
+    referencia_tipo = db.Column(db.String(20), nullable=True)  # venta, apartado, compra
     fecha = db.Column(db.DateTime, default=local_now, nullable=False)
     observacion = db.Column(db.String(255), nullable=True)
 
