@@ -19,3 +19,4 @@ dist/
 htmlcov/
 instance/
 venv/
+.ruff_cache/
