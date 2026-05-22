@@ -35,7 +35,7 @@ SITCAV es una herramienta diseñada para la gestión de inventario, ventas, comp
 
 ### Configuración de Base de Datos
 - La base de datos local se guarda en `instance/system_data.db`.
-- Se inicializa automáticamente al arrancar la app usando `schema.sql` y `db.py`.
+- Se inicializa automáticamente al arrancar la app usando `schemas/sqlite.sql` y `db.py`.
 - En Vercel, la base de datos es de solo lectura (usando SQLite efímero o configuración específica); localmente es persistente en la carpeta `instance/`.
 
 ## Convenciones de Desarrollo

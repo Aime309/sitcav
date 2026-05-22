@@ -19,11 +19,14 @@ def init_db(app: Flask, db: SQLAlchemy) -> None:
         if os.path.exists(app.config["DATABASE"]):
             return print("✅ Base de datos existente detectada.")
 
-        with app.open_resource("schema.sql") as f:
-            schema = str(f.read().decode("utf8")).split(";")
+        with app.open_resource("schemas/sqlite.sql") as f:
+            schema_sql = f.read().decode("utf8")
 
-        with db.engine.connect() as connection:
-            for query in schema:
-                connection.execute(text(query.strip()))
+        # Usar executescript del driver nativo sqlite3 para manejar triggers con punto y coma interno
+        raw_conn = db.engine.raw_connection()
+        try:
+            raw_conn.executescript(schema_sql)
+        finally:
+            raw_conn.close()
 
-            print("✅ Base de datos y tablas creadas desde schema.sql.")
+        print("✅ Base de datos y tablas creadas desde schemas/sqlite.sql.")

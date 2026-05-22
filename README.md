@@ -44,7 +44,8 @@ Acceso: `http://localhost:3000`
 ├── db.py                  # Configuración de SQLAlchemy y utilidades
 ├── auth.py                # Lógica de autenticación
 ├── pdf_generator.py       # Generación de reportes y facturas PDF
-├── schema.sql             # Esquema SQL para inicialización
+├── schemas/               # Esquemas de base de datos
+│   └── sqlite.sql         # Esquema SQL para inicialización (SQLite)
 ├── [modelo].py            # Modelos SQLAlchemy (ej. producto.py, venta.py)
 ├── [blueprint].py         # Blueprints de la API (ej. productos.py, ventas.py)
 ├── pyproject.toml         # Dependencias (uv)

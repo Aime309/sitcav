@@ -30,7 +30,7 @@
 - **Backend:** Python 3.12.x, Flask, SQLAlchemy (SQLite). Punto de entrada: `app.py`.
 - **Frontend:** Servido a través de plantillas Jinja2 (`templates/index.html`), lógica principal en `static/app.js`.
 - **Generación de PDF:** `pdf_generator.py` usa ReportLab para crear facturas en `instance/facturas/`.
-- **Base de Datos:** Archivo SQLite en `instance/system_data.db`, inicializado mediante `db.py` y `schema.sql`.
+- **Base de Datos:** Archivo SQLite en `instance/system_data.db`, inicializado mediante `db.py` y `schemas/sqlite.sql`.
 - **API:** Centralizada en `api.py`. Lógica dividida en modelos (nombres de archivo en singular, ej. `producto.py`) y blueprints (nombres de archivo en plural, ej. `productos.py`).
 - **Autenticación:** Gestionada en `auth.py`.
 - **UI basada en roles:** La visibilidad de los módulos se controla mediante `setupRolePermissions()` en `static/app.js`.
