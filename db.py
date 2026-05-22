@@ -17,7 +17,7 @@ def init_db(app: Flask, db: SQLAlchemy) -> None:
 
     with app.app_context():
         if os.path.exists(app.config["DATABASE"]):
-            return print("✅ Base de datos existente detectada.")
+            return print("[OK] Base de datos existente detectada.")
 
         with app.open_resource("schemas/sqlite.sql") as f:
             schema_sql = f.read().decode("utf8")
@@ -29,4 +29,4 @@ def init_db(app: Flask, db: SQLAlchemy) -> None:
         finally:
             raw_conn.close()
 
-        print("✅ Base de datos y tablas creadas desde schemas/sqlite.sql.")
+        print("[OK] Base de datos y tablas creadas desde schemas/sqlite.sql.")
