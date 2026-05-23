@@ -16,11 +16,11 @@ def init_db(app: Flask) -> None:
     db.init_app(app)
 
     with app.app_context():
-        if os.path.exists(app.config["DATABASE"]):
+        if os.path.exists(cast(str, app.config["DATABASE"])):
             return print("[OK] Base de datos existente detectada.")
 
-            schema_sql = f.read().decode("utf8")
         with app.open_resource(cast(str, app.config["SCHEMA_REL_PATH"])) as f:
+            schema_sql = cast(bytes, f.read()).decode("utf8")
 
         # Usar executescript del driver nativo sqlite3 para manejar triggers con punto y coma interno
         raw_conn = db.engine.raw_connection()
