@@ -3,7 +3,6 @@ from datetime import datetime
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
 
 db = SQLAlchemy()
 
@@ -12,7 +11,7 @@ def local_now():
     return datetime.now()
 
 
-def init_db(app: Flask, db: SQLAlchemy) -> None:
+def init_db(app: Flask) -> None:
     db.init_app(app)
 
     with app.app_context():

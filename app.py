@@ -4,7 +4,7 @@ from typing import Any
 
 from flask import Flask, render_template
 
-from db import db, init_db
+from db import init_db
 
 
 def read_root():
@@ -56,7 +56,7 @@ def create_app(
             os.makedirs(app.config["PRODUCTS_UPLOAD_FOLDER"], exist_ok=True)
             os.makedirs(app.config["PROFILE_UPLOAD_FOLDER"], exist_ok=True)
 
-    init_db(app, db)
+    init_db(app)
 
     return app
 
