@@ -36,6 +36,7 @@ def create_app(
             PRODUCTS_UPLOAD_FOLDER=os.path.join(UPLOADS_ROOT, "products"),
             PROFILE_UPLOAD_FOLDER=os.path.join(UPLOADS_ROOT, "profiles"),
             SQLALCHEMY_DATABASE_URI=f"sqlite:///{app.config['DATABASE']}",
+            SCHEMA_REL_PATH="schemas/sqlite.sql",
         )
 
     from blueprints.api import api_bp

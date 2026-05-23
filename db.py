@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from typing import cast
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -18,11 +19,12 @@ def init_db(app: Flask) -> None:
         if os.path.exists(app.config["DATABASE"]):
             return print("[OK] Base de datos existente detectada.")
 
-        with app.open_resource("schemas/sqlite.sql") as f:
             schema_sql = f.read().decode("utf8")
+        with app.open_resource(cast(str, app.config["SCHEMA_REL_PATH"])) as f:
 
         # Usar executescript del driver nativo sqlite3 para manejar triggers con punto y coma interno
         raw_conn = db.engine.raw_connection()
+
         try:
             raw_conn.executescript(schema_sql)
         finally:
