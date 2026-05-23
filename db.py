@@ -1,13 +1,10 @@
 import os
-from datetime import datetime
 from typing import cast
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
-
-
 
 
 def init_db(app: Flask) -> None:
