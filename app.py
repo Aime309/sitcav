@@ -17,7 +17,6 @@ def create_app(
         import_name=__name__,
         instance_path="/tmp" if IS_VERCEL else None,
         instance_relative_config=True,
-        root_path=os.path.dirname(__file__),
     )
 
     if test_config is not None:
