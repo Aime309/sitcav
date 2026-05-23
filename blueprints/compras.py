@@ -2,13 +2,13 @@ from decimal import Decimal
 
 from flask import Blueprint, request, send_file
 
-from compra import Compra
-from cotizacion_model import Cotizacion
+from models.compra import Compra
+from models.cotizacion import Cotizacion
 from db import db
-from detalle_compra import DetalleCompra
-from negocio_model import Negocio
-from producto import Producto
-from proveedor import Proveedor
+from models.detalle_compra import DetalleCompra
+from models.negocio import Negocio
+from models.producto import Producto
+from models.proveedor import Proveedor
 
 compras_bp = Blueprint("compras", __name__, url_prefix="/compras")
 

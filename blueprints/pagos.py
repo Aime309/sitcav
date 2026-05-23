@@ -1,9 +1,9 @@
 from flask import Blueprint, request
 
-from cotizacion_model import Cotizacion
+from models.cotizacion import Cotizacion
 from db import db
-from pago import Pago
-from venta import Venta
+from models.pago import Pago
+from models.venta import Venta
 
 pagos_bp = Blueprint("pagos", __name__, url_prefix="/pagos")
 

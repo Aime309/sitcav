@@ -1,8 +1,8 @@
 from flask import Blueprint, request
 
-from categoria import Categoria
+from models.categoria import Categoria
 from db import db
-from producto import Producto
+from models.producto import Producto
 
 categorias_bp = Blueprint("categorias", __name__, url_prefix="/categorias")
 

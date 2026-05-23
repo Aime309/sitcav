@@ -1,7 +1,7 @@
 import os
 
 from flask import Blueprint, current_app, request
-from usuario import Usuario
+from models.usuario import Usuario
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 

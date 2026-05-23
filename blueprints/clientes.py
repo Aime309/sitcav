@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from cliente import Cliente
+from models.cliente import Cliente
 from db import db
 
 clientes_bp = Blueprint("clientes", __name__, url_prefix="/clientes")

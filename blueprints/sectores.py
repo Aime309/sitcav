@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from sector import Sector
+from models.sector import Sector
 
 sectores_bp = Blueprint("sectores", __name__, url_prefix="/sectores")
 

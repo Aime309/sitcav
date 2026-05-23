@@ -4,16 +4,16 @@ from decimal import Decimal
 
 from flask import Blueprint, request, send_file
 
-from apartado import Apartado
-from cotizacion_model import Cotizacion
+from models.apartado import Apartado
+from models.cotizacion import Cotizacion
 from db import db
-from detalle_apartado import DetalleApartado
-from detalle_venta import DetalleVenta
-from movimiento_inventario import MovimientoInventario
-from negocio_model import Negocio
-from pago_apartado import PagoApartado
-from producto import Producto
-from venta import Venta
+from models.detalle_apartado import DetalleApartado
+from models.detalle_venta import DetalleVenta
+from models.movimiento_inventario import MovimientoInventario
+from models.negocio import Negocio
+from models.pago_apartado import PagoApartado
+from models.producto import Producto
+from models.venta import Venta
 
 apartados_bp = Blueprint("apartados", __name__, url_prefix="/apartados")
 

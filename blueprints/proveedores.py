@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from proveedor import Proveedor
+from models.proveedor import Proveedor
 
 from db import db
 

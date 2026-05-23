@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 
 from db import db
-from negocio_model import Negocio
+from models.negocio import Negocio
 
 negocio_bp = Blueprint("negocio", __name__, url_prefix="/negocio")
 

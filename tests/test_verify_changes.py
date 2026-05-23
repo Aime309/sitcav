@@ -3,9 +3,9 @@ from pathlib import Path
 import pytest
 from flask.testing import FlaskClient
 
-from cliente import Cliente
-from negocio_model import Negocio
-from producto import Producto
+from models.cliente import Cliente
+from models.negocio import Negocio
+from models.producto import Producto
 
 
 def test_flujo_venta_y_reembolso(client: FlaskClient):

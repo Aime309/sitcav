@@ -1,8 +1,8 @@
 from flask import Blueprint, send_file
 
-from negocio_model import Negocio
+from models.negocio import Negocio
 from pdf_generator import generar_factura_pdf
-from venta import Venta
+from models.venta import Venta
 
 factura_bp = Blueprint("factura", __name__, url_prefix="/factura")
 

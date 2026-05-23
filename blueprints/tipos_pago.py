@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from tipo_pago import TipoPago
+from models.tipo_pago import TipoPago
 
 
 tipos_pago_bp = Blueprint("tipos_pago", __name__, url_prefix="/tipos-pago")

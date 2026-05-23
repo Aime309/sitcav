@@ -1,8 +1,8 @@
 from flask import Blueprint, request, send_file
 
-from cliente import Cliente
-from usuario import Usuario
-from venta import Venta
+from models.cliente import Cliente
+from models.usuario import Usuario
+from models.venta import Venta
 
 consultas_bp = Blueprint("consultas", __name__, url_prefix="/consultas")
 

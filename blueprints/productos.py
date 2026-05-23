@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from flask import Blueprint, current_app, request
-from producto import Producto
+from models.producto import Producto
 from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
 

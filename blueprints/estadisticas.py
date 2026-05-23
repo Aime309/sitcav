@@ -2,13 +2,13 @@ from datetime import datetime, timedelta
 
 from flask import Blueprint
 
-from apartado import Apartado
-from categoria import Categoria
-from compra import Compra
+from models.apartado import Apartado
+from models.categoria import Categoria
+from models.compra import Compra
 from db import db
-from detalle_venta import DetalleVenta
-from producto import Producto
-from venta import Venta
+from models.detalle_venta import DetalleVenta
+from models.producto import Producto
+from models.venta import Venta
 
 estadisticas_bp = Blueprint("estadisticas", __name__, url_prefix="/estadisticas")
 

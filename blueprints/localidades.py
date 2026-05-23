@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from localidad import Localidad
+from models.localidad import Localidad
 
 localidades_bp = Blueprint("localidades", __name__, url_prefix="/localidades")
 
