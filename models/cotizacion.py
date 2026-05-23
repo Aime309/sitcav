@@ -6,7 +6,7 @@ class Cotizacion(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     id_usuario = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
-    fecha_hora = db.Column(db.DateTime, server_default=db.func.current_timestamp(), nullable=False)
+    fecha_hora = db.Column(db.DateTime, nullable=False)
     tasa_dolar_bolivares = db.Column(db.Numeric(10, 2), nullable=False)
 
     def to_dict(self):

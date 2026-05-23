@@ -12,9 +12,9 @@ class Producto(db.Model):
     id_categoria = db.Column(db.Integer, db.ForeignKey("categorias.id"), nullable=False)
     id_proveedor = db.Column(db.Integer, db.ForeignKey("proveedores.id"))
     precio_unitario_actual_dolares = db.Column(db.Numeric(10, 2), nullable=False)
-    cantidad_disponible = db.Column(db.Integer, default=0)
-    dias_garantia = db.Column(db.Integer, default=0)
-    dias_apartado = db.Column(db.Integer, default=0)
+    cantidad_disponible = db.Column(db.Integer)
+    dias_garantia = db.Column(db.Integer)
+    dias_apartado = db.Column(db.Integer)
     imagen_url = db.Column(db.String(500))  # Campo para URL de imagen del producto
 
     # Relaciones

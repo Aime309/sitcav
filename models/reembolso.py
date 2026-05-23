@@ -11,7 +11,7 @@ class Reembolso(db.Model):
     monto_bolivares = db.Column(db.Numeric(10, 2), nullable=False)
     tasa_cambio = db.Column(db.Numeric(10, 2), nullable=False)
     motivo = db.Column(db.String(255), nullable=True)
-    fecha = db.Column(db.DateTime, server_default=db.func.current_timestamp(), nullable=False)
+    fecha = db.Column(db.DateTime, nullable=False)
 
     # Relaciones
     usuario = db.relationship("Usuario", backref="reembolsos_procesados", lazy=True)

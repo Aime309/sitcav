@@ -10,7 +10,7 @@ class Usuario(db.Model):
     rol = db.Column(
         db.String(50), nullable=False
     )  # Vendedor, Empleado Superior, Encargado
-    activo = db.Column(db.Boolean, nullable=False, default=True)
+    activo = db.Column(db.Boolean, nullable=False)
 
     # Profile fields
     nombre = db.Column(db.String(100), nullable=False)

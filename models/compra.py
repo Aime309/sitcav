@@ -8,7 +8,7 @@ class Compra(db.Model):
     id_proveedor = db.Column(
         db.Integer, db.ForeignKey("proveedores.id"), nullable=False
     )
-    fecha_creacion = db.Column(db.DateTime, server_default=db.func.current_timestamp(), nullable=False)
+    fecha_creacion = db.Column(db.DateTime, nullable=False)
     cotizacion_dolar_bolivares = db.Column(db.Numeric(10, 2), nullable=False)
 
     # Relaciones

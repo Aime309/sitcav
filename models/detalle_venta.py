@@ -9,7 +9,7 @@ class DetalleVenta(db.Model):
     id_producto = db.Column(db.Integer, db.ForeignKey("productos.id"), nullable=False)
     precio_unitario_tipo_dolares = db.Column(db.Numeric(10, 2), nullable=False)
     cantidad = db.Column(db.Integer, nullable=False)
-    esta_apartado = db.Column(db.Boolean, default=False)
+    esta_apartado = db.Column(db.Boolean)
 
     # Relaciones
     pagos = db.relationship("Pago", backref="detalle_venta", lazy=True)

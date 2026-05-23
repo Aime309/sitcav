@@ -86,11 +86,11 @@ CREATE TABLE IF NOT EXISTS productos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_categoria INTEGER NOT NULL REFERENCES categorias(id),
     id_proveedor INTEGER REFERENCES proveedores(id),
-    cantidad_disponible INTEGER,
+    cantidad_disponible INTEGER DEFAULT 0,
     codigo VARCHAR(100) NOT NULL UNIQUE,
     descripcion TEXT,
-    dias_apartado INTEGER,
-    dias_garantia INTEGER,
+    dias_apartado INTEGER DEFAULT 0,
+    dias_garantia INTEGER DEFAULT 0,
     imei VARCHAR(50),
     imagen_url VARCHAR(500),
     nombre VARCHAR(200) NOT NULL CHECK (LENGTH(nombre) > 0),
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS ventas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_cliente INTEGER NOT NULL REFERENCES clientes(id),
     id_vendedor INTEGER REFERENCES usuarios(id),
-    cotizacion_dolar_bolivares NUMERIC(10, 2),
+    cotizacion_dolar_bolivares NUMERIC(10, 2) DEFAULT 0,
     fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS detalles_ventas (
     id_venta INTEGER NOT NULL REFERENCES ventas(id),
     id_producto INTEGER NOT NULL REFERENCES productos(id),
     cantidad INTEGER NOT NULL,
-    esta_apartado BOOLEAN,
+    esta_apartado BOOLEAN NOT NULL DEFAULT FALSE,
     precio_unitario_tipo_dolares NUMERIC(10, 2) NOT NULL
 );
 
@@ -133,11 +133,11 @@ CREATE TABLE IF NOT EXISTS pagos (
 CREATE TABLE IF NOT EXISTS apartados (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_cliente INTEGER NOT NULL REFERENCES clientes(id),
-    estado VARCHAR(20),
+    estado VARCHAR(20) NOT NULL DEFAULT 'activo',
     fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha_limite DATETIME NOT NULL,
     monto_total NUMERIC(10, 2) NOT NULL,
-    monto_pagado NUMERIC(10, 2),
+    monto_pagado NUMERIC(10, 2) DEFAULT 0,
     observaciones TEXT
 );
 
