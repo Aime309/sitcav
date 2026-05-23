@@ -13,6 +13,7 @@ from movimiento_inventario import MovimientoInventario
 from negocio_model import Negocio
 from pago_apartado import PagoApartado
 from producto import Producto
+from venta import Venta
 
 apartados_bp = Blueprint("apartados", __name__, url_prefix="/apartados")
 

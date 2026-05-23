@@ -31,9 +31,9 @@ def create_app(
             SQLALCHEMY_DATABASE_URI=f"sqlite:///{app.config['DATABASE']}",
         )
 
-    from api import api_bp
-    from auth import auth_bp
-    from uploads import uploads_bp
+    from blueprints.api import api_bp
+    from blueprints.auth import auth_bp
+    from blueprints.uploads import uploads_bp
 
     app.register_blueprint(api_bp)
     app.register_blueprint(auth_bp)

@@ -1,6 +1,6 @@
 from flask import Blueprint, send_file
 
-from negocio import Negocio
+from negocio_model import Negocio
 from pdf_generator import generar_factura_pdf
 from venta import Venta
 
