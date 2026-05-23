@@ -7,7 +7,7 @@ from models.usuario import Usuario
 auth_bp = Blueprint("auth", __name__)
 
 
-@auth_bp.route("/login", methods=["POST", "OPTIONS"])
+@auth_bp.post("/login")
 def login():
     if request.method == "OPTIONS":
         return "", 204
@@ -34,12 +34,12 @@ def login():
     return {"success": False, "message": "Credenciales inválidas"}, 401
 
 
-@auth_bp.route("/logout", methods=["POST"])
+@auth_bp.post("/logout")
 def logout():
     return {"success": True, "message": "Sesión cerrada correctamente"}
 
 
-@auth_bp.route("/register", methods=["POST"])
+@auth_bp.post("/register")
 def register():
     data = request.get_json()
     try:
@@ -75,7 +75,7 @@ def register():
         return {"success": False, "message": f"Error al registrar: {str(e)}"}, 400
 
 
-@auth_bp.route("/check-user-recovery", methods=["POST"])
+@auth_bp.post("/check-user-recovery")
 def check_user_recovery():
     data = request.get_json()
     cedula = data.get("cedula")
@@ -102,7 +102,7 @@ def check_user_recovery():
     }
 
 
-@auth_bp.route("/verify-security-answers", methods=["POST"])
+@auth_bp.post("/verify-security-answers")
 def verify_security_answers():
     data = request.get_json()
     user_id = data.get("user_id")
@@ -129,7 +129,7 @@ def verify_security_answers():
         }, 400
 
 
-@auth_bp.route("/reset-password-recovery", methods=["POST"])
+@auth_bp.post("/reset-password-recovery")
 def reset_password_recovery():
     data = request.get_json()
     user_id = data.get("user_id")

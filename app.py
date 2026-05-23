@@ -51,7 +51,7 @@ def create_app(
     app.register_blueprint(auth_bp)
     app.register_blueprint(uploads_bp)
 
-    app.add_url_rule("/", methods=["GET"], view_func=read_root)
+    app.get("/")(read_root)
 
     # Configuración de rutas para base de datos y archivos
     if not IS_VERCEL:
