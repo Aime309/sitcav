@@ -7,6 +7,10 @@ from flask import Flask, render_template
 from db import db, init_db
 
 
+def read_root():
+    return render_template("index.html")
+
+
 def create_app(
     test_config: Mapping[str, Any] | None = None,
 ) -> Flask:
@@ -42,9 +46,7 @@ def create_app(
     app.register_blueprint(auth_bp)
     app.register_blueprint(uploads_bp)
 
-    @app.get("/")
-    def read_root():
-        return render_template("index.html")
+    app.add_url_rule("/", methods=["GET"], view_func=read_root)
 
     # Configuración de rutas para base de datos y archivos
     if not IS_VERCEL:
