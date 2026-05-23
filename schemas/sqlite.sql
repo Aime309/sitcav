@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS productos (
 CREATE TABLE IF NOT EXISTS cotizaciones (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_usuario INTEGER NOT NULL REFERENCES usuarios(id),
-    fecha_hora DATETIME NOT NULL,
+    fecha_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     tasa_dolar_bolivares NUMERIC(10, 2) NOT NULL
 );
 
@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS ventas (
     id_cliente INTEGER NOT NULL REFERENCES clientes(id),
     id_vendedor INTEGER REFERENCES usuarios(id),
     cotizacion_dolar_bolivares NUMERIC(10, 2),
-    fecha_creacion DATETIME NOT NULL
+    fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS detalles_ventas (
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS pagos (
     id_detalle_venta INTEGER NOT NULL REFERENCES detalles_ventas(id),
     id_tipo_pago INTEGER NOT NULL REFERENCES tipos_pago(id),
     cotizacion_dolar_bolivares NUMERIC(10, 2) NOT NULL,
-    fecha_creacion DATETIME NOT NULL,
+    fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     monto NUMERIC(10, 2) NOT NULL
 );
 
@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS apartados (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_cliente INTEGER NOT NULL REFERENCES clientes(id),
     estado VARCHAR(20),
-    fecha_creacion DATETIME NOT NULL,
+    fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha_limite DATETIME NOT NULL,
     monto_total NUMERIC(10, 2) NOT NULL,
     monto_pagado NUMERIC(10, 2),
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS detalles_apartados (
 CREATE TABLE IF NOT EXISTS pagos_apartados (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_apartado INTEGER NOT NULL REFERENCES apartados(id),
-    fecha_pago DATETIME NOT NULL,
+    fecha_pago DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     monto NUMERIC(10, 2) NOT NULL,
     observacion VARCHAR(255)
 );
@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS compras (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_proveedor INTEGER NOT NULL REFERENCES proveedores(id),
     cotizacion_dolar_bolivares NUMERIC(10, 2) NOT NULL,
-    fecha_creacion DATETIME NOT NULL
+    fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS detalles_compras (
@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS movimientos_inventario (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_producto INTEGER NOT NULL REFERENCES productos(id),
     cantidad INTEGER NOT NULL,
-    fecha DATETIME NOT NULL,
+    fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     motivo VARCHAR(50) NOT NULL,
     observacion VARCHAR(255),
     referencia_id INTEGER,
@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS reembolsos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_usuario INTEGER NOT NULL REFERENCES usuarios(id),
     id_venta INTEGER NOT NULL REFERENCES ventas(id),
-    fecha DATETIME NOT NULL,
+    fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     monto_bolivares NUMERIC(10, 2) NOT NULL,
     monto_dolares NUMERIC(10, 2) NOT NULL,
     motivo VARCHAR(255),
@@ -198,7 +198,7 @@ CREATE TABLE IF NOT EXISTS reembolsos (
 CREATE TABLE IF NOT EXISTS historial_precios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_producto INTEGER NOT NULL REFERENCES productos(id),
-    fecha DATETIME NOT NULL,
+    fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     precio_anterior NUMERIC(10, 2) NOT NULL,
     precio_nuevo NUMERIC(10, 2) NOT NULL
 );
