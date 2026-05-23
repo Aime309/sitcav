@@ -55,7 +55,6 @@ def register():
             nombre=data["nombre"],
             contrasena=hashed_password,
             rol="Vendedor",
-            activo=True,
             pregunta_1=data.get("pregunta_1"),
             respuesta_1=data.get("respuesta_1"),
             pregunta_2=data.get("pregunta_2"),

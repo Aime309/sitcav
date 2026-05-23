@@ -27,7 +27,6 @@ def create_usuario():
             nombre=data["nombre"],
             contrasena=hashed_password,
             rol=data.get("rol", "Vendedor"),
-            activo=True,
         )
         db.session.add(nuevo_usuario)
         db.session.commit()
