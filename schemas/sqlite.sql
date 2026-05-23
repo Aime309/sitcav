@@ -1,50 +1,50 @@
 BEGIN TRANSACTION;
 
 CREATE TABLE IF NOT EXISTS usuarios (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     admin_id INTEGER REFERENCES usuarios(id),
-    activo BOOLEAN,
-    apellidos VARCHAR(100),
+    activo BOOLEAN DEFAULT true,
     cedula VARCHAR(20) NOT NULL UNIQUE,
     contrasena VARCHAR(255) NOT NULL,
     direccion VARCHAR(300),
     foto_url VARCHAR(500),
     nombre VARCHAR(100) NOT NULL,
+    apellidos VARCHAR(100),
     pregunta_1 VARCHAR(255),
     pregunta_2 VARCHAR(255),
     pregunta_3 VARCHAR(255),
     respuesta_1 VARCHAR(255),
     respuesta_2 VARCHAR(255),
     respuesta_3 VARCHAR(255),
-    rol VARCHAR(50) NOT NULL
+    rol VARCHAR(50) NOT NULL CHECK (rol IN ('Empleado', 'Encargado'))
 );
 
 CREATE TABLE IF NOT EXISTS estados (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_usuario INTEGER NOT NULL REFERENCES usuarios(id),
     nombre VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS localidades (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_estado INTEGER NOT NULL REFERENCES estados(id),
     nombre VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS sectores (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_localidad INTEGER NOT NULL REFERENCES localidades(id),
     nombre VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS categorias (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_usuario INTEGER NOT NULL REFERENCES usuarios(id),
     nombre VARCHAR(100) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS proveedores (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_estado INTEGER REFERENCES estados(id),
     id_localidad INTEGER REFERENCES localidades(id),
     id_sector INTEGER REFERENCES sectores(id),
@@ -55,17 +55,17 @@ CREATE TABLE IF NOT EXISTS proveedores (
 );
 
 CREATE TABLE IF NOT EXISTS clientes (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_localidad INTEGER REFERENCES localidades(id),
-    apellidos VARCHAR(100),
     cedula VARCHAR(20) NOT NULL UNIQUE,
     direccion VARCHAR(300),
     nombre VARCHAR(100) NOT NULL,
+    apellidos VARCHAR(100),
     telefono VARCHAR(20)
 );
 
 CREATE TABLE IF NOT EXISTS negocios (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_localidad INTEGER NOT NULL REFERENCES localidades(id),
     id_sector INTEGER NOT NULL REFERENCES sectores(id),
     direccion VARCHAR(300),
@@ -75,13 +75,13 @@ CREATE TABLE IF NOT EXISTS negocios (
 );
 
 CREATE TABLE IF NOT EXISTS tipos_pago (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_usuario INTEGER NOT NULL REFERENCES usuarios(id),
     nombre VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS productos (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_categoria INTEGER NOT NULL REFERENCES categorias(id),
     id_proveedor INTEGER REFERENCES proveedores(id),
     cantidad_disponible INTEGER,
@@ -96,14 +96,14 @@ CREATE TABLE IF NOT EXISTS productos (
 );
 
 CREATE TABLE IF NOT EXISTS cotizaciones (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_usuario INTEGER NOT NULL REFERENCES usuarios(id),
     fecha_hora DATETIME NOT NULL,
     tasa_dolar_bolivares NUMERIC(10, 2) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ventas (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_cliente INTEGER NOT NULL REFERENCES clientes(id),
     id_vendedor INTEGER REFERENCES usuarios(id),
     cotizacion_dolar_bolivares NUMERIC(10, 2),
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS ventas (
 );
 
 CREATE TABLE IF NOT EXISTS detalles_ventas (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_venta INTEGER NOT NULL REFERENCES ventas(id),
     id_producto INTEGER NOT NULL REFERENCES productos(id),
     cantidad INTEGER NOT NULL,
@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS detalles_ventas (
 );
 
 CREATE TABLE IF NOT EXISTS pagos (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_detalle_venta INTEGER NOT NULL REFERENCES detalles_ventas(id),
     id_tipo_pago INTEGER NOT NULL REFERENCES tipos_pago(id),
     cotizacion_dolar_bolivares NUMERIC(10, 2) NOT NULL,
@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS pagos (
 );
 
 CREATE TABLE IF NOT EXISTS apartados (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_cliente INTEGER NOT NULL REFERENCES clientes(id),
     estado VARCHAR(20),
     fecha_creacion DATETIME NOT NULL,
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS apartados (
 );
 
 CREATE TABLE IF NOT EXISTS detalles_apartados (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_apartado INTEGER NOT NULL REFERENCES apartados(id),
     id_producto INTEGER NOT NULL REFERENCES productos(id),
     cantidad INTEGER NOT NULL,
@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS detalles_apartados (
 );
 
 CREATE TABLE IF NOT EXISTS pagos_apartados (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_apartado INTEGER NOT NULL REFERENCES apartados(id),
     fecha_pago DATETIME NOT NULL,
     monto NUMERIC(10, 2) NOT NULL,
@@ -156,14 +156,14 @@ CREATE TABLE IF NOT EXISTS pagos_apartados (
 );
 
 CREATE TABLE IF NOT EXISTS compras (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_proveedor INTEGER NOT NULL REFERENCES proveedores(id),
     cotizacion_dolar_bolivares NUMERIC(10, 2) NOT NULL,
     fecha_creacion DATETIME NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS detalles_compras (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_compra INTEGER NOT NULL REFERENCES compras(id),
     id_producto INTEGER NOT NULL REFERENCES productos(id),
     cantidad INTEGER NOT NULL,
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS detalles_compras (
 );
 
 CREATE TABLE IF NOT EXISTS movimientos_inventario (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_producto INTEGER NOT NULL REFERENCES productos(id),
     cantidad INTEGER NOT NULL,
     fecha DATETIME NOT NULL,
@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS movimientos_inventario (
 );
 
 CREATE TABLE IF NOT EXISTS reembolsos (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_usuario INTEGER NOT NULL REFERENCES usuarios(id),
     id_venta INTEGER NOT NULL REFERENCES ventas(id),
     fecha DATETIME NOT NULL,
@@ -194,16 +194,16 @@ CREATE TABLE IF NOT EXISTS reembolsos (
 );
 
 CREATE TABLE IF NOT EXISTS historial_precios (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_producto INTEGER NOT NULL REFERENCES productos(id),
     fecha DATETIME NOT NULL,
     precio_anterior NUMERIC(10, 2) NOT NULL,
     precio_nuevo NUMERIC(10, 2) NOT NULL
 );
 
-INSERT INTO usuarios VALUES (1, NULL, 1, NULL, '12345678', 'scrypt:32768:8:1$lHBAWMFWJ2IidHB7$bd878d2d0cd6379049d206be691cf221f8e40fa12ff7c09ab9119c612ea039e340e8c79610b5d826ab2be3ee1e7e8d72d592ad6af5a7bd81410d2c381a69bdee', NULL, NULL, 'Juan Pérez (Encargado)', NULL, NULL, NULL, NULL, NULL, NULL, 'Encargado'),
- (2, NULL, 1, NULL, '87654321', 'scrypt:32768:8:1$tYME3wHYSCjJs1fg$f060029bf3f4cbb29b253eb6ffde11666127bc8e391ff4d7fcc606078e9673467aeb5dfb8a6f4aabee1e77b94fdb20b2ac0472529e8446dcd3530b6f126766e1', NULL, NULL, 'María García (Emp. Superior)', NULL, NULL, NULL, NULL, NULL, NULL, 'Empleado Superior'),
- (3, NULL, 1, NULL, '11223344', 'scrypt:32768:8:1$EooCC6xwJ0QEFaHa$be2650e9c8ca8c617490009ad519803c52464b3080427388ebea6dbb5ed665dad4107a6b37f9f135ecff216f8e629e7f36a676984dca843b06bd8e2297386ec6', NULL, NULL, 'Carlos López (Vendedor)', NULL, NULL, NULL, NULL, NULL, NULL, 'Vendedor');
+INSERT INTO usuarios VALUES (1, NULL, 1, '12345678', 'scrypt:32768:8:1$lHBAWMFWJ2IidHB7$bd878d2d0cd6379049d206be691cf221f8e40fa12ff7c09ab9119c612ea039e340e8c79610b5d826ab2be3ee1e7e8d72d592ad6af5a7bd81410d2c381a69bdee', NULL, NULL, 'Juan Pérez (Encargado)', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Encargado'),
+ (2, NULL, 1, '87654321', 'scrypt:32768:8:1$tYME3wHYSCjJs1fg$f060029bf3f4cbb29b253eb6ffde11666127bc8e391ff4d7fcc606078e9673467aeb5dfb8a6f4aabee1e77b94fdb20b2ac0472529e8446dcd3530b6f126766e1', NULL, NULL, 'María García (Empleado)', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Empleado'),
+ (3, NULL, 1, '11223344', 'scrypt:32768:8:1$EooCC6xwJ0QEFaHa$be2650e9c8ca8c617490009ad519803c52464b3080427388ebea6dbb5ed665dad4107a6b37f9f135ecff216f8e629e7f36a676984dca843b06bd8e2297386ec6', NULL, NULL, 'Carlos López (Empleado)', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Empleado');
 
 INSERT INTO estados VALUES (1, 1, 'Miranda');
 
@@ -219,9 +219,9 @@ INSERT INTO categorias VALUES (1, 1, 'Smartphones'),
 INSERT INTO proveedores VALUES (1, 1, 1, 1, NULL, 'TechSupply International', 'J-98765432-1', '0212-555-9876'),
  (2, 1, 1, NULL, NULL, 'ElectroDistribuidora CA', 'J-55544433-2', '0212-555-4433');
 
-INSERT INTO clientes VALUES (1, 1, 'Rodríguez', '22334455', NULL, 'Ana', '0424-111-2222'),
- (2, 1, 'Martínez', '33445566', NULL, 'Pedro', '0414-222-3333'),
- (3, 1, 'Fernández', '44556677', NULL, 'Luisa', '0426-333-4444');
+INSERT INTO clientes VALUES (1, 1, '22334455', NULL, 'Ana', 'Rodríguez', '0424-111-2222'),
+ (2, 1, '33445566', NULL, 'Pedro', 'Martínez', '0414-222-3333'),
+ (3, 1, '44556677', NULL, 'Luisa', 'Fernández', '0426-333-4444');
 
 INSERT INTO negocios VALUES (1, 1, 1, NULL, 'TechStore Venezuela', 'J-12345678-9', '0212-555-1234');
 
