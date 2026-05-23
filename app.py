@@ -1,6 +1,6 @@
 import os
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, cast
 
 from flask import Flask, render_template
 
@@ -53,8 +53,8 @@ def create_app(
         # En desarrollo local, aseguramos que exista la carpeta instance
         if not os.path.exists(app.instance_path):
             os.makedirs(app.instance_path, exist_ok=True)
-            os.makedirs(app.config["PRODUCTS_UPLOAD_FOLDER"], exist_ok=True)
-            os.makedirs(app.config["PROFILE_UPLOAD_FOLDER"], exist_ok=True)
+            os.makedirs(cast(str, app.config["PRODUCTS_UPLOAD_FOLDER"]), exist_ok=True)
+            os.makedirs(cast(str, app.config["PROFILE_UPLOAD_FOLDER"]), exist_ok=True)
 
     init_db(app)
 
