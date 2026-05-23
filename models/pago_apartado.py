@@ -1,4 +1,4 @@
-from db import db, local_now
+from db import db
 
 
 class PagoApartado(db.Model):
@@ -7,7 +7,7 @@ class PagoApartado(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_apartado = db.Column(db.Integer, db.ForeignKey("apartados.id"), nullable=False)
     monto = db.Column(db.Numeric(10, 2), nullable=False)
-    fecha_pago = db.Column(db.DateTime, default=local_now, nullable=False)
+    fecha_pago = db.Column(db.DateTime, server_default=db.func.current_timestamp(), nullable=False)
     observacion = db.Column(db.String(255), nullable=True)
 
     def to_dict(self):

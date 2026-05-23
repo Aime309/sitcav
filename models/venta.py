@@ -1,4 +1,4 @@
-from db import db, local_now
+from db import db
 
 
 class Venta(db.Model):
@@ -7,7 +7,7 @@ class Venta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_cliente = db.Column(db.Integer, db.ForeignKey("clientes.id"), nullable=False)
     id_vendedor = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=True)
-    fecha_creacion = db.Column(db.DateTime, default=local_now, nullable=False)
+    fecha_creacion = db.Column(db.DateTime, server_default=db.func.current_timestamp(), nullable=False)
     cotizacion_dolar_bolivares = db.Column(db.Numeric(10, 2), default=0)
 
     # Relaciones

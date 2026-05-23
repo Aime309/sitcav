@@ -8,8 +8,6 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-def local_now():
-    return datetime.now()
 
 
 def init_db(app: Flask) -> None:

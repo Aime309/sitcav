@@ -1,4 +1,4 @@
-from db import db, local_now
+from db import db
 
 
 class MovimientoInventario(db.Model):
@@ -15,7 +15,7 @@ class MovimientoInventario(db.Model):
         db.Integer, nullable=True
     )  # ID de venta/apartado/compra relacionada
     referencia_tipo = db.Column(db.String(20), nullable=True)  # venta, apartado, compra
-    fecha = db.Column(db.DateTime, default=local_now, nullable=False)
+    fecha = db.Column(db.DateTime, server_default=db.func.current_timestamp(), nullable=False)
     observacion = db.Column(db.String(255), nullable=True)
 
     # Relación con producto

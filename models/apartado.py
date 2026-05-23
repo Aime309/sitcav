@@ -1,4 +1,4 @@
-from db import db, local_now
+from db import db
 
 
 class Apartado(db.Model):
@@ -6,7 +6,7 @@ class Apartado(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     id_cliente = db.Column(db.Integer, db.ForeignKey("clientes.id"), nullable=False)
-    fecha_creacion = db.Column(db.DateTime, default=local_now, nullable=False)
+    fecha_creacion = db.Column(db.DateTime, server_default=db.func.current_timestamp(), nullable=False)
     fecha_limite = db.Column(db.DateTime, nullable=False)  # Generalmente 3 meses
     monto_total = db.Column(db.Numeric(10, 2), nullable=False)
     monto_pagado = db.Column(db.Numeric(10, 2), default=0)
