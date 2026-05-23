@@ -12,9 +12,13 @@ def create_app(
 ) -> Flask:
     # En Vercel, el sistema de archivos es de solo lectura excepto /tmp
     IS_VERCEL = os.environ.get("VERCEL") == "1"
-    instance_path = "/tmp" if IS_VERCEL else None
 
-    app = Flask(__name__, instance_path=instance_path)
+    app = Flask(
+        import_name=__name__,
+        instance_path="/tmp" if IS_VERCEL else None,
+        instance_relative_config=True,
+        root_path=os.path.dirname(__file__),
+    )
 
     if test_config is not None:
         app.config.from_mapping(test_config)
