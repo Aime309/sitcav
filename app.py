@@ -32,11 +32,15 @@ def create_app(
             app.instance_path, "system_data.db"
         ).replace("\\", "/")
 
+        app.config["SCHEMA_REL_PATH"] = os.path.join("schemas", "sqlite.sql")
+
         app.config.from_mapping(
             PRODUCTS_UPLOAD_FOLDER=os.path.join(UPLOADS_ROOT, "products"),
             PROFILE_UPLOAD_FOLDER=os.path.join(UPLOADS_ROOT, "profiles"),
             SQLALCHEMY_DATABASE_URI=f"sqlite:///{app.config['DATABASE']}",
-            SCHEMA_REL_PATH="schemas/sqlite.sql",
+            SCHEMA_ABS_PATH=os.path.join(
+                app.root_path, cast(str, app.config["SCHEMA_REL_PATH"])
+            ),
         )
 
     from blueprints.api import api_bp
