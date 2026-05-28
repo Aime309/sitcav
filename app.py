@@ -7,7 +7,7 @@ from flask import Flask, render_template
 from db import init_db
 
 
-def read_root():
+def render_index():
     return render_template("index.html")
 
 
@@ -48,7 +48,7 @@ def create_app(
     app.register_blueprint(auth_bp)
     app.register_blueprint(uploads_bp)
 
-    app.get("/")(read_root)
+    app.get("/")(render_index)
 
     # Configuración de rutas para base de datos y archivos
     if not IS_VERCEL:
