@@ -144,7 +144,7 @@ def create_apartado():
 
 
 @apartados_bp.get("/<int:id>")
-def get_apartado(id: int):
+def select_layaway(id: int):
     apartado = Apartado.query.get_or_404(id)
 
     return apartado.to_dict()
@@ -188,7 +188,7 @@ def registrar_pago_apartado(id: int):
 
 
 @apartados_bp.post("/<int:id>/completar")
-def completar_apartado(id: int):
+def complete_layaway(id: int):
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado != "activo":
@@ -242,7 +242,7 @@ def completar_apartado(id: int):
 
 
 @apartados_bp.post("/<int:id>/cancelar")
-def cancelar_apartado(id: int):
+def cancel_layaway(id: int):
     apartado = Apartado.query.get_or_404(id)
 
     if apartado.estado != "activo":
@@ -288,7 +288,7 @@ def cancelar_apartado(id: int):
 
 
 @apartados_bp.get("/<int:id>/pdf")
-def generar_pdf_apartado(id: int):
+def select_layaway_pdf(id: int):
     try:
         apartado = Apartado.query.get_or_404(id)
         apartado_data = apartado.to_dict()
