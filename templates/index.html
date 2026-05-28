@@ -823,8 +823,11 @@
                         <h3>Sistema de Respaldo</h3>
                         <p style="margin: 20px 0;">Próximamente: Crea y restaura respaldos de la
                             base de datos</p>
-                        <button class="btn btn-primary" onclick="openProveedorModal()">
-                            <i class="fas fa-download"></i> Crear Respaldo
+                        <button class="btn btn-primary" onclick="createSqlBackup()">
+                            <i class="fas fa-file-code"></i> Crear Respaldo SQL
+                        </button>
+                        <button class="btn btn-secondary" onclick="createFileBackup()">
+                            <i class="fas fa-file"></i> Crear Respaldo Archivo
                         </button>
                     </div>
                 </div>

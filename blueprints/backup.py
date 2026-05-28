@@ -8,8 +8,8 @@ from flask import Blueprint, current_app
 backup_bp = Blueprint("backup", __name__, url_prefix="/backup")
 
 
-@backup_bp.post("/crear")
-def crear_backup():
+@backup_bp.post("/sql")
+def create_sql_backup():
     try:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         backup_filename = f"backup_{timestamp}.sql"
@@ -57,8 +57,8 @@ def historial_backups():
         return {"success": False, "message": f"Error al listar backups: {str(e)}"}, 500
 
 
-@backup_bp.post("/")
-def create_backup():
+@backup_bp.post("/file")
+def create_file_backup():
     try:
         # Crear directorio de backups si no existe
         backup_dir = os.path.join(current_app.instance_path, "backups")

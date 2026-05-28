@@ -32,7 +32,7 @@ function showWelcome() {
     document.getElementById('app-container').classList.remove('active');
 }
 
-function showLogin() {
+window.showLogin = function() {
     document.getElementById('welcome-screen').classList.add('hidden');
     document.getElementById('login-form').classList.remove('hidden');
     document.getElementById('register-form').classList.add('hidden');
@@ -1327,50 +1327,40 @@ async function deleteProveedor(id) {
 // =====================================================
 // BACKUP MODULE
 // =====================================================
-async function createBackup() {
+window.createSqlBackup = async function() {
     const statusDiv = document.getElementById('backup-status');
-    if (statusDiv) {
-        statusDiv.innerHTML = '<div class="spinner"></div> Creando respaldo...';
-    }
-
+    if (statusDiv) statusDiv.innerHTML = '<div class="spinner"></div> Creando respaldo SQL...';
     try {
-        const response = await fetch(`./api/backup`, {
-            method: 'POST'
-        });
-
+        const response = await fetch('./api/backup/sql', { method: 'POST' });
+        const data = await response.json();
         if (response.ok) {
-            const data = await response.json();
-            alert('Respaldo creado exitosamente: ' + (data.filename || 'backup.db'));
-            if (statusDiv) {
-                statusDiv.innerHTML = '✅ Último respaldo: ' + new Date().toLocaleString();
-            }
+            alert('Respaldo SQL creado exitosamente: ' + (data.filename || 'backup.sql'));
+            if (statusDiv) statusDiv.innerHTML = '✅ Último respaldo SQL: ' + new Date().toLocaleString();
         } else {
-            alert('Error al crear respaldo');
-            if (statusDiv) {
-                statusDiv.innerHTML = '❌ Error al crear respaldo';
-            }
+            alert(data.message || 'Error al crear respaldo SQL');
+            if (statusDiv) statusDiv.innerHTML = '❌ Error al crear respaldo SQL';
         }
     } catch (error) {
-        alert('Error de conexión al crear respaldo');
-        if (statusDiv) {
-            statusDiv.innerHTML = '❌ Error de conexión';
-        }
+        alert('Error de conexión al crear respaldo SQL');
+        if (statusDiv) statusDiv.innerHTML = '❌ Error de conexión';
     }
-    for (let i = 1; i < tr.length; i++) {
-        let found = false;
-        const td = tr[i].getElementsByTagName('td');
-
-        for (let j = 0; j < td.length; j++) {
-            if (td[j]) {
-                const txtValue = td[j].textContent || td[j].innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    found = true;
-                    break;
-                }
-            }
+}
+window.createFileBackup = async function() {
+    const statusDiv = document.getElementById('backup-status');
+    if (statusDiv) statusDiv.innerHTML = '<div class="spinner"></div> Creando respaldo Archivo...';
+    try {
+        const response = await fetch('./api/backup/file', { method: 'POST' });
+        const data = await response.json();
+        if (response.ok) {
+            alert('Respaldo Archivo creado exitosamente: ' + (data.filename || 'backup.db'));
+            if (statusDiv) statusDiv.innerHTML = '✅ Último respaldo Archivo: ' + new Date().toLocaleString();
+        } else {
+            alert(data.message || 'Error al crear respaldo Archivo');
+            if (statusDiv) statusDiv.innerHTML = '❌ Error al crear respaldo Archivo';
         }
-
-        tr[i].style.display = found ? '' : 'none';
+    } catch (error) {
+        alert('Error de conexión al crear respaldo Archivo');
+        if (statusDiv) statusDiv.innerHTML = '❌ Error de conexión';
     }
 }
 
