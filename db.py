@@ -12,9 +12,7 @@ def init_db(app: Flask) -> None:
 
     with app.app_context():
         if os.path.exists(cast(str, app.config["DATABASE"])):
-            return print(
-                f"[OK] Base de datos existente detectada: {app.config['DATABASE']}."
-            )
+            return print(f"[OK] Base de datos existente detectada: {app.config['DATABASE']}.")
 
         with app.open_resource(cast(str, app.config["SCHEMA_ABS_PATH"])) as f:
             schema_sql = cast(bytes, f.read()).decode("utf8")
@@ -27,6 +25,4 @@ def init_db(app: Flask) -> None:
         finally:
             raw_connection.close()
 
-        print(
-            f"[OK] Base de datos y tablas creadas desde {app.config['SCHEMA_ABS_PATH']}."
-        )
+        print(f"[OK] Base de datos y tablas creadas desde {app.config['SCHEMA_ABS_PATH']}.")
