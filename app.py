@@ -23,6 +23,8 @@ def create_app(
         instance_relative_config=True,
     )
 
+    app.secret_key = "75102519e5812b6ab31d592ce67d5c6ddb5ac373c4130f032dc9c5ff4e204de0"
+
     if test_config is not None:
         app.config.from_mapping(test_config)
     else:
