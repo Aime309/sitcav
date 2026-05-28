@@ -1,13 +1,13 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import db
 from models.usuario import Usuario
 
-auth_bp = Blueprint("auth", __name__)
+auth_bp = Blueprint(name="auth", import_name=__name__)
 
 
-@auth_bp.post("/login")
+@auth_bp.route("/login", methods=["POST", "OPTIONS"])
 def login():
     if request.method == "OPTIONS":
         return "", 204
@@ -15,11 +15,13 @@ def login():
     data = request.get_json()
     cedula = data.get("usuario")
     contrasena = data.get("contrasena")
-
     usuario = Usuario.query.filter_by(cedula=cedula, activo=True).first()
 
-    if usuario and check_password_hash(usuario.contrasena, contrasena):
+    if isinstance(usuario, Usuario) and check_password_hash(usuario.contrasena, contrasena):
         print(f"Login exitoso para: {usuario.nombre} con rol: {usuario.rol}")
+
+        session["user_id"] = usuario.id
+
         return {
             "success": True,
             "message": "Autenticación exitosa",
@@ -31,20 +33,26 @@ def login():
         }
 
     print(f"Intento de login fallido para: {cedula}")
+
     return {"success": False, "message": "Credenciales inválidas"}, 401
 
 
 @auth_bp.post("/logout")
 def logout():
+    if "user_id" in session:
+        del session["user_id"]
+
     return {"success": True, "message": "Sesión cerrada correctamente"}
 
 
 @auth_bp.post("/register")
 def register():
     data = request.get_json()
+
     try:
         # Verificar si la cédula ya existe
         existing_user = Usuario.query.filter_by(cedula=data["cedula"]).first()
+
         if existing_user:
             return {"success": False, "message": "La cédula ya está registrada"}, 400
 
@@ -62,6 +70,7 @@ def register():
             pregunta_3=data.get("pregunta_3"),
             respuesta_3=data.get("respuesta_3"),
         )
+
         db.session.add(nuevo_usuario)
         db.session.commit()
 
@@ -70,18 +79,19 @@ def register():
             "message": "Usuario registrado exitosamente",
             "usuario": nuevo_usuario.to_dict(),
         }, 201
-    except Exception as e:
+    except Exception as exception:
         db.session.rollback()
-        return {"success": False, "message": f"Error al registrar: {str(e)}"}, 400
+
+        return {"success": False, "message": f"Error al registrar: {exception}"}, 400
 
 
 @auth_bp.post("/check-user-recovery")
 def check_user_recovery():
     data = request.get_json()
     cedula = data.get("cedula")
-
     usuario = Usuario.query.filter_by(cedula=cedula).first()
-    if not usuario:
+
+    if not isinstance(usuario, Usuario):
         return {"success": False, "message": "Usuario no encontrado"}, 404
 
     # Verificar si tiene preguntas configuradas
@@ -112,7 +122,8 @@ def verify_security_answers():
         return {"success": False, "message": "Datos incompletos"}, 400
 
     usuario = Usuario.query.get(user_id)
-    if not usuario:
+
+    if not isinstance(usuario, Usuario):
         return {"success": False, "message": "Usuario no encontrado"}, 404
 
     # Verificar respuestas (ignorando mayúsculas/minúsculas)
@@ -139,13 +150,15 @@ def reset_password_recovery():
         return {"success": False, "message": "Datos incompletos"}, 400
 
     usuario = Usuario.query.get(user_id)
+
     if not usuario:
         return {"success": False, "message": "Usuario no encontrado"}, 404
 
     try:
         usuario.contrasena = generate_password_hash(new_password)
         db.session.commit()
+
         return {"success": True, "message": "Contraseña actualizada exitosamente"}
-    except Exception as e:
+    except Exception as exception:
         db.session.rollback()
-        return {"success": False, "message": f"Error: {str(e)}"}, 500
+        return {"success": False, "message": f"Error: {exception}"}, 500
