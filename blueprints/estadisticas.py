@@ -16,7 +16,7 @@ estadisticas_bp = Blueprint("estadisticas", __name__, url_prefix="/estadisticas"
 
 
 @estadisticas_bp.get("/resumen")
-def get_estadisticas_resumen():
+def select_statistics_summary():
     try:
         hoy = datetime.now().date()
         inicio_dia = datetime.combine(hoy, datetime.min.time())
@@ -64,7 +64,7 @@ def get_estadisticas_resumen():
 
 
 @estadisticas_bp.get("/historico")
-def get_estadisticas_historico():
+def select_statistics_history():
     try:
         hoy = datetime.now().date()
         dias = []

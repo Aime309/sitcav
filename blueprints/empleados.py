@@ -7,7 +7,7 @@ empleados_bp = Blueprint("empleados", __name__, url_prefix="/empleados")
 
 
 @empleados_bp.get("/")
-def list_empleados():
+def select_employees():
     try:
         empleados = Usuario.query.all()
         return [
@@ -24,7 +24,7 @@ def list_empleados():
 
 
 @empleados_bp.delete("/<int:id>")
-def delete_empleado(id: int):
+def delete_employee(id: int):
     empleado = Usuario.query.get(id)
     if empleado is None:
         return {"message": "Empleado no encontrado"}, 404

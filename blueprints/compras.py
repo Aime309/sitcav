@@ -15,13 +15,13 @@ compras_bp = Blueprint("compras", __name__, url_prefix="/compras")
 
 
 @compras_bp.get("/")
-def list_compras():
+def select_purchases():
     compras = Compra.query.order_by(Compra.fecha_creacion.desc()).all()
     return [compra.to_dict() for compra in compras]
 
 
 @compras_bp.post("/")
-def create_compra():
+def insert_purchase():
     data = request.get_json()
     try:
         cotizacion_actual = Cotizacion.query.order_by(
@@ -76,7 +76,7 @@ def create_compra():
 
 
 @compras_bp.delete("/<int:id>")
-def delete_compra(id: int):
+def delete_purchase(id: int):
     try:
         compra = Compra.query.get_or_404(id)
 
@@ -96,7 +96,7 @@ def delete_compra(id: int):
 
 
 @compras_bp.get("/<int:id>/pdf")
-def get_compra_pdf(id: int):
+def select_purchase_pdf(id: int):
     try:
         compra = Compra.query.get_or_404(id)
         negocio = Negocio.query.first()
@@ -132,6 +132,6 @@ def get_compra_pdf(id: int):
 
 
 @compras_bp.get("/<int:id>")
-def get_compra(id: int):
+def select_purchase(id: int):
     compra = Compra.query.get_or_404(id)
     return compra.to_dict()

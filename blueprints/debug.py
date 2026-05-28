@@ -6,7 +6,7 @@ debug_bp = Blueprint("debug", __name__, url_prefix="/debug")
 
 
 @debug_bp.get("/uploads")
-def list_uploaded_files():
+def select_uploaded_files():
     upload_folder = current_app.config["PRODUCTS_UPLOAD_FOLDER"]
     try:
         files = os.listdir(upload_folder)

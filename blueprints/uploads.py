@@ -5,7 +5,7 @@ uploads_bp = Blueprint(name="uploads", import_name=__name__, url_prefix="/upload
 
 
 @uploads_bp.get("/productos/<path:filename>")
-def uploaded_file(filename: str):
+def select_product_image(filename: str):
     upload_folder = current_app.config["PRODUCTS_UPLOAD_FOLDER"]
 
 
@@ -13,7 +13,7 @@ def uploaded_file(filename: str):
 
 
 @uploads_bp.get("/profiles/<path:filename>")
-def serve_profile_photo(filename: str):
+def select_user_photo(filename: str):
     profiles_folder = current_app.config["PROFILE_UPLOAD_FOLDER"]
 
 

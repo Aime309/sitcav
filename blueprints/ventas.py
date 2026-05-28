@@ -14,13 +14,13 @@ ventas_bp = Blueprint("ventas", __name__, url_prefix="/ventas")
 
 
 @ventas_bp.get("/")
-def list_ventas():
+def select_sales():
     ventas = Venta.query.order_by(Venta.fecha_creacion.desc()).all()
     return [venta.to_dict() for venta in ventas]
 
 
 @ventas_bp.post("/")
-def create_venta():
+def insert_sale():
     data = request.get_json()
     try:
         id_cliente = data.get("id_cliente")
@@ -107,7 +107,7 @@ def create_venta():
 
 
 @ventas_bp.get("/<int:id>")
-def get_venta(id: int):
+def select_sale(id: int):
     venta = db.session.get(Venta, id)
     if not venta:
         return {"message": "Venta no encontrada", "success": False}, 404
@@ -115,7 +115,7 @@ def get_venta(id: int):
 
 
 @ventas_bp.delete("/<int:id>")
-def delete_venta(id: int):
+def delete_sale(id: int):
     try:
         venta = db.session.get(Venta, id)
         if not venta:

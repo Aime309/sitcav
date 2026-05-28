@@ -20,7 +20,7 @@ reportes_bp = Blueprint("reportes", __name__, url_prefix="/reportes")
 
 
 @reportes_bp.get("/estadisticas")
-def get_estadisticas():
+def select_statistics_report():
     try:
         hoy = datetime.now().date()
         ventas_hoy = Venta.query.filter(
@@ -72,7 +72,7 @@ def get_estadisticas():
 
 
 @reportes_bp.get("/ventas")
-def reporte_ventas():
+def select_sales_report():
     fecha_desde = request.args.get("desde")
     fecha_hasta = request.args.get("hasta")
 
@@ -111,7 +111,7 @@ def reporte_ventas():
 
 
 @reportes_bp.get("/ventas/pdf")
-def generar_reporte_ventas_pdf_endpoint():
+def select_sales_report_pdf():
     try:
         fecha_desde = request.args.get("desde")
         fecha_hasta = request.args.get("hasta")

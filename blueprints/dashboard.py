@@ -17,7 +17,7 @@ dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 
 
 @dashboard_bp.get("/stats")
-def get_dashboard_stats():
+def select_dashboard_stats():
     try:
         hoy = datetime.now()
         inicio_mes = datetime(hoy.year, hoy.month, 1)

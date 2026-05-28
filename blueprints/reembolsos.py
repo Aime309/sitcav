@@ -27,7 +27,7 @@ reembolsos_bp = Blueprint("reembolsos", __name__, url_prefix="/reembolsos")
 
 
 @reembolsos_bp.get("/")
-def get_reembolsos():
+def select_refunds():
     try:
         reembolsos = Reembolso.query.order_by(Reembolso.fecha.desc()).all()
         return [r.to_dict() for r in reembolsos]
@@ -39,7 +39,7 @@ def get_reembolsos():
 
 
 @reembolsos_bp.post("/")
-def create_reembolso():
+def insert_refund():
     data = request.get_json()
     try:
         id_venta = data.get("id_venta")
@@ -95,7 +95,7 @@ def create_reembolso():
 
 
 @reembolsos_bp.delete("/<int:id>")
-def delete_reembolso(id: int):
+def delete_refund(id: int):
     try:
         reembolso = db.session.get(Reembolso, id)
         if not reembolso:
@@ -112,7 +112,7 @@ def delete_reembolso(id: int):
 
 
 @reembolsos_bp.get("/<int:id>/pdf")
-def get_reembolso_pdf(id: int):
+def select_refund_pdf(id: int):
     try:
         reembolso = db.session.get(Reembolso, id)
         if not reembolso:

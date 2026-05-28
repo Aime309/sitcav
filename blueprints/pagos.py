@@ -9,7 +9,7 @@ pagos_bp = Blueprint("pagos", __name__, url_prefix="/pagos")
 
 
 @pagos_bp.get("/venta/<int:venta_id>")
-def list_pagos_venta(venta_id: int):
+def select_sale_payments(venta_id: int):
     venta = Venta.query.get_or_404(venta_id)
     pagos = []
     for detalle in venta.detalles:
@@ -19,7 +19,7 @@ def list_pagos_venta(venta_id: int):
 
 
 @pagos_bp.post("/")
-def create_pago():
+def select_payment():
     data = request.get_json()
     try:
         cotizacion_actual = Cotizacion.query.order_by(

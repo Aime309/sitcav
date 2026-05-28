@@ -8,7 +8,7 @@ factura_bp = Blueprint("factura", __name__, url_prefix="/factura")
 
 
 @factura_bp.get("/<int:venta_id>")
-def generar_factura(venta_id: int):
+def select_sale_invoice(venta_id: int):
     try:
         # Obtener la venta con todos sus datos
         venta = Venta.query.get_or_404(venta_id)

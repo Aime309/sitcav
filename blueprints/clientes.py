@@ -7,13 +7,13 @@ clientes_bp = Blueprint("clientes", __name__, url_prefix="/clientes")
 
 
 @clientes_bp.get("/")
-def list_clientes():
+def select_clients():
     clientes = Cliente.query.all()
     return [cliente.to_dict() for cliente in clientes]
 
 
 @clientes_bp.post("/")
-def create_cliente():
+def insert_client():
     data = request.get_json()
     if not data:
         return {"message": "No se recibieron datos", "success": False}, 400
@@ -40,7 +40,7 @@ def create_cliente():
 
 
 @clientes_bp.put("/<int:id>")
-def update_cliente(id: int):
+def update_client(id: int):
     cliente = Cliente.query.get_or_404(id)
     data = request.get_json()
     try:
@@ -62,7 +62,7 @@ def update_cliente(id: int):
 
 
 @clientes_bp.delete("/<int:id>")
-def delete_cliente(id: int):
+def delete_client(id: int):
     cliente = Cliente.query.get(id)
     if cliente is None:
         return {"message": "Cliente no encontrado"}, 404
@@ -80,7 +80,7 @@ def delete_cliente(id: int):
 
 
 @clientes_bp.get("/buscar")
-def search_clientes():
+def filter_clients():
     query = request.args.get("q", "")
     clientes = Cliente.query.filter(
         (Cliente.nombre.ilike(f"%{query}%"))

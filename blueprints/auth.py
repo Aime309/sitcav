@@ -7,7 +7,7 @@ from models.usuario import Usuario
 auth_bp = Blueprint(name="auth", import_name=__name__)
 
 @auth_bp.route("/login", methods=["OPTIONS"])
-def loginOptions():
+def login_options():
     return "", 204
 
 
@@ -45,7 +45,7 @@ def logout():
 
 
 @auth_bp.post("/register")
-def register():
+def insert_seller():
     data = request.get_json()
 
     try:
@@ -112,7 +112,7 @@ def check_user_recovery():
 
 
 @auth_bp.post("/verify-security-answers")
-def verify_security_answers():
+def check_security_answers():
     data = request.get_json()
     user_id = data.get("user_id")
     respuestas = data.get("respuestas")  # Lista de 3 respuestas
@@ -140,7 +140,7 @@ def verify_security_answers():
 
 
 @auth_bp.post("/reset-password-recovery")
-def reset_password_recovery():
+def update_user_password():
     data = request.get_json()
     user_id = data.get("user_id")
     new_password = data.get("new_password")

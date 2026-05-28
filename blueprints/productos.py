@@ -13,7 +13,7 @@ productos_bp = Blueprint("productos", __name__, url_prefix="/productos")
 
 
 @productos_bp.get("/")
-def list_productos():
+def select_products():
     productos = Producto.query.all()
     resultado = []
     for prod in productos:
@@ -26,7 +26,7 @@ def list_productos():
 
 
 @productos_bp.post("/")
-def create_product():
+def insert_product():
     try:
         # Manejar multipart/form-data o JSON
         if request.content_type and "multipart/form-data" in request.content_type:
@@ -71,7 +71,7 @@ def create_product():
 
 
 @productos_bp.put("/<int:id>")
-def update_producto(id: int):
+def update_product(id: int):
     producto = Producto.query.get_or_404(id)
 
     try:
@@ -124,7 +124,7 @@ def update_producto(id: int):
 
 
 @productos_bp.delete("/<int:id>")
-def delete_producto(id: int):
+def delete_product(id: int):
     producto = Producto.query.get(id)
     if producto is None:
         return {"message": "Producto no encontrado"}, 404
@@ -148,7 +148,7 @@ def delete_producto(id: int):
 
 
 @productos_bp.get("/buscar")
-def search_productos():
+def filter_products():
     query = request.args.get("q", "")
     productos = Producto.query.filter(
         (Producto.nombre.ilike(f"%{query}%")) | (Producto.codigo.ilike(f"%{query}%"))
@@ -157,6 +157,6 @@ def search_productos():
 
 
 @productos_bp.get("/stock-bajo")
-def productos_stock_bajo():
+def select_low_stock_products():
     productos = Producto.query.filter(Producto.cantidad_disponible < 10).all()
     return [p.to_dict() for p in productos]
