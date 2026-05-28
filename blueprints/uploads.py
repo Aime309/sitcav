@@ -8,7 +8,6 @@ uploads_bp = Blueprint(name="uploads", import_name=__name__, url_prefix="/upload
 def uploaded_file(filename: str):
     upload_folder = current_app.config["PRODUCTS_UPLOAD_FOLDER"]
 
-    print(f"DEBUG: Serving file {escape(filename)} from {upload_folder}")
 
     return send_from_directory(upload_folder, escape(filename))
 
@@ -17,6 +16,5 @@ def uploaded_file(filename: str):
 def serve_profile_photo(filename: str):
     profiles_folder = current_app.config["PROFILE_UPLOAD_FOLDER"]
 
-    print(f"DEBUG: Serving profile photo {escape(filename)} from {profiles_folder}")
 
     return send_from_directory(profiles_folder, escape(filename))

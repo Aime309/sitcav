@@ -73,6 +73,7 @@ def create_reembolso():
             monto_bolivares=monto_bolivares,
             tasa_cambio=tasa_cambio,
             motivo=motivo,
+            fecha=datetime.now(),
         )
 
         db.session.add(nuevo_reembolso)
@@ -85,6 +86,7 @@ def create_reembolso():
         }, 201
 
     except Exception as e:
+        import traceback
         db.session.rollback()
         return {
             "message": f"Error al procesar reembolso: {str(e)}",

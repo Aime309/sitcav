@@ -48,10 +48,12 @@ def create_venta():
             else Decimal("1.00")
         )
 
+        from datetime import datetime
         nueva_venta = Venta(
             id_cliente=id_cliente,
             id_vendedor=data.get("id_vendedor"),
             cotizacion_dolar_bolivares=tasa_cambio,
+            fecha_creacion=datetime.now(),
         )
         db.session.add(nueva_venta)
         db.session.flush()
@@ -99,6 +101,7 @@ def create_venta():
         db.session.rollback()
         return {"message": str(ve), "success": False}, 400
     except Exception as e:
+        import traceback
         db.session.rollback()
         return {"message": f"Error al crear venta: {str(e)}", "success": False}, 500
 

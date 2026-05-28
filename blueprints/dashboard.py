@@ -60,5 +60,4 @@ def get_dashboard_stats():
             "total_cotizacion": tasa_actual,
         }
     except Exception as e:
-        print(f"Error dashboard stats: {e}")
         return {"message": f"Error: {str(e)}", "total_productos": 0}, 500

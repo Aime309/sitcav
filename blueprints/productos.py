@@ -46,7 +46,6 @@ def create_product():
             save_path = os.path.join(
                 current_app.config["PRODUCTS_UPLOAD_FOLDER"], filename
             )
-            print(f"DEBUG: Saving file to: {save_path}")
             file.save(save_path)
             imagen_url = f"/uploads/{filename}"
 
@@ -109,7 +108,6 @@ def update_producto(id: int):
             save_path = os.path.join(
                 current_app.config["PRODUCTS_UPLOAD_FOLDER"], filename
             )
-            print(f"DEBUG: Saving file (update) to: {save_path}")
             file.save(save_path)
             producto.imagen_url = f"/uploads/{filename}"
         elif "imagen_url" in data:

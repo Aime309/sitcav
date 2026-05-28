@@ -145,7 +145,6 @@ def get_estadisticas_historico():
         }
 
     except Exception as e:
-        print(f"Error en historico: {str(e)}")
 
         traceback.print_exc()
         return {

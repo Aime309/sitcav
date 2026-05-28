@@ -19,7 +19,6 @@ def login():
     usuario = Usuario.query.filter_by(cedula=cedula, activo=True).first()
 
     if isinstance(usuario, Usuario) and check_password_hash(usuario.contrasena, contrasena):
-        print(f"Login exitoso para: {usuario.nombre} con rol: {usuario.rol}")
 
         session["user_id"] = usuario.id
 
@@ -33,7 +32,6 @@ def login():
             "foto_url": usuario.foto_url,
         }
 
-    print(f"Intento de login fallido para: {cedula}")
 
     return {"success": False, "message": "Credenciales inválidas"}, 401
 
