@@ -3,6 +3,7 @@ from flask import Blueprint, request, send_file
 from models.cliente import Cliente
 from models.usuario import Usuario
 from models.venta import Venta
+from pdf_generator import generar_reporte_consultas_pdf
 
 consultas_bp = Blueprint("consultas", __name__, url_prefix="/consultas")
 
@@ -105,8 +106,6 @@ def exportar_consultas_pdf():
                     "total": float(total),
                 }
             )
-
-        from pdf_generator import generar_reporte_consultas_pdf
 
         pdf_path = generar_reporte_consultas_pdf(datos_reporte, filtros_texto)
 

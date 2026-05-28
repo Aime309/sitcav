@@ -10,6 +10,18 @@ from models.negocio import Negocio
 from models.reembolso import Reembolso
 from models.usuario import Usuario
 from models.venta import Venta
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import inch
+from reportlab.platypus import (
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+)
 
 reembolsos_bp = Blueprint("reembolsos", __name__, url_prefix="/reembolsos")
 
@@ -114,19 +126,6 @@ def get_reembolso_pdf(id: int):
         negocio = Negocio.query.first()
 
         # Create a simple PDF receipt for the refund
-        from reportlab.lib import colors
-        from reportlab.lib.enums import TA_CENTER
-        from reportlab.lib.pagesizes import letter
-        from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-        from reportlab.lib.units import inch
-        from reportlab.platypus import (
-            Paragraph,
-            SimpleDocTemplate,
-            Spacer,
-            Table,
-            TableStyle,
-        )
-
         # Create folder
         reembolsos_dir = os.path.join(current_app.instance_path, "reembolsos_pdf")
         os.makedirs(reembolsos_dir, exist_ok=True)

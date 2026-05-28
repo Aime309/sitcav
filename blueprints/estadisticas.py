@@ -9,6 +9,8 @@ from db import db
 from models.detalle_venta import DetalleVenta
 from models.producto import Producto
 from models.venta import Venta
+from sqlalchemy import func
+import traceback
 
 estadisticas_bp = Blueprint("estadisticas", __name__, url_prefix="/estadisticas")
 
@@ -97,8 +99,6 @@ def get_estadisticas_historico():
             compras_data.append(float(total_c))
 
         # Top 5 Productos más vendidos
-        from sqlalchemy import func
-
         # Note: We must handle cases where join returns no rows, resulting in None sums if not grouping correctly,
         # but group_by usually filters out null groups unless outer joined.
         # Here we use inner joins, so we are safe from null products, but sum could be null? No, quantity is non-nullable.
@@ -146,7 +146,6 @@ def get_estadisticas_historico():
 
     except Exception as e:
         print(f"Error en historico: {str(e)}")
-        import traceback
 
         traceback.print_exc()
         return {

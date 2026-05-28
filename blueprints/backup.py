@@ -1,6 +1,7 @@
 import os
 import sqlite3
 from datetime import datetime
+import shutil
 
 from flask import Blueprint, current_app
 
@@ -58,9 +59,6 @@ def historial_backups():
 
 @backup_bp.post("/")
 def create_backup():
-    import shutil
-    from datetime import datetime
-
     try:
         # Crear directorio de backups si no existe
         backup_dir = os.path.join(current_app.instance_path, "backups")

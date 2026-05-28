@@ -9,6 +9,7 @@ from models.detalle_compra import DetalleCompra
 from models.negocio import Negocio
 from models.producto import Producto
 from models.proveedor import Proveedor
+from pdf_generator import generar_factura_compra_pdf
 
 compras_bp = Blueprint("compras", __name__, url_prefix="/compras")
 
@@ -121,8 +122,6 @@ def get_compra_pdf(id: int):
             prod = Producto.query.get(detalle["id_producto"])
             if prod:
                 detalle["producto"] = {"nombre": prod.nombre}
-
-        from pdf_generator import generar_factura_compra_pdf
 
         pdf_path = generar_factura_compra_pdf(compra_data, negocio_data)
 

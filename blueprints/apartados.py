@@ -14,29 +14,36 @@ from models.negocio import Negocio
 from models.pago_apartado import PagoApartado
 from models.producto import Producto
 from models.venta import Venta
+from pdf_generator import generar_apartado_pdf
 
-apartados_bp = Blueprint("apartados", __name__, url_prefix="/apartados")
+
+apartados_bp = Blueprint(name="apartados", import_name=__name__, url_prefix="/apartados")
 
 
 @apartados_bp.get("/")
 def list_apartados():
     estado = request.args.get("estado", None)
-    query = Apartado.query
+
     if estado:
-        query = query.filter_by(estado=estado)
-    apartados = query.order_by(Apartado.fecha_creacion.desc()).all()
-    return [a.to_dict() for a in apartados]
+        query = Apartado.query.filter_by(estado=estado)
+
+    apartados = Apartado.query.order_by(Apartado.fecha_creacion.desc()).all()
+
+    return [apartado.to_dict() for apartado in apartados]
 
 
 @apartados_bp.post("/")
 def create_apartado():
     data = request.get_json()
+
     try:
         id_cliente = data.get("id_cliente")
+
         if not id_cliente:
             return {"success": False, "message": "Se requiere un cliente"}, 400
 
         productos = data.get("productos", [])
+
         if not productos:
             return {
                 "success": False,
@@ -45,21 +52,23 @@ def create_apartado():
 
         # Calcular monto total y validar stock
         monto_total = Decimal("0")
+
         for item in productos:
             producto = Producto.query.get(item["id_producto"])
+
             if not producto:
                 return {
                     "success": False,
                     "message": f"Producto {item['id_producto']} no encontrado",
                 }, 404
+
             if producto.cantidad_disponible < item["cantidad"]:
                 return {
                     "success": False,
                     "message": f"Stock insuficiente para {producto.nombre}",
                 }, 400
-            monto_total += (
-                Decimal(str(producto.precio_unitario_actual_dolares)) * item["cantidad"]
-            )
+
+            monto_total += Decimal(str(producto.precio_unitario_actual_dolares)) * item["cantidad"]
 
         # Calcular fecha límite (3 meses por defecto)
         dias_limite = data.get("dias_limite", 90)
@@ -74,6 +83,7 @@ def create_apartado():
             estado="activo",
             observaciones=data.get("observaciones", ""),
         )
+
         db.session.add(nuevo_apartado)
         db.session.flush()
 
@@ -87,6 +97,7 @@ def create_apartado():
                 cantidad=item["cantidad"],
                 precio_unitario=producto.precio_unitario_actual_dolares,
             )
+
             db.session.add(detalle)
 
             # Reducir stock
@@ -102,16 +113,19 @@ def create_apartado():
                 referencia_tipo="apartado",
                 observacion=f"Apartado #{nuevo_apartado.id} creado",
             )
+
             db.session.add(movimiento)
 
         # Registrar pago inicial si se proporciona
         abono_inicial = data.get("abono_inicial", 0)
+
         if abono_inicial and float(abono_inicial) > 0:
             pago = PagoApartado(
                 id_apartado=nuevo_apartado.id,
                 monto=Decimal(str(abono_inicial)),
                 observacion="Abono inicial",
             )
+
             db.session.add(pago)
 
         db.session.commit()
@@ -123,14 +137,16 @@ def create_apartado():
             "apartado": nuevo_apartado.to_dict(),
         }, 201
 
-    except Exception as e:
+    except Exception as exception:
         db.session.rollback()
-        return {"success": False, "message": f"Error al crear apartado: {str(e)}"}, 500
+
+        return {"success": False, "message": f"Error al crear apartado: {exception}"}, 500
 
 
 @apartados_bp.get("/<int:id>")
 def get_apartado(id: int):
     apartado = Apartado.query.get_or_404(id)
+
     return apartado.to_dict()
 
 
@@ -154,8 +170,8 @@ def registrar_pago_apartado(id: int):
             monto=monto,
             observacion=data.get("observacion", ""),
         )
-        db.session.add(pago)
 
+        db.session.add(pago)
         db.session.commit()
         db.session.refresh(apartado)
 
@@ -165,9 +181,10 @@ def registrar_pago_apartado(id: int):
             "apartado": apartado.to_dict(),
         }
 
-    except Exception as e:
+    except Exception as exception:
         db.session.rollback()
-        return {"success": False, "message": f"Error al registrar pago: {str(e)}"}, 500
+
+        return {"success": False, "message": f"Error al registrar pago: {str(exception)}"}, 500
 
 
 @apartados_bp.post("/<int:id>/completar")
@@ -185,12 +202,8 @@ def completar_apartado(id: int):
 
     try:
         # Obtener tasa actual
-        cotizacion_actual = Cotizacion.query.order_by(
-            Cotizacion.fecha_hora.desc()
-        ).first()
-        tasa = (
-            cotizacion_actual.tasa_dolar_bolivares if cotizacion_actual else Decimal(0)
-        )
+        cotizacion_actual = Cotizacion.query.order_by(Cotizacion.fecha_hora.desc()).first()
+        tasa = cotizacion_actual.tasa_dolar_bolivares if cotizacion_actual else Decimal(0)
 
         # Crear venta
         venta = Venta(id_cliente=apartado.id_cliente, cotizacion_dolar_bolivares=tasa)
@@ -206,6 +219,7 @@ def completar_apartado(id: int):
                 precio_unitario_tipo_dolares=detalle_ap.precio_unitario,
                 esta_apartado=True,
             )
+
             db.session.add(detalle_venta)
 
         apartado.estado = "completado"
@@ -218,11 +232,12 @@ def completar_apartado(id: int):
             "apartado": apartado.to_dict(),
         }
 
-    except Exception as e:
+    except Exception as exception:
         db.session.rollback()
+
         return {
             "success": False,
-            "message": f"Error al completar apartado: {str(e)}",
+            "message": f"Error al completar apartado: {exception}",
         }, 500
 
 
@@ -237,6 +252,7 @@ def cancelar_apartado(id: int):
         # Devolver productos al inventario
         for detalle in apartado.detalles:
             producto = Producto.query.get(detalle.id_producto)
+
             if producto:
                 producto.cantidad_disponible += detalle.cantidad
 
@@ -250,6 +266,7 @@ def cancelar_apartado(id: int):
                     referencia_tipo="apartado",
                     observacion=f"Apartado #{apartado.id} cancelado",
                 )
+
                 db.session.add(movimiento)
 
         apartado.estado = "cancelado"
@@ -261,11 +278,12 @@ def cancelar_apartado(id: int):
             "apartado": apartado.to_dict(),
         }
 
-    except Exception as e:
+    except Exception as exception:
         db.session.rollback()
+
         return {
             "success": False,
-            "message": f"Error al cancelar apartado: {str(e)}",
+            "message": f"Error al cancelar apartado: {exception}",
         }, 500
 
 
@@ -277,6 +295,7 @@ def generar_pdf_apartado(id: int):
 
         # Obtener datos del negocio
         negocio = Negocio.query.first()
+
         if not negocio:
             return {
                 "success": False,
@@ -289,8 +308,6 @@ def generar_pdf_apartado(id: int):
             "telefono": negocio.telefono,
         }
 
-        from pdf_generator import generar_apartado_pdf
-
         pdf_path = generar_apartado_pdf(apartado_data, negocio_data)
 
         return send_file(
@@ -299,8 +316,8 @@ def generar_pdf_apartado(id: int):
             download_name=os.path.basename(pdf_path),
         )
 
-    except Exception as e:
-        return {"success": False, "message": f"Error al generar PDF: {str(e)}"}, 500
+    except Exception as exception:
+        return {"success": False, "message": f"Error al generar PDF: {exception}"}, 500
 
 
 @apartados_bp.delete("/<int:id>")
@@ -316,7 +333,9 @@ def delete_apartado(id: int):
     try:
         db.session.delete(apartado)
         db.session.commit()
+
         return {"success": True, "message": "Apartado eliminado correctamente"}
-    except Exception as e:
+    except Exception as exception:
         db.session.rollback()
-        return {"success": False, "message": f"Error al eliminar: {str(e)}"}, 500
+
+        return {"success": False, "message": f"Error al eliminar: {exception}"}, 500
