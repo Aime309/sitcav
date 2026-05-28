@@ -6,12 +6,13 @@ from models.usuario import Usuario
 
 auth_bp = Blueprint(name="auth", import_name=__name__)
 
+@auth_bp.route("/login", methods=["OPTIONS"])
+def loginOptions():
+    return "", 204
 
-@auth_bp.route("/login", methods=["POST", "OPTIONS"])
+
+@auth_bp.post("/login")
 def login():
-    if request.method == "OPTIONS":
-        return "", 204
-
     data = request.get_json()
     cedula = data.get("usuario")
     contrasena = data.get("contrasena")
@@ -161,4 +162,5 @@ def reset_password_recovery():
         return {"success": True, "message": "Contraseña actualizada exitosamente"}
     except Exception as exception:
         db.session.rollback()
+
         return {"success": False, "message": f"Error: {exception}"}, 500
