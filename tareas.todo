@@ -1,0 +1,24 @@
+☐ Quitar la opción de invitado y que la página principal sea accesible para cualquier usuario, mostrando productos como en Amazon o Mercado Libre. Si el usuario desea comprar, debe registrarse.
+☐ Mostrar términos y condiciones en el menú de inicio y/o al crear una cuenta.
+☐ Cambiar el logotipo en la página principal por el logo de SITCAV junto al nombre del sistema.
+☐ Agregar seguridad tipo captcha en el registro y/o inicio de sesión.
+☐ Rediseñar la barra de módulos para mejorar su apariencia según sugerencias.
+☐ Implementar el concepto de "cliente online" para reflejar compras/apartados hechos por clientes a través del ecommerce.
+☐ Agregar alertas/notificaciones para:
+    ☐ Cotización
+    ☐ Mensajes
+    ☐ Venta final
+    ☐ Registro exitoso
+    ☐ Compra exitosa
+    ☐ Eliminación exitosa
+    ☐ Recordatorio de vencimiento de apartado (10 días antes)
+    ☐ Acciones importantes (registro, compra, eliminación, etc.)
+☐ Mostrar solo productos con stock bajo al seleccionar la opción correspondiente.
+☐ Mejorar la seguridad de contraseñas (complejidad).
+☐ Validar que la primera letra de los nombres se escriba en mayúscula automáticamente.
+☐ Notificar al usuario tras registro exitoso y redirigir al inicio de sesión.
+☐ El administrador debe validar/crear el registro de empleados normales para que puedan usar el sistema.
+☐ Agregar gestión de sucursales.
+☐ Crear módulo de producto defectuoso y enviar notificaciones relacionadas.
+☐ Agregar módulo "Garantía" para productos devueltos por clientes.
+☐ Actualizar roles a: Administrador, Encargado, Vendedor, Cliente online.
