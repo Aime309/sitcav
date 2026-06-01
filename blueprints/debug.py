@@ -1,19 +1,22 @@
 import os
+from typing import cast
 
 from flask import Blueprint, current_app
 
-debug_bp = Blueprint("debug", __name__, url_prefix="/debug")
+debug_bp = Blueprint(name="debug", import_name=__name__, url_prefix="/debug")
 
 
 @debug_bp.get("/uploads")
 def select_uploaded_files():
-    upload_folder = current_app.config["PRODUCTS_UPLOAD_FOLDER"]
+    path = cast(str, current_app.config["PRODUCTS_UPLOAD_FOLDER"])
+
     try:
-        files = os.listdir(upload_folder)
+        files = os.listdir(path)
+
         return {
-            "folder": upload_folder,
+            "folder": path,
             "files": files,
-            "exists": os.path.exists(upload_folder),
+            "exists": os.path.exists(path),
         }
-    except Exception as e:
-        return {"error": str(e)}
+    except Exception as exception:
+        return {"error": exception}
