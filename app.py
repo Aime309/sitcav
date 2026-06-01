@@ -1,9 +1,7 @@
 import os
 from collections.abc import Mapping
 from typing import Any, cast
-
 from flask import Flask, render_template
-
 from db import init_db
 
 
@@ -11,9 +9,7 @@ def render_index():
     return render_template("index.html")
 
 
-def create_app(
-    test_config: Mapping[str, Any] | None = None,
-) -> Flask:
+def create_app(test_config: Mapping[str, Any] | None = None) -> Flask:
     # En Vercel, el sistema de archivos es de solo lectura excepto /tmp
     IS_VERCEL = os.environ.get("VERCEL") == "1"
 
