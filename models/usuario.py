@@ -158,9 +158,7 @@ class Usuario(db.Model):
             and bool(self.pregunta_3)
         )
 
-    def verificar_respuestas(
-        self, respuesta_1: str, respuesta_2: str, respuesta_3: str
-    ) -> bool:
+    def verificar_respuestas(self, respuestas: list[str]) -> bool:
         if self.respuesta_1 is None:
             self.respuesta_1 = ""
 
@@ -171,9 +169,13 @@ class Usuario(db.Model):
             self.respuesta_3 = ""
 
         return (
-            self.respuesta_1.lower().strip() == respuesta_1.lower().strip()
-            and self.respuesta_2.lower().strip() == respuesta_2.lower().strip()
-            and self.respuesta_3.lower().strip() == respuesta_3.lower().strip()
+            len(respuestas) == 3
+            and self.respuesta_1.lower().strip()
+            == respuestas[0].lower().strip()
+            and self.respuesta_2.lower().strip()
+            == respuestas[1].lower().strip()
+            and self.respuesta_3.lower().strip()
+            == respuestas[2].lower().strip()
         )
 
     def cambiar_clave(self, clave: str) -> "Usuario":

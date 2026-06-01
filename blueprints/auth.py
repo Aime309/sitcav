@@ -1,10 +1,12 @@
+from typing import Any, cast
+
 from flask import Blueprint, request, session
-from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import db
 from models.usuario import Usuario
 
 auth_bp = Blueprint(name="auth", import_name=__name__)
+
 
 @auth_bp.route("/login", methods=["OPTIONS"])
 def login_options():
@@ -13,14 +15,20 @@ def login_options():
 
 @auth_bp.post("/login")
 def login():
-    data = request.get_json()
-    cedula = data.get("usuario")
-    contrasena = data.get("contrasena")
-    usuario = Usuario.query.filter_by(cedula=cedula, activo=True).first()
+    json = cast(dict[str, Any], request.get_json())
+    cedula = cast(str | None, json.get("usuario"))
+    clave = cast(str | None, json.get("contrasena"))
 
-    if isinstance(usuario, Usuario) and check_password_hash(usuario.contrasena, contrasena):
+    if not cedula or not clave:
+        return {
+            "success": False,
+            "message": "Cédula y contraseña son requeridos",
+        }, 400
 
-        session["user_id"] = usuario.id
+    usuario = Usuario.obtener_activos_por_credenciales(cedula, clave)
+
+    if usuario:
+        session["usuario.id"] = usuario.id
 
         return {
             "success": True,
@@ -32,69 +40,100 @@ def login():
             "foto_url": usuario.foto_url,
         }
 
-
     return {"success": False, "message": "Credenciales inválidas"}, 401
 
 
 @auth_bp.post("/logout")
 def logout():
-    if "user_id" in session:
-        del session["user_id"]
+    if "usuario.id" in session:
+        del session["usuario.id"]
 
     return {"success": True, "message": "Sesión cerrada correctamente"}
 
 
 @auth_bp.post("/register")
 def insert_seller():
-    data = request.get_json()
+    json = cast(dict[str, Any], request.get_json())
+    cedula = cast(str | None, json.get("cedula"))
+    clave = cast(str | None, json.get("contrasena"))
+    nombres = cast(str | None, json.get("nombre"))
+    pregunta_1 = cast(str | None, json.get("pregunta_1"))
+    pregunta_2 = cast(str | None, json.get("pregunta_2"))
+    pregunta_3 = cast(str | None, json.get("pregunta_3"))
+    respuesta_1 = cast(str | None, json.get("respuesta_1"))
+    respuesta_2 = cast(str | None, json.get("respuesta_2"))
+    respuesta_3 = cast(str | None, json.get("respuesta_3"))
+
+    if (
+        not cedula
+        or not clave
+        or not nombres
+        or not pregunta_1
+        or not pregunta_2
+        or not pregunta_3
+        or not respuesta_1
+        or not respuesta_2
+        or not respuesta_3
+    ):
+        return {
+            "success": False,
+            "message": "Todos los campos son requeridos",
+        }, 400
 
     try:
         # Verificar si la cédula ya existe
-        existing_user = Usuario.query.filter_by(cedula=data["cedula"]).first()
+        usuario = Usuario.obtener_por_cedula(cedula)
 
-        if existing_user:
-            return {"success": False, "message": "La cédula ya está registrada"}, 400
+        if usuario:
+            return {
+                "success": False,
+                "message": "La cédula ya está registrada",
+            }, 400
 
-        hashed_password = generate_password_hash(data["contrasena"])
-
-        nuevo_usuario = Usuario(
-            cedula=data["cedula"],
-            nombre=data["nombre"],
-            contrasena=hashed_password,
-            rol="Vendedor",
-            pregunta_1=data.get("pregunta_1"),
-            respuesta_1=data.get("respuesta_1"),
-            pregunta_2=data.get("pregunta_2"),
-            respuesta_2=data.get("respuesta_2"),
-            pregunta_3=data.get("pregunta_3"),
-            respuesta_3=data.get("respuesta_3"),
+        vendedor = Usuario.instanciar_empleado(
+            cedula,
+            nombres,
+            clave,
+            pregunta_1,
+            pregunta_2,
+            pregunta_3,
+            respuesta_1,
+            respuesta_2,
+            respuesta_3,
         )
 
-        db.session.add(nuevo_usuario)
+        db.session.add(vendedor)
         db.session.commit()
 
         return {
             "success": True,
             "message": "Usuario registrado exitosamente",
-            "usuario": nuevo_usuario.to_dict(),
+            "usuario": vendedor.to_dict(),
         }, 201
     except Exception as exception:
         db.session.rollback()
 
-        return {"success": False, "message": f"Error al registrar: {exception}"}, 400
+        return {
+            "success": False,
+            "message": f"Error al registrar: {exception}",
+        }, 400
 
 
 @auth_bp.post("/check-user-recovery")
 def check_user_recovery():
-    data = request.get_json()
-    cedula = data.get("cedula")
-    usuario = Usuario.query.filter_by(cedula=cedula).first()
+    json = cast(dict[str, Any], request.get_json())
+    cedula = cast(str | None, json.get("cedula"))
 
-    if not isinstance(usuario, Usuario):
+    if not cedula:
+        return {"success": False, "message": "Cédula es requerida"}, 400
+
+    usuario = Usuario.obtener_por_cedula(cedula)
+
+    if not usuario:
         return {"success": False, "message": "Usuario no encontrado"}, 404
 
     # Verificar si tiene preguntas configuradas
-    if not usuario.pregunta_1 or not usuario.pregunta_2 or not usuario.pregunta_3:
+    if not usuario.tiene_preguntas():
         return {
             "success": False,
             "message": "El usuario no tiene preguntas de seguridad configuradas. Contacte al administrador.",
@@ -113,51 +152,50 @@ def check_user_recovery():
 
 @auth_bp.post("/verify-security-answers")
 def check_security_answers():
-    data = request.get_json()
-    user_id = data.get("user_id")
-    respuestas = data.get("respuestas")  # Lista de 3 respuestas
+    json = cast(dict[str, Any], request.get_json())
+    id = cast(int | None, json.get("user_id"))
+    respuestas = cast(list[str] | None, json.get("respuestas"))
 
-    if not user_id or not respuestas or len(respuestas) != 3:
+    if not id or not respuestas or len(respuestas) != 3:
         return {"success": False, "message": "Datos incompletos"}, 400
 
-    usuario = Usuario.query.get(user_id)
+    usuario = Usuario.obtener_por_id(id)
 
-    if not isinstance(usuario, Usuario):
+    if not usuario:
         return {"success": False, "message": "Usuario no encontrado"}, 404
 
     # Verificar respuestas (ignorando mayúsculas/minúsculas)
-    r1_ok = usuario.respuesta_1.lower().strip() == respuestas[0].lower().strip()
-    r2_ok = usuario.respuesta_2.lower().strip() == respuestas[1].lower().strip()
-    r3_ok = usuario.respuesta_3.lower().strip() == respuestas[2].lower().strip()
+    if not usuario.verificar_respuestas(respuestas):
+        return {"success": True, "message": "Respuestas correctas"}
 
-    if r1_ok and r2_ok and r3_ok:
-        return {"success": True}
-    else:
-        return {
-            "success": False,
-            "message": "Una o más respuestas son incorrectas",
-        }, 400
+    return {
+        "success": False,
+        "message": "Una o más respuestas son incorrectas",
+    }, 400
 
 
 @auth_bp.post("/reset-password-recovery")
 def update_user_password():
-    data = request.get_json()
-    user_id = data.get("user_id")
-    new_password = data.get("new_password")
+    json = cast(dict[str, Any], request.get_json())
+    id = cast(int | None, json.get("user_id"))
+    clave = cast(str | None, json.get("new_password"))
 
-    if not user_id or not new_password:
+    if not id or not clave:
         return {"success": False, "message": "Datos incompletos"}, 400
 
-    usuario = Usuario.query.get(user_id)
+    usuario = Usuario.obtener_por_id(id)
 
     if not usuario:
         return {"success": False, "message": "Usuario no encontrado"}, 404
 
     try:
-        usuario.contrasena = generate_password_hash(new_password)
+        usuario.cambiar_clave(clave)
         db.session.commit()
 
-        return {"success": True, "message": "Contraseña actualizada exitosamente"}
+        return {
+            "success": True,
+            "message": "Contraseña actualizada exitosamente",
+        }
     except Exception as exception:
         db.session.rollback()
 
