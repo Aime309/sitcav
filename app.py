@@ -1,7 +1,9 @@
 import os
 from collections.abc import Mapping
-from typing import Any, cast
+from typing import Any
+
 from flask import Flask, render_template
+
 from db import init_db
 
 
@@ -19,22 +21,31 @@ def create_app(test_config: Mapping[str, Any] | None = None) -> Flask:
         instance_relative_config=True,
     )
 
-    app.secret_key = "75102519e5812b6ab31d592ce67d5c6ddb5ac373c4130f032dc9c5ff4e204de0"
+    app.secret_key = os.environ.get(
+        "SECRET_KEY",
+        "75102519e5812b6ab31d592ce67d5c6ddb5ac373c4130f032dc9c5ff4e204de0",
+    )
+
+    UPLOADS_ROOT = os.path.join(app.instance_path, "uploads")
+    DATABASE = os.path.join(app.instance_path, "system_data.db")
+    SCHEMA_REL_PATH = os.path.join("schemas", "sqlite.sql")
+    PRODUCTS_UPLOAD_FOLDER = os.path.join(UPLOADS_ROOT, "products")
+    PROFILE_UPLOAD_FOLDER = os.path.join(UPLOADS_ROOT, "profiles")
+
+    app.config.from_mapping(
+        DATABASE=DATABASE.replace("\\", "/"),
+        SCHEMA_REL_PATH=SCHEMA_REL_PATH,
+    )
+
+    app.config.from_mapping(
+        PRODUCTS_UPLOAD_FOLDER=PRODUCTS_UPLOAD_FOLDER,
+        PROFILE_UPLOAD_FOLDER=PROFILE_UPLOAD_FOLDER,
+        SQLALCHEMY_DATABASE_URI=f"sqlite:///{app.config['DATABASE']}",
+        SCHEMA_ABS_PATH=os.path.join(app.root_path, SCHEMA_REL_PATH),
+    )
 
     if test_config is not None:
         app.config.from_mapping(test_config)
-    else:
-        UPLOADS_ROOT = os.path.join(app.instance_path, "uploads")
-
-        app.config["DATABASE"] = os.path.join(app.instance_path, "system_data.db").replace("\\", "/")
-        app.config["SCHEMA_REL_PATH"] = os.path.join("schemas", "sqlite.sql")
-
-        app.config.from_mapping(
-            PRODUCTS_UPLOAD_FOLDER=os.path.join(UPLOADS_ROOT, "products"),
-            PROFILE_UPLOAD_FOLDER=os.path.join(UPLOADS_ROOT, "profiles"),
-            SQLALCHEMY_DATABASE_URI=f"sqlite:///{app.config['DATABASE']}",
-            SCHEMA_ABS_PATH=os.path.join(app.root_path, cast(str, app.config["SCHEMA_REL_PATH"])),
-        )
 
     from blueprints.api import api_bp
     from blueprints.auth import auth_bp
@@ -51,8 +62,8 @@ def create_app(test_config: Mapping[str, Any] | None = None) -> Flask:
         # En desarrollo local, aseguramos que exista la carpeta instance
         if not os.path.exists(app.instance_path):
             os.makedirs(app.instance_path, exist_ok=True)
-            os.makedirs(cast(str, app.config["PRODUCTS_UPLOAD_FOLDER"]), exist_ok=True)
-            os.makedirs(cast(str, app.config["PROFILE_UPLOAD_FOLDER"]), exist_ok=True)
+            os.makedirs(PRODUCTS_UPLOAD_FOLDER, exist_ok=True)
+            os.makedirs(PROFILE_UPLOAD_FOLDER, exist_ok=True)
 
     init_db(app)
 
