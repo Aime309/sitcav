@@ -1,11 +1,11 @@
-from typing import Literal, TypedDict
+from typing import Literal, TypedDict, cast
 
 from sqlalchemy.orm import Mapped, mapped_column
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import db
 
-Rol = Literal["Encargado"] | Literal["Empleado"]
+Rol = Literal["Encargado", "Empleado"]
 
 
 class UsuarioDict(TypedDict):
@@ -79,32 +79,31 @@ class Usuario(db.Model):
     def obtener_activos_por_credenciales(
         cls, cedula: str, clave: str
     ) -> "Usuario | None":
-        usuario = Usuario.query.filter_by(cedula=cedula, activo=True).first()
+        usuario = cast(
+            Usuario | None,
+            Usuario.query.filter_by(cedula=cedula, activo=True).first(),
+        )
 
-        if isinstance(usuario, cls):
+        if usuario is not None:
             if check_password_hash(usuario.contrasena, clave):
                 return usuario
 
     @classmethod
     def obtener_por_cedula(cls, cedula: str) -> "Usuario | None":
-        usuario = Usuario.query.filter_by(cedula=cedula).first()
-
-        if isinstance(usuario, cls):
-            return usuario
+        return cast(
+            Usuario | None, Usuario.query.filter_by(cedula=cedula).first()
+        )
 
     @classmethod
     def obtener_por_id(cls, id: int) -> "Usuario | None":
-        usuario = Usuario.query.get(id)
-
-        if isinstance(usuario, cls):
-            return usuario
+        return cast(Usuario | None, Usuario.query.get(id))
 
     @classmethod
     def instanciar_empleado(
         cls,
         cedula: str,
-        nombres: str,
         clave: str,
+        nombres: str,
         pregunta_1: str,
         pregunta_2: str,
         pregunta_3: str,
@@ -113,17 +112,23 @@ class Usuario(db.Model):
         respuesta_3: str,
     ) -> "Usuario":
         usuario = Usuario()
-        usuario.cedula = cedula
-        usuario.nombre = nombres
-        usuario.cambiar_clave(clave)
-        usuario.rol = "Empleado"
-        usuario.activo = True
-        usuario.pregunta_1 = pregunta_1
-        usuario.pregunta_2 = pregunta_2
-        usuario.pregunta_3 = pregunta_3
-        usuario.respuesta_1 = respuesta_1
-        usuario.respuesta_2 = respuesta_2
-        usuario.respuesta_3 = respuesta_3
+
+        usuario.actualizar(
+            cedula,
+            clave,
+            "Empleado",
+            True,
+            nombres,
+            None,
+            None,
+            None,
+            pregunta_1,
+            pregunta_2,
+            pregunta_3,
+            respuesta_1,
+            respuesta_2,
+            respuesta_3,
+        )
 
         return usuario
 
@@ -131,15 +136,12 @@ class Usuario(db.Model):
     def instanciar_usuario(
         cls,
         cedula: str,
-        nombres: str,
         clave: str,
         rol: Rol,
+        nombres: str,
     ) -> "Usuario":
         usuario = Usuario()
-        usuario.cedula = cedula
-        usuario.nombre = nombres
-        usuario.cambiar_clave(clave)
-        usuario.rol = rol
+        usuario.actualizar(cedula, clave, rol, None, nombres)
 
         return usuario
 
@@ -149,7 +151,7 @@ class Usuario(db.Model):
 
     @classmethod
     def obtener_todos_los_usuarios(cls) -> list["Usuario"]:
-        return cls.query.all()
+        return cast(list[Usuario], cls.query.all())
 
     def tiene_preguntas(self) -> bool:
         return (
@@ -182,3 +184,62 @@ class Usuario(db.Model):
         self.contrasena = generate_password_hash(clave)
 
         return self
+
+    def actualizar(
+        self,
+        cedula: str | None = None,
+        clave: str | None = None,
+        rol: Rol | None = None,
+        activo: bool | None = None,
+        nombres: str | None = None,
+        apellidos: str | None = None,
+        direccion: str | None = None,
+        foto_url: str | None = None,
+        pregunta_1: str | None = None,
+        pregunta_2: str | None = None,
+        pregunta_3: str | None = None,
+        respuesta_1: str | None = None,
+        respuesta_2: str | None = None,
+        respuesta_3: str | None = None,
+    ) -> "Usuario":
+        self.cedula = cedula if cedula is not None else self.cedula
+
+        if clave is not None:
+            self.cambiar_clave(clave)
+
+        self.rol = rol if rol is not None else self.rol
+        self.activo = activo if activo is not None else self.activo
+        self.nombre = nombres if nombres is not None else self.nombre
+        self.apellidos = apellidos if apellidos is not None else self.apellidos
+        self.direccion = direccion if direccion is not None else self.direccion
+        self.foto_url = foto_url if foto_url is not None else self.foto_url
+
+        self.pregunta_1 = (
+            pregunta_1 if pregunta_1 is not None else self.pregunta_1
+        )
+
+        self.pregunta_2 = (
+            pregunta_2 if pregunta_2 is not None else self.pregunta_2
+        )
+
+        self.pregunta_3 = (
+            pregunta_3 if pregunta_3 is not None else self.pregunta_3
+        )
+
+        self.respuesta_1 = (
+            respuesta_1 if respuesta_1 is not None else self.respuesta_1
+        )
+
+        self.respuesta_2 = (
+            respuesta_2 if respuesta_2 is not None else self.respuesta_2
+        )
+
+        self.respuesta_3 = (
+            respuesta_3 if respuesta_3 is not None else self.respuesta_3
+        )
+
+        return self
+
+    @classmethod
+    def validar_rol(cls, rol: str) -> Rol | None:
+        return cast(Rol | None, rol if rol in Rol.__args__ else None)

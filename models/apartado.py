@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from db import db
 
-Estado = Literal["activo"] | Literal["completado"] | Literal["cancelado"]
+Estado = Literal["activo", "completado", "cancelado"]
 
 
 class ApartadoDict(TypedDict):
