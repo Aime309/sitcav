@@ -1,5 +1,39 @@
 {
   "devDependencies": {
-    "sass": "^1.101.0"
+    "@biomejs/biome": "2.5.0",
+    "@fortawesome/fontawesome-free": "5.8.1",
+    "animate.css": "3.7.0",
+    "bootstrap": "4.3.1",
+    "counterup": "1.0.2",
+    "ion-rangeslider": "2.1.7",
+    "isotope-cells-by-column": "1.1.4",
+    "jquery.easing": "1.3.2",
+    "jquery.stellar": "0.6.2",
+    "lightslider": "1.1.3",
+    "magnific-popup": "1.1.0",
+    "mixitup": "3.3.1",
+    "owl.carousel": "2.3.4",
+    "sass": "1.101.0",
+    "slick-carousel": "1.4.1",
+    "swiper": "4.3.3"
+  },
+  "scripts": {
+    "build": "npm run build:sass & npm run build:fontawesome & npm run build:bootstrap & npm run build:animate.css & npm run build:owl.carousel & npm run build:rangeslider & npm run build:cells-by-column & npm run build:jquery.easing & npm run build:magnific-popup & npm run build:slick & npm run build:stellar & npm run build:lightslider & npm run build:swiper & npm run build:counterup & npm run build:mixitup",
+    "build:animate.css": "cp node_modules/animate.css/animate.min.css css/animate.css",
+    "build:bootstrap": "cp node_modules/bootstrap/dist/css/bootstrap.min.* css & cp node_modules/bootstrap/dist/js/bootstrap.min.* js",
+    "build:cells-by-column": "cp node_modules/isotope-cells-by-column/cells-by-column.js js",
+    "build:counterup": "cp node_modules/counterup/jquery.counterup.min.js js",
+    "build:fontawesome": "cp node_modules/@fortawesome/fontawesome-free/css/all.min.css css/all.css & cp -r node_modules/@fortawesome/fontawesome-free/webfonts ./",
+    "build:jquery.easing": "cp node_modules/jquery.easing/jquery.easing.min.js js",
+    "build:lightslider": "cp node_modules/lightslider/dist/css/lightslider.min.css css & cp node_modules/lightslider/dist/img/controls.png img & cp node_modules/lightslider/dist/js/lightslider.min.js js",
+    "build:magnific-popup": "cp node_modules/magnific-popup/dist/jquery.magnific-popup.min.js js/jquery.magnific-popup.js",
+    "build:mixitup": "cp node_modules/mixitup/dist/mixitup.min.js js",
+    "build:owl.carousel": "cp node_modules/owl.carousel/dist/assets/{owl.carousel.min.css,owl.video.play.png} css & cp node_modules/owl.carousel/dist/owl.carousel.min.js js",
+    "build:rangeslider": "sass -s compressed sass/price_rangs.scss:css/price_rangs.css & cp node_modules/ion-rangeslider/img/sprite-skin-simple.png img",
+    "build:sass": "sass -s compressed sass/style.scss:css/style.css sass/price_rangs.scss:css/price_rangs.css sass/magnific-popup.scss:css/magnific-popup.css node_modules/slick-carousel/slick/slick.scss:css/slick.css node_modules/slick-carousel/slick/slick-theme.scss:css/slick-theme.min.css",
+    "build:slick": "cp node_modules/slick-carousel/slick/slick.min.js js & cp node_modules/slick-carousel/slick/slick.css css & cp -r node_modules/slick-carousel/slick/fonts css",
+    "build:stellar": "cp node_modules/jquery.stellar/jquery.stellar.js js/stellar.js",
+    "build:swiper": "cp node_modules/swiper/dist/css/swiper.min.css css & cp node_modules/swiper/dist/js/swiper.min.* js",
+    "format": "biome format"
   }
 }
