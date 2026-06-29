@@ -3,10 +3,12 @@
 declare(strict_types=1);
 
 use flight\Container;
+use GuzzleHttp\Psr7\HttpFactory;
 use Leaf\Auth;
 use Leaf\Config;
 use Leaf\Db;
 use Leaf\Db\Utils;
+use Psr\Http\Message\RequestFactoryInterface;
 
 /**
  * Return the leaf auth object
@@ -160,6 +162,8 @@ require_once "vendor/autoload.php";
 
 $_ENV = (array) require ".env.php";
 $_ENV += (array) require ".env.example.php";
+
+Container::getInstance()->singleton(RequestFactoryInterface::class, HttpFactory::class);
 
 foreach (glob("config/*") ?: [] as $config) {
   require_once $config;

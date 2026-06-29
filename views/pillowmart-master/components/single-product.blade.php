@@ -2,13 +2,13 @@
   product: @json($product),
 
   get reservedProduct() {
-    return reservedProducts.find(reservedProduct => reservedProduct.{{ auth()->config("id.key") }} === this.product.{{ auth()->config("id.key") }});
+    return reservedProducts.find(reservedProduct => reservedProduct.id === this.product.id);
   },
 
   quantity: 1,
   }' x-effect="
   if (quantity === 0) {
-    return reservedProducts = reservedProducts.filter(reservedProduct => reservedProduct.{{ auth()->config("id.key") }} !== product.{{ auth()->config("id.key") }});
+    return removeReservedProduct(reservedProduct);
   }
 
   if (quantity < 0) {
@@ -18,7 +18,7 @@
   if (quantity > (product.stock || 0)) {
     quantity = product.stock || 0;
   }
-  " x-init="quantity = reservedProduct.quantity || 1">
+  " x-init="quantity = reservedProduct?.quantity || 1">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-12">
@@ -60,7 +60,7 @@
                   }
 
                   if (!quantity) {
-                    return removeReservedProduct(product.{{ auth()->config('id.key') }});
+                    return removeReservedProduct(product);
                   }
 
                   reservedProducts.push({ ...product, quantity });

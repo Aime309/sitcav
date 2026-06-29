@@ -8,6 +8,18 @@ use Leaf\Exception\Run;
 Flight::group(
   "/api",
   static function (): void {
+    Flight::route('POST /login', static function (): void {
+      $data = Flight::request()->data;
+
+      if (auth()->login(['email' => $data['email'], 'password' => $data['password']])) {
+        Flight::json(auth()->user()->getAuthInfo());
+
+        return;
+      }
+
+      Flight::json(auth()->errors(), 401);
+    });
+
     Flight::route("GET /products/types", static function (): void {
       Flight::json(
         array_filter(

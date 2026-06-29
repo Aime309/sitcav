@@ -15,9 +15,9 @@
       return this.reservedProductsSubTotal;
     },
 
-    removeReservedProduct(productId) {
+    removeReservedProduct(reservedProduct) {
       this.reservedProducts = this.reservedProducts.filter(product => {
-        return product.{{ auth()->config('id.key') }} !== reservedProduct.{{ auth()->config('id.key') }};
+        return product.id !== reservedProduct.id;
       });
     },
   }' x-init="
