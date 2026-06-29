@@ -24,7 +24,7 @@ const router = createBrowserRouter(
     },
     MainRoutes
   ],
-  { basename: '/dashboard' }
+  { basename: import.meta.env.DEV ? import.meta.env.BASE_URL : '/dashboard' }
 );
 
 export default router;
