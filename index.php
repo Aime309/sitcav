@@ -74,7 +74,7 @@ function auth()
 
                   if ($result[$item["foreignKey"]] ?? false) {
                     $stmt = $this->connection()->prepare(
-                      "SELECT * FROM {$item["table"]} WHERE id = ?",
+                      "SELECT * FROM {$item['table']} WHERE id = ?",
                     );
 
                     $stmt->execute([$result[$item["foreignKey"]]]);
@@ -85,7 +85,7 @@ function auth()
                       Utils::basicSingularize($currentTable) . "_id";
 
                     $stmt = $this->connection()->prepare(
-                      "SELECT * FROM {$item["table"]} WHERE {$item["foreignKey"]} = ?",
+                      "SELECT * FROM {$item['table']} WHERE {$item['foreignKey']} = ?",
                     );
 
                     $stmt->execute([$result["id"]]);
