@@ -7,7 +7,7 @@ use Leaf\Exception\Handler\JsonResponseHandler;
 use Leaf\Exception\Run;
 
 Flight::group(
-  "/api",
+  '/api',
   static function (): void {
     Flight::route('POST /login', static function (): void {
       $data = Flight::request()->data;
