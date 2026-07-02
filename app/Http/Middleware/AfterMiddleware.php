@@ -6,5 +6,5 @@ namespace App\Http\Middleware;
 
 interface AfterMiddleware
 {
-  public static function after(array $params = []): void;
+  public function after(array $params = []): void;
 }

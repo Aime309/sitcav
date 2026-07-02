@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Middleware\Ecommerce;
+namespace App\Http\Middleware\Dashboard;
 
 use App\Http\Middleware\BeforeMiddleware;
 use App\Http\Middleware\Middleware;
@@ -15,7 +15,7 @@ final readonly class RedirectIfAuthenticated extends Middleware implements Befor
   public function before(array $params = []): void
   {
     if (auth()->user()) {
-      Flight::redirect(Flight::request()->referrer);
+      Flight::redirect('/dashboard');
 
       exit;
     }

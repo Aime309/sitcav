@@ -12,7 +12,7 @@ use Override;
 final readonly class IndexConfirmationPolicy extends Middleware implements BeforeMiddleware
 {
   #[Override]
-  public static function before(array $params = []): void
+  public function before(array $params = []): void
   {
     $reservation = db()
       ->select("reservations")

@@ -2,25 +2,35 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\Dashboard\Authenticate;
+use App\Http\Middleware\Dashboard\Authorize;
+use App\Http\Middleware\Dashboard\RedirectIfAuthenticated;
 use Leaf\Exception\Handler\PrettyPageHandler;
 use Leaf\Exception\Run;
 
 Flight::group(
-  "/dashboard",
+  '/dashboard',
   static function (): void {
-    Flight::route("GET /(login|register)", static function (): void {
-      Flight::render("index");
+    Flight::router()->get('/login', static function (): void {
+      Flight::render('index');
+    })
+      ->addMiddleware(RedirectIfAuthenticated::class);
+
+    Flight::router()->get('/register', static function (): void {
+      Flight::render('index');
+    })
+      ->addMiddleware(RedirectIfAuthenticated::class);
+
+    Flight::router()->get('/logout', static function (): void {
+      auth()->logout();
+      Flight::redirect('/dashboard/login');
     });
 
-    Flight::route("GET /*", static function (): void {
-      Flight::render("index");
-    })->addMiddleware(static function (): void {
-      if (auth()->user() === null) {
-        Flight::redirect("/dashboard/login");
-
-        exit();
-      }
-    });
+    Flight::router()->get('/*', static function (): void {
+      Flight::render('index');
+    })
+      ->addMiddleware(Authenticate::class)
+      ->addMiddleware(Authorize::class);
   },
   [
     static function (): void {
@@ -28,18 +38,18 @@ Flight::group(
       $prettyPushHandler = new PrettyPageHandler();
 
       $prettyPushHandler
-        ->addEditor(PrettyPageHandler::EDITOR_SUBLIME, "subl:%file:%line")
+        ->addEditor(PrettyPageHandler::EDITOR_SUBLIME, 'subl:%file:%line')
         ->setEditor(PrettyPageHandler::EDITOR_SUBLIME);
 
       $run->pushHandler($prettyPushHandler)->register();
     },
     static function (): void {
       Flight::set(
-        "flight.views.path",
-        "views/dashboardkit-free-admin-template/react/dist",
+        'flight.views.path',
+        'views/dashboardkit-free-admin-template/react/dist',
       );
 
-      Flight::set("flight.views.extension", ".html");
+      Flight::set('flight.views.extension', '.html');
     },
   ],
 );

@@ -12,7 +12,7 @@ use Override;
 final readonly class Authenticate extends Middleware implements BeforeMiddleware
 {
   #[Override]
-  public static function before(array $params = []): void
+  public function before(array $params = []): void
   {
     if (!auth()->user()) {
       Flight::redirect(Flight::getUrl("ecommerce.login"));

@@ -6,5 +6,5 @@ namespace App\Http\Middleware;
 
 interface BeforeMiddleware
 {
-  public static function before(array $params = []): void;
+  public function before(array $params = []): void;
 }

@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import { createContext, useReducer } from 'react';
 
 // project imports
-import * as actionType from 'store/actions';
-import { CONFIG } from 'config/constant';
+import * as actionType from '../store/actions';
+import { CONFIG } from '../config/constant';
 
 const initialState = {
   ...CONFIG,
