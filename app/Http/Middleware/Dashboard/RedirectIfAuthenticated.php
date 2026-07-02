@@ -15,7 +15,7 @@ final readonly class RedirectIfAuthenticated extends Middleware implements Befor
   public function before(array $params = []): void
   {
     if (auth()->user()) {
-      Flight::redirect('/dashboard');
+      Flight::redirect(Flight::getUrl('dashboard.index'));
 
       exit;
     }

@@ -15,7 +15,7 @@ final readonly class Authenticate extends Middleware implements BeforeMiddleware
   public function before(array $params = []): void
   {
     if (!auth()->user()) {
-      Flight::redirect("/dashboard/login");
+      Flight::redirect(Flight::getUrl('dashboard.login'));
 
       exit;
     }

@@ -17,7 +17,7 @@ final readonly class Authorize extends Middleware implements BeforeMiddleware
   public function before(array $params = []): void
   {
     if (auth()->user()->is('Client')) {
-      Flight::redirect('/dashboard/logout');
+      Flight::redirect(Flight::getUrl('dashboard.logout'));
 
       exit;
     }

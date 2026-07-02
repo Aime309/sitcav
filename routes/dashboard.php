@@ -14,23 +14,26 @@ Flight::group(
     Flight::router()->get('/login', static function (): void {
       Flight::render('index');
     })
-      ->addMiddleware(RedirectIfAuthenticated::class);
+      ->addMiddleware(RedirectIfAuthenticated::class)
+      ->setAlias('dashboard.login');
 
     Flight::router()->get('/register', static function (): void {
       Flight::render('index');
     })
-      ->addMiddleware(RedirectIfAuthenticated::class);
+      ->addMiddleware(RedirectIfAuthenticated::class)
+      ->setAlias('dashboard.register');
 
     Flight::router()->get('/logout', static function (): void {
       auth()->logout();
-      Flight::redirect('/dashboard/login');
-    });
+      Flight::redirect(Flight::getUrl('dashboard.login'));
+    })->setAlias('dashboard.logout');
 
     Flight::router()->get('/*', static function (): void {
       Flight::render('index');
     })
       ->addMiddleware(Authenticate::class)
-      ->addMiddleware(Authorize::class);
+      ->addMiddleware(Authorize::class)
+      ->setAlias('dashboard.index');
   },
   [
     static function (): void {
