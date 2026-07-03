@@ -64,7 +64,7 @@ function ConfigProvider({ children }) {
   }, initialState);
   return (
     <Provider value={{ state, dispatch }}>
-      <>{children}</>{' '}
+      {children}
     </Provider>
   );
 }

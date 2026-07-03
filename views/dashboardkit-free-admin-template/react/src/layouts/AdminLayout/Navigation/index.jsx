@@ -2,11 +2,11 @@ import { useContext } from 'react';
 
 // project imports
 import NavContent from './NavContent';
-import { ConfigContext } from 'contexts/ConfigContext';
-import useWindowSize from 'hooks/useWindowSize';
-import navigation from 'menu-items';
-import navitemcollapse from 'menu-items-collapse';
-import * as actionType from 'store/actions';
+import { ConfigContext } from '../../../contexts/ConfigContext';
+import useWindowSize from '../../../hooks/useWindowSize';
+import navigation from '../../../menu-items';
+import navitemcollapse from '../../../menu-items-collapse';
+import * as actionType from '../../../store/actions';
 
 // assets
 import avatar2 from 'assets/images/user/avatar-2.jpg';

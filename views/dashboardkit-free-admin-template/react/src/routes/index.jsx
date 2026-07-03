@@ -3,7 +3,7 @@ import { createBrowserRouter } from 'react-router-dom';
 
 // project import
 import MainRoutes from './MainRoutes';
-import AdminLayout from 'layouts/AdminLayout';
+import AdminLayout from '../layouts/AdminLayout';
 
 // render - landing page
 const DashboardSales = lazy(() => import('../views/dashboard/DashSales/index'));

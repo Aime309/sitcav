@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 
 // project imports
 
-import Loader from 'components/Loader/Loader';
+import Loader from '../../components/Loader/Loader';
 
 /**
  * GuestLayout is a top-level component that wraps around the <Outlet> component
@@ -17,12 +17,9 @@ import Loader from 'components/Loader/Loader';
  */
 
 export default function GuestLayout() {
-  let GuestLayout = (
-    <>
-      <Suspense fallback={<Loader />}>
-        <Outlet />
-      </Suspense>
-    </>
+  return (
+    <Suspense fallback={<Loader />}>
+      <Outlet />
+    </Suspense>
   );
-  return <>{GuestLayout}</>;
 }

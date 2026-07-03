@@ -7,13 +7,13 @@ import { Card, ListGroup } from 'react-bootstrap';
 
 // project imports
 import NavGroup from './NavGroup';
-import { ConfigContext } from 'contexts/ConfigContext';
+import { ConfigContext } from '../../../../contexts/ConfigContext';
 
 // third party
 import SimpleBar from 'simplebar-react';
 
 // assets
-import logo from 'assets/images/logo.svg';
+import logo from '../../../../assets/images/logo.png';
 
 // -----------------------|| NAV CONTENT ||-----------------------//
 
@@ -46,15 +46,6 @@ export default function NavContent({ navigation, activeNav }) {
       <ListGroup variant="flush" as="ul" bsPrefix=" " className="pc-navbar">
         {navItems}
       </ListGroup>
-      <Card className="nav-action-card m-3">
-        <Card.Body>
-          <h5 className="text-white">Upgrade To Pro</h5>
-          <p className="text-white text-opacity-75">To get more features and components</p>
-          <a href="https://codedthemes.com/item/dashboardkit-react-admin-template/" target="_blank" className="btn btn-primary">
-            Buy Now
-          </a>
-        </Card.Body>
-      </Card>
     </SimpleBar>
   );
 
@@ -68,8 +59,8 @@ export default function NavContent({ navigation, activeNav }) {
 
   const mHeader = (
     <div className="m-header">
-      <Link to="/dashboard/sales" className="b-brand">
-        <img src={logo} alt="" className="logo logo-lg" />
+      <Link to="/" className="b-brand">
+        <img src={logo} className="logo logo-lg" width="100%" />
       </Link>
     </div>
   );

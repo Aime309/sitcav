@@ -3,7 +3,7 @@ import { useContext } from 'react';
 // project imports
 import NavLeft from './NavLeft';
 import NavRight from './NavRight';
-import { ConfigContext } from 'contexts/ConfigContext';
+import { ConfigContext } from '../../../contexts/ConfigContext';
 
 // -----------------------|| NAV BAR ||-----------------------//
 
@@ -21,19 +21,12 @@ export default function NavBar() {
     mobDrpClass = [...mobDrpClass, 'mob-drp-active'];
   }
 
-  let navBar = (
-    <>
-      <div className="header-wrapper">
-        <div className={mobDrpClass.join(' ')}>
-          <NavLeft />
-        </div>
-        <div className="ms-auto">
-          <NavRight />
-        </div>
+  return <header className={headerClass.join(' ')}>
+    <div className="header-wrapper">
+      <div className="ms-auto">
+        <NavRight />
       </div>
-      {(collapseTabMenu || collapseHeaderMenu) && <div className="pc-md-overlay" />}
-    </>
-  );
-
-  return <header className={headerClass.join(' ')}>{navBar}</header>;
+    </div>
+    {(collapseTabMenu || collapseHeaderMenu) && <div className="pc-md-overlay" />}
+  </header>;
 }

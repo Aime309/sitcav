@@ -1,5 +1,7 @@
 <!doctype html>
-<html lang="en">
+<html
+  lang="<?= $_ENV['APP_LOCALE'] ?>"
+  data-auth-info='<?= json_encode(auth()->user()?->getAuthInfo() ?? []) ?>'>
   <head>
     <!-- Title -->
     <title>Bienvenido | <?= $_ENV['APP_NAME'] ?></title>

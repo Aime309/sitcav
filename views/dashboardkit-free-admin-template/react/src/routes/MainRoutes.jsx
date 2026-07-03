@@ -1,7 +1,7 @@
 import { lazy } from 'react';
 
-import AdminLayout from 'layouts/AdminLayout';
-import GuestLayout from 'layouts/GuestLayout';
+import AdminLayout from '../layouts/AdminLayout';
+import GuestLayout from '../layouts/GuestLayout';
 
 const DashboardSales = lazy(() => import('../views/dashboard/DashSales/index'));
 

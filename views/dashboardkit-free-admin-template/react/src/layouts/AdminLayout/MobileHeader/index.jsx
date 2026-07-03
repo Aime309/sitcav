@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom';
 import FeatherIcon from 'feather-icons-react';
 
 // project imports
-import { ConfigContext } from 'contexts/ConfigContext';
-import * as actionType from 'store/actions';
+import { ConfigContext } from '../../../contexts/ConfigContext';
+import * as actionType from '../../../store/actions';
 
 // assets
-import logo from 'assets/images/logo.svg';
+import logo from '../../../assets/images/logo.png';
 
 // -----------------------|| MOBILE HEADER ||-----------------------//
 
