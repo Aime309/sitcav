@@ -23,7 +23,7 @@ final readonly class LoginController extends Controller
         auth()->config("password.key") => $data["password"],
       ])
     ) {
-      Flight::redirect("/ecommerce");
+      Flight::redirect(Flight::getUrl('ecommerce.index'));
 
       return;
     }

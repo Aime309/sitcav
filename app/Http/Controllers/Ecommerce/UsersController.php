@@ -21,12 +21,12 @@ final readonly class UsersController extends Controller
         auth()->config("roles.key") => json_encode(["Client"]),
       ])
     ) {
-      Flight::redirect("/ecommerce");
+      Flight::redirect(Flight::getUrl('ecommerce.index'));
 
       return;
     }
 
     flash()->set(auth()->errors());
-    Flight::redirect("/ecommerce/register");
+    Flight::redirect(Flight::getUrl('ecommerce.register'));
   }
 }
