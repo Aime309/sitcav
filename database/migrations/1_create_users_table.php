@@ -27,7 +27,7 @@ db()
     "email" => "TEXT NOT NULL UNIQUE CHECK (email LIKE '%@%')",
     "name" => "TEXT NOT NULL DEFAULT ''",
     "last_name" => "TEXT NOT NULL DEFAULT ''",
-    "avatar" => "BLOB NOT NULL UNIQUE DEFAULT ''",
+    "avatar" => "BLOB NOT NULL DEFAULT ''",
     "phone" => "TEXT NOT NULL DEFAULT ''",
     "location" => "TEXT NOT NULL DEFAULT ''",
   ])
