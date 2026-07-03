@@ -21,12 +21,14 @@ export default function NavBar() {
     mobDrpClass = [...mobDrpClass, 'mob-drp-active'];
   }
 
-  return <header className={headerClass.join(' ')}>
-    <div className="header-wrapper">
-      <div className="ms-auto">
-        <NavRight />
+  return (
+    <header className={headerClass.join(' ')}>
+      <div className="header-wrapper">
+        <div className="ms-auto">
+          <NavRight />
+        </div>
       </div>
-    </div>
-    {(collapseTabMenu || collapseHeaderMenu) && <div className="pc-md-overlay" />}
-  </header>;
+      {(collapseTabMenu || collapseHeaderMenu) && <div className="pc-md-overlay" />}
+    </header>
+  );
 }

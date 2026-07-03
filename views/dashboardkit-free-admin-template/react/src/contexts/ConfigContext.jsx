@@ -62,11 +62,7 @@ function ConfigProvider({ children }) {
         throw new Error();
     }
   }, initialState);
-  return (
-    <Provider value={{ state, dispatch }}>
-      {children}
-    </Provider>
-  );
+  return <Provider value={{ state, dispatch }}>{children}</Provider>;
 }
 
 export { ConfigContext, ConfigProvider };

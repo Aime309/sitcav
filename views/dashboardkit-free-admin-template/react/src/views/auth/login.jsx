@@ -35,7 +35,13 @@ export default function SignIn1() {
                     <Form.Control type="password" placeholder="Contraseña" name="password" />
                   </InputGroup>
                   <Form.Group>
-                    <Form.Check type="checkbox" className="text-left mb-4 mt-2" label="Guardar Credenciales." defaultChecked name="remember" />
+                    <Form.Check
+                      type="checkbox"
+                      className="text-left mb-4 mt-2"
+                      label="Guardar Credenciales."
+                      defaultChecked
+                      name="remember"
+                    />
                   </Form.Group>
                   <Button className="btn btn-block btn-primary mb-4" type="submit">
                     Iniciar Sesión

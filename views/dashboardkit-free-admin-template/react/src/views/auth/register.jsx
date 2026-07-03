@@ -40,7 +40,9 @@ export default function SignUp1() {
                     </InputGroup.Text>
                     <Form.Control type="password" placeholder="Contraseña" name="password" />
                   </InputGroup>
-                  <Button className="btn-block mb-4" type="submit">Registrarse</Button>
+                  <Button className="btn-block mb-4" type="submit">
+                    Registrarse
+                  </Button>
                 </Form>
                 <p className="mb-2">
                   ¿Ya tienes una cuenta?&nbsp;
