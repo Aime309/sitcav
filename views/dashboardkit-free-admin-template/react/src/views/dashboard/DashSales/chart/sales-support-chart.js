@@ -1,3 +1,5 @@
+import { CURRENT_YEAR_RESERVATIONS_PER_MONTH } from '../../../../config/constant';
+
 export function SalesSupportChartData() {
   return {
     type: 'area',
@@ -25,7 +27,7 @@ export function SalesSupportChartData() {
         y: {
           title: {
             formatter() {
-              return 'Ticket ';
+              return 'Reservas ';
             }
           }
         },
@@ -39,7 +41,7 @@ export function SalesSupportChartData() {
     },
     series: [
       {
-        data: [0, 20, 10, 45, 30, 55, 20, 30, 0]
+        data: CURRENT_YEAR_RESERVATIONS_PER_MONTH
       }
     ]
   };

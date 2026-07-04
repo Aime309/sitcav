@@ -1,3 +1,5 @@
+import { CUSTOMER_SATISFACTION } from "../../../../config/constant";
+
 export function SalesCustomerSatisfactionChartData() {
   return {
     height: 260,
@@ -5,7 +7,7 @@ export function SalesCustomerSatisfactionChartData() {
       chart: {
         background: 'transparent'
       },
-      labels: ['extremely Satisfied', 'Satisfied', 'Poor', 'Very Poor'],
+      labels: ['Extremadamente Satisfecho', 'Satisfecho', 'Insatisfecho', 'Muy Insatisfecho'],
       legend: {
         show: true,
         offsetY: 50
@@ -38,6 +40,6 @@ export function SalesCustomerSatisfactionChartData() {
         }
       ]
     },
-    series: [66, 50, 40, 30]
+    series: Object.values(CUSTOMER_SATISFACTION)
   };
 }

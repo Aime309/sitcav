@@ -182,6 +182,30 @@ const PRODUCTS = [
     "price" => 360,
     "type" => "Food",
   ],
+  [
+    "name" => "HeadPhone",
+    "sources" => ["/views/dashboardkit-free-admin-template/react/src/assets/images/widget/p1.png"],
+    "price" => 10,
+    "type" => "Tech",
+  ],
+  [
+    "name" => "Iphone 6",
+    "sources" => ["/views/dashboardkit-free-admin-template/react/src/assets/images/widget/p2.png"],
+    "price" => 10,
+    "type" => "Tech",
+  ],
+  [
+    "name" => "Jacket",
+    "sources" => ["/views/dashboardkit-free-admin-template/react/src/assets/images/widget/p3.png"],
+    "price" => 10,
+    "type" => "Clothing",
+  ],
+  [
+    "name" => "Sofa",
+    "sources" => ["/views/dashboardkit-free-admin-template/react/src/assets/images/widget/p4.png"],
+    "price" => 10,
+    "type" => "Furniture",
+  ],
 ];
 
 foreach (PRODUCTS as $product) {
@@ -194,7 +218,7 @@ foreach (PRODUCTS as $product) {
       "name" => $product["name"],
       "price" => $product["price"],
       "description" => $product["description"] ?? "",
-      "type" => $product["type"],
+      "type" => $product["type"] ?? '',
       "pinned" => $product["pinned"] ?? false,
     ])
     ->execute();

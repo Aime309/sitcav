@@ -1,3 +1,5 @@
+import { CURRENT_YEAR_SALES_AVERAGE_PER_MONTH, CURRENT_YEAR_SALES_PER_MONTH } from "../../../../config/constant";
+
 export function SalesAccountChartData() {
   return {
     height: 350,
@@ -19,7 +21,7 @@ export function SalesAccountChartData() {
       fill: {
         opacity: [0.85, 1]
       },
-      labels: ['Jan 01', 'Feb 01', 'Mar 01', 'Apr 01', 'May 01', 'Jun 01', 'Jul 01', 'Aug 01', 'Sep 01', 'Oct 01', 'Nov 01', 'Dec 01'],
+      labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dec'],
       markers: {
         size: 0
       },
@@ -58,14 +60,14 @@ export function SalesAccountChartData() {
     },
     series: [
       {
-        name: 'Total Sales',
+        name: 'Ventas Totales',
         type: 'column',
-        data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30, 40]
+        data: CURRENT_YEAR_SALES_PER_MONTH
       },
       {
-        name: 'Average',
+        name: 'Promedio',
         type: 'line',
-        data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39, 51]
+        data: CURRENT_YEAR_SALES_AVERAGE_PER_MONTH
       }
     ]
   };

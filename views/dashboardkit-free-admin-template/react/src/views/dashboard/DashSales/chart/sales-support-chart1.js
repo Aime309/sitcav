@@ -1,3 +1,5 @@
+import { CURRENT_MONTH_RESERVATION_SALES_PER_DAY } from '../../../../config/constant';
+
 export function SalesSupportChartData1() {
   return {
     height: 85,
@@ -44,7 +46,7 @@ export function SalesSupportChartData1() {
     },
     series: [
       {
-        data: [25, 66, 41, 89, 63, 25, 44, 12, 36, 9, 54, 44, 12, 36, 9, 54, 25, 66, 41, 89, 63, 25, 44, 12, 36, 9, 25, 44, 12, 36, 9, 54]
+        data: CURRENT_MONTH_RESERVATION_SALES_PER_DAY
       }
     ]
   };
