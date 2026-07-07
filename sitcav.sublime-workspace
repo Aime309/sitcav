@@ -1,0 +1,2224 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"produ",
+				"productSold"
+			],
+			[
+				"ave",
+				"averagePrice"
+			],
+			[
+				"total",
+				"totalProfit"
+			],
+			[
+				"ligh",
+				"light-danger"
+			],
+			[
+				"light",
+				"light-warning"
+			],
+			[
+				"light-",
+				"light-success"
+			],
+			[
+				"newP",
+				"newProducts"
+			],
+			[
+				"custome",
+				"customerSatisfaction"
+			],
+			[
+				"CURRENT_YEAR_SALES",
+				"CURRENT_YEAR_SALES_AVERAGE_PER_MONTH"
+			],
+			[
+				"CURRENT_YEAR_SAEL",
+				"CURRENT_YEAR_SALES_PER_MONTH"
+			],
+			[
+				"currentYear",
+				"currentYearSalesAveragePerMonth"
+			],
+			[
+				"currentYearSales",
+				"currentYearSalesAverage"
+			],
+			[
+				"currentSales",
+				"currentYearSalesPerMonth"
+			],
+			[
+				"CURRENT",
+				"CURRENT_MONTH_RESERVATION_SALES_PER_DAY"
+			],
+			[
+				"RESER",
+				"CURRENT_YEAR_RESERVATIONS_PER_MONTH"
+			],
+			[
+				"RESERVATION_PER",
+				"RESERVATIONS_PER_YEAR"
+			],
+			[
+				"conversion",
+				"conversionRatePercentage"
+			],
+			[
+				"conversio",
+				"conversionRatePercentage"
+			],
+			[
+				"cou",
+				"rowCount()"
+			],
+			[
+				"ex",
+				"execute()"
+			],
+			[
+				"where",
+				"whereJsonContains($column, $value, $jsonKey)"
+			],
+			[
+				"router",
+				"router"
+			],
+			[
+				"useWi",
+				"useWindowSize"
+			],
+			[
+				"AUTH",
+				"AUTH_INFO"
+			],
+			[
+				"docu",
+				"documentElement"
+			],
+			[
+				"dash",
+				"dashboard.login"
+			],
+			[
+				"das",
+				"dashboard.index"
+			],
+			[
+				"ecom",
+				"ecommerce.register"
+			],
+			[
+				"ecomm",
+				"ecommerce.index"
+			],
+			[
+				"IndexController",
+				"IndexController"
+			],
+			[
+				"get",
+				"getAuthInfo()"
+			],
+			[
+				"json",
+				"json($data, $code, $encode, $charset, $encodeOption, $encodeDepth)"
+			],
+			[
+				"js",
+				"jsonHalt($data, $code, $encode, $charset, $option)"
+			],
+			[
+				"head",
+				"header($name, $value)"
+			],
+			[
+				"co",
+				"config"
+			],
+			[
+				"Form",
+				"FormData"
+			],
+			[
+				"sub",
+				"submit"
+			],
+			[
+				"log",
+				"logout($action)"
+			],
+			[
+				"Authorize",
+				"Authorize"
+			],
+			[
+				"Authenticate",
+				"Authenticate"
+			],
+			[
+				"RedirectIfAuthenticated",
+				"RedirectIfAuthenticated"
+			],
+			[
+				"scssimpo",
+				"\"scss.lint.importStatement\""
+			],
+			[
+				"Redire",
+				"RedirectIfAuthenticated"
+			],
+			[
+				"Produ",
+				"ProductsController"
+			],
+			[
+				"inde",
+				"indexPinned"
+			],
+			[
+				"pass",
+				"password.encode"
+			],
+			[
+				"ECO",
+				"ECOMMERCE_CACHED_VIEWS_PATH"
+			],
+			[
+				"Auth",
+				"Auth"
+			],
+			[
+				"Config",
+				"Config"
+			],
+			[
+				"Error",
+				"Error"
+			],
+			[
+				"Client",
+				"Client"
+			],
+			[
+				"aut",
+				"authenticate"
+			],
+			[
+				"render",
+				"renderConfirmationById"
+			],
+			[
+				"getU",
+				"getUrl($alias, $params)"
+			],
+			[
+				"rende",
+				"renderProductList"
+			],
+			[
+				"RequestFac",
+				"RequestFactoryInterface"
+			],
+			[
+				"ClientIn",
+				"ClientInterface"
+			],
+			[
+				"RequestFa",
+				"RequestFactoryInterface"
+			],
+			[
+				"re",
+				"requestFactory"
+			],
+			[
+				"RequestF",
+				"RequestFactoryInterface"
+			],
+			[
+				"ClientInterface",
+				"ClientInterface"
+			],
+			[
+				"ClientI",
+				"ClientInterface"
+			],
+			[
+				"Redirec",
+				"RedirectIfAuthenticated"
+			],
+			[
+				"Autho",
+				"Authorize"
+			],
+			[
+				"ps",
+				"\"psr-4\""
+			],
+			[
+				"ua",
+				"\"autoload\""
+			],
+			[
+				"jso",
+				"json($data, $code, $encode, $charset, $encodeOption, $encodeDepth)"
+			],
+			[
+				"setcookie",
+				"setcookie($name, $value, $expires_or_options, $path, $domain, $secure, $httponly)"
+			],
+			[
+				"Reques",
+				"Request"
+			],
+			[
+				"OAu",
+				"OAuth2Controller"
+			],
+			[
+				"regi",
+				"registerContainerHandler($containerHandler)"
+			],
+			[
+				"for",
+				"foreignKey"
+			],
+			[
+				"bind",
+				"bindValue($param, $value, $type)"
+			],
+			[
+				"ge",
+				"getBody()"
+			],
+			[
+				"res",
+				"$reservedProduct"
+			],
+			[
+				"p",
+				"api.products.@id"
+			],
+			[
+				"reser",
+				"reservedProducts"
+			],
+			[
+				"con",
+				"config($config, $value)"
+			],
+			[
+				"rese",
+				"reservation"
+			],
+			[
+				"ro",
+				"rollBack()"
+			],
+			[
+				"config",
+				"config($name, $value)"
+			],
+			[
+				"db",
+				"dbtype"
+			],
+			[
+				"dis",
+				"display($key)"
+			],
+			[
+				"ecommerc",
+				"ecommerce.confirmation"
+			],
+			[
+				"GOOG",
+				"GOOGLE_AUTH_REDIRECT_URI"
+			],
+			[
+				"confi",
+				"confirmation"
+			],
+			[
+				"BLAD",
+				"BLADE_ONE"
+			],
+			[
+				"BLA",
+				"BLADE_ONE"
+			],
+			[
+				"ur",
+				"getUrl()"
+			],
+			[
+				"getRef",
+				"getReferrer()"
+			],
+			[
+				"wo",
+				"\"working_dir\""
+			],
+			[
+				"reserv",
+				"reservation"
+			],
+			[
+				"las",
+				"lastInsertId($name)"
+			],
+			[
+				"detai",
+				"details"
+			],
+			[
+				"id",
+				"lastInsertId($name)"
+			],
+			[
+				"r",
+				"$reservationDetails"
+			],
+			[
+				"crea",
+				"createTableIfNotExists($table, $fields)"
+			],
+			[
+				"create",
+				"create(array $data): ?PDOStatement"
+			],
+			[
+				"se",
+				"setDb($db)"
+			],
+			[
+				"getPro",
+				"getProperty($name)"
+			],
+			[
+				"update",
+				"update(array $userData): bool"
+			],
+			[
+				"getPr",
+				"getProperty($name)"
+			],
+			[
+				"Date",
+				"Date"
+			],
+			[
+				"up",
+				"update(array $userData): bool"
+			],
+			[
+				"Reflection",
+				"ReflectionObject"
+			],
+			[
+				"tab",
+				"createTableIfNotExists($table, $fields)"
+			],
+			[
+				"tick",
+				"register_tick_function($callback, $args)"
+			],
+			[
+				"cl",
+				"closeCursor()"
+			],
+			[
+				"upda",
+				"update($userData)"
+			],
+			[
+				"comp",
+				"compiles"
+			],
+			[
+				"hasSelec",
+				"hasSelectedType"
+			],
+			[
+				"wi",
+				"withProvider($clientName, $client)"
+			],
+			[
+				"thro",
+				"throwable"
+			],
+			[
+				"base",
+				"base64_encode($string)"
+			],
+			[
+				"c",
+				"clearSaved()"
+			],
+			[
+				"role",
+				"roles.key"
+			],
+			[
+				"client",
+				"clientSecret"
+			],
+			[
+				"Google",
+				"Google"
+			],
+			[
+				"http",
+				"$httpClient"
+			],
+			[
+				"ht",
+				"$httpClient"
+			],
+			[
+				"Googl",
+				"Google"
+			],
+			[
+				"getRes",
+				"getResourceOwner($token)"
+			],
+			[
+				"s",
+				"set($message, $key)"
+			],
+			[
+				"with",
+				"withGoogle($clientId, $clientSecret, $options)"
+			],
+			[
+				"EDI",
+				"EDITOR_SUBLIME"
+			],
+			[
+				"edito",
+				"getEditorHref($filePath, $line)"
+			],
+			[
+				"editor",
+				"addEditor($identifier, $resolver)"
+			],
+			[
+				"Run",
+				"Run"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "index.php",
+			"settings":
+			{
+				"buffer_size": 5003,
+				"line_ending": "Windows"
+			},
+			"undo_stack":
+			[
+			]
+		}
+	],
+	"build_system": "dev",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Analyze",
+					""
+				],
+				[
+					"CI",
+					""
+				],
+				[
+					"Check",
+					""
+				],
+				[
+					"Stylelint",
+					""
+				]
+			],
+			[
+				"Analyze",
+				""
+			]
+		],
+		[
+			[
+				[
+					"CI",
+					""
+				],
+				[
+					"Check",
+					""
+				]
+			],
+			[
+				"CI",
+				""
+			]
+		],
+		[
+			[
+				[
+					"CI",
+					""
+				],
+				[
+					"Check",
+					""
+				],
+				[
+					"Stylelint",
+					""
+				]
+			],
+			[
+				"CI",
+				""
+			]
+		],
+		[
+			[
+				[
+					"CI",
+					""
+				],
+				[
+					"Check",
+					""
+				],
+				[
+					"Stylelint",
+					""
+				],
+				[
+					"Packages/PHP/PHP.sublime-build",
+					""
+				],
+				[
+					"Packages/PHP/PHP.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"CI",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/PHP/PHP.sublime-build",
+					""
+				],
+				[
+					"Packages/PHP/PHP.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/PHP/PHP.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"dev",
+					""
+				],
+				[
+					"Packages/PHP/PHP.sublime-build",
+					""
+				],
+				[
+					"Packages/PHP/PHP.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"dev",
+				""
+			]
+		],
+		[
+			[
+				[
+					"npm run dev",
+					""
+				],
+				[
+					"php artisan serve",
+					""
+				]
+			],
+			[
+				"npm run dev",
+				""
+			]
+		],
+		[
+			[
+				[
+					"php artisan serve",
+					""
+				],
+				[
+					"Packages/PHP/PHP.sublime-build",
+					""
+				],
+				[
+					"Packages/PHP/PHP.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/PHP/PHP.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"ui:",
+				"UI: Select Color Scheme"
+			],
+			[
+				"restart",
+				"LSP: Restart Server"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"enable",
+				"LSP: Enable Language Server in Project"
+			],
+			[
+				"resta",
+				"LSP: Restart Server"
+			],
+			[
+				"lsp:",
+				"LSP: Troubleshoot Server"
+			],
+			[
+				"lsp",
+				"LSP: Troubleshoot Server"
+			],
+			[
+				"lsp:t",
+				"LSP: Troubleshoot Server"
+			],
+			[
+				"refres",
+				"ST: Refresh Connection Data"
+			],
+			[
+				"select",
+				"ST: Select Connection"
+			],
+			[
+				"list",
+				"Package Control: List Packages"
+			],
+			[
+				"close",
+				"Project: Close"
+			],
+			[
+				"restar",
+				"LSP: Restart Server"
+			],
+			[
+				"st:",
+				"ST: Refresh Connection Data"
+			],
+			[
+				"sele",
+				"ST: Select Connection"
+			],
+			[
+				"sort",
+				"Sort Lines"
+			],
+			[
+				"unfo",
+				"Code Folding: Unfold All"
+			],
+			[
+				"copilot",
+				"Copilot: Sign In"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"terminus",
+				"Terminus: Toggle Panel"
+			],
+			[
+				"fold",
+				"Code Folding: Fold All"
+			],
+			[
+				"wrap",
+				"Wrap at Ruler"
+			],
+			[
+				"copit",
+				"Copilot: Sign In"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"copil",
+				"Copilot: Check Status"
+			],
+			[
+				"css",
+				"CSS Intellisense: Clear Cache"
+			],
+			[
+				"mark",
+				"Markdown Preview: Open Markdown Cheat sheet"
+			],
+			[
+				"view",
+				"View Package File"
+			],
+			[
+				"explia",
+				"Copilot: Explain"
+			],
+			[
+				"satisfy",
+				"Package Control: Satisfy Libraries"
+			],
+			[
+				"upgrade",
+				"Package Control: Upgrade All Packages"
+			],
+			[
+				"reload",
+				"SublimeLinter: Reload SublimeLinter and its Plugins"
+			],
+			[
+				"disable",
+				"LSP: Disable Language Server in Project"
+			],
+			[
+				"reloa",
+				"SublimeLinter: Reload SublimeLinter and its Plugins"
+			],
+			[
+				"sublimelinter: reload",
+				"SublimeLinter: Reload SublimeLinter and its Plugins"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"add",
+				"Package Control: Add Repository"
+			],
+			[
+				"add rep",
+				"Package Control: Add Repository"
+			],
+			[
+				"Advance",
+				"Package Control: Advanced Install Packages"
+			],
+			[
+				"views",
+				"View: Toggle Side Bar"
+			],
+			[
+				"explain",
+				"Copilot: Explain"
+			],
+			[
+				"st: select",
+				"ST: Select Connection"
+			],
+			[
+				"progre",
+				"PHPUnit: Toggle --no-progress"
+			],
+			[
+				"testdo",
+				"PHPUnit: Toggle --testdox"
+			],
+			[
+				"chat",
+				"Copilot: Chat"
+			],
+			[
+				"trim",
+				"Trim Trailing White Space"
+			],
+			[
+				"rest",
+				"LSP: Restart Server"
+			],
+			[
+				"model",
+				"Copilot: Models"
+			],
+			[
+				"mo",
+				"Copilot: Models"
+			],
+			[
+				"models",
+				"Copilot: Models"
+			],
+			[
+				"fix",
+				"Copilot: Fix This"
+			],
+			[
+				"explian",
+				"ST: Explain Plan"
+			],
+			[
+				"re",
+				"LSP: Restart Server"
+			],
+			[
+				"package control",
+				"Package Control: Upgrade All Packages"
+			],
+			[
+				"res",
+				"LSP: Restart Server"
+			],
+			[
+				"tasks",
+				"Tasks: Filter by tags under cursors"
+			],
+			[
+				"package control: sa",
+				"Package Control: Satisfy Libraries"
+			],
+			[
+				"format",
+				"LSP: Format File With"
+			],
+			[
+				"select cone",
+				"ST: Select Connection"
+			],
+			[
+				"unfold",
+				"Code Folding: Unfold All"
+			],
+			[
+				"inlay",
+				"LSP: Toggle Inlay Hints"
+			],
+			[
+				"hints",
+				"LSP: Toggle Inlay Hints"
+			],
+			[
+				"fold all",
+				"Code Folding: Fold All"
+			],
+			[
+				"package control: upgrade",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"edi",
+				"Project: Edit Project"
+			],
+			[
+				"edito",
+				"Project: Edit Project"
+			],
+			[
+				"jinja",
+				"Set Syntax: HTML (Jinja)"
+			],
+			[
+				"html jin",
+				"Set Syntax: HTML (Jinja)"
+			],
+			[
+				"canc",
+				"Build: Cancel"
+			],
+			[
+				"lsp utils",
+				"Preferences: LSP Utils Settings"
+			],
+			[
+				"html",
+				"Set Syntax: HTML (Jinja)"
+			],
+			[
+				"html ",
+				"Set Syntax: HTML (Jinja)"
+			],
+			[
+				"reinde",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"html ji",
+				"Set Syntax: HTML (Jinja)"
+			],
+			[
+				"lsp: ",
+				"LSP: Enable Language Server in Project"
+			],
+			[
+				"vi",
+				"View Package File"
+			],
+			[
+				"lsp: ena",
+				"LSP: Enable Language Server in Project"
+			],
+			[
+				"lsp: format",
+				"LSP: Format File"
+			],
+			[
+				"docu",
+				"Help: Documentation"
+			],
+			[
+				"minima",
+				"View: Toggle Minimap"
+			],
+			[
+				"terminus:",
+				"Terminus Utilities: Select Theme"
+			],
+			[
+				"disabl",
+				"Package Control: Disable Package"
+			],
+			[
+				"package",
+				"Install Package Control"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 695.0,
+		"history":
+		[
+			"cls"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/Franyer/Desktop/sitcav"
+	],
+	"file_history":
+	[
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/config/constant.js",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/index.html",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Dashboard/IndexController.php",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/data/productTableData.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/routes/MainRoutes.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/routes/index.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/views/dashboard/DashSales/index.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/data/feedData.js",
+		"/C/Users/Franyer/Desktop/sitcav/database/migrations/2_create_products_table.php",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/components/Widgets/ProductTable.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/views/dashboard/DashSales/chart/sales-customer-satisfication-chart.js",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/views/dashboard/DashSales/chart/sales-account-chart.js",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/views/dashboard/DashSales/chart/sales-support-chart1.js",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/views/dashboard/DashSales/chart/sales-support-chart.js",
+		"/C/Users/Franyer/Desktop/sitcav/routes/dashboard.php",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/components/Card/MainCard.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/components/Loader/Bar.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/components/Loader/Container.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/components/Loader/Loader.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/components/Widgets/FeedTable.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/reportWebVitals.js",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/App.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/index.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/contexts/ConfigContext.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/menu-items.js",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/menu-items-collapse.js",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/node_modules/web-vitals/dist/modules/index.d.ts",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/eslint.config.mjs",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/jsconfig.node.json",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/jsconfig.json",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/package.json",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/.env",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/layouts/AdminLayout/index.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/layouts/AdminLayout/Navigation/index.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/layouts/AdminLayout/Navigation/NavContent/index.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/store/actions.js",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/layouts/AdminLayout/NavBar/NavRight/index.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/layouts/AdminLayout/NavBar/index.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/config/auth.php",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/layouts/AdminLayout/MobileHeader/index.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/views/auth/login.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/views/auth/register.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/layouts/AdminLayout/Breadcrumb/index.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Ecommerce/LoginController.php",
+		"/C/Users/Franyer/Desktop/sitcav/routes/ecommerce.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Ecommerce/UsersController.php",
+		"/C/Users/Franyer/Desktop/sitcav/routes/api.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Dashboard/IndexControlller.php",
+		"/C/Users/Franyer/Desktop/sitcav/database/migrations/1_create_users_table.php",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/layouts/GuestLayout/index.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Middleware/Dashboard/RedirectIfAuthenticated.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Middleware/Dashboard/Authorize.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Middleware/Dashboard/Authenticate.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Middleware/Ecommerce/Authenticate.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Middleware/Ecommerce/Authorize.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Middleware/Ecommerce/RedirectIfAuthenticated.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Middleware/AfterMiddleware.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Policies/Ecommerce/IndexConfirmationPolicy.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Middleware/BeforeMiddleware.php",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/layouts/AdminLayout/NavBar/NavLeft/index.jsx",
+		"/C/Users/Franyer/Documents/SimCity 4/Timbuktu/.megaignore",
+		"/C/ilive_reader093/tropod_Properties.xml",
+		"/C/ilive_reader093/new_properties.xml",
+		"/C/Program Files (x86)/ILives/ILives Reader/new_properties.xml",
+		"/C/Users/Franyer/AppData/Local/Temp/9db2df6a-0722-427b-b5c9-6ff4bd682b76_SC4-ModernCamera_1_0_2.zip.b76/metadata.yaml",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/components/Loader/Progress.jsx",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/vite.config.mjs",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/assets/fonts/material.css",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/assets/scss/style.scss",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/tsconfig.json",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/hooks/useWindowSize.js",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/assets/scss/themes/_general.scss",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/assets/scss/customizer.scss",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/assets/scss/react-common.scss",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/assets/scss/themes/plugins/_simplebar-scrollbar.scss",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/node_modules/simplebar-react/dist/simplebar.min.css",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/assets/scss/pages/dashboard.scss",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/assets/scss/themes/components/_avatar.scss",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/assets/scss/react-modules/_tooltip.scss",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/index.scss",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/src/assets/scss/settings/_color-variables.scss",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/node_modules/bootstrap/scss/_functions.scss",
+		"/C/Users/Franyer/Desktop/sitcav/sitcav.sublime-project",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/node_modules/react-router-dom/dist/index.d.ts",
+		"/C/Users/Franyer/Desktop/sitcav/.gitignore",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/.prettierrc",
+		"/C/Users/Franyer/Desktop/sitcav/views/dashboardkit-free-admin-template/react/.env.example",
+		"/C/ProgramData/scoop/persist/sublime-text/Data/Package Storage/LSP-tsgo/server/node_modules/@typescript/native-preview/bin/tsgo",
+		"/C/Users/Franyer/.npmrc",
+		"/C/ProgramData/scoop/persist/sublime-text/Data/Package Storage/LSP-tsgo/server/node_modules/@typescript/native-preview/lib/tsgo.js",
+		"/C/ProgramData/scoop/persist/sublime-text/Data/Package Storage/LSP-tsgo/server/node_modules/@typescript/native-preview/package.json",
+		"/C/ProgramData/scoop/persist/sublime-text/Data/Package Storage/LSP-tsgo/server/package.json",
+		"/C/Users/Franyer/Desktop/sitcav/index.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Api/ProductsController.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Api/ProductTypesController.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Api/ProductCategoriesController.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Api/LoginController.php",
+		"/C/Users/Franyer/Desktop/sitcav/bootstrap/app.php",
+		"/C/Users/Franyer/Desktop/sitcav/config/app.php",
+		"/C/Users/Franyer/Desktop/sitcav/config/database.php",
+		"/C/Users/Franyer/Desktop/sitcav/config/session.php",
+		"/C/Users/Franyer/Desktop/sitcav/.env.php",
+		"/C/Users/Franyer/Desktop/sitcav/.env.example.php",
+		"/C/Users/Franyer/Desktop/sitcav/storage/framework/views/.gitignore",
+		"/C/Users/Franyer/Desktop/sitcav/public/index.php",
+		"/C/Users/Franyer/Desktop/sitcav/views/pillowmart-master/components/layout.blade.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Ecommerce/ProductsController.php",
+		"/C/Users/Franyer/Desktop/sitcav/views/pillowmart-master/components/single-product.blade.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Ecommerce/ReservationsController.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Ecommerce/OAuth2Controller.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Middleware/Ecommerce/SetupBlade.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Middleware/Ecommerce/ErrorsHandler.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Ecommerce/ConfirmationController.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Middleware/Middleware.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Policies/BeforePolicy.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Policies/Policy.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Policies/IndexConfirmationPolicy.php",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Ecommerce/IndexController.php",
+		"/C/Users/Franyer/Desktop/sitcav/vendor/flightphp/core/flight/core/Dispatcher.php",
+		"/C/Users/Franyer/Desktop/sitcav/vendor/psr/http-factory/src/RequestFactoryInterface.php",
+		"/C/Users/Franyer/Desktop/sitcav/vendor/guzzlehttp/guzzle/src/ClientInterface.php",
+		"/C/Users/Franyer/Desktop/sitcav/vendor/psr/http-client/src/ClientInterface.php",
+		"/C/Users/Franyer/Desktop/sitcav/vendor/guzzlehttp/guzzle/src/Exception/ConnectException.php",
+		"/C/Users/Franyer/Desktop/sitcav/tests/api.http",
+		"/C/Users/Franyer/Desktop/sitcav/app/Http/Controllers/Controller.php",
+		"/C/Users/Franyer/Desktop/sitcav/composer.json",
+		"/C/Users/Franyer/Desktop/sitcav/vendor/leafs/auth/src/Auth/User.php",
+		"/C/Users/Franyer/Desktop/sitcav/vendor/leafs/auth/src/Auth.php"
+	],
+	"find":
+	{
+		"height": 31.0
+	},
+	"find_in_files":
+	{
+		"height": 114.0,
+		"where_history":
+		[
+			"C:\\Users\\Franyer\\Desktop\\sitcav\\views\\dashboardkit-free-admin-template\\react,<project filters>",
+			"C:\\Users\\Franyer\\Desktop\\sitcav\\views\\dashboardkit-free-admin-template\\react\\src,<project filters>",
+			"C:\\Users\\Franyer\\Desktop\\sitcavv3,<project filters>",
+			"C:\\Users\\Franyer\\Desktop\\sitcavv3",
+			"C:\\Users\\Franyer\\Desktop\\sitcavv3\\views\\pillowmart-master,<project filters>",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"stock",
+			"widget",
+			"data/",
+			"data",
+			"components",
+			"menu-items-collapse",
+			"favicon.ico",
+			"VITE_APP_BASE_NAME",
+			"PUBLIC_URL",
+			"GENERATE_SOURCEMAP",
+			"VITE_APP_VERSION",
+			"Sign up",
+			"Signin",
+			"BASE_TITLE",
+			"./",
+			"../",
+			"Exemplar File",
+			"0x8A2602CA",
+			"0xaa1dd399",
+			"submenux",
+			"building",
+			"submenu",
+			"src/",
+			"../../../",
+			"./",
+			"../../../",
+			"../../",
+			"./",
+			"../",
+			"./",
+			"../",
+			"../../../",
+			"../../../node_modules/",
+			"assets",
+			"ProductTypesController",
+			"Flash::",
+			"REDIRECT_IF_AUTHENTICATED",
+			"AUTHORIZE",
+			"AUTHENTICATE",
+			"google",
+			"$this->connection()",
+			"$this->added",
+			"Flash::",
+			"AUTHORIZE",
+			"AUTHENTICATE",
+			"Flash::",
+			"UNIQUE",
+			"id",
+			"product.id",
+			"action=\"./",
+			"action=\"",
+			"href=\"./",
+			"ecommerce.logout",
+			"\"./products/pinned\"",
+			"\"/ecommerce/login\"",
+			"auth()->db()->",
+			"db()->",
+			"DB->",
+			"AUTH->",
+			"Flight::render",
+			"AUTH->",
+			"AUTH",
+			"AUTH->",
+			"AUTH",
+			"DB->",
+			"DB",
+			"AUTH",
+			"DB",
+			"AUTH",
+			"DB",
+			"DB->",
+			"AUTH",
+			"=",
+			"Flight::response()",
+			"Flight::request()->url",
+			"GET ",
+			"Flight::route",
+			"Flight::group",
+			"Flight::request()->referrer",
+			"Flight::request()",
+			"Flight::redirect",
+			"GET ",
+			"Flight::route",
+			"Flight::group",
+			"Flight::json",
+			"GET ",
+			"Flight::route",
+			"Flight::group",
+			"$this->db = ",
+			"#"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"db()->",
+			"auth()->db()->"
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": false
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "index.php",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5003,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								279,
+								279
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "<",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								},
+								{
+									"characters": "$>:\\/'\"*.<",
+									"selector": "punctuation.accessor | punctuation.definition.variable | punctuation.separator.namespace | punctuation.definition.tag.begin",
+									"server": "LSP-intelephense"
+								}
+							],
+							"color_helper.box_height": 20,
+							"color_helper.color_scheme": "auto",
+							"color_helper.refresh": false,
+							"color_helper.scan":
+							{
+								"allow_scanning": true,
+								"color_class":
+								[
+									{
+										"class": "css-level-4",
+										"scopes": ""
+									}
+								],
+								"color_trigger": "(?xi)\n(?:\n    \\b(?<![-#&$])(?:\n        color\\((?!\\s*-)|(?:hsla?|(?:ok)?(?:lch|lab)|hwb|rgba?)\\(\n) |\n\\b(?<![-#&$])[\\w]{3,}(?![(-])\\b|(?<![&])\\#)\n",
+								"current_ext": ".php",
+								"current_syntax": "PHP/PHP",
+								"enabled": true,
+								"last_updated": 1783133259.07,
+								"scanning": "support.constant.color.w3c.standard.css,support.constant.color.w3c.extended.css,support.function.color.css,constant.other.color.rgb-value.css, constant.other.color.rgba-value.css,support.function.custom.sass"
+							},
+							"copilot.completion._is_modified": false,
+							"copilot.completion.is_visible": false,
+							"copilot.completion.is_visible_panel_completions": false,
+							"copilot.completion.is_waiting_completion": false,
+							"copilot.completion.is_waiting_panel_completions": false,
+							"copilot.completion.original_layout": null,
+							"lsp_active": true,
+							"lsp_uri": "file:///C:/Users/Franyer/Desktop/sitcav/index.php",
+							"show_definitions": false,
+							"syntax": "Packages/PHP/PHP.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 31.0
+	},
+	"input":
+	{
+		"height": 45.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.LSP Log Panel":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.REST Client Response":
+	{
+		"height": 604.0,
+		"history":
+		[
+		]
+	},
+	"output.SQLTools Result":
+	{
+		"height": 155.0,
+		"history":
+		[
+		]
+	},
+	"output.SublimeLinter":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.SublimeLinter Messages":
+	{
+		"height": 155.0,
+		"history":
+		[
+		]
+	},
+	"output.Terminus":
+	{
+		"height": 695.0,
+		"history":
+		[
+		]
+	},
+	"output.Terminus Build Results":
+	{
+		"height": 695.0,
+		"history":
+		[
+		]
+	},
+	"output.diagnostics":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.exec":
+	{
+		"height": 680.0,
+		"history":
+		[
+			"Franyer"
+		]
+	},
+	"output.find_results":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.mdpopups-dummy":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"pinned_build_system": "",
+	"project": "sitcav.sublime-project",
+	"replace":
+	{
+		"height": 58.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"constant.js",
+				"views\\dashboardkit-free-admin-template\\react\\src\\config\\constant.js"
+			],
+			[
+				"index.html",
+				"views\\dashboardkit-free-admin-template\\react\\index.html"
+			],
+			[
+				"dashboard",
+				"routes\\dashboard.php"
+			],
+			[
+				"index.htm",
+				"views\\dashboardkit-free-admin-template\\react\\index.html"
+			],
+			[
+				"constant",
+				"views\\dashboardkit-free-admin-template\\react\\src\\config\\constant.js"
+			],
+			[
+				"auth.",
+				"config\\auth.php"
+			],
+			[
+				"login.jsx",
+				"views\\dashboardkit-free-admin-template\\react\\src\\views\\auth\\login.jsx"
+			],
+			[
+				"register.jsx",
+				"views\\dashboardkit-free-admin-template\\react\\src\\views\\auth\\register.jsx"
+			],
+			[
+				"ecom",
+				"routes\\ecommerce.php"
+			],
+			[
+				"UsersC",
+				"app\\Http\\Controllers\\Ecommerce\\UsersController.php"
+			],
+			[
+				"api.php",
+				"routes\\api.php"
+			],
+			[
+				"dashboard.php",
+				"routes\\dashboard.php"
+			],
+			[
+				"das",
+				"routes\\dashboard.php"
+			],
+			[
+				"eco",
+				"routes\\ecommerce.php"
+			],
+			[
+				"index.php",
+				"index.php"
+			],
+			[
+				"layout",
+				"views\\pillowmart-master\\components\\layout.blade.php"
+			],
+			[
+				"single-product.blade",
+				"views\\pillowmart-master\\components\\single-product.blade.php"
+			],
+			[
+				"ProductCo",
+				"app\\Http\\Controllers\\Ecommerce\\ProductsController.php"
+			],
+			[
+				"index",
+				"index.php"
+			],
+			[
+				"e",
+				"routes\\ecommerce.php"
+			],
+			[
+				"ecoe",
+				"vendor\\guzzlehttp\\guzzle\\src\\Exception\\ConnectException.php"
+			],
+			[
+				"ecome",
+				"routes\\ecommerce.php"
+			],
+			[
+				"form",
+				"vendor\\leafs\\form\\src\\Form.php"
+			],
+			[
+				"products",
+				"database\\migrations\\2_create_products_table.php"
+			],
+			[
+				"create_user",
+				"database\\migrations\\1_create_users_table.php"
+			],
+			[
+				"dashb",
+				"routes\\dashboard.php"
+			],
+			[
+				"confirm",
+				"views\\pillowmart-master\\components\\confirmation.blade.php"
+			],
+			[
+				"layout.bad",
+				"views\\pillowmart-master\\components\\layout.blade.php"
+			],
+			[
+				"database",
+				"config\\database.php"
+			],
+			[
+				"api",
+				"routes\\api.php"
+			],
+			[
+				"Model.php",
+				"vendor\\leafs\\auth\\src\\Auth\\Model.php"
+			],
+			[
+				"confirma",
+				"views\\pillowmart-master\\confirmation.blade.php"
+			],
+			[
+				"auth.php",
+				"config\\auth.php"
+			],
+			[
+				"reservat",
+				"database\\migrations\\3_create_reservations_table.php"
+			],
+			[
+				"",
+				"routes\\ecommerce.php"
+			],
+			[
+				"login.blad",
+				"views\\pillowmart-master\\components\\login.blade.php"
+			],
+			[
+				"checkout-deta",
+				"views\\pillowmart-master\\components\\checkout-details.blade.php"
+			],
+			[
+				"checkout",
+				"views\\pillowmart-master\\components\\checkout.blade.php"
+			],
+			[
+				"ecomme",
+				"routes\\ecommerce.php"
+			],
+			[
+				"ecommer",
+				"routes\\ecommerce.php"
+			],
+			[
+				"single-product",
+				"views\\pillowmart-master\\components\\single-product-list.blade.php"
+			],
+			[
+				"swiper.min.js",
+				"views\\pillowmart-master\\js\\swiper.min.js"
+			],
+			[
+				"swiper.min",
+				"views\\pillowmart-master\\css\\swiper.min.css"
+			],
+			[
+				"jqueryma",
+				"views\\pillowmart-master\\js\\jquery.magnific-popup.js"
+			],
+			[
+				"style.scss",
+				"views\\pillowmart-master\\sass\\style.scss"
+			],
+			[
+				"nice-se",
+				"views\\pillowmart-master\\css\\nice-select.css"
+			],
+			[
+				"slick.c",
+				"views\\pillowmart-master\\css\\slick.css"
+			],
+			[
+				"magnifi",
+				"views\\pillowmart-master\\css\\magnific-popup.css"
+			],
+			[
+				"themify-c",
+				"views\\pillowmart-master\\css\\themify-icons.css"
+			],
+			[
+				"flaticon",
+				"views\\pillowmart-master\\css\\flaticon.css"
+			],
+			[
+				"owl.ca",
+				"views\\pillowmart-master\\css\\owl.carousel.min.css"
+			],
+			[
+				"all.c",
+				"views\\pillowmart-master\\css\\all.css"
+			],
+			[
+				"animate.css",
+				"views\\pillowmart-master\\css\\animate.css"
+			],
+			[
+				"bootstrap.min.js",
+				"views\\pillowmart-master\\js\\bootstrap.min.js"
+			],
+			[
+				"bootstrap.min",
+				"views\\pillowmart-master\\css\\bootstrap.min.css"
+			],
+			[
+				"bootstra.min.css",
+				"views\\pillowmart-master\\css\\bootstrap.min.css"
+			],
+			[
+				"layout.blade",
+				"views\\pillowmart-master\\components\\layout.blade.php"
+			],
+			[
+				"cart.blade",
+				"views\\pillowmart-master\\components\\cart.blade.php"
+			],
+			[
+				"header.blade",
+				"views\\pillowmart-master\\components\\header.blade.php"
+			],
+			[
+				"BladeOne",
+				"vendor\\eftec\\bladeone\\lib\\BladeOne.php"
+			],
+			[
+				"Model",
+				"vendor\\leafs\\auth\\src\\Auth\\Model.php"
+			],
+			[
+				"db/functions",
+				"vendor\\leafs\\db\\src\\functions.php"
+			],
+			[
+				"db.php",
+				"vendor\\leafs\\db\\src\\Db.php"
+			],
+			[
+				"login.blade",
+				"views\\pillowmart-master\\components\\login.blade.php"
+			],
+			[
+				"users",
+				"database\\migrations\\1_create_users_table.php"
+			],
+			[
+				"migration/",
+				"database\\migrations\\1_create_users_table.php"
+			],
+			[
+				"Config.p",
+				"vendor\\leafs\\leaf\\src\\Config.php"
+			],
+			[
+				".js",
+				"views\\dashboardkit-free-admin-template\\react\\node_modules\\lodash\\fp\\__.js"
+			],
+			[
+				"web.",
+				"sitcavv4\\dashboard\\routes\\web.php"
+			],
+			[
+				"confirmation.blade",
+				"views\\pillowmart-master\\confirmation.blade.php"
+			],
+			[
+				"auth.h",
+				"config\\auth.php"
+			],
+			[
+				"User.php",
+				"vendor\\leafs\\auth\\src\\Auth\\User.php"
+			],
+			[
+				"checkout.blade",
+				"views\\pillowmart-master\\components\\checkout.blade.php"
+			],
+			[
+				"order-box",
+				"views\\pillowmart-master\\components\\order-box.blade.php"
+			],
+			[
+				"checkou",
+				"views\\pillowmart-master\\components\\checkout.blade.php"
+			],
+			[
+				"Auth.p",
+				"config\\auth.php"
+			],
+			[
+				"db.ph",
+				"vendor\\leafs\\db\\src\\Db.php"
+			],
+			[
+				"Config.php",
+				"vendor\\leafs\\leaf\\src\\Config.php"
+			],
+			[
+				"session",
+				"config\\session.php"
+			],
+			[
+				"Auth.php",
+				"config\\auth.php"
+			],
+			[
+				"inde.php",
+				"index.php"
+			],
+			[
+				"DB.php",
+				"vendor\\leafs\\db\\src\\Db.php"
+			],
+			[
+				"ecomer",
+				"routes\\ecommerce.php"
+			],
+			[
+				"databa",
+				"config\\database.php"
+			],
+			[
+				"databas",
+				"config\\database.php"
+			],
+			[
+				"db.",
+				"vendor\\leafs\\db\\src\\Db.php"
+			],
+			[
+				"d",
+				"config\\database.php"
+			],
+			[
+				"da",
+				"views\\dashboardkit-free-admin-template\\bootstrap\\dist\\assets\\js\\pages\\dashboard-analytics.js"
+			],
+			[
+				"auth",
+				"config\\auth.php"
+			],
+			[
+				"index.blade",
+				"views\\pillowmart-master\\index.blade.php"
+			],
+			[
+				"users_",
+				"database\\migrations\\1_create_users_table.php"
+			],
+			[
+				"checkout-de",
+				"views\\pillowmart-master\\components\\checkout-details.blade.php"
+			],
+			[
+				"layout.b",
+				"views\\pillowmart-master\\components\\layout.blade.php"
+			],
+			[
+				"single-produc.blade",
+				"views\\pillowmart-master\\components\\single-product.blade.php"
+			],
+			[
+				"layout.",
+				"views\\pillowmart-master\\components\\layout.blade.php"
+			],
+			[
+				"cart.blad",
+				"views\\pillowmart-master\\components\\cart.blade.php"
+			],
+			[
+				"create_ta",
+				"database\\migrations\\2_create_products_table.php"
+			],
+			[
+				"order-bx",
+				"views\\pillowmart-master\\components\\order-box.blade.php"
+			],
+			[
+				"product-list",
+				"views\\pillowmart-master\\components\\product-list.blade.php"
+			],
+			[
+				"single-produc",
+				"views\\pillowmart-master\\components\\single-product-item.blade.php"
+			],
+			[
+				"trending-it",
+				"views\\pillowmart-master\\components\\trending-items.blade.php"
+			],
+			[
+				"single",
+				"views\\pillowmart-master\\components\\single-product-list.blade.php"
+			],
+			[
+				"single-product-list",
+				"views\\pillowmart-master\\components\\single-product-list.blade.php"
+			],
+			[
+				"banner.blade",
+				"views\\pillowmart-master\\components\\banner.blade.php"
+			],
+			[
+				"cart.p",
+				"views\\pillowmart-master\\components\\cart.blade.php"
+			],
+			[
+				"header",
+				"views\\pillowmart-master\\components\\header.blade.php"
+			],
+			[
+				"all.cs",
+				"views\\pillowmart-master\\css\\all.css"
+			],
+			[
+				"single-product-in",
+				"views\\pillowmart-master\\components\\single-product-iner.blade.php"
+			],
+			[
+				"single-product-lis",
+				"views\\pillowmart-master\\components\\single-product-list.blade.php"
+			],
+			[
+				"index.blad",
+				"views\\pillowmart-master\\index.blade.php"
+			],
+			[
+				"banner",
+				"views\\pillowmart-master\\components\\banner.blade.php"
+			],
+			[
+				"head",
+				"views\\pillowmart-master\\components\\header.blade.php"
+			],
+			[
+				"in",
+				"index.php"
+			],
+			[
+				"login.bl",
+				"views\\pillowmart-master\\components\\login.blade.php"
+			],
+			[
+				"header. l",
+				"views\\pillowmart-master\\components\\header.blade.php"
+			],
+			[
+				"checkout.ph",
+				"views\\pillowmart-master\\checkout.blade.php"
+			],
+			[
+				"banner.bl",
+				"views\\pillowmart-master\\components\\banner.blade.php"
+			],
+			[
+				"product_list",
+				"views\\pillowmart-master\\product_list.blade.php"
+			],
+			[
+				"header.php",
+				"views\\pillowmart-master\\components\\header.blade.php"
+			],
+			[
+				"heade.",
+				"views\\pillowmart-master\\components\\header.blade.php"
+			],
+			[
+				"login.php",
+				"views\\pillowmart-master\\login.blade.php"
+			],
+			[
+				"footer.p",
+				"views\\pillowmart-master\\components\\footer.blade.php"
+			],
+			[
+				"Footer.ph",
+				"views\\pillowmart-master\\components\\footer.blade.php"
+			],
+			[
+				"footer",
+				"views\\pillowmart-master\\components\\footer.blade.php"
+			],
+			[
+				"header.p",
+				"views\\pillowmart-master\\components\\header.blade.php"
+			],
+			[
+				"bread",
+				"views\\pillowmart-master\\components\\breadcrumb.blade.php"
+			],
+			[
+				"layou",
+				"views\\pillowmart-master\\components\\layout.blade.php"
+			],
+			[
+				"slic",
+				"views\\pillowmart-master\\css\\slick.css"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"C:\\Users\\Franyer\\Desktop\\LicoSys\\licosys.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 62.0,
+		"last_filter": "navegac",
+		"selected_items":
+		[
+			[
+				"navegac",
+				"navegacion"
+			],
+			[
+				"reset_pas",
+				"reset_password_recovery"
+			],
+			[
+				"verify",
+				"verify_security_answers"
+			],
+			[
+				"check",
+				"check_user_recovery"
+			],
+			[
+				"insert_see",
+				"insert_seller"
+			],
+			[
+				"regis",
+				"register"
+			],
+			[
+				"login",
+				"login"
+			],
+			[
+				"uploaded",
+				"uploaded_file"
+			],
+			[
+				"list_upl",
+				"list_uploaded_files"
+			],
+			[
+				"get_re",
+				"get_reembolso_pdf"
+			],
+			[
+				"generar",
+				"generar_factura"
+			],
+			[
+				"generar_reort",
+				"generar_reporte_ventas_pdf"
+			],
+			[
+				"get_estad",
+				"get_estadisticas_historico"
+			],
+			[
+				"get_esta",
+				"get_estadisticas"
+			],
+			[
+				"get_das",
+				"get_dashboard_stats"
+			],
+			[
+				"ajust",
+				"ajuste_inventario"
+			],
+			[
+				"list_emplea",
+				"list_empleados"
+			],
+			[
+				"upload_",
+				"upload_usuario_foto"
+			],
+			[
+				"list_pagos",
+				"list_pagos_venta"
+			],
+			[
+				"select_lay",
+				"select_layaway_pdf"
+			],
+			[
+				"generar_pdf",
+				"generar_apartado_pdf"
+			],
+			[
+				"get_comp",
+				"get_compra_pdf"
+			],
+			[
+				"get_v",
+				"get_venta"
+			],
+			[
+				"search_pro",
+				"search_productos"
+			],
+			[
+				"search",
+				"search_clientes"
+			],
+			[
+				"create_bac",
+				"create_backup"
+			],
+			[
+				"crear_bac",
+				"crear_backup"
+			],
+			[
+				"generarpdf",
+				"generar_pdf_apartado"
+			]
+		],
+		"width": 592.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+		"copilot.conversation.code_block_index":
+		{
+		},
+		"copilot.conversation.conversation_entries":
+		[
+		],
+		"copilot.conversation.conversation_id": "",
+		"copilot.conversation.follow_up": "",
+		"copilot.conversation.group_id": -1,
+		"copilot.conversation.is_visible": false,
+		"copilot.conversation.is_waiting": false,
+		"copilot.conversation.last_active_view_id": -1,
+		"copilot.conversation.original_layout": null,
+		"copilot.conversation.reference_block_state":
+		{
+		},
+		"copilot.conversation.suggested_title": "",
+		"copilot.conversation.view_id": -1,
+		"copilot.copilotignore.patterns":
+		{
+		},
+		"lsp_show_inlay_hints": true
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 220.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
