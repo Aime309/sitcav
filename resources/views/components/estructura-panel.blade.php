@@ -76,6 +76,13 @@
                                 Ventas
                             </a>
                         </li>
+                        <li class="w3-bar-item">
+                            <a
+                                href="./panel/{{ $negocio['id'] }}/reservas"
+                                class="w3-button">
+                                Reservas
+                            </a>
+                        </li>
                     @endif
                     <li class="w3-bar-item">
                         <a

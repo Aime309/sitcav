@@ -462,6 +462,10 @@ Route::get('/panel/{negocio}/ventas', function () {
     return view('panel_{negocio}_ventas');
 });
 
+Route::get('/panel/{negocio}/reservas', function () {
+    return view('panel_{negocio}_reservas');
+});
+
 Route::post('/panel/{negocio}/ventas', function () {});
 Route::post('/panel/{negocio}/ventas/desde-reserva', function () {});
 
