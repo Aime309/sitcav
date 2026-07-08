@@ -416,12 +416,52 @@ Route::post('/panel/negocios', function () {
     ]);
 });
 
-Route::get('/panel/perfil', function () {
-    return view('panel_perfil');
+Route::get('/panel/{negocio}/perfil', function ($negocio) {
+    $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
+    $stmt->execute([$negocio]);
+    $negocio = $stmt->fetch();
+    session_start();
+    $usuario = $_SESSION['panel']['usuario'];
+
+    return view('panel_perfil', ['negocio' => $negocio, 'usuario' => $usuario]);
 });
 
-Route::post('/panel/perfil', function () {});
-Route::post('/panel/perfil/clave', function () {});
+Route::post('/panel/{negocio}/perfil', function () {
+    session_start();
+    $usuario = &$_SESSION['panel']['usuario'];
+    $usuario['nombre'] = $_POST['nombre'];
+    $usuario['apellido'] = $_POST['apellido'];
+    $usuario['correo'] = $_POST['correo'];
+    $usuario['telefono'] = $_POST['telefono'];
+
+    PDO->prepare('UPDATE usuarios SET
+        nombre = :nombre,
+        apellido = :apellido,
+        correo = :correo,
+        telefono = :telefono,
+        actualizado_en = CURRENT_TIMESTAMP
+        WHERE id = :id
+    ')->execute([
+        ':nombre' => $usuario['nombre'],
+        ':apellido' => $usuario['apellido'],
+        ':correo' => $usuario['correo'],
+        ':telefono' => $usuario['telefono'],
+        ':id' => $usuario['id'],
+    ]);
+});
+
+Route::post('/panel/{negocio}/perfil/clave', function () {
+    session_start();
+    $usuario = &$_SESSION['panel']['usuario'];
+    $clave = $_POST['clave'] ?? '';
+    $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
+
+    PDO->prepare('UPDATE usuarios SET
+        clave = :clave,
+        actualizado_en = CURRENT_TIMESTAMP
+        WHERE id = :id
+    ')->execute([':clave' => $usuario['clave'], ':id' => $usuario['id']]);
+});
 
 Route::get('/panel/{negocio}', function ($negocio) {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
@@ -628,9 +668,11 @@ Route::post('/{slug}/perfil/clave', function ($slug) {
     $clave = $_POST['clave'] ?? '';
     $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
 
-    PDO
-        ->prepare('UPDATE clientes SET clave = :clave WHERE id = :id')
-        ->execute([':clave' => $usuario['clave'], ':id' => $usuario['id']]);
+    PDO->prepare('UPDATE clientes SET
+        clave = :clave,
+        actualizado_en = CURRENT_TIMESTAMP
+        WHERE id = :id
+    ')->execute([':clave' => $usuario['clave'], ':id' => $usuario['id']]);
 });
 
 Route::get('/{slug}/carrito', function () {
