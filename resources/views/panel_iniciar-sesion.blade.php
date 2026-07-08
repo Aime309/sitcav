@@ -1,5 +1,5 @@
 <x-estructura-panel titulo="Iniciar sesión">
-    <form method="post">
+    <form method="post" class="w3-container">
         <input
             name="correo"
             placeholder="Correo electrónico"

@@ -1,5 +1,5 @@
 <x-estructura-panel titulo="Registrarse">
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" class="w3-container">
         <input
             name="nombre"
             placeholder="Nombre"

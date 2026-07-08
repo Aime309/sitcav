@@ -29,7 +29,13 @@
             <nav class="w3-container">
                 <ul class="w3-bar">
                     <li class="w3-bar-item">
-                        <h1>{{ $negocio['nombre'] }}</h1>
+                        <h1>
+                            <a
+                                href="./panel/{{ $negocio['id'] }}"
+                                class="w3-button">
+                                {{ $negocio['nombre'] }}
+                            </a>
+                        </h1>
                     </li>
                     @if (in_array('Administrador', $usuario['roles']))
                         <li class="w3-bar-item">
@@ -92,7 +98,7 @@
                         </a>
                     </li>
                     <li class="w3-bar-item w3-right">
-                        <a href="./panel/cerra-sesion" class="w3-button">
+                        <a href="./panel/cerrar-sesion" class="w3-button">
                             Cerrar sesión
                         </a>
                     </li>

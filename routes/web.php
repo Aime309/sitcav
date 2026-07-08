@@ -491,8 +491,15 @@ Route::get('/panel/{negocio}/reservas', function () {
 Route::post('/panel/{negocio}/ventas', function () {});
 Route::post('/panel/{negocio}/ventas/desde-reserva', function () {});
 
-Route::get('/{slug}', function () {
-    return view('{slug}');
+Route::get('/{slug}', function ($slug) {
+    $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
+    $stmt->execute([$slug]);
+    $negocio = $stmt->fetch();
+
+    session_start();
+    $usuario = $_SESSION['ecommerce'][$slug]['usuario'] ?? [];
+
+    return view('{slug}', ['negocio' => $negocio, 'usuario' => $usuario]);
 });
 
 Route::get('/{slug}/productos', function () {
@@ -503,17 +510,80 @@ Route::get('/{slug}/productos/{producto}', function () {
     return view('{slug}_productos_{producto}');
 });
 
-Route::get('/{slug}/iniciar-sesion', function () {
-    return view('{slug}_iniciar-sesion');
+Route::get('/{slug}/iniciar-sesion', function ($slug) {
+    $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
+    $stmt->execute([$slug]);
+    $negocio = $stmt->fetch();
+
+    return view('{slug}_iniciar-sesion', ['negocio' => $negocio]);
 });
 
-Route::post('/{slug}/iniciar-sesion', function () {});
+Route::post('/{slug}/iniciar-sesion', function ($slug) {
+    $correo = $_POST['correo'] ?? '';
+    $clave = $_POST['clave'] ?? '';
 
-Route::get('/{slug}/registrarse', function () {
-    return view('{slug}_registrarse');
+    $stmt = PDO->prepare('SELECT * FROM clientes WHERE correo = ?');
+    $stmt->execute([$correo]);
+    $usuario = $stmt->fetch();
+
+    if ($usuario && password_verify($clave, $usuario['clave'])) {
+        session_start();
+        $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+        $_SESSION['ecommerce'][$slug]['usuario'] = $usuario;
+    }
 });
 
-Route::post('/{slug}/registrarse', function () {});
+Route::get('/{slug}/registrarse', function ($slug) {
+    $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
+    $stmt->execute([$slug]);
+    $negocio = $stmt->fetch();
+
+    return view('{slug}_registrarse', ['negocio' => $negocio]);
+});
+
+Route::post('/{slug}/registrarse', function ($slug) {
+    $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
+    $stmt->execute([$slug]);
+    $negocio = $stmt->fetch();
+    $nombre = $_POST['nombre'] ?? '';
+    $apellido = $_POST['apellido'] ?? '';
+    $correo = $_POST['correo'] ?? '';
+    $clave = $_POST['clave'] ?? '';
+    $telefono = $_POST['telefono'] ?? '';
+    $imagenes = [];
+
+    $cliente = [
+        'id' => uniqid(),
+        'nombre' => $nombre,
+        'apellido' => $apellido,
+        'correo' => $correo,
+        'clave' => password_hash($clave, PASSWORD_DEFAULT),
+        'telefono' => $telefono,
+        'imagenes' => $imagenes,
+    ];
+
+    PDO->prepare('INSERT INTO clientes
+        (id, negocio_id, nombre, apellido, correo, telefono, clave, imagenes) VALUES
+        (:id, :negocio_id, :nombre, :apellido, :correo, :telefono, :clave, :imagenes)
+    ')->execute([
+        ':id' => $cliente['id'],
+        ':negocio_id' => $negocio['id'],
+        ':nombre' => $cliente['nombre'],
+        ':apellido' => $cliente['apellido'],
+        ':correo' => $cliente['correo'],
+        ':clave' => $cliente['clave'],
+        ':telefono' => $cliente['telefono'],
+        ':imagenes' => json_encode($cliente['imagenes']),
+    ]);
+
+    session_start();
+    $_SESSION['ecommerce'][$slug]['usuario'] = $cliente;
+});
+
+Route::any('/{slug}/cerrar-sesion', function ($slug) {
+    session_start();
+    unset($_SESSION['ecommerce'][$slug]);
+});
 
 Route::get('/{slug}/perfil', function () {
     return view('{slug}_perfil');
