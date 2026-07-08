@@ -1,4 +1,4 @@
-<x-estructura-ecommerce titulo="Perfil" :negocio="$negocio" :usuario="$usuario">
+<x-estructura-ecommerce titulo="Editar perfil" :negocio="$negocio" :usuario="$usuario">
     <main class="w3-row-padding">
         <form method="post" enctype="multipart/form-data" class="w3-half">
             <input

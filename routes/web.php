@@ -416,6 +416,44 @@ Route::post('/panel/negocios', function () {
     ]);
 });
 
+Route::get('/panel/negocios/{negocio}', function ($negocio) {
+    $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
+    $stmt->execute([$negocio]);
+    $negocio = $stmt->fetch();
+    session_start();
+    $usuario = $_SESSION['panel']['usuario'];
+
+    return view('panel_negocios_{negocio}', [
+        'negocio' => $negocio,
+        'usuario' => $usuario,
+    ]);
+});
+
+Route::post('/panel/negocios/{negocio}', function ($negocio) {
+    $nombre = $_POST['nombre'];
+    $rif = $_POST['rif'];
+    $direccion = $_POST['direccion'];
+    $telefono = $_POST['telefono'];
+    $slug = $_POST['slug'];
+
+    PDO->prepare('UPDATE negocios SET
+        nombre = :nombre,
+        rif = :rif,
+        direccion = :direccion,
+        telefono = :telefono,
+        slug = :slug,
+        actualizado_en = CURRENT_TIMESTAMP
+        WHERE id = :id
+    ')->execute([
+        ':nombre' => $nombre,
+        ':rif' => $rif,
+        ':direccion' => $direccion,
+        ':telefono' => $telefono,
+        ':slug' => $slug,
+        ':id' => $negocio,
+    ]);
+});
+
 Route::get('/panel/{negocio}/perfil', function ($negocio) {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
     $stmt->execute([$negocio]);
@@ -473,8 +511,6 @@ Route::get('/panel/{negocio}', function ($negocio) {
 
     return view('panel_{negocio}', ['negocio' => $negocio, 'usuario' => $usuario]);
 });
-
-Route::post('/panel/{negocio}', function () {});
 
 Route::get('/panel/{negocio}/empleados', function () {
     return view('panel_{negocio}_empleados');

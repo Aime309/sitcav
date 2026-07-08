@@ -63,7 +63,7 @@
                         <a
                             href="./{{ $negocio['slug'] }}/perfil"
                             class="w3-button">
-                            Perfil
+                            Editar perfil
                         </a>
                     </li>
                 @endif

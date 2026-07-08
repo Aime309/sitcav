@@ -104,10 +104,15 @@
                     </li>
                     <li class="w3-bar-item w3-right">
                         <a href="./panel/{{ $negocio['id'] }}/perfil" class="w3-button">
-                            Perfil
+                            Editar perfil
                         </a>
                     </li>
                     @if (in_array('Administrador', $usuario['roles']))
+                        <li class="w3-bar-item w3-right">
+                            <a href="./panel/negocios/{{ $negocio['id'] }}" class="w3-button">
+                                Editar negocio
+                            </a>
+                        </li>
                         <li class="w3-bar-item w3-right">
                             <a href="./panel" class="w3-button">
                                 Seleccionar establecimiento
