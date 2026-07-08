@@ -585,12 +585,53 @@ Route::any('/{slug}/cerrar-sesion', function ($slug) {
     unset($_SESSION['ecommerce'][$slug]);
 });
 
-Route::get('/{slug}/perfil', function () {
-    return view('{slug}_perfil');
+Route::get('/{slug}/perfil', function ($slug) {
+    $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
+    $stmt->execute([$slug]);
+    $negocio = $stmt->fetch();
+    session_start();
+    $usuario = $_SESSION['ecommerce'][$slug]['usuario'];
+
+    return view('{slug}_perfil', [
+        'negocio' => $negocio,
+        'usuario' => $usuario,
+    ]);
 });
 
-Route::post('/{slug}/perfil', function () {});
-Route::post('/{slug}/perfil/clave', function () {});
+Route::post('/{slug}/perfil', function ($slug) {
+    session_start();
+    $usuario = &$_SESSION['ecommerce'][$slug]['usuario'];
+    $usuario['nombre'] = $_POST['nombre'];
+    $usuario['apellido'] = $_POST['apellido'];
+    $usuario['correo'] = $_POST['correo'];
+    $usuario['telefono'] = $_POST['telefono'];
+
+    PDO->prepare('UPDATE clientes SET
+        nombre = :nombre,
+        apellido = :apellido,
+        correo = :correo,
+        telefono = :telefono,
+        actualizado_en = CURRENT_TIMESTAMP
+        WHERE id = :id
+    ')->execute([
+        ':nombre' => $usuario['nombre'],
+        ':apellido' => $usuario['apellido'],
+        ':correo' => $usuario['correo'],
+        ':telefono' => $usuario['telefono'],
+        ':id' => $usuario['id'],
+    ]);
+});
+
+Route::post('/{slug}/perfil/clave', function ($slug) {
+    session_start();
+    $usuario = &$_SESSION['ecommerce'][$slug]['usuario'];
+    $clave = $_POST['clave'] ?? '';
+    $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
+
+    PDO
+        ->prepare('UPDATE clientes SET clave = :clave WHERE id = :id')
+        ->execute([':clave' => $usuario['clave'], ':id' => $usuario['id']]);
+});
 
 Route::get('/{slug}/carrito', function () {
     return view('{slug}_carrito');
