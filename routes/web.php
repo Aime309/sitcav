@@ -22,11 +22,11 @@ PDO->query('CREATE TABLE IF NOT EXISTS usuarios (
         json_valid(roles)
         AND json_array_length(roles) > 0
         AND (
-            json_extract(roles, "$[0]") IN ("administrador", "empleado", "vendedor", "cliente")
-            OR json_extract(roles, "$[1]") IN ("administrador", "empleado", "vendedor", "cliente")
-            OR json_extract(roles, "$[2]") IN ("administrador", "empleado", "vendedor", "cliente")
-            OR json_extract(roles, "$[3]") IN ("administrador", "empleado", "vendedor", "cliente")
-            OR json_extract(roles, "$[4]") IN ("administrador", "empleado", "vendedor", "cliente")
+            json_extract(roles, "$[0]") IN ("administrador", "empleado", "vendedor")
+            OR json_extract(roles, "$[1]") IN ("administrador", "empleado", "vendedor")
+            OR json_extract(roles, "$[2]") IN ("administrador", "empleado", "vendedor")
+            OR json_extract(roles, "$[3]") IN ("administrador", "empleado", "vendedor")
+            OR json_extract(roles, "$[4]") IN ("administrador", "empleado", "vendedor")
         )
     ),
     imagenes TEXT NOT NULL CHECK (
@@ -93,6 +93,28 @@ PDO->query('CREATE TABLE IF NOT EXISTS asignaciones (
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) STRICT')->execute();
 
+PDO->query('CREATE TABLE IF NOT EXISTS clientes (
+    id TEXT PRIMARY KEY,
+    negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
+    nombre TEXT NOT NULL CHECK (length(nombre) > 0),
+    apellido TEXT NOT NULL CHECK (length(apellido) > 0),
+    correo TEXT NOT NULL UNIQUE CHECK (correo LIKE "%@gmail.com"),
+    clave TEXT NOT NULL UNIQUE CHECK (length(clave) >= 8),
+    telefono TEXT NOT NULL UNIQUE CHECK (
+        telefono LIKE "+58416_______"
+        OR telefono LIKE "+58414_______"
+        OR telefono LIKE "+58424_______"
+        OR telefono LIKE "+58426_______"
+    ),
+    imagenes TEXT NOT NULL CHECK (
+        json_valid(imagenes)
+        AND json_array_length(imagenes) >= 0
+    ),
+    activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
+    creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
+) STRICT')->execute();
+
 PDO->query('CREATE TABLE IF NOT EXISTS proveedores (
     id TEXT PRIMARY KEY,
     negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
@@ -157,7 +179,7 @@ PDO->query('CREATE TABLE IF NOT EXISTS ventas (
     establecimiento_tipo TEXT NOT NULL,
     establecimiento_id TEXT NOT NULL,
     usuario_id TEXT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-    cliente_id TEXT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    cliente_id TEXT NOT NULL REFERENCES clientes(id) ON DELETE CASCADE,
     reserva_id TEXT REFERENCES reservas(id) ON DELETE SET NULL,
     creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -176,7 +198,7 @@ PDO->query('CREATE TABLE IF NOT EXISTS ventas_detalles (
 PDO->query('CREATE TABLE IF NOT EXISTS carritos (
     id TEXT PRIMARY KEY,
     negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
-    cliente_id TEXT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    cliente_id TEXT NOT NULL REFERENCES clientes(id) ON DELETE CASCADE,
     creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) STRICT')->execute();
@@ -195,7 +217,7 @@ PDO->query('CREATE TABLE IF NOT EXISTS carritos_detalles (
 PDO->query('CREATE TABLE IF NOT EXISTS reservas (
     id TEXT PRIMARY KEY,
     negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
-    cliente_id TEXT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    cliente_id TEXT NOT NULL REFERENCES clientes(id) ON DELETE CASCADE,
     estado TEXT NOT NULL DEFAULT "activa",
     expira_en TEXT NOT NULL,
     creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
