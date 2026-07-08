@@ -178,71 +178,135 @@ PDO->query('CREATE TABLE IF NOT EXISTS reservas_detalles (
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) STRICT')->execute();
 
-Route::get('/panel/iniciar-sesion', function () {});
+Route::get('/panel/iniciar-sesion', function () {
+    return view('panel_iniciar-sesion');
+});
+
 Route::post('/panel/iniciar-sesion', function () {});
 
-Route::get('/panel/registrarse', function () {});
+Route::get('/panel/registrarse', function () {
+    return view('panel_registrarse');
+});
+
 Route::post('/panel/registrarse', function () {});
 
 Route::post('/panel/cerrar-sesion', function () {});
 
-Route::get('/panel', function () {});
+Route::get('/panel', function () {
+    return view('panel');
+});
 
-Route::get('/panel/perfil', function () {});
+Route::get('/panel/perfil', function () {
+    return view('panel_perfil');
+});
+
 Route::post('/panel/perfil', function () {});
 Route::post('/panel/perfil/clave', function () {});
 
-Route::get('/panel/{negocio}', function () {});
+Route::get('/panel/{negocio}', function () {
+    return view('panel_{negocio}');
+});
 
-Route::get('/panel/{negocio}/empleados', function () {});
+Route::post('/panel/{negocio}', function () {});
+
+Route::get('/panel/{negocio}/empleados', function () {
+    return view('panel_{negocio}_empleados');
+});
+
 Route::post('/panel/{negocio}/empleados', function () {});
 Route::post('/panel/{negocio}/empleados/{empleado}', function () {});
 
-Route::get('/panel/{negocio}/proveedores', function () {});
+Route::get('/panel/{negocio}/proveedores', function () {
+    return view('panel_{negocio}_proveedores');
+});
+
 Route::post('/panel/{negocio}/proveedores', function () {});
 Route::post('/panel/{negocio}/proveedores/{proveedor}', function () {});
 
-Route::get('/panel/{negocio}/clientes', function () {});
+Route::get('/panel/{negocio}/clientes', function () {
+    return view('panel_{negocio}_clientes');
+});
+
 Route::post('/panel/{negocio}/clientes', function () {});
 Route::post('/panel/{negocio}/clientes/{cliente}', function () {});
 
-Route::get('/panel/{negocio}/productos', function () {});
+Route::get('/panel/{negocio}/productos', function () {
+    return view('panel_{negocio}_productos');
+});
+
 Route::post('/panel/{negocio}/productos', function () {});
 Route::post('/panel/{negocio}/productos/{producto}', function () {});
 
-Route::get('/panel/{negocio}/sucursales', function () {});
-Route::get('/panel/{negocio}/sucursales/{sucursal}', function () {});
+Route::get('/panel/{negocio}/sucursales', function () {
+    return view('panel_{negocio}_sucursales');
+});
+
+Route::get('/panel/{negocio}/sucursales/{sucursal}', function () {
+    return view('panel_{negocio}');
+});
+
 Route::post('/panel/{negocio}/sucursales/{sucursal}', function () {});
 
-Route::post('/panel/{negocio}/cerrar-carga-inicial', function () {});
+Route::get('/panel/{negocio}/compras', function () {
+    return view('panel_{negocio}_compras');
+});
 
-Route::get('/panel/{negocio}/compras', function () {});
 Route::post('/panel/{negocio}/compras', function () {});
 
-Route::get('/panel/{negocio}/ventas', function () {});
+Route::get('/panel/{negocio}/ventas', function () {
+    return view('panel_{negocio}_ventas');
+});
+
 Route::post('/panel/{negocio}/ventas', function () {});
 Route::post('/panel/{negocio}/ventas/desde-reserva', function () {});
 
-Route::get('/{slug}', function () {});
-Route::get('/{slug}/productos', function () {});
-Route::get('/{slug}/productos/{producto}', function () {});
+Route::get('/{slug}', function () {
+    return view('{slug}');
+});
 
-Route::get('/{slug}/iniciar-sesion', function () {});
+Route::get('/{slug}/productos', function () {
+    return view('{slug}_productos');
+});
+
+Route::get('/{slug}/productos/{producto}', function () {
+    return view('{slug}_productos_{producto}');
+});
+
+Route::get('/{slug}/iniciar-sesion', function () {
+    return view('{slug}_iniciar-sesion');
+});
+
 Route::post('/{slug}/iniciar-sesion', function () {});
 
-Route::get('/{slug}/registrarse', function () {});
+Route::get('/{slug}/registrarse', function () {
+    return view('{slug}_registrarse');
+});
+
 Route::post('/{slug}/registrarse', function () {});
 
-Route::get('/{slug}/perfil', function () {});
+Route::get('/{slug}/perfil', function () {
+    return view('{slug}_perfil');
+});
+
 Route::post('/{slug}/perfil', function () {});
 Route::post('/{slug}/perfil/clave', function () {});
 
-Route::get('/{slug}/carrito', function () {});
+Route::get('/{slug}/carrito', function () {
+    return view('{slug}_carrito');
+});
+
 Route::post('/{slug}/carrito/items', function () {});
 Route::post('/{slug}/carrito/items/{elemento}', function () {});
 Route::post('/{slug}/carrito/items/{elemento}/eliminar', function () {});
 
-Route::get('/{slug}/reservas', function () {});
+Route::get('/{slug}/reservas', function () {
+    return view('{slug}_reservas');
+});
+
 Route::post('/{slug}/reservas', function () {});
-Route::get('/{slug}/reservas/{reserva}', function () {});
+
+Route::get('/{slug}/reservas/{reserva}', function () {
+    return view('{slug}_reservas_{reserva}');
+});
+
 Route::post('/{slug}/reservas/{reserva}/cancelar', function () {});
