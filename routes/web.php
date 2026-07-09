@@ -12,9 +12,10 @@ use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
+use Pdo\Sqlite;
 
-define('PDO', match ($_ENV['DB_CONNECTION']) {
-    'sqlite' => new PDO\Sqlite('sqlite:' . __DIR__ . '/../database/database.sqlite'),
+define('PDO', match (config('database.default')) {
+    'sqlite' => new Sqlite('sqlite:' . config('database.connections.sqlite.database')),
 });
 
 PDO->query('CREATE TABLE IF NOT EXISTS usuarios (
