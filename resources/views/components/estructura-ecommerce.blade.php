@@ -33,7 +33,7 @@
                 <li class="w3-bar-item">
                     <h1>
                         <a
-                            href="./{{ $negocio['slug'] }}"
+                            href="{{ route('{negocio}', ['negocio' => $negocio['slug']]) }}"
                             class="w3-button">
                             {{ $negocio['nombre'] }}
                         </a>
@@ -42,14 +42,18 @@
                 @if (empty($usuario))
                     <li class="w3-bar-item w3-right">
                         <a
-                            href="./{{ $negocio['slug'] }}/registrarse"
+                            href="{{ route('{negocio}.registrarse', [
+                                'negocio' => $negocio['slug'],
+                            ]) }}"
                             class="w3-button">
                             Registrarse
                         </a>
                     </li>
                     <li class="w3-bar-item w3-right">
                         <a
-                            href="./{{ $negocio['slug'] }}/iniciar-sesion"
+                            href="{{ route('{negocio}.iniciar-sesion', [
+                                'negocio' => $negocio['slug'],
+                            ]) }}"
                             class="w3-button">
                             Iniciar sesión
                         </a>
@@ -57,14 +61,18 @@
                 @else
                     <li class="w3-bar-item w3-right">
                         <a
-                            href="./{{ $negocio['slug'] }}/cerrar-sesion"
+                            href="{{ route('{negocio}.cerrar-sesion', [
+                                'negocio' => $negocio['slug'],
+                            ]) }}"
                             class="w3-button">
                             Cerrar sesión
                         </a>
                     </li>
                     <li class="w3-bar-item w3-right">
                         <a
-                            href="./{{ $negocio['slug'] }}/perfil"
+                            href="{{ route('{negocio}.perfil', [
+                                'negocio' => $negocio['slug'],
+                            ]) }}"
                             class="w3-button">
                             Editar perfil
                         </a>

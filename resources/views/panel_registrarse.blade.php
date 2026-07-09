@@ -58,5 +58,8 @@
             value="Registrarse"
             class="w3-button w3-blue w3-hover-light-blue w3-block"
         />
+        <a href="{{ route('panel.iniciar-sesion') }}">
+            Iniciar sesión
+        </a>
     </form>
 </x-estructura>

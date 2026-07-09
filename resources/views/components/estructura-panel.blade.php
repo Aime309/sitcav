@@ -35,7 +35,9 @@
                         @if (empty($sucursal))
                             <h1>
                                 <a
-                                    href="./panel/negocios/{{ $negocio['id'] }}"
+                                    href="{{ route('panel.negocios.{negocio}', [
+                                        'negocio' => $negocio['id'],
+                                    ]) }}"
                                     class="w3-button">
                                     {{ $negocio['nombre'] }}
                                 </a>
@@ -43,7 +45,13 @@
                         @else
                             <h1>
                                 <a
-                                    href="./panel/negocios/{{ $negocio['id'] }}/sucursales/{{ $sucursal['id'] }}"
+                                    href="{{ route(
+                                        'panel.negocios.{negocio}.sucursales.{sucursal}',
+                                        [
+                                            'negocio' => $negocio['id'],
+                                            'sucursal' => $sucursal['id'],
+                                        ],
+                                    ) }}"
                                     class="w3-button">
                                     {{ $sucursal['nombre'] }}
                                 </a>
@@ -53,14 +61,20 @@
                     @if (in_array('Administrador', $usuario['roles']))
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/negocios/{{ $negocio['id'] }}/empleados"
+                                href="{{ route(
+                                    'panel.negocios.{negocio}.empleados',
+                                    ['negocio' => $negocio['id']],
+                                ) }}"
                                 class="w3-button">
                                 Empleados
                             </a>
                         </li>
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/negocios/{{ $negocio['id'] }}/sucursales"
+                                href="{{ route(
+                                    'panel.negocios.{negocio}.sucursales',
+                                    ['negocio' => $negocio['id']],
+                                ) }}"
                                 class="w3-button">
                                 Sucursales
                             </a>
@@ -69,35 +83,50 @@
                     @if (in_array('Encargado', $usuario['roles']))
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/negocios/{{ $negocio['id'] }}/proveedores"
+                                href="{{ route(
+                                    'panel.negocios.{negocio}.proveedores',
+                                    ['negocio' => $negocio['id']],
+                                ) }}"
                                 class="w3-button">
                                 Proveedores
                             </a>
                         </li>
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/negocios/{{ $negocio['id'] }}/clientes"
+                                href="{{ route(
+                                    'panel.negocios.{negocio}.clientes',
+                                    ['negocio' => $negocio['id']],
+                                ) }}"
                                 class="w3-button">
                                 Clientes
                             </a>
                         </li>
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/negocios/{{ $negocio['id'] }}/compras"
+                                href="{{ route(
+                                    'panel.negocios.{negocio}.compras',
+                                    ['negocio' => $negocio['id']],
+                                ) }}"
                                 class="w3-button">
                                 Compras
                             </a>
                         </li>
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/negocios/{{ $negocio['id'] }}/ventas"
+                                href="{{ route(
+                                    'panel.negocios.{negocio}.ventas',
+                                    ['negocio' => $negocio['id']],
+                                ) }}"
                                 class="w3-button">
                                 Ventas
                             </a>
                         </li>
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/negocios/{{ $negocio['id'] }}/reservas"
+                                href="{{ route(
+                                    'panel.negocios.{negocio}.reservas',
+                                    ['negocio' => $negocio['id']],
+                                ) }}"
                                 class="w3-button">
                                 Reservas
                             </a>
@@ -105,29 +134,46 @@
                     @endif
                     <li class="w3-bar-item">
                         <a
-                            href="./panel/negocios/{{ $negocio['id'] }}/productos"
+                            href="{{ route(
+                                'panel.negocios.{negocio}.productos',
+                                ['negocio' => $negocio['id']],
+                            ) }}"
                             class="w3-button">
                             Productos
                         </a>
                     </li>
                     <li class="w3-bar-item w3-right">
-                        <a href="./panel/cerrar-sesion" class="w3-button">
+                        <a
+                            href="{{ route('panel.cerrar-sesion') }}"
+                            class="w3-button">
                             Cerrar sesión
                         </a>
                     </li>
                     <li class="w3-bar-item w3-right">
-                        <a href="./panel/negocios/{{ $negocio['id'] }}/perfil" class="w3-button">
+                        <a
+                            href="{{ route(
+                                'panel.negocios.{negocio}.perfil',
+                                ['negocio' => $negocio['id']],
+                            ) }}"
+                            class="w3-button">
                             Editar perfil
                         </a>
                     </li>
                     @if (in_array('Administrador', $usuario['roles']))
                         <li class="w3-bar-item w3-right">
-                            <a href="./panel/negocios/{{ $negocio['id'] }}/editar" class="w3-button">
+                            <a
+                                href="{{ route(
+                                    'panel.negocios.{negocio}.editar',
+                                    ['negocio' => $negocio['id']],
+                                ) }}"
+                                class="w3-button">
                                 Editar negocio
                             </a>
                         </li>
                         <li class="w3-bar-item w3-right">
-                            <a href="./panel/negocios" class="w3-button">
+                            <a
+                                href="{{ route('panel.negocios') }}"
+                                class="w3-button">
                                 Seleccionar establecimiento
                             </a>
                         </li>

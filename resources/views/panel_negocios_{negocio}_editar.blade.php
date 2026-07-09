@@ -3,7 +3,7 @@
         method="post"
         enctype="multipart/form-data"
         class="w3-container"
-        action="./panel/negocios/{{ $negocio['id'] }}">
+        action="{{ route('panel.negocios.{negocio}', ['negocio' => $negocio['id']]) }}">
         <input
             name="nombre"
             placeholder="Nombre"

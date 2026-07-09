@@ -2,26 +2,25 @@
     <main class="w3-row-padding">
         <ul class="w3-half w3-ul">
             @foreach ($usuario['negocios'] as $negocio)
-            <li>
-                <a href="./panel/negocios/{{ $negocio['id'] }}">
-                    {{ $negocio['nombre'] }}
-                </a>
-                <ul class="w3-ul w3-hoverable">
-                    @foreach ($negocio['sucursales'] as $sucursal)
-                        <li>
-                            <a href="./panel/negocios/{{ $negocio['id'] }}/sucursales/{{ $sucursal['id'] }}">
-                                {{ $sucursal['nombre'] }}
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            </li>
+                <li>
+                    <a href="{{ route('panel.negocios.{negocio}', ['negocio' => $negocio['id']]) }}">
+                        {{ $negocio['nombre'] }}
+                    </a>
+                    <ul class="w3-ul w3-hoverable">
+                        @foreach ($negocio['sucursales'] as $sucursal)
+                            <li>
+                                <a href="{{ route('panel.negocios.{negocio}.sucursales.{sucursal}', ['negocio' => $negocio['id'], 'sucursal' => $sucursal['id']]) }}">
+                                    {{ $sucursal['nombre'] }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </li>
             @endforeach
         </ul>
 
         <form
             method="post"
-            action="./panel/negocios"
             enctype="multipart/form-data"
             class="w3-half w3-card-4">
             <input

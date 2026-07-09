@@ -19,5 +19,8 @@
             value="Iniciar sesión"
             class="w3-button w3-blue w3-hover-light-blue w3-block"
         />
+        <a href="{{ route('panel.registrarse') }}">
+            Registrarse
+        </a>
     </form>
 </x-estructura-panel>

@@ -50,7 +50,9 @@
         </form>
         <form
             method="post"
-            action="./panel/negocios/{{ $negocio['id'] }}/perfil/clave"
+            action="{{ route('panel.negocios.{negocio}.perfil.clave', [
+                'negocio' => $negocio['id'],
+            ]) }}"
             class="w3-half">
             <input
                 name="clave"
