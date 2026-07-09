@@ -241,6 +241,48 @@ PDO->query('CREATE TABLE IF NOT EXISTS reservas_detalles (
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) STRICT')->execute();
 
+define('IDS_NEGOCIO', array_map(
+    static fn(array $negocio): string => $negocio['id'],
+    PDO->query('SELECT id FROM negocios')->fetchAll(),
+));
+
+define('IDS_EMPLEADOS', array_map(
+    static fn(array $empleado): string => $empleado['id'],
+    PDO
+        ->query('SELECT id FROM usuarios WHERE roles NOT LIKE "%Administrador%" AND (roles LIKE "%Encargado%" OR roles LIKE "%Vendedor%")')
+        ->fetchAll(),
+));
+
+define('IDS_PROVEEDORES', array_map(
+    static fn(array $proveedor): string => $proveedor['id'],
+    PDO->query('SELECT id FROM proveedores')->fetchAll(),
+));
+
+define('IDS_CLIENTES', array_map(
+    static fn(array $cliente): string => $cliente['id'],
+    PDO->query('SELECT id FROM clientes')->fetchAll(),
+));
+
+define('IDS_PRODUCTOS', array_map(
+    static fn(array $producto): string => $producto['id'],
+    PDO->query('SELECT id FROM productos')->fetchAll(),
+));
+
+define('IDS_SUCURSALES', array_map(
+    static fn(array $sucursal): string => $sucursal['id'],
+    PDO->query('SELECT id FROM sucursales')->fetchAll(),
+));
+
+define('IDS_RESERVAS', array_map(
+    static fn(array $reserva): string => $reserva['id'],
+    PDO->query('SELECT id FROM reservas')->fetchAll(),
+));
+
+define('SLUGS_NEGOCIOS', array_map(
+    static fn(array $negocio): string => $negocio['slug'],
+    PDO->query('SELECT slug FROM negocios')->fetchAll(),
+));
+
 // Ver inicio de sesión del panel
 Route::get('/panel/iniciar-sesion', static function (): View {
     return view('panel_iniciar-sesion');
@@ -441,7 +483,8 @@ Route::get('/panel/negocios/{negocio}/editar', static function (string $negocio)
         'negocio' => $negocio,
         'usuario' => $usuario,
     ]);
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Actualizar negocio
 Route::post('/panel/negocios/{negocio}', static function (string $negocio): void {
@@ -470,7 +513,8 @@ Route::post('/panel/negocios/{negocio}', static function (string $negocio): void
         ':carga_inicial_cerrada' => $cargaInicialCerrada,
         ':id' => $negocio,
     ]);
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Editar perfil
 Route::get('/panel/negocios/{negocio}/perfil', static function (string $negocio): View {
@@ -485,7 +529,8 @@ Route::get('/panel/negocios/{negocio}/perfil', static function (string $negocio)
         'negocio' => $negocio,
         'usuario' => $usuario,
     ]);
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Actualizar perfil
 Route::post('/panel/negocios/{negocio}/perfil', static function (string $negocio): void {
@@ -510,7 +555,8 @@ Route::post('/panel/negocios/{negocio}/perfil', static function (string $negocio
         ':telefono' => $usuario['telefono'],
         ':id' => $usuario['id'],
     ]);
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Actualizar clave
 Route::post('/panel/negocios/{negocio}/perfil/clave', static function (string $negocio): void {
@@ -524,7 +570,8 @@ Route::post('/panel/negocios/{negocio}/perfil/clave', static function (string $n
         actualizado_en = CURRENT_TIMESTAMP
         WHERE id = :id
     ')->execute([':clave' => $usuario['clave'], ':id' => $usuario['id']]);
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Panel administrativo de un negocio
 Route::get('/panel/negocios/{negocio}', static function (string $negocio): View {
@@ -539,40 +586,53 @@ Route::get('/panel/negocios/{negocio}', static function (string $negocio): View 
         'negocio' => $negocio,
         'usuario' => $usuario,
     ]);
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Ver empleados
 Route::get('/panel/negocios/{negocio}/empleados', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_empleados');
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Registrar empleado
-Route::post('/panel/negocios/{negocio}/empleados', static function (string $negocio): void {});
+Route::post('/panel/negocios/{negocio}/empleados', static function (string $negocio): void {})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Actualizar empleado
-Route::post('/panel/negocios/{negocio}/empleados/{empleado}', static function (string $negocio, string $empleado): void {});
+Route::post('/panel/negocios/{negocio}/empleados/{empleado}', static function (string $negocio, string $empleado): void {})
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->whereIn('empleado', IDS_EMPLEADOS);
 
 // Ver proveedores
 Route::get('/panel/negocios/{negocio}/proveedores', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_proveedores');
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Registrar proveedor
-Route::post('/panel/negocios/{negocio}/proveedores', static function (string $negocio): void {});
+Route::post('/panel/negocios/{negocio}/proveedores', static function (string $negocio): void {})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Actualizar proveedor
-Route::post('/panel/negocios/{negocio}/proveedores/{proveedor}', static function (string $negocio, string $proveedor): void {});
+Route::post('/panel/negocios/{negocio}/proveedores/{proveedor}', static function (string $negocio, string $proveedor): void {})
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->whereIn('proveedor', IDS_PROVEEDORES);
 
 // Ver clientes
 Route::get('/panel/negocios/{negocio}/clientes', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_clientes');
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Registrar cliente
-Route::post('/panel/negocios/{negocio}/clientes', static function (string $negocio): void {});
+Route::post('/panel/negocios/{negocio}/clientes', static function (string $negocio): void {})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Actualizar cliente
-Route::post('/panel/negocios/{negocio}/clientes/{cliente}', static function (string $negocio, string $cliente): void {});
+Route::post('/panel/negocios/{negocio}/clientes/{cliente}', static function (string $negocio, string $cliente): void {})
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->whereIn('cliente', IDS_CLIENTES);
 
 // Ver productos
 Route::get('/panel/negocios/{negocio}/productos', static function (string $negocio): View {
@@ -591,7 +651,8 @@ Route::get('/panel/negocios/{negocio}/productos', static function (string $negoc
         'negocio' => $negocio,
         'usuario' => $usuario,
     ]);
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Registrar producto
 Route::post('/panel/negocios/{negocio}/productos', static function (string $negocio): void {
@@ -638,7 +699,8 @@ Route::post('/panel/negocios/{negocio}/productos', static function (string $nego
     }
 
     PDO->commit();
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Editar producto
 Route::get('/panel/negocios/{negocio}/productos/{producto}', static function (string $negocio, string $producto): View {
@@ -662,7 +724,9 @@ Route::get('/panel/negocios/{negocio}/productos/{producto}', static function (st
         'producto' => $producto,
         'usuario' => $usuario,
     ]);
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->whereIn('producto', IDS_PRODUCTOS);
 
 // Actualizar producto
 Route::post('/panel/negocios/{negocio}/productos/{producto}', static function (string $negocio, string $producto): void {
@@ -699,7 +763,9 @@ Route::post('/panel/negocios/{negocio}/productos/{producto}', static function (s
     }
 
     PDO->commit();
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->whereIn('producto', IDS_PRODUCTOS);
 
 // Activar producto
 Route::get('/panel/negocios/{negocio}/productos/{producto}/activar', static function (string $negocio, string $producto): void {
@@ -708,7 +774,9 @@ Route::get('/panel/negocios/{negocio}/productos/{producto}/activar', static func
         actualizado_en = CURRENT_TIMESTAMP
         WHERE id = :id
     ')->execute([':id' => $producto]);
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->whereIn('producto', IDS_PRODUCTOS);
 
 // Desactivar producto
 Route::get('/panel/negocios/{negocio}/productos/{producto}/desactivar', static function (string $negocio, string $producto): void {
@@ -717,44 +785,58 @@ Route::get('/panel/negocios/{negocio}/productos/{producto}/desactivar', static f
         actualizado_en = CURRENT_TIMESTAMP
         WHERE id = :id
     ')->execute([':id' => $producto]);
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->whereIn('producto', IDS_PRODUCTOS);
 
 // Ver sucursales
 Route::get('/panel/negocios/{negocio}/sucursales', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_sucursales');
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Panel administrativo de una sucursal
 Route::get('/panel/negocios/{negocio}/sucursales/{sucursal}', static function (string $negocio, string $sucursal): View {
     return view('panel_negocios_{negocio}_sucursales_{sucursal}');
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->whereIn('sucursal', IDS_SUCURSALES);
 
 // Actualizar sucursal
-Route::post('/panel/negocios/{negocio}/sucursales/{sucursal}', static function (string $negocio, string $sucursal): void {});
+Route::post('/panel/negocios/{negocio}/sucursales/{sucursal}', static function (string $negocio, string $sucursal): void {})
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->whereIn('sucursal', IDS_SUCURSALES);
 
 // Ver compras
 Route::get('/panel/negocios/{negocio}/compras', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_compras');
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Registrar compra
-Route::post('/panel/negocios/{negocio}/compras', static function (string $negocio): void {});
+Route::post('/panel/negocios/{negocio}/compras', static function (string $negocio): void {})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Ver ventas
 Route::get('/panel/negocios/{negocio}/ventas', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_ventas');
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Registrar venta
-Route::post('/panel/negocios/{negocio}/ventas', static function (string $negocio): void {});
+Route::post('/panel/negocios/{negocio}/ventas', static function (string $negocio): void {})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Vender productos reservados
-Route::post('/panel/negocios/{negocio}/ventas/{reserva}', static function (string $negocio, string $reserva): void {});
+Route::post('/panel/negocios/{negocio}/ventas/{reserva}', static function (string $negocio, string $reserva): void {})
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->whereIn('reserva', IDS_RESERVAS);
 
 // Ver reservas
 Route::get('/panel/negocios/{negocio}/reservas', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_reservas');
-});
+})
+    ->whereIn('negocio', IDS_NEGOCIO);
 
 // Ecommerce de un negocio
 Route::get('/{negocio}', static function (string $negocio): View {
@@ -766,17 +848,21 @@ Route::get('/{negocio}', static function (string $negocio): View {
     $usuario = $_SESSION['ecommerce'][$negocio]['usuario'] ?? [];
 
     return view('{negocio}', ['negocio' => $negocio, 'usuario' => $usuario]);
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Ver productos de un negocio
 Route::get('/{negocio}/productos', static function (string $negocio): View {
     return view('{negocio}_productos');
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Ver producto de un negocio
 Route::get('/{negocio}/productos/{producto}', static function (string $negocio, string $producto): View {
     return view('{negocio}_productos_{producto}');
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->whereIn('producto', IDS_PRODUCTOS);
 
 // Ver inicio de sesión en un negocio
 Route::get('/{negocio}/iniciar-sesion', static function (string $negocio): View {
@@ -785,7 +871,8 @@ Route::get('/{negocio}/iniciar-sesion', static function (string $negocio): View 
     $negocio = $stmt->fetch();
 
     return view('{negocio}_iniciar-sesion', ['negocio' => $negocio]);
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Iniciar sesión en un negocio
 Route::post('/{negocio}/iniciar-sesion', static function (string $negocio): void {
@@ -801,7 +888,8 @@ Route::post('/{negocio}/iniciar-sesion', static function (string $negocio): void
         $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
         $_SESSION['ecommerce'][$negocio]['usuario'] = $usuario;
     }
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Ver registro de cliente en un negocio
 Route::get('/{negocio}/registrarse', static function (string $negocio): View {
@@ -810,7 +898,8 @@ Route::get('/{negocio}/registrarse', static function (string $negocio): View {
     $negocio = $stmt->fetch();
 
     return view('{negocio}_registrarse', ['negocio' => $negocio]);
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Registrarse como cliente en un negocio
 Route::post('/{negocio}/registrarse', static function (string $negocio): void {
@@ -850,13 +939,15 @@ Route::post('/{negocio}/registrarse', static function (string $negocio): void {
 
     session_start();
     $_SESSION['ecommerce'][$negocio]['usuario'] = $cliente;
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Cerrar sesión en un negocio
 Route::get('/{negocio}/cerrar-sesion', static function (string $negocio): void {
     session_start();
-    unset($_SESSION['ecommerce'][$slug]);
-});
+    unset($_SESSION['ecommerce'][$negocio]);
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Editar perfil en un negocio
 Route::get('/{negocio}/perfil', static function (string $negocio): View {
@@ -870,7 +961,8 @@ Route::get('/{negocio}/perfil', static function (string $negocio): View {
         'negocio' => $negocio,
         'usuario' => $usuario,
     ]);
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Actualizar perfil en un negocio
 Route::post('/{negocio}/perfil', static function (string $negocio): void {
@@ -895,7 +987,8 @@ Route::post('/{negocio}/perfil', static function (string $negocio): void {
         ':telefono' => $usuario['telefono'],
         ':id' => $usuario['id'],
     ]);
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Actualizar clave en un negocio
 Route::post('/{negocio}/perfil/clave', static function (string $negocio): void {
@@ -909,34 +1002,47 @@ Route::post('/{negocio}/perfil/clave', static function (string $negocio): void {
         actualizado_en = CURRENT_TIMESTAMP
         WHERE id = :id
     ')->execute([':clave' => $usuario['clave'], ':id' => $usuario['id']]);
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Ver carrito en un negocio
 Route::get('/{negocio}/carrito', static function (string $negocio): View {
     return view('{negocio}_carrito');
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Añadir producto al carrito en un negocio
-Route::post('/{negocio}/carrito/productos', static function (string $negocio): void {});
+Route::post('/{negocio}/carrito/productos', static function (string $negocio): void {})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Actualizar cantidad de producto en el carrito en un negocio
-Route::post('/{negocio}/carrito/productos/{producto}', static function (string $negocio): void {});
+Route::post('/{negocio}/carrito/productos/{producto}', static function (string $negocio): void {})
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->whereIn('producto', IDS_PRODUCTOS);
 
 // Eliminar un producto del carrito en un negocio
-Route::post('/{negocio}/carrito/productos/{producto}/eliminar', static function (string $negocio): void {});
+Route::post('/{negocio}/carrito/productos/{producto}/eliminar', static function (string $negocio): void {})
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->whereIn('producto', IDS_PRODUCTOS);
 
 // Ver reservas en un negocio
 Route::get('/{negocio}/reservas', static function (string $negocio): View {
     return view('{negocio}_reservas');
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Reservar en un negocio
-Route::post('/{negocio}/reservas', static function (string $negocio): void {});
+Route::post('/{negocio}/reservas', static function (string $negocio): void {})
+    ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Ver reserva en un negocio
 Route::get('/{negocio}/reservas/{reserva}', static function (string $negocio, string $reserva): View {
     return view('{negocio}_reservas_{reserva}');
-});
+})
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->whereIn('reserva', IDS_RESERVAS);
 
 // Cancelar reserva en un negocio
-Route::post('/{negocio}/reservas/{reserva}/cancelar', static function (string $negocio, string $reserva): void {});
+Route::post('/{negocio}/reservas/{reserva}/cancelar', static function (string $negocio, string $reserva): void {})
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->whereIn('reserva', IDS_RESERVAS);
