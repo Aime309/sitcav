@@ -290,7 +290,7 @@ define('SLUGS_NEGOCIOS', array_map(
 // Ver inicio de sesión del panel
 Route::get('/panel/iniciar-sesion', static function (): View {
     return view('panel_iniciar-sesion');
-});
+})->name('panel.iniciar-sesion');
 
 // Iniciar sesión en el panel
 Route::post('/panel/iniciar-sesion', static function (): void {
@@ -312,7 +312,7 @@ Route::post('/panel/iniciar-sesion', static function (): void {
 // Ver registro de administrador del panel
 Route::get('/panel/registrarse', static function (): View {
     return view('panel_registrarse');
-});
+})->name('panel.registrarse');
 
 // Registrarse como administrador en el panel
 Route::post('/panel/registrarse', static function (): void {
@@ -382,7 +382,7 @@ Route::post('/panel/registrarse', static function (): void {
 Route::get('/panel/cerrar-sesion', static function (): void {
     session_start();
     unset($_SESSION['panel']);
-});
+})->name('panel.cerrar-sesion');
 
 // Seleccionar establecimiento
 Route::get('/panel/negocios', static function (): View {
@@ -413,7 +413,7 @@ Route::get('/panel/negocios', static function (): View {
     }
 
     return view('panel_negocios', ['usuario' => $usuario]);
-});
+})->name('panel.negocios');
 
 // Actualizar negocio
 Route::post('/panel/negocios', static function (): void {
@@ -494,7 +494,8 @@ Route::get(
         ]);
     },
 )
-    ->whereIn('negocio', IDS_NEGOCIO);
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->name('panel.negocios.{negocio}.editar');
 
 // Actualizar negocio
 Route::post(
@@ -546,7 +547,8 @@ Route::get(
         ]);
     },
 )
-    ->whereIn('negocio', IDS_NEGOCIO);
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->name('panel.negocios.{negocio}.perfil');
 
 // Actualizar perfil
 Route::post(
@@ -612,7 +614,8 @@ Route::get(
         ]);
     },
 )
-    ->whereIn('negocio', IDS_NEGOCIO);
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->name('panel.negocios.{negocio}');
 
 // Ver empleados
 Route::get(
@@ -621,7 +624,8 @@ Route::get(
         return view('panel_negocios_{negocio}_empleados');
     },
 )
-    ->whereIn('negocio', IDS_NEGOCIO);
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->name('panel.negocios.{negocio}.empleados');
 
 // Registrar empleado
 Route::post(
@@ -645,7 +649,8 @@ Route::get(
         return view('panel_negocios_{negocio}_proveedores');
     },
 )
-    ->whereIn('negocio', IDS_NEGOCIO);
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->name('panel.negocios.{negocio}.proveedores');
 
 // Registrar proveedor
 Route::post(
@@ -669,7 +674,8 @@ Route::get(
         return view('panel_negocios_{negocio}_clientes');
     },
 )
-    ->whereIn('negocio', IDS_NEGOCIO);
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->name('panel.negocios.{negocio}.clientes');
 
 // Registrar cliente
 Route::post(
@@ -710,7 +716,8 @@ Route::get(
         ]);
     },
 )
-    ->whereIn('negocio', IDS_NEGOCIO);
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->name('panel.negocios.{negocio}.productos');
 
 // Registrar producto
 Route::post(
@@ -796,7 +803,8 @@ Route::get(
     },
 )
     ->whereIn('negocio', IDS_NEGOCIO)
-    ->whereIn('producto', IDS_PRODUCTOS);
+    ->whereIn('producto', IDS_PRODUCTOS)
+    ->name('panel.negocios.{negocio}.productos.{producto}');
 
 // Actualizar producto
 Route::post(
@@ -852,7 +860,8 @@ Route::get(
     },
 )
     ->whereIn('negocio', IDS_NEGOCIO)
-    ->whereIn('producto', IDS_PRODUCTOS);
+    ->whereIn('producto', IDS_PRODUCTOS)
+    ->name('panel.negocios.{negocio}.productos.{producto}.activar');
 
 // Desactivar producto
 Route::get(
@@ -866,7 +875,8 @@ Route::get(
     },
 )
     ->whereIn('negocio', IDS_NEGOCIO)
-    ->whereIn('producto', IDS_PRODUCTOS);
+    ->whereIn('producto', IDS_PRODUCTOS)
+    ->name('panel.negocios.{negocio}.productos.{producto}.desactivar');
 
 // Ver sucursales
 Route::get(
@@ -875,7 +885,8 @@ Route::get(
         return view('panel_negocios_{negocio}_sucursales');
     },
 )
-    ->whereIn('negocio', IDS_NEGOCIO);
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->name('panel.negocios.{negocio}.sucursales');
 
 // Panel administrativo de una sucursal
 Route::get(
@@ -885,7 +896,8 @@ Route::get(
     },
 )
     ->whereIn('negocio', IDS_NEGOCIO)
-    ->whereIn('sucursal', IDS_SUCURSALES);
+    ->whereIn('sucursal', IDS_SUCURSALES)
+    ->name('panel.negocios.{negocio}.sucursales.{sucursal}');
 
 // Actualizar sucursal
 Route::post(
@@ -902,7 +914,8 @@ Route::get(
         return view('panel_negocios_{negocio}_compras');
     },
 )
-    ->whereIn('negocio', IDS_NEGOCIO);
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->name('panel.negocios.{negocio}.compras');
 
 // Registrar compra
 Route::post(
@@ -918,7 +931,8 @@ Route::get(
         return view('panel_negocios_{negocio}_ventas');
     },
 )
-    ->whereIn('negocio', IDS_NEGOCIO);
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->name('panel.negocios.{negocio}.ventas');
 
 // Registrar venta
 Route::post(
@@ -942,7 +956,8 @@ Route::get(
         return view('panel_negocios_{negocio}_reservas');
     },
 )
-    ->whereIn('negocio', IDS_NEGOCIO);
+    ->whereIn('negocio', IDS_NEGOCIO)
+    ->name('panel.negocios.{negocio}.reservas');
 
 // Ecommerce de un negocio
 Route::get(
@@ -961,7 +976,8 @@ Route::get(
         ]);
     },
 )
-    ->whereIn('negocio', SLUGS_NEGOCIOS);
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->name('{negocio}');
 
 // Ver productos de un negocio
 Route::get(
@@ -970,7 +986,8 @@ Route::get(
         return view('{negocio}_productos');
     },
 )
-    ->whereIn('negocio', SLUGS_NEGOCIOS);
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->name('{negocio}.productos');
 
 // Ver producto de un negocio
 Route::get(
@@ -980,7 +997,8 @@ Route::get(
     },
 )
     ->whereIn('negocio', SLUGS_NEGOCIOS)
-    ->whereIn('producto', IDS_PRODUCTOS);
+    ->whereIn('producto', IDS_PRODUCTOS)
+    ->name('{negocio}.productos.{producto}');
 
 // Ver inicio de sesión en un negocio
 Route::get(
@@ -993,7 +1011,8 @@ Route::get(
         return view('{negocio}_iniciar-sesion', ['negocio' => $negocio]);
     },
 )
-    ->whereIn('negocio', SLUGS_NEGOCIOS);
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->name('{negocio}.iniciar-sesion');
 
 // Iniciar sesión en un negocio
 Route::post(
@@ -1026,7 +1045,8 @@ Route::get(
         return view('{negocio}_registrarse', ['negocio' => $negocio]);
     },
 )
-    ->whereIn('negocio', SLUGS_NEGOCIOS);
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->name('{negocio}.registrarse');
 
 // Registrarse como cliente en un negocio
 Route::post(
@@ -1080,7 +1100,8 @@ Route::get(
         unset($_SESSION['ecommerce'][$negocio]);
     },
 )
-    ->whereIn('negocio', SLUGS_NEGOCIOS);
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->name('{negocio}.cerrar-sesion');
 
 // Editar perfil en un negocio
 Route::get(
@@ -1098,7 +1119,8 @@ Route::get(
         ]);
     },
 )
-    ->whereIn('negocio', SLUGS_NEGOCIOS);
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->name('{negocio}.perfil');
 
 // Actualizar perfil en un negocio
 Route::post(
@@ -1154,7 +1176,8 @@ Route::get(
         return view('{negocio}_carrito');
     },
 )
-    ->whereIn('negocio', SLUGS_NEGOCIOS);
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->name('{negocio}.carrito');
 
 // Añadir producto al carrito en un negocio
 Route::post(
@@ -1186,7 +1209,8 @@ Route::get(
         return view('{negocio}_reservas');
     },
 )
-    ->whereIn('negocio', SLUGS_NEGOCIOS);
+    ->whereIn('negocio', SLUGS_NEGOCIOS)
+    ->name('{negocio}.reservas');
 
 // Reservar en un negocio
 Route::post(
@@ -1203,7 +1227,8 @@ Route::get(
     },
 )
     ->whereIn('negocio', SLUGS_NEGOCIOS)
-    ->whereIn('reserva', IDS_RESERVAS);
+    ->whereIn('reserva', IDS_RESERVAS)
+    ->name('{negocio}.reservas.{reserva}');
 
 // Cancelar reserva en un negocio
 Route::post(
