@@ -25,10 +25,10 @@ use Illuminate\Database\Eloquent\Model;
 final class Negocio extends Model
 {
     /** The name of the "created at" column. */
-    public const ?string CREATED_AT = 'creation_date';
+    public const ?string CREATED_AT = 'creado_en';
 
     /** The name of the "updated at" column. */
-    public const ?string UPDATED_AT = 'updated_date';
+    public const ?string UPDATED_AT = 'actualizado_en';
 
     /** The model's default values for attributes. */
     protected $attributes = [
