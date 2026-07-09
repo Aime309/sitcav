@@ -1042,120 +1042,126 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
         },
     )->name('{negocio}');
 
-    // Ver productos de un negocio
-    Route::get(
-        'productos',
-        static function (Negocio $negocio): View {
-            $productos = Producto::query()
-                ->where('negocio_id', $negocio->id)
-                ->get();
+    Route::prefix('productos')->group(static function (): void {
+        // Ver productos de un negocio
+        Route::get(
+            '/',
+            static function (Negocio $negocio): View {
+                $productos = Producto::query()
+                    ->where('negocio_id', $negocio->id)
+                    ->get();
 
-            session_start();
-            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
-
-            return view('{negocio}_productos', [
-                'negocio' => $negocio,
-                'productos' => $productos,
-                'usuario' => $usuario,
-            ]);
-        },
-    )->name('{negocio}.productos');
-
-    // Ver producto de un negocio
-    Route::get(
-        'productos/{producto}',
-        static function (Negocio $negocio, Producto $producto): View {
-            session_start();
-            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
-
-            return view('{negocio}_productos_{producto}', [
-                'negocio' => $negocio,
-                'producto' => $producto,
-                'usuario' => $usuario,
-            ]);
-        },
-    )->name('{negocio}.productos.{producto}');
-
-    // Ver inicio de sesión en un negocio
-    Route::get(
-        'iniciar-sesion',
-        static function (Negocio $negocio): View {
-            return view('{negocio}_iniciar-sesion', ['negocio' => $negocio]);
-        },
-    )->name('{negocio}.iniciar-sesion');
-
-    // Iniciar sesión en un negocio
-    Route::post(
-        'iniciar-sesion',
-        static function (Negocio $negocio): RedirectResponse {
-            $correo = $_POST['correo'] ?? '';
-            $clave = $_POST['clave'] ?? '';
-
-            $stmt = PDO->prepare('SELECT * FROM clientes WHERE correo = ?');
-            $stmt->execute([$correo]);
-            $usuario = $stmt->fetch();
-
-            if ($usuario && password_verify($clave, $usuario['clave'])) {
                 session_start();
-                $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
-                $_SESSION['ecommerce'][$negocio->slug]['usuario'] = $usuario;
+                $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
 
-                return to_route('{negocio}', ['negocio' => $negocio]);
-            }
+                return view('{negocio}_productos', [
+                    'negocio' => $negocio,
+                    'productos' => $productos,
+                    'usuario' => $usuario,
+                ]);
+            },
+        )->name('{negocio}.productos');
 
-            return to_route('{negocio}.iniciar-sesion', ['negocio' => $negocio]);
-        },
-    );
+        // Ver producto de un negocio
+        Route::get(
+            '{producto}',
+            static function (Negocio $negocio, Producto $producto): View {
+                session_start();
+                $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
 
-    // Ver registro de cliente en un negocio
-    Route::get(
-        'registrarse',
-        static function (Negocio $negocio): View {
-            return view('{negocio}_registrarse', ['negocio' => $negocio]);
-        },
-    )->name('{negocio}.registrarse');
+                return view('{negocio}_productos_{producto}', [
+                    'negocio' => $negocio,
+                    'producto' => $producto,
+                    'usuario' => $usuario,
+                ]);
+            },
+        )->name('{negocio}.productos.{producto}');
+    });
 
-    // Registrarse como cliente en un negocio
-    Route::post(
-        'registrarse',
-        static function (Negocio $negocio): RedirectResponse {
-            $nombre = $_POST['nombre'] ?? '';
-            $apellido = $_POST['apellido'] ?? '';
-            $correo = $_POST['correo'] ?? '';
-            $clave = $_POST['clave'] ?? '';
-            $telefono = $_POST['telefono'] ?? '';
-            $imagenes = [];
+    Route::prefix('iniciar-sesion')->group(static function (): void {
+        // Ver inicio de sesión en un negocio
+        Route::get(
+            '/',
+            static function (Negocio $negocio): View {
+                return view('{negocio}_iniciar-sesion', ['negocio' => $negocio]);
+            },
+        )->name('{negocio}.iniciar-sesion');
 
-            $cliente = [
-                'id' => uniqid(),
-                'nombre' => $nombre,
-                'apellido' => $apellido,
-                'correo' => $correo,
-                'clave' => password_hash($clave, PASSWORD_DEFAULT),
-                'telefono' => $telefono,
-                'imagenes' => $imagenes,
-            ];
+        // Iniciar sesión en un negocio
+        Route::post(
+            '/',
+            static function (Negocio $negocio): RedirectResponse {
+                $correo = $_POST['correo'] ?? '';
+                $clave = $_POST['clave'] ?? '';
 
-            PDO->prepare('INSERT INTO clientes
-                (id, negocio_id, nombre, apellido, correo, telefono, clave, imagenes) VALUES
-                (:id, :negocio_id, :nombre, :apellido, :correo, :telefono, :clave, :imagenes)
-            ')->execute([
-                ':id' => $cliente['id'],
-                ':negocio_id' => $negocio['id'],
-                ':nombre' => $cliente['nombre'],
-                ':apellido' => $cliente['apellido'],
-                ':correo' => $cliente['correo'],
-                ':clave' => $cliente['clave'],
-                ':telefono' => $cliente['telefono'],
-                ':imagenes' => json_encode($cliente['imagenes']),
-            ]);
+                $stmt = PDO->prepare('SELECT * FROM clientes WHERE correo = ?');
+                $stmt->execute([$correo]);
+                $usuario = $stmt->fetch();
 
-            session_start();
-            $_SESSION['ecommerce'][$negocio['slug']]['usuario'] = $cliente;
+                if ($usuario && password_verify($clave, $usuario['clave'])) {
+                    session_start();
+                    $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                    $_SESSION['ecommerce'][$negocio->slug]['usuario'] = $usuario;
 
-            return to_route('{negocio}', ['negocio' => $negocio['slug']]);
-        },
-    );
+                    return to_route('{negocio}', ['negocio' => $negocio]);
+                }
+
+                return to_route('{negocio}.iniciar-sesion', ['negocio' => $negocio]);
+            },
+        );
+    });
+
+    Route::prefix('registrarse')->group(static function (): void {
+        // Ver registro de cliente en un negocio
+        Route::get(
+            '/',
+            static function (Negocio $negocio): View {
+                return view('{negocio}_registrarse', ['negocio' => $negocio]);
+            },
+        )->name('{negocio}.registrarse');
+
+        // Registrarse como cliente en un negocio
+        Route::post(
+            '/',
+            static function (Negocio $negocio): RedirectResponse {
+                $nombre = $_POST['nombre'] ?? '';
+                $apellido = $_POST['apellido'] ?? '';
+                $correo = $_POST['correo'] ?? '';
+                $clave = $_POST['clave'] ?? '';
+                $telefono = $_POST['telefono'] ?? '';
+                $imagenes = [];
+
+                $cliente = [
+                    'id' => uniqid(),
+                    'nombre' => $nombre,
+                    'apellido' => $apellido,
+                    'correo' => $correo,
+                    'clave' => password_hash($clave, PASSWORD_DEFAULT),
+                    'telefono' => $telefono,
+                    'imagenes' => $imagenes,
+                ];
+
+                PDO->prepare('INSERT INTO clientes
+                    (id, negocio_id, nombre, apellido, correo, telefono, clave, imagenes) VALUES
+                    (:id, :negocio_id, :nombre, :apellido, :correo, :telefono, :clave, :imagenes)
+                ')->execute([
+                    ':id' => $cliente['id'],
+                    ':negocio_id' => $negocio['id'],
+                    ':nombre' => $cliente['nombre'],
+                    ':apellido' => $cliente['apellido'],
+                    ':correo' => $cliente['correo'],
+                    ':clave' => $cliente['clave'],
+                    ':telefono' => $cliente['telefono'],
+                    ':imagenes' => json_encode($cliente['imagenes']),
+                ]);
+
+                session_start();
+                $_SESSION['ecommerce'][$negocio['slug']]['usuario'] = $cliente;
+
+                return to_route('{negocio}', ['negocio' => $negocio['slug']]);
+            },
+        );
+    });
 
     // Cerrar sesión en un negocio
     Route::get(
@@ -1168,167 +1174,179 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
         },
     )->name('{negocio}.cerrar-sesion');
 
-    // Editar perfil en un negocio
-    Route::get(
-        'perfil',
-        static function (Negocio $negocio): View {
-            session_start();
-            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'];
+    Route::prefix('perfil')->group(static function (): void {
+        // Editar perfil en un negocio
+        Route::get(
+            '/',
+            static function (Negocio $negocio): View {
+                session_start();
+                $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'];
 
-            return view('{negocio}_perfil', [
-                'negocio' => $negocio,
-                'usuario' => $usuario,
-            ]);
-        },
-    )->name('{negocio}.perfil');
+                return view('{negocio}_perfil', [
+                    'negocio' => $negocio,
+                    'usuario' => $usuario,
+                ]);
+            },
+        )->name('{negocio}.perfil');
 
-    // Actualizar perfil en un negocio
-    Route::post(
-        'perfil',
-        static function (Negocio $negocio): RedirectResponse {
-            session_start();
-            $usuario = &$_SESSION['ecommerce'][$negocio]['usuario'];
-            $usuario['nombre'] = $_POST['nombre'];
-            $usuario['apellido'] = $_POST['apellido'];
-            $usuario['correo'] = $_POST['correo'];
-            $usuario['telefono'] = $_POST['telefono'];
+        // Actualizar perfil en un negocio
+        Route::post(
+            '/',
+            static function (Negocio $negocio): RedirectResponse {
+                session_start();
+                $usuario = &$_SESSION['ecommerce'][$negocio]['usuario'];
+                $usuario['nombre'] = $_POST['nombre'];
+                $usuario['apellido'] = $_POST['apellido'];
+                $usuario['correo'] = $_POST['correo'];
+                $usuario['telefono'] = $_POST['telefono'];
 
-            PDO->prepare('UPDATE clientes SET
-                nombre = :nombre,
-                apellido = :apellido,
-                correo = :correo,
-                telefono = :telefono,
-                actualizado_en = CURRENT_TIMESTAMP
-                WHERE id = :id
-            ')->execute([
-                ':nombre' => $usuario['nombre'],
-                ':apellido' => $usuario['apellido'],
-                ':correo' => $usuario['correo'],
-                ':telefono' => $usuario['telefono'],
-                ':id' => $usuario['id'],
-            ]);
+                PDO->prepare('UPDATE clientes SET
+                    nombre = :nombre,
+                    apellido = :apellido,
+                    correo = :correo,
+                    telefono = :telefono,
+                    actualizado_en = CURRENT_TIMESTAMP
+                    WHERE id = :id
+                ')->execute([
+                    ':nombre' => $usuario['nombre'],
+                    ':apellido' => $usuario['apellido'],
+                    ':correo' => $usuario['correo'],
+                    ':telefono' => $usuario['telefono'],
+                    ':id' => $usuario['id'],
+                ]);
 
-            return to_route('{negocio}.perfil', ['negocio' => $negocio]);
-        },
-    );
+                return to_route('{negocio}.perfil', ['negocio' => $negocio]);
+            },
+        );
 
-    // Actualizar clave en un negocio
-    Route::post(
-        'perfil/clave',
-        static function (Negocio $negocio): RedirectResponse {
-            session_start();
-            $usuario = &$_SESSION['ecommerce'][$negocio]['usuario'];
-            $clave = $_POST['clave'] ?? '';
-            $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
+        // Actualizar clave en un negocio
+        Route::post(
+            'clave',
+            static function (Negocio $negocio): RedirectResponse {
+                session_start();
+                $usuario = &$_SESSION['ecommerce'][$negocio]['usuario'];
+                $clave = $_POST['clave'] ?? '';
+                $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
 
-            PDO->prepare('UPDATE clientes SET
-                clave = :clave,
-                actualizado_en = CURRENT_TIMESTAMP
-                WHERE id = :id
-            ')->execute([
-                ':clave' => $usuario['clave'],
-                ':id' => $usuario['id'],
-            ]);
+                PDO->prepare('UPDATE clientes SET
+                    clave = :clave,
+                    actualizado_en = CURRENT_TIMESTAMP
+                    WHERE id = :id
+                ')->execute([
+                    ':clave' => $usuario['clave'],
+                    ':id' => $usuario['id'],
+                ]);
 
-            return to_route('{negocio}.perfil', ['negocio' => $negocio]);
-        },
-    );
+                return to_route('{negocio}.perfil', ['negocio' => $negocio]);
+            },
+        );
+    });
 
-    // Ver carrito en un negocio
-    Route::get(
-        'carrito',
-        static function (Negocio $negocio): View {
-            session_start();
-            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+    Route::prefix('carrito')->group(static function (): void {
+        // Ver carrito en un negocio
+        Route::get(
+            '/',
+            static function (Negocio $negocio): View {
+                session_start();
+                $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
 
-            return view('{negocio}_carrito', [
-                'negocio' => $negocio,
-                'usuario' => $usuario,
-            ]);
-        },
-    )->name('{negocio}.carrito');
+                return view('{negocio}_carrito', [
+                    'negocio' => $negocio,
+                    'usuario' => $usuario,
+                ]);
+            },
+        )->name('{negocio}.carrito');
 
-    // Añadir producto al carrito en un negocio
-    Route::post(
-        'carrito/productos',
-        static function (Negocio $negocio): RedirectResponse {
-            return to_route('{negocio}.carrito', ['negocio' => $negocio]);
-        },
-    );
+        Route::prefix('productos')->group(static function (): void {
+            // Añadir producto al carrito en un negocio
+            Route::post(
+                'productos',
+                static function (Negocio $negocio): RedirectResponse {
+                    return to_route('{negocio}.carrito', ['negocio' => $negocio]);
+                },
+            );
 
-    // Actualizar cantidad de producto en el carrito en un negocio
-    Route::post(
-        'carrito/productos/{producto}',
-        static function (
-            Negocio $negocio,
-            Producto $producto,
-        ): RedirectResponse {
-            session_start();
-            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+            Route::prefix('{producto}')->group(static function (): void {
+                // Actualizar cantidad de producto en el carrito en un negocio
+                Route::post(
+                    '/',
+                    static function (
+                        Negocio $negocio,
+                        Producto $producto,
+                    ): RedirectResponse {
+                        session_start();
+                        $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
 
-            return to_route('{negocio}.carrito', [
-                'negocio' => $negocio,
-                'producto' => $producto,
-                'usuario' => $usuario,
-            ]);
-        },
-    );
+                        return to_route('{negocio}.carrito', [
+                            'negocio' => $negocio,
+                            'producto' => $producto,
+                            'usuario' => $usuario,
+                        ]);
+                    },
+                );
 
-    // Eliminar un producto del carrito en un negocio
-    Route::post(
-        'carrito/productos/{producto}/eliminar',
-        static function (
-            Negocio $negocio,
-            Producto $producto,
-        ): RedirectResponse {
-            return to_route('{negocio}.carrito', ['negocio' => $negocio]);
-        },
-    );
+                // Eliminar un producto del carrito en un negocio
+                Route::post(
+                    'eliminar',
+                    static function (
+                        Negocio $negocio,
+                        Producto $producto,
+                    ): RedirectResponse {
+                        return to_route('{negocio}.carrito', ['negocio' => $negocio]);
+                    },
+                );
+            });
+        });
+    });
 
-    // Ver reservas en un negocio
-    Route::get(
-        'reservas',
-        static function (Negocio $negocio): View {
-            session_start();
-            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+    Route::prefix('reservas')->group(static function (): void {
+        // Ver reservas en un negocio
+        Route::get(
+            '/',
+            static function (Negocio $negocio): View {
+                session_start();
+                $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
 
-            return view('{negocio}_reservas', [
-                'negocio' => $negocio,
-                'usuario' => $usuario,
-            ]);
-        },
-    )->name('{negocio}.reservas');
+                return view('{negocio}_reservas', [
+                    'negocio' => $negocio,
+                    'usuario' => $usuario,
+                ]);
+            },
+        )->name('{negocio}.reservas');
 
-    // Reservar en un negocio
-    Route::post(
-        'reservas',
-        static function (Negocio $negocio): RedirectResponse {
-            return to_route('{negocio}.reservas.{reserva}', [
-                'negocio' => $negocio,
-                'reserva' => uniqid(),
-            ]);
-        },
-    );
+        // Reservar en un negocio
+        Route::post(
+            '/',
+            static function (Negocio $negocio): RedirectResponse {
+                return to_route('{negocio}.reservas.{reserva}', [
+                    'negocio' => $negocio,
+                    'reserva' => uniqid(),
+                ]);
+            },
+        );
 
-    // Ver reserva en un negocio
-    Route::get(
-        'reservas/{reserva}',
-        static function (Negocio $negocio, string $reserva): View {
-            session_start();
-            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+        Route::prefix('{reserva}')->group(static function (): void {
+            // Ver reserva en un negocio
+            Route::get(
+                '/',
+                static function (Negocio $negocio, string $reserva): View {
+                    session_start();
+                    $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
 
-            return view('{negocio}_reservas_{reserva}', [
-                'negocio' => $negocio,
-                'usuario' => $usuario,
-            ]);
-        },
-    )->name('{negocio}.reservas.{reserva}');
+                    return view('{negocio}_reservas_{reserva}', [
+                        'negocio' => $negocio,
+                        'usuario' => $usuario,
+                    ]);
+                },
+            )->name('{negocio}.reservas.{reserva}');
 
-    // Cancelar reserva en un negocio
-    Route::post(
-        'reservas/{reserva}/cancelar',
-        static function (Negocio $negocio, string $reserva): RedirectResponse {
-            return to_route('{negocio}.reservas', ['negocio' => $negocio]);
-        },
-    );
+            // Cancelar reserva en un negocio
+            Route::post(
+                'cancelar',
+                static function (Negocio $negocio, string $reserva): RedirectResponse {
+                    return to_route('{negocio}.reservas', ['negocio' => $negocio]);
+                },
+            );
+        });
+    });
 });
