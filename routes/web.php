@@ -132,23 +132,26 @@ PDO->query('CREATE TABLE IF NOT EXISTS proveedores (
 PDO->query('CREATE TABLE IF NOT EXISTS productos (
     id TEXT PRIMARY KEY,
     negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
-    nombre TEXT NOT NULL,
+    nombre TEXT NOT NULL CHECK (length(nombre) > 0),
     descripcion TEXT NOT NULL,
-    precio REAL NOT NULL,
-    imagenes BLOB NOT NULL,
-    activo INT NOT NULL DEFAULT 1,
+    precio REAL NOT NULL CHECK (precio >= 0),
+    imagenes TEXT NOT NULL CHECK (
+        json_valid(imagenes)
+        AND json_array_length(imagenes) >= 0
+    ),
+    activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
     creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
 ) STRICT')->execute();
 
 PDO->query('CREATE TABLE IF NOT EXISTS inventarios (
     id TEXT PRIMARY KEY,
-    establecimiento_tipo TEXT NOT NULL,
+    establecimiento_tipo TEXT NOT NULL CHECK (establecimiento_tipo IN ("negocio", "sucursal")),
     establecimiento_id TEXT NOT NULL,
     producto_id TEXT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
-    stock INT NOT NULL,
+    stock INT NOT NULL CHECK (stock >= 0),
     creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
 ) STRICT')->execute();
 
 PDO->query('CREATE TABLE IF NOT EXISTS compras (
@@ -435,6 +438,7 @@ Route::post('/panel/negocios/{negocio}', function ($negocio) {
     $direccion = $_POST['direccion'];
     $telefono = $_POST['telefono'];
     $slug = $_POST['slug'];
+    $cargaInicialCerrada = ($_POST['carga_inicial_cerrada'] ?? '') === 'on' ? 1 : 0;
 
     PDO->prepare('UPDATE negocios SET
         nombre = :nombre,
@@ -442,6 +446,7 @@ Route::post('/panel/negocios/{negocio}', function ($negocio) {
         direccion = :direccion,
         telefono = :telefono,
         slug = :slug,
+        carga_inicial_cerrada = :carga_inicial_cerrada,
         actualizado_en = CURRENT_TIMESTAMP
         WHERE id = :id
     ')->execute([
@@ -450,6 +455,7 @@ Route::post('/panel/negocios/{negocio}', function ($negocio) {
         ':direccion' => $direccion,
         ':telefono' => $telefono,
         ':slug' => $slug,
+        ':carga_inicial_cerrada' => $cargaInicialCerrada,
         ':id' => $negocio,
     ]);
 });
@@ -533,12 +539,144 @@ Route::get('/panel/{negocio}/clientes', function () {
 Route::post('/panel/{negocio}/clientes', function () {});
 Route::post('/panel/{negocio}/clientes/{cliente}', function () {});
 
-Route::get('/panel/{negocio}/productos', function () {
-    return view('panel_{negocio}_productos');
+Route::get('/panel/{negocio}/productos', function ($negocio) {
+    $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
+    $stmt->execute([$negocio]);
+    $negocio = $stmt->fetch();
+
+    $negocio['productos'] = PDO
+        ->query("SELECT * FROM productos WHERE negocio_id = '{$negocio['id']}'")
+        ->fetchAll();
+
+    session_start();
+    $usuario = $_SESSION['panel']['usuario'];
+
+    return view('panel_{negocio}_productos', [
+        'negocio' => $negocio,
+        'usuario' => $usuario,
+    ]);
 });
 
-Route::post('/panel/{negocio}/productos', function () {});
-Route::post('/panel/{negocio}/productos/{producto}', function () {});
+Route::post('/panel/{negocio}/productos', function ($negocio) {
+    $nombre = $_POST['nombre'] ?? '';
+    $descripcion = $_POST['descripcion'] ?? '';
+    $precio = $_POST['precio'] ?? '';
+    $imagenes = [];
+    $stock = $_POST['stock'] ?? null;
+
+    $producto = [
+        'id' => uniqid(),
+        'negocio_id' => $negocio,
+        'nombre' => $nombre,
+        'descripcion' => $descripcion,
+        'precio' => $precio,
+        'imagenes' => $imagenes,
+    ];
+
+    PDO->beginTransaction();
+
+    PDO->prepare('INSERT INTO productos
+        (id, negocio_id, nombre, descripcion, precio, imagenes) VALUES
+        (:id, :negocio_id, :nombre, :descripcion, :precio, :imagenes)
+    ')->execute([
+        ':id' => $producto['id'],
+        ':negocio_id' => $producto['negocio_id'],
+        ':nombre' => $producto['nombre'],
+        ':descripcion' => $producto['descripcion'],
+        ':precio' => $producto['precio'],
+        ':imagenes' => json_encode($producto['imagenes']),
+    ]);
+
+    if ($stock !== null) {
+        PDO->prepare('INSERT INTO inventarios
+            (id, establecimiento_tipo, establecimiento_id, producto_id, stock) VALUES
+            (:id, :establecimiento_tipo, :establecimiento_id, :producto_id, :stock)
+        ')->execute([
+            ':id' => uniqid(),
+            ':establecimiento_tipo' => 'negocio',
+            ':establecimiento_id' => $negocio,
+            ':producto_id' => $producto['id'],
+            ':stock' => $stock,
+        ]);
+    }
+
+    PDO->commit();
+});
+
+Route::get('/panel/{negocio}/productos/{producto}', function ($negocio, $producto) {
+    $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
+    $stmt->execute([$negocio]);
+    $negocio = $stmt->fetch();
+
+    $stmt = PDO->prepare('SELECT * FROM productos WHERE id = ?');
+    $stmt->execute([$producto]);
+    $producto = $stmt->fetch();
+
+    $producto['stock'] = PDO
+        ->query("SELECT stock FROM inventarios WHERE establecimiento_id = '{$negocio['id']}' AND producto_id = '{$producto['id']}'")
+        ->fetchColumn();
+
+    session_start();
+    $usuario = $_SESSION['panel']['usuario'];
+
+    return view('panel_{negocio}_productos_{producto}', [
+        'negocio' => $negocio,
+        'producto' => $producto,
+        'usuario' => $usuario,
+    ]);
+});
+
+Route::post('/panel/{negocio}/productos/{producto}', function ($negocio, $producto) {
+    $nombre = $_POST['nombre'] ?? '';
+    $descripcion = $_POST['descripcion'] ?? '';
+    $precio = $_POST['precio'] ?? '';
+    $stock = $_POST['stock'] ?? null;
+
+    PDO->beginTransaction();
+
+    PDO->prepare('UPDATE productos SET
+        nombre = :nombre,
+        descripcion = :descripcion,
+        precio = :precio,
+        actualizado_en = CURRENT_TIMESTAMP
+        WHERE id = :id
+    ')->execute([
+        ':nombre' => $nombre,
+        ':descripcion' => $descripcion,
+        ':precio' => $precio,
+        ':id' => $producto,
+    ]);
+
+    if ($stock !== null) {
+        PDO->prepare('UPDATE inventarios SET
+            stock = :stock,
+            actualizado_en = CURRENT_TIMESTAMP
+            WHERE establecimiento_id = :establecimiento_id AND producto_id = :producto_id
+        ')->execute([
+            ':stock' => $stock,
+            ':establecimiento_id' => $negocio,
+            ':producto_id' => $producto,
+        ]);
+    }
+
+    PDO->commit();
+});
+
+Route::any('/panel/{negocio}/productos/{producto}/activar', function ($negocio, $producto) {
+    PDO->prepare('UPDATE productos SET
+        activo = 1,
+        actualizado_en = CURRENT_TIMESTAMP
+        WHERE id = :id
+    ')->execute([':id' => $producto]);
+});
+
+Route::any('/panel/{negocio}/productos/{producto}/desactivar', function ($negocio, $producto) {
+    PDO->prepare('UPDATE productos SET
+        activo = 0,
+        actualizado_en = CURRENT_TIMESTAMP
+        WHERE id = :id
+    ')->execute([':id' => $producto]);
+});
 
 Route::get('/panel/{negocio}/sucursales', function () {
     return view('panel_{negocio}_sucursales');

@@ -49,6 +49,16 @@
             class="w3-input"
             value="{{ $negocio['slug'] }}"
         />
+        <label>
+            <input
+                name="carga_inicial_cerrada"
+                type="checkbox"
+                class="w3-check"
+                {{ $negocio['carga_inicial_cerrada'] ? 'checked' : '' }}
+            />
+
+            Carga inicial cerrada
+        </label>
         <input
             type="submit"
             value="Actualizar"
