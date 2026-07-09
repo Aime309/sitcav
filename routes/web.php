@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 
 define('PDO', match ($_ENV['DB_CONNECTION']) {
@@ -239,12 +242,12 @@ PDO->query('CREATE TABLE IF NOT EXISTS reservas_detalles (
 ) STRICT')->execute();
 
 // Ver inicio de sesión del panel
-Route::get('/panel/iniciar-sesion', function () {
+Route::get('/panel/iniciar-sesion', static function (): View {
     return view('panel_iniciar-sesion');
 });
 
 // Iniciar sesión en el panel
-Route::post('/panel/iniciar-sesion', function () {
+Route::post('/panel/iniciar-sesion', static function (): void {
     $correo = $_POST['correo'] ?? '';
     $clave = $_POST['clave'] ?? '';
 
@@ -261,12 +264,12 @@ Route::post('/panel/iniciar-sesion', function () {
 });
 
 // Ver registro de administrador del panel
-Route::get('/panel/registrarse', function () {
+Route::get('/panel/registrarse', static function (): View {
     return view('panel_registrarse');
 });
 
 // Registrarse como administrador en el panel
-Route::post('/panel/registrarse', function () {
+Route::post('/panel/registrarse', static function (): void {
     $nombre = $_POST['nombre'] ?? '';
     $apellido = $_POST['apellido'] ?? '';
     $correo = $_POST['correo'] ?? '';
@@ -330,13 +333,13 @@ Route::post('/panel/registrarse', function () {
 });
 
 // Cerrar sesión en el panel
-Route::get('/panel/cerrar-sesion', function () {
+Route::get('/panel/cerrar-sesion', static function (): void {
     session_start();
     unset($_SESSION['panel']);
 });
 
 // Seleccionar establecimiento
-Route::get('/panel/negocios', function () {
+Route::get('/panel/negocios', static function (): View {
     session_start();
     $usuario = $_SESSION['panel']['usuario'];
 
@@ -364,7 +367,7 @@ Route::get('/panel/negocios', function () {
 });
 
 // Actualizar negocio
-Route::post('/panel/negocios', function () {
+Route::post('/panel/negocios', static function (): void {
     $nombre = $_POST['nombre'] ?? '';
     $rif = $_POST['rif'] ?? '';
     $direccion = $_POST['direccion'] ?? '';
@@ -427,7 +430,7 @@ Route::post('/panel/negocios', function () {
 });
 
 // Editar negocio
-Route::get('/panel/negocios/{negocio}/editar', function ($negocio) {
+Route::get('/panel/negocios/{negocio}/editar', static function (string $negocio): View {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
     $stmt->execute([$negocio]);
     $negocio = $stmt->fetch();
@@ -441,7 +444,7 @@ Route::get('/panel/negocios/{negocio}/editar', function ($negocio) {
 });
 
 // Actualizar negocio
-Route::post('/panel/negocios/{negocio}', function ($negocio) {
+Route::post('/panel/negocios/{negocio}', static function (string $negocio): void {
     $nombre = $_POST['nombre'];
     $rif = $_POST['rif'];
     $direccion = $_POST['direccion'];
@@ -470,7 +473,7 @@ Route::post('/panel/negocios/{negocio}', function ($negocio) {
 });
 
 // Editar perfil
-Route::get('/panel/negocios/{negocio}/perfil', function ($negocio) {
+Route::get('/panel/negocios/{negocio}/perfil', static function (string $negocio): View {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
     $stmt->execute([$negocio]);
     $negocio = $stmt->fetch();
@@ -485,7 +488,7 @@ Route::get('/panel/negocios/{negocio}/perfil', function ($negocio) {
 });
 
 // Actualizar perfil
-Route::post('/panel/negocios/{negocio}/perfil', function () {
+Route::post('/panel/negocios/{negocio}/perfil', static function (string $negocio): void {
     session_start();
     $usuario = &$_SESSION['panel']['usuario'];
     $usuario['nombre'] = $_POST['nombre'];
@@ -510,7 +513,7 @@ Route::post('/panel/negocios/{negocio}/perfil', function () {
 });
 
 // Actualizar clave
-Route::post('/panel/negocios/{negocio}/perfil/clave', function () {
+Route::post('/panel/negocios/{negocio}/perfil/clave', static function (string $negocio): void {
     session_start();
     $usuario = &$_SESSION['panel']['usuario'];
     $clave = $_POST['clave'] ?? '';
@@ -524,7 +527,7 @@ Route::post('/panel/negocios/{negocio}/perfil/clave', function () {
 });
 
 // Panel administrativo de un negocio
-Route::get('/panel/negocios/{negocio}', function ($negocio) {
+Route::get('/panel/negocios/{negocio}', static function (string $negocio): View {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
     $stmt->execute([$negocio]);
     $negocio = $stmt->fetch();
@@ -539,40 +542,40 @@ Route::get('/panel/negocios/{negocio}', function ($negocio) {
 });
 
 // Ver empleados
-Route::get('/panel/negocios/{negocio}/empleados', function () {
+Route::get('/panel/negocios/{negocio}/empleados', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_empleados');
 });
 
 // Registrar empleado
-Route::post('/panel/negocios/{negocio}/empleados', function () {});
+Route::post('/panel/negocios/{negocio}/empleados', static function (string $negocio): void {});
 
 // Actualizar empleado
-Route::post('/panel/negocios/{negocio}/empleados/{empleado}', function () {});
+Route::post('/panel/negocios/{negocio}/empleados/{empleado}', static function (string $negocio, string $empleado): void {});
 
 // Ver proveedores
-Route::get('/panel/negocios/{negocio}/proveedores', function () {
+Route::get('/panel/negocios/{negocio}/proveedores', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_proveedores');
 });
 
 // Registrar proveedor
-Route::post('/panel/negocios/{negocio}/proveedores', function () {});
+Route::post('/panel/negocios/{negocio}/proveedores', static function (string $negocio): void {});
 
 // Actualizar proveedor
-Route::post('/panel/negocios/{negocio}/proveedores/{proveedor}', function () {});
+Route::post('/panel/negocios/{negocio}/proveedores/{proveedor}', static function (string $negocio, string $proveedor): void {});
 
 // Ver clientes
-Route::get('/panel/negocios/{negocio}/clientes', function () {
+Route::get('/panel/negocios/{negocio}/clientes', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_clientes');
 });
 
 // Registrar cliente
-Route::post('/panel/negocios/{negocio}/clientes', function () {});
+Route::post('/panel/negocios/{negocio}/clientes', static function (string $negocio): void {});
 
 // Actualizar cliente
-Route::post('/panel/negocios/{negocio}/clientes/{cliente}', function () {});
+Route::post('/panel/negocios/{negocio}/clientes/{cliente}', static function (string $negocio, string $cliente): void {});
 
 // Ver productos
-Route::get('/panel/negocios/{negocio}/productos', function ($negocio) {
+Route::get('/panel/negocios/{negocio}/productos', static function (string $negocio): View {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
     $stmt->execute([$negocio]);
     $negocio = $stmt->fetch();
@@ -591,7 +594,7 @@ Route::get('/panel/negocios/{negocio}/productos', function ($negocio) {
 });
 
 // Registrar producto
-Route::post('/panel/negocios/{negocio}/productos', function ($negocio) {
+Route::post('/panel/negocios/{negocio}/productos', static function (string $negocio): void {
     $nombre = $_POST['nombre'] ?? '';
     $descripcion = $_POST['descripcion'] ?? '';
     $precio = $_POST['precio'] ?? '';
@@ -638,7 +641,7 @@ Route::post('/panel/negocios/{negocio}/productos', function ($negocio) {
 });
 
 // Editar producto
-Route::get('/panel/negocios/{negocio}/productos/{producto}', function ($negocio, $producto) {
+Route::get('/panel/negocios/{negocio}/productos/{producto}', static function (string $negocio, string $producto): View {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
     $stmt->execute([$negocio]);
     $negocio = $stmt->fetch();
@@ -662,7 +665,7 @@ Route::get('/panel/negocios/{negocio}/productos/{producto}', function ($negocio,
 });
 
 // Actualizar producto
-Route::post('/panel/negocios/{negocio}/productos/{producto}', function ($negocio, $producto) {
+Route::post('/panel/negocios/{negocio}/productos/{producto}', static function (string $negocio, string $producto): void {
     $nombre = $_POST['nombre'] ?? '';
     $descripcion = $_POST['descripcion'] ?? '';
     $precio = $_POST['precio'] ?? '';
@@ -699,7 +702,7 @@ Route::post('/panel/negocios/{negocio}/productos/{producto}', function ($negocio
 });
 
 // Activar producto
-Route::get('/panel/negocios/{negocio}/productos/{producto}/activar', function ($negocio, $producto) {
+Route::get('/panel/negocios/{negocio}/productos/{producto}/activar', static function (string $negocio, string $producto): void {
     PDO->prepare('UPDATE productos SET
         activo = 1,
         actualizado_en = CURRENT_TIMESTAMP
@@ -708,7 +711,7 @@ Route::get('/panel/negocios/{negocio}/productos/{producto}/activar', function ($
 });
 
 // Desactivar producto
-Route::get('/panel/negocios/{negocio}/productos/{producto}/desactivar', function ($negocio, $producto) {
+Route::get('/panel/negocios/{negocio}/productos/{producto}/desactivar', static function (string $negocio, string $producto): void {
     PDO->prepare('UPDATE productos SET
         activo = 0,
         actualizado_en = CURRENT_TIMESTAMP
@@ -717,44 +720,44 @@ Route::get('/panel/negocios/{negocio}/productos/{producto}/desactivar', function
 });
 
 // Ver sucursales
-Route::get('/panel/negocios/{negocio}/sucursales', function () {
+Route::get('/panel/negocios/{negocio}/sucursales', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_sucursales');
 });
 
 // Panel administrativo de una sucursal
-Route::get('/panel/negocios/{negocio}/sucursales/{sucursal}', function () {
+Route::get('/panel/negocios/{negocio}/sucursales/{sucursal}', static function (string $negocio, string $sucursal): View {
     return view('panel_negocios_{negocio}_sucursales_{sucursal}');
 });
 
 // Actualizar sucursal
-Route::post('/panel/negocios/{negocio}/sucursales/{sucursal}', function () {});
+Route::post('/panel/negocios/{negocio}/sucursales/{sucursal}', static function (string $negocio, string $sucursal): void {});
 
 // Ver compras
-Route::get('/panel/negocios/{negocio}/compras', function () {
+Route::get('/panel/negocios/{negocio}/compras', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_compras');
 });
 
 // Registrar compra
-Route::post('/panel/negocios/{negocio}/compras', function () {});
+Route::post('/panel/negocios/{negocio}/compras', static function (string $negocio): void {});
 
 // Ver ventas
-Route::get('/panel/negocios/{negocio}/ventas', function () {
+Route::get('/panel/negocios/{negocio}/ventas', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_ventas');
 });
 
 // Registrar venta
-Route::post('/panel/negocios/{negocio}/ventas', function () {});
+Route::post('/panel/negocios/{negocio}/ventas', static function (string $negocio): void {});
 
 // Vender productos reservados
-Route::post('/panel/negocios/{negocio}/ventas/{reserva}', function () {});
+Route::post('/panel/negocios/{negocio}/ventas/{reserva}', static function (string $negocio, string $reserva): void {});
 
 // Ver reservas
-Route::get('/panel/negocios/{negocio}/reservas', function () {
+Route::get('/panel/negocios/{negocio}/reservas', static function (string $negocio): View {
     return view('panel_negocios_{negocio}_reservas');
 });
 
 // Ecommerce de un negocio
-Route::get('/{slug}', function ($slug) {
+Route::get('/{slug}', static function (string $slug): View {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
     $stmt->execute([$slug]);
     $negocio = $stmt->fetch();
@@ -766,17 +769,17 @@ Route::get('/{slug}', function ($slug) {
 });
 
 // Ver productos de un negocio
-Route::get('/{slug}/productos', function () {
+Route::get('/{slug}/productos', static function (string $slug): View {
     return view('{slug}_productos');
 });
 
 // Ver producto de un negocio
-Route::get('/{slug}/productos/{producto}', function () {
+Route::get('/{slug}/productos/{producto}', static function (string $slug, string $producto): View {
     return view('{slug}_productos_{producto}');
 });
 
 // Ver inicio de sesión en un negocio
-Route::get('/{slug}/iniciar-sesion', function ($slug) {
+Route::get('/{slug}/iniciar-sesion', static function (string $slug): View {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
     $stmt->execute([$slug]);
     $negocio = $stmt->fetch();
@@ -785,7 +788,7 @@ Route::get('/{slug}/iniciar-sesion', function ($slug) {
 });
 
 // Iniciar sesión en un negocio
-Route::post('/{slug}/iniciar-sesion', function ($slug) {
+Route::post('/{slug}/iniciar-sesion', static function (string $slug): void {
     $correo = $_POST['correo'] ?? '';
     $clave = $_POST['clave'] ?? '';
 
@@ -801,7 +804,7 @@ Route::post('/{slug}/iniciar-sesion', function ($slug) {
 });
 
 // Ver registro de cliente en un negocio
-Route::get('/{slug}/registrarse', function ($slug) {
+Route::get('/{slug}/registrarse', static function (string $slug): View {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
     $stmt->execute([$slug]);
     $negocio = $stmt->fetch();
@@ -810,7 +813,7 @@ Route::get('/{slug}/registrarse', function ($slug) {
 });
 
 // Registrarse como cliente en un negocio
-Route::post('/{slug}/registrarse', function ($slug) {
+Route::post('/{slug}/registrarse', static function (string $slug): void {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
     $stmt->execute([$slug]);
     $negocio = $stmt->fetch();
@@ -850,13 +853,13 @@ Route::post('/{slug}/registrarse', function ($slug) {
 });
 
 // Cerrar sesión en un negocio
-Route::get('/{slug}/cerrar-sesion', function ($slug) {
+Route::get('/{slug}/cerrar-sesion', static function (string $slug): void {
     session_start();
     unset($_SESSION['ecommerce'][$slug]);
 });
 
 // Editar perfil en un negocio
-Route::get('/{slug}/perfil', function ($slug) {
+Route::get('/{slug}/perfil', static function (string $slug): View {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
     $stmt->execute([$slug]);
     $negocio = $stmt->fetch();
@@ -870,7 +873,7 @@ Route::get('/{slug}/perfil', function ($slug) {
 });
 
 // Actualizar perfil en un negocio
-Route::post('/{slug}/perfil', function ($slug) {
+Route::post('/{slug}/perfil', static function (string $slug): void {
     session_start();
     $usuario = &$_SESSION['ecommerce'][$slug]['usuario'];
     $usuario['nombre'] = $_POST['nombre'];
@@ -895,7 +898,7 @@ Route::post('/{slug}/perfil', function ($slug) {
 });
 
 // Actualizar clave en un negocio
-Route::post('/{slug}/perfil/clave', function ($slug) {
+Route::post('/{slug}/perfil/clave', static function (string $slug): void {
     session_start();
     $usuario = &$_SESSION['ecommerce'][$slug]['usuario'];
     $clave = $_POST['clave'] ?? '';
@@ -909,31 +912,31 @@ Route::post('/{slug}/perfil/clave', function ($slug) {
 });
 
 // Ver carrito en un negocio
-Route::get('/{slug}/carrito', function () {
+Route::get('/{slug}/carrito', static function (string $slug): View {
     return view('{slug}_carrito');
 });
 
 // Añadir producto al carrito en un negocio
-Route::post('/{slug}/carrito/productos', function () {});
+Route::post('/{slug}/carrito/productos', static function (string $slug): void {});
 
 // Actualizar cantidad de producto en el carrito en un negocio
-Route::post('/{slug}/carrito/productos/{producto}', function () {});
+Route::post('/{slug}/carrito/productos/{producto}', static function (string $slug): void {});
 
 // Eliminar un producto del carrito en un negocio
-Route::post('/{slug}/carrito/productos/{producto}/eliminar', function () {});
+Route::post('/{slug}/carrito/productos/{producto}/eliminar', static function (string $slug): void {});
 
 // Ver reservas en un negocio
-Route::get('/{slug}/reservas', function () {
+Route::get('/{slug}/reservas', static function (string $slug): View {
     return view('{slug}_reservas');
 });
 
 // Reservar en un negocio
-Route::post('/{slug}/reservas', function () {});
+Route::post('/{slug}/reservas', static function (string $slug): void {});
 
 // Ver reserva en un negocio
-Route::get('/{slug}/reservas/{reserva}', function () {
+Route::get('/{slug}/reservas/{reserva}', static function (string $slug, string $reserva): View {
     return view('{slug}_reservas_{reserva}');
 });
 
 // Cancelar reserva en un negocio
-Route::post('/{slug}/reservas/{reserva}/cancelar', function () {});
+Route::post('/{slug}/reservas/{reserva}/cancelar', static function (string $slug, string $reserva): void {});
