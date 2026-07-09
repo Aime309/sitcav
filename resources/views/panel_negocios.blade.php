@@ -1,23 +1,42 @@
 <x-estructura-panel titulo="Seleccionar establecimiento" :usuario="$usuario">
     <main class="w3-row-padding">
-        <ul class="w3-half w3-ul">
-            @foreach ($usuario['negocios'] as $negocio)
-                <li>
-                    <a href="{{ route('panel.negocios.{negocio}', ['negocio' => $negocio['id']]) }}">
+        <section class="w3-half">
+            <div class="w3-row-padding">
+                @foreach ($usuario['negocios'] as $negocio)
+                    <a
+                        href="{{ route('panel.negocios.{negocio}', [
+                            'negocio' => $negocio['id']]
+                        ) }}"
+                        class="w3-half w3-button">
+                        <img
+                            src="{{ $negocio['imagenes'][0] ?? '' }}"
+                            class="w3-image w3-block"
+                        />
                         {{ $negocio['nombre'] }}
-                    </a>
-                    <ul class="w3-ul w3-hoverable">
-                        @foreach ($negocio['sucursales'] as $sucursal)
-                            <li>
-                                <a href="{{ route('panel.negocios.{negocio}.sucursales.{sucursal}', ['negocio' => $negocio['id'], 'sucursal' => $sucursal['id']]) }}">
+
+                        <div class="w3-row-padding">
+                            @foreach ($negocio['sucursales'] as $sucursal)
+                                <a
+                                    href="{{ route(
+                                        'panel.negocios.{negocio}.sucursales.{sucursal}',
+                                        [
+                                            'negocio' => $negocio['id'],
+                                            'sucursal' => $sucursal['id']
+                                        ],
+                                    ) }}"
+                                    class="w3-half w3-button">
+                                    <img
+                                        src="{{ $sucursal['imagenes'][0] ?? '' }}"
+                                        class="w3-image w3-block"
+                                    />
                                     {{ $sucursal['nombre'] }}
                                 </a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </li>
-            @endforeach
-        </ul>
+                            @endforeach
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
 
         <form
             method="post"
