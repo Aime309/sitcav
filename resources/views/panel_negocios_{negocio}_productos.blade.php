@@ -7,7 +7,7 @@
                     <td>{{ $producto['precio'] }}</td>
                     <td>
                         <a
-                            href="./panel/{{ $negocio['id'] }}/productos/{{ $producto['id'] }}"
+                            href="./panel/negocios/{{ $negocio['id'] }}/productos/{{ $producto['id'] }}"
                             class="w3-button">
                             Editar
                         </a>
@@ -15,13 +15,13 @@
                     <td>
                         @if ($producto['activo'])
                             <a
-                                href="./panel/{{ $negocio['id'] }}/productos/{{ $producto['id'] }}/desactivar"
+                                href="./panel/negocios/{{ $negocio['id'] }}/productos/{{ $producto['id'] }}/desactivar"
                                 class="w3-button w3-danger">
                                 Desactivar
                             </a>
                         @else
                             <a
-                                href="./panel/{{ $negocio['id'] }}/productos/{{ $producto['id'] }}/activar"
+                                href="./panel/negocios/{{ $negocio['id'] }}/productos/{{ $producto['id'] }}/activar"
                                 class="w3-button w3-success">
                                 Activar
                             </a>

@@ -50,7 +50,7 @@
         </form>
         <form
             method="post"
-            action="./panel/{{ $negocio['id'] }}/perfil/clave"
+            action="./panel/negocios/{{ $negocio['id'] }}/perfil/clave"
             class="w3-half">
             <input
                 name="clave"

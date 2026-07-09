@@ -22,32 +22,45 @@
             rel="stylesheet"
             href="https://www.w3schools.com/w3css/5/w3.css"
         />
-        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.12/dist/cdn.min.js" defer></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.12/dist/cdn.min.js"
+            defer>
+        </script>
     </head>
     <body>
         @if (!empty($negocio))
             <nav class="w3-container">
                 <ul class="w3-bar">
                     <li class="w3-bar-item">
-                        <h1>
-                            <a
-                                href="./panel/{{ $negocio['id'] }}"
-                                class="w3-button">
-                                {{ $negocio['nombre'] }}
-                            </a>
-                        </h1>
+                        @if (empty($sucursal))
+                            <h1>
+                                <a
+                                    href="./panel/negocios/{{ $negocio['id'] }}"
+                                    class="w3-button">
+                                    {{ $negocio['nombre'] }}
+                                </a>
+                            </h1>
+                        @else
+                            <h1>
+                                <a
+                                    href="./panel/negocios/{{ $negocio['id'] }}/sucursales/{{ $sucursal['id'] }}"
+                                    class="w3-button">
+                                    {{ $sucursal['nombre'] }}
+                                </a>
+                            </h1>
+                        @endif
                     </li>
                     @if (in_array('Administrador', $usuario['roles']))
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/{{ $negocio['id'] }}/empleados"
+                                href="./panel/negocios/{{ $negocio['id'] }}/empleados"
                                 class="w3-button">
                                 Empleados
                             </a>
                         </li>
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/{{ $negocio['id'] }}/sucursales"
+                                href="./panel/negocios/{{ $negocio['id'] }}/sucursales"
                                 class="w3-button">
                                 Sucursales
                             </a>
@@ -56,35 +69,35 @@
                     @if (in_array('Encargado', $usuario['roles']))
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/{{ $negocio['id'] }}/proveedores"
+                                href="./panel/negocios/{{ $negocio['id'] }}/proveedores"
                                 class="w3-button">
                                 Proveedores
                             </a>
                         </li>
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/{{ $negocio['id'] }}/clientes"
+                                href="./panel/negocios/{{ $negocio['id'] }}/clientes"
                                 class="w3-button">
                                 Clientes
                             </a>
                         </li>
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/{{ $negocio['id'] }}/compras"
+                                href="./panel/negocios/{{ $negocio['id'] }}/compras"
                                 class="w3-button">
                                 Compras
                             </a>
                         </li>
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/{{ $negocio['id'] }}/ventas"
+                                href="./panel/negocios/{{ $negocio['id'] }}/ventas"
                                 class="w3-button">
                                 Ventas
                             </a>
                         </li>
                         <li class="w3-bar-item">
                             <a
-                                href="./panel/{{ $negocio['id'] }}/reservas"
+                                href="./panel/negocios/{{ $negocio['id'] }}/reservas"
                                 class="w3-button">
                                 Reservas
                             </a>
@@ -92,7 +105,7 @@
                     @endif
                     <li class="w3-bar-item">
                         <a
-                            href="./panel/{{ $negocio['id'] }}/productos"
+                            href="./panel/negocios/{{ $negocio['id'] }}/productos"
                             class="w3-button">
                             Productos
                         </a>
@@ -103,18 +116,18 @@
                         </a>
                     </li>
                     <li class="w3-bar-item w3-right">
-                        <a href="./panel/{{ $negocio['id'] }}/perfil" class="w3-button">
+                        <a href="./panel/negocios/{{ $negocio['id'] }}/perfil" class="w3-button">
                             Editar perfil
                         </a>
                     </li>
                     @if (in_array('Administrador', $usuario['roles']))
                         <li class="w3-bar-item w3-right">
-                            <a href="./panel/negocios/{{ $negocio['id'] }}" class="w3-button">
+                            <a href="./panel/negocios/{{ $negocio['id'] }}/editar" class="w3-button">
                                 Editar negocio
                             </a>
                         </li>
                         <li class="w3-bar-item w3-right">
-                            <a href="./panel" class="w3-button">
+                            <a href="./panel/negocios" class="w3-button">
                                 Seleccionar establecimiento
                             </a>
                         </li>

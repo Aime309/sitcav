@@ -22,7 +22,10 @@
             rel="stylesheet"
             href="https://www.w3schools.com/w3css/5/w3.css"
         />
-        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.12/dist/cdn.min.js" defer></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.12/dist/cdn.min.js"
+            defer>
+        </script>
     </head>
     <body>
         <nav class="w3-container">

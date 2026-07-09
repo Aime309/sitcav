@@ -3,13 +3,13 @@
         <ul class="w3-half w3-ul">
             @foreach ($usuario['negocios'] as $negocio)
             <li>
-                <a href="./panel/{{ $negocio['id'] }}">
+                <a href="./panel/negocios/{{ $negocio['id'] }}">
                     {{ $negocio['nombre'] }}
                 </a>
                 <ul class="w3-ul w3-hoverable">
                     @foreach ($negocio['sucursales'] as $sucursal)
                         <li>
-                            <a href="./panel/{{ $negocio['id'] }}/sucursales/{{ $sucursal['id'] }}">
+                            <a href="./panel/negocios/{{ $negocio['id'] }}/sucursales/{{ $sucursal['id'] }}">
                                 {{ $sucursal['nombre'] }}
                             </a>
                         </li>

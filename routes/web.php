@@ -238,10 +238,12 @@ PDO->query('CREATE TABLE IF NOT EXISTS reservas_detalles (
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) STRICT')->execute();
 
+// Ver inicio de sesión del panel
 Route::get('/panel/iniciar-sesion', function () {
     return view('panel_iniciar-sesion');
 });
 
+// Iniciar sesión en el panel
 Route::post('/panel/iniciar-sesion', function () {
     $correo = $_POST['correo'] ?? '';
     $clave = $_POST['clave'] ?? '';
@@ -258,10 +260,12 @@ Route::post('/panel/iniciar-sesion', function () {
     }
 });
 
+// Ver registro de administrador del panel
 Route::get('/panel/registrarse', function () {
     return view('panel_registrarse');
 });
 
+// Registrarse como administrador en el panel
 Route::post('/panel/registrarse', function () {
     $nombre = $_POST['nombre'] ?? '';
     $apellido = $_POST['apellido'] ?? '';
@@ -325,12 +329,14 @@ Route::post('/panel/registrarse', function () {
     $_SESSION['panel']['usuario'] = $usuario;
 });
 
-Route::any('/panel/cerrar-sesion', function () {
+// Cerrar sesión en el panel
+Route::get('/panel/cerrar-sesion', function () {
     session_start();
     unset($_SESSION['panel']);
 });
 
-Route::get('/panel', function () {
+// Seleccionar establecimiento
+Route::get('/panel/negocios', function () {
     session_start();
     $usuario = $_SESSION['panel']['usuario'];
 
@@ -354,9 +360,10 @@ Route::get('/panel', function () {
         $negocio['sucursales'] = $sucursales;
     }
 
-    return view('panel', ['usuario' => $usuario]);
+    return view('panel_negocios', ['usuario' => $usuario]);
 });
 
+// Actualizar negocio
 Route::post('/panel/negocios', function () {
     $nombre = $_POST['nombre'] ?? '';
     $rif = $_POST['rif'] ?? '';
@@ -419,19 +426,21 @@ Route::post('/panel/negocios', function () {
     ]);
 });
 
-Route::get('/panel/negocios/{negocio}', function ($negocio) {
+// Editar negocio
+Route::get('/panel/negocios/{negocio}/editar', function ($negocio) {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
     $stmt->execute([$negocio]);
     $negocio = $stmt->fetch();
     session_start();
     $usuario = $_SESSION['panel']['usuario'];
 
-    return view('panel_negocios_{negocio}', [
+    return view('panel_negocios_{negocio}_editar', [
         'negocio' => $negocio,
         'usuario' => $usuario,
     ]);
 });
 
+// Actualizar negocio
 Route::post('/panel/negocios/{negocio}', function ($negocio) {
     $nombre = $_POST['nombre'];
     $rif = $_POST['rif'];
@@ -460,17 +469,23 @@ Route::post('/panel/negocios/{negocio}', function ($negocio) {
     ]);
 });
 
-Route::get('/panel/{negocio}/perfil', function ($negocio) {
+// Editar perfil
+Route::get('/panel/negocios/{negocio}/perfil', function ($negocio) {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
     $stmt->execute([$negocio]);
     $negocio = $stmt->fetch();
+
     session_start();
     $usuario = $_SESSION['panel']['usuario'];
 
-    return view('panel_perfil', ['negocio' => $negocio, 'usuario' => $usuario]);
+    return view('panel_negocios_{negocio}_perfil', [
+        'negocio' => $negocio,
+        'usuario' => $usuario,
+    ]);
 });
 
-Route::post('/panel/{negocio}/perfil', function () {
+// Actualizar perfil
+Route::post('/panel/negocios/{negocio}/perfil', function () {
     session_start();
     $usuario = &$_SESSION['panel']['usuario'];
     $usuario['nombre'] = $_POST['nombre'];
@@ -494,7 +509,8 @@ Route::post('/panel/{negocio}/perfil', function () {
     ]);
 });
 
-Route::post('/panel/{negocio}/perfil/clave', function () {
+// Actualizar clave
+Route::post('/panel/negocios/{negocio}/perfil/clave', function () {
     session_start();
     $usuario = &$_SESSION['panel']['usuario'];
     $clave = $_POST['clave'] ?? '';
@@ -507,7 +523,8 @@ Route::post('/panel/{negocio}/perfil/clave', function () {
     ')->execute([':clave' => $usuario['clave'], ':id' => $usuario['id']]);
 });
 
-Route::get('/panel/{negocio}', function ($negocio) {
+// Panel administrativo de un negocio
+Route::get('/panel/negocios/{negocio}', function ($negocio) {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
     $stmt->execute([$negocio]);
     $negocio = $stmt->fetch();
@@ -515,31 +532,47 @@ Route::get('/panel/{negocio}', function ($negocio) {
     session_start();
     $usuario = $_SESSION['panel']['usuario'];
 
-    return view('panel_{negocio}', ['negocio' => $negocio, 'usuario' => $usuario]);
+    return view('panel_negocios_{negocio}', [
+        'negocio' => $negocio,
+        'usuario' => $usuario,
+    ]);
 });
 
-Route::get('/panel/{negocio}/empleados', function () {
-    return view('panel_{negocio}_empleados');
+// Ver empleados
+Route::get('/panel/negocios/{negocio}/empleados', function () {
+    return view('panel_negocios_{negocio}_empleados');
 });
 
-Route::post('/panel/{negocio}/empleados', function () {});
-Route::post('/panel/{negocio}/empleados/{empleado}', function () {});
+// Registrar empleado
+Route::post('/panel/negocios/{negocio}/empleados', function () {});
 
-Route::get('/panel/{negocio}/proveedores', function () {
-    return view('panel_{negocio}_proveedores');
+// Actualizar empleado
+Route::post('/panel/negocios/{negocio}/empleados/{empleado}', function () {});
+
+// Ver proveedores
+Route::get('/panel/negocios/{negocio}/proveedores', function () {
+    return view('panel_negocios_{negocio}_proveedores');
 });
 
-Route::post('/panel/{negocio}/proveedores', function () {});
-Route::post('/panel/{negocio}/proveedores/{proveedor}', function () {});
+// Registrar proveedor
+Route::post('/panel/negocios/{negocio}/proveedores', function () {});
 
-Route::get('/panel/{negocio}/clientes', function () {
-    return view('panel_{negocio}_clientes');
+// Actualizar proveedor
+Route::post('/panel/negocios/{negocio}/proveedores/{proveedor}', function () {});
+
+// Ver clientes
+Route::get('/panel/negocios/{negocio}/clientes', function () {
+    return view('panel_negocios_{negocio}_clientes');
 });
 
-Route::post('/panel/{negocio}/clientes', function () {});
-Route::post('/panel/{negocio}/clientes/{cliente}', function () {});
+// Registrar cliente
+Route::post('/panel/negocios/{negocio}/clientes', function () {});
 
-Route::get('/panel/{negocio}/productos', function ($negocio) {
+// Actualizar cliente
+Route::post('/panel/negocios/{negocio}/clientes/{cliente}', function () {});
+
+// Ver productos
+Route::get('/panel/negocios/{negocio}/productos', function ($negocio) {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
     $stmt->execute([$negocio]);
     $negocio = $stmt->fetch();
@@ -551,13 +584,14 @@ Route::get('/panel/{negocio}/productos', function ($negocio) {
     session_start();
     $usuario = $_SESSION['panel']['usuario'];
 
-    return view('panel_{negocio}_productos', [
+    return view('panel_negocios_{negocio}_productos', [
         'negocio' => $negocio,
         'usuario' => $usuario,
     ]);
 });
 
-Route::post('/panel/{negocio}/productos', function ($negocio) {
+// Registrar producto
+Route::post('/panel/negocios/{negocio}/productos', function ($negocio) {
     $nombre = $_POST['nombre'] ?? '';
     $descripcion = $_POST['descripcion'] ?? '';
     $precio = $_POST['precio'] ?? '';
@@ -603,7 +637,8 @@ Route::post('/panel/{negocio}/productos', function ($negocio) {
     PDO->commit();
 });
 
-Route::get('/panel/{negocio}/productos/{producto}', function ($negocio, $producto) {
+// Editar producto
+Route::get('/panel/negocios/{negocio}/productos/{producto}', function ($negocio, $producto) {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
     $stmt->execute([$negocio]);
     $negocio = $stmt->fetch();
@@ -619,14 +654,15 @@ Route::get('/panel/{negocio}/productos/{producto}', function ($negocio, $product
     session_start();
     $usuario = $_SESSION['panel']['usuario'];
 
-    return view('panel_{negocio}_productos_{producto}', [
+    return view('panel_negocios_{negocio}_productos_{producto}', [
         'negocio' => $negocio,
         'producto' => $producto,
         'usuario' => $usuario,
     ]);
 });
 
-Route::post('/panel/{negocio}/productos/{producto}', function ($negocio, $producto) {
+// Actualizar producto
+Route::post('/panel/negocios/{negocio}/productos/{producto}', function ($negocio, $producto) {
     $nombre = $_POST['nombre'] ?? '';
     $descripcion = $_POST['descripcion'] ?? '';
     $precio = $_POST['precio'] ?? '';
@@ -662,7 +698,8 @@ Route::post('/panel/{negocio}/productos/{producto}', function ($negocio, $produc
     PDO->commit();
 });
 
-Route::any('/panel/{negocio}/productos/{producto}/activar', function ($negocio, $producto) {
+// Activar producto
+Route::get('/panel/negocios/{negocio}/productos/{producto}/activar', function ($negocio, $producto) {
     PDO->prepare('UPDATE productos SET
         activo = 1,
         actualizado_en = CURRENT_TIMESTAMP
@@ -670,7 +707,8 @@ Route::any('/panel/{negocio}/productos/{producto}/activar', function ($negocio, 
     ')->execute([':id' => $producto]);
 });
 
-Route::any('/panel/{negocio}/productos/{producto}/desactivar', function ($negocio, $producto) {
+// Desactivar producto
+Route::get('/panel/negocios/{negocio}/productos/{producto}/desactivar', function ($negocio, $producto) {
     PDO->prepare('UPDATE productos SET
         activo = 0,
         actualizado_en = CURRENT_TIMESTAMP
@@ -678,33 +716,44 @@ Route::any('/panel/{negocio}/productos/{producto}/desactivar', function ($negoci
     ')->execute([':id' => $producto]);
 });
 
-Route::get('/panel/{negocio}/sucursales', function () {
-    return view('panel_{negocio}_sucursales');
+// Ver sucursales
+Route::get('/panel/negocios/{negocio}/sucursales', function () {
+    return view('panel_negocios_{negocio}_sucursales');
 });
 
-Route::get('/panel/{negocio}/sucursales/{sucursal}', function () {
-    return view('panel_{negocio}');
+// Panel administrativo de una sucursal
+Route::get('/panel/negocios/{negocio}/sucursales/{sucursal}', function () {
+    return view('panel_negocios_{negocio}_sucursales_{sucursal}');
 });
 
-Route::post('/panel/{negocio}/sucursales/{sucursal}', function () {});
+// Actualizar sucursal
+Route::post('/panel/negocios/{negocio}/sucursales/{sucursal}', function () {});
 
-Route::get('/panel/{negocio}/compras', function () {
-    return view('panel_{negocio}_compras');
+// Ver compras
+Route::get('/panel/negocios/{negocio}/compras', function () {
+    return view('panel_negocios_{negocio}_compras');
 });
 
-Route::post('/panel/{negocio}/compras', function () {});
+// Registrar compra
+Route::post('/panel/negocios/{negocio}/compras', function () {});
 
-Route::get('/panel/{negocio}/ventas', function () {
-    return view('panel_{negocio}_ventas');
+// Ver ventas
+Route::get('/panel/negocios/{negocio}/ventas', function () {
+    return view('panel_negocios_{negocio}_ventas');
 });
 
-Route::get('/panel/{negocio}/reservas', function () {
-    return view('panel_{negocio}_reservas');
+// Registrar venta
+Route::post('/panel/negocios/{negocio}/ventas', function () {});
+
+// Vender productos reservados
+Route::post('/panel/negocios/{negocio}/ventas/{reserva}', function () {});
+
+// Ver reservas
+Route::get('/panel/negocios/{negocio}/reservas', function () {
+    return view('panel_negocios_{negocio}_reservas');
 });
 
-Route::post('/panel/{negocio}/ventas', function () {});
-Route::post('/panel/{negocio}/ventas/desde-reserva', function () {});
-
+// Ecommerce de un negocio
 Route::get('/{slug}', function ($slug) {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
     $stmt->execute([$slug]);
@@ -716,14 +765,17 @@ Route::get('/{slug}', function ($slug) {
     return view('{slug}', ['negocio' => $negocio, 'usuario' => $usuario]);
 });
 
+// Ver productos de un negocio
 Route::get('/{slug}/productos', function () {
     return view('{slug}_productos');
 });
 
+// Ver producto de un negocio
 Route::get('/{slug}/productos/{producto}', function () {
     return view('{slug}_productos_{producto}');
 });
 
+// Ver inicio de sesión en un negocio
 Route::get('/{slug}/iniciar-sesion', function ($slug) {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
     $stmt->execute([$slug]);
@@ -732,6 +784,7 @@ Route::get('/{slug}/iniciar-sesion', function ($slug) {
     return view('{slug}_iniciar-sesion', ['negocio' => $negocio]);
 });
 
+// Iniciar sesión en un negocio
 Route::post('/{slug}/iniciar-sesion', function ($slug) {
     $correo = $_POST['correo'] ?? '';
     $clave = $_POST['clave'] ?? '';
@@ -747,6 +800,7 @@ Route::post('/{slug}/iniciar-sesion', function ($slug) {
     }
 });
 
+// Ver registro de cliente en un negocio
 Route::get('/{slug}/registrarse', function ($slug) {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
     $stmt->execute([$slug]);
@@ -755,6 +809,7 @@ Route::get('/{slug}/registrarse', function ($slug) {
     return view('{slug}_registrarse', ['negocio' => $negocio]);
 });
 
+// Registrarse como cliente en un negocio
 Route::post('/{slug}/registrarse', function ($slug) {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
     $stmt->execute([$slug]);
@@ -794,11 +849,13 @@ Route::post('/{slug}/registrarse', function ($slug) {
     $_SESSION['ecommerce'][$slug]['usuario'] = $cliente;
 });
 
-Route::any('/{slug}/cerrar-sesion', function ($slug) {
+// Cerrar sesión en un negocio
+Route::get('/{slug}/cerrar-sesion', function ($slug) {
     session_start();
     unset($_SESSION['ecommerce'][$slug]);
 });
 
+// Editar perfil en un negocio
 Route::get('/{slug}/perfil', function ($slug) {
     $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
     $stmt->execute([$slug]);
@@ -812,6 +869,7 @@ Route::get('/{slug}/perfil', function ($slug) {
     ]);
 });
 
+// Actualizar perfil en un negocio
 Route::post('/{slug}/perfil', function ($slug) {
     session_start();
     $usuario = &$_SESSION['ecommerce'][$slug]['usuario'];
@@ -836,6 +894,7 @@ Route::post('/{slug}/perfil', function ($slug) {
     ]);
 });
 
+// Actualizar clave en un negocio
 Route::post('/{slug}/perfil/clave', function ($slug) {
     session_start();
     $usuario = &$_SESSION['ecommerce'][$slug]['usuario'];
@@ -849,22 +908,32 @@ Route::post('/{slug}/perfil/clave', function ($slug) {
     ')->execute([':clave' => $usuario['clave'], ':id' => $usuario['id']]);
 });
 
+// Ver carrito en un negocio
 Route::get('/{slug}/carrito', function () {
     return view('{slug}_carrito');
 });
 
-Route::post('/{slug}/carrito/items', function () {});
-Route::post('/{slug}/carrito/items/{elemento}', function () {});
-Route::post('/{slug}/carrito/items/{elemento}/eliminar', function () {});
+// Añadir producto al carrito en un negocio
+Route::post('/{slug}/carrito/productos', function () {});
 
+// Actualizar cantidad de producto en el carrito en un negocio
+Route::post('/{slug}/carrito/productos/{producto}', function () {});
+
+// Eliminar un producto del carrito en un negocio
+Route::post('/{slug}/carrito/productos/{producto}/eliminar', function () {});
+
+// Ver reservas en un negocio
 Route::get('/{slug}/reservas', function () {
     return view('{slug}_reservas');
 });
 
+// Reservar en un negocio
 Route::post('/{slug}/reservas', function () {});
 
+// Ver reserva en un negocio
 Route::get('/{slug}/reservas/{reserva}', function () {
     return view('{slug}_reservas_{reserva}');
 });
 
+// Cancelar reserva en un negocio
 Route::post('/{slug}/reservas/{reserva}/cancelar', function () {});
