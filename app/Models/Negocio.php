@@ -24,6 +24,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $actualizado_en
  * @property Collection<int, Producto> $productos
  * @property Collection<int, Sucursal> $sucursales
+ * @property Collection<int, Proveedor> $proveedores
+ * @property Collection<int, Cliente> $clientes
+ * @property Collection<int, Reserva> $reservas
  */
 #[Table(keyType: 'string', incrementing: false)]
 final class Negocio extends Model
@@ -45,5 +48,20 @@ final class Negocio extends Model
     public function sucursales(): HasMany
     {
         return $this->hasMany(Sucursal::class);
+    }
+
+    public function proveedores(): HasMany
+    {
+        return $this->hasMany(Proveedor::class);
+    }
+
+    public function clientes(): HasMany
+    {
+        return $this->hasMany(Cliente::class);
+    }
+
+    public function reservas(): HasMany
+    {
+        return $this->hasMany(Reserva::class);
     }
 }

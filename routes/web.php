@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Models\Cliente;
 use App\Models\Negocio;
 use App\Models\Producto;
+use App\Models\Proveedor;
+use App\Models\Reserva;
 use App\Models\Sucursal;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
@@ -622,7 +625,7 @@ Route::prefix('panel')->group(static function (): void {
                 // Actualizar proveedor
                 Route::post(
                     '{proveedor}',
-                    static function (Negocio $negocio, string $proveedor): RedirectResponse {
+                    static function (Negocio $negocio, Proveedor $proveedor): RedirectResponse {
                         return to_route('panel.negocios.{negocio}.proveedores', [
                             'negocio' => $negocio,
                         ]);
@@ -660,7 +663,7 @@ Route::prefix('panel')->group(static function (): void {
                 // Actualizar cliente
                 Route::post(
                     '{cliente}',
-                    static function (Negocio $negocio, string $cliente): RedirectResponse {
+                    static function (Negocio $negocio, Cliente $cliente): RedirectResponse {
                         return to_route('panel_negocios_{negocio}_clientes', [
                             'negocio' => $negocio,
                         ]);
@@ -986,7 +989,7 @@ Route::prefix('panel')->group(static function (): void {
                 // Vender productos reservados
                 Route::post(
                     '{reserva}',
-                    static function (Negocio $negocio, string $reserva): RedirectResponse {
+                    static function (Negocio $negocio, Reserva $reserva): RedirectResponse {
                         return to_route('panel.negocios.{negocio}.ventas', [
                             'negocio' => $negocio,
                         ]);
@@ -1019,7 +1022,7 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
         '/',
         static function (Negocio $negocio): View {
             session_start();
-            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+            $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
             return view('{negocio}', [
                 'negocio' => $negocio,
@@ -1034,7 +1037,7 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
             '/',
             static function (Negocio $negocio): View {
                 session_start();
-                $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
                 return view('{negocio}_productos', [
                     'negocio' => $negocio,
@@ -1048,7 +1051,7 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
             '{producto}',
             static function (Negocio $negocio, Producto $producto): View {
                 session_start();
-                $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
                 return view('{negocio}_productos_{producto}', [
                     'negocio' => $negocio,
@@ -1075,14 +1078,12 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
                 $correo = $_POST['correo'] ?? '';
                 $clave = $_POST['clave'] ?? '';
 
-                $stmt = PDO->prepare('SELECT * FROM clientes WHERE correo = ?');
-                $stmt->execute([$correo]);
-                $usuario = $stmt->fetch();
+                $usuario = Cliente::query()->where('correo', $correo)->first();
 
                 if ($usuario && password_verify($clave, $usuario['clave'])) {
                     session_start();
                     $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
-                    $_SESSION['ecommerce'][$negocio->slug]['usuario'] = $usuario;
+                    $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'] = $usuario->id;
 
                     return to_route('{negocio}', ['negocio' => $negocio]);
                 }
@@ -1112,34 +1113,20 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
                 $telefono = $_POST['telefono'] ?? '';
                 $imagenes = [];
 
-                $cliente = [
-                    'id' => uniqid(),
-                    'nombre' => $nombre,
-                    'apellido' => $apellido,
-                    'correo' => $correo,
-                    'clave' => password_hash($clave, PASSWORD_DEFAULT),
-                    'telefono' => $telefono,
-                    'imagenes' => $imagenes,
-                ];
+                $cliente = new Cliente;
+                $cliente->id = uniqid();
+                $cliente->nombre = $nombre;
+                $cliente->apellido = $apellido;
+                $cliente->correo = $correo;
+                $cliente->clave = password_hash($clave, PASSWORD_DEFAULT);
+                $cliente->telefono = $telefono;
+                $cliente->imagenes = json_encode($imagenes);
 
-                PDO->prepare('INSERT INTO clientes
-                    (id, negocio_id, nombre, apellido, correo, telefono, clave, imagenes) VALUES
-                    (:id, :negocio_id, :nombre, :apellido, :correo, :telefono, :clave, :imagenes)
-                ')->execute([
-                    ':id' => $cliente['id'],
-                    ':negocio_id' => $negocio['id'],
-                    ':nombre' => $cliente['nombre'],
-                    ':apellido' => $cliente['apellido'],
-                    ':correo' => $cliente['correo'],
-                    ':clave' => $cliente['clave'],
-                    ':telefono' => $cliente['telefono'],
-                    ':imagenes' => json_encode($cliente['imagenes']),
+                $cliente->save();
+
+                return to_route('{negocio}.iniciar-sesion', [
+                    'negocio' => $negocio['slug'],
                 ]);
-
-                session_start();
-                $_SESSION['ecommerce'][$negocio['slug']]['usuario'] = $cliente;
-
-                return to_route('{negocio}', ['negocio' => $negocio['slug']]);
             },
         );
     });
@@ -1161,7 +1148,7 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
             '/',
             static function (Negocio $negocio): View {
                 session_start();
-                $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'];
+                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
                 return view('{negocio}_perfil', [
                     'negocio' => $negocio,
@@ -1175,26 +1162,13 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
             '/',
             static function (Negocio $negocio): RedirectResponse {
                 session_start();
-                $usuario = &$_SESSION['ecommerce'][$negocio]['usuario'];
+                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
                 $usuario['nombre'] = $_POST['nombre'];
                 $usuario['apellido'] = $_POST['apellido'];
                 $usuario['correo'] = $_POST['correo'];
                 $usuario['telefono'] = $_POST['telefono'];
 
-                PDO->prepare('UPDATE clientes SET
-                    nombre = :nombre,
-                    apellido = :apellido,
-                    correo = :correo,
-                    telefono = :telefono,
-                    actualizado_en = CURRENT_TIMESTAMP
-                    WHERE id = :id
-                ')->execute([
-                    ':nombre' => $usuario['nombre'],
-                    ':apellido' => $usuario['apellido'],
-                    ':correo' => $usuario['correo'],
-                    ':telefono' => $usuario['telefono'],
-                    ':id' => $usuario['id'],
-                ]);
+                $usuario->save();
 
                 return to_route('{negocio}.perfil', ['negocio' => $negocio]);
             },
@@ -1205,18 +1179,11 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
             'clave',
             static function (Negocio $negocio): RedirectResponse {
                 session_start();
-                $usuario = &$_SESSION['ecommerce'][$negocio]['usuario'];
+                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
                 $clave = $_POST['clave'] ?? '';
                 $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
 
-                PDO->prepare('UPDATE clientes SET
-                    clave = :clave,
-                    actualizado_en = CURRENT_TIMESTAMP
-                    WHERE id = :id
-                ')->execute([
-                    ':clave' => $usuario['clave'],
-                    ':id' => $usuario['id'],
-                ]);
+                $usuario->save();
 
                 return to_route('{negocio}.perfil', ['negocio' => $negocio]);
             },
@@ -1229,7 +1196,7 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
             '/',
             static function (Negocio $negocio): View {
                 session_start();
-                $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
                 return view('{negocio}_carrito', [
                     'negocio' => $negocio,
@@ -1255,13 +1222,9 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
                         Negocio $negocio,
                         Producto $producto,
                     ): RedirectResponse {
-                        session_start();
-                        $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
-
                         return to_route('{negocio}.carrito', [
                             'negocio' => $negocio,
                             'producto' => $producto,
-                            'usuario' => $usuario,
                         ]);
                     },
                 );
@@ -1286,7 +1249,7 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
             '/',
             static function (Negocio $negocio): View {
                 session_start();
-                $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
                 return view('{negocio}_reservas', [
                     'negocio' => $negocio,
@@ -1310,13 +1273,14 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
             // Ver reserva en un negocio
             Route::get(
                 '/',
-                static function (Negocio $negocio, string $reserva): View {
+                static function (Negocio $negocio, Reserva $reserva): View {
                     session_start();
-                    $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+                    $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
                     return view('{negocio}_reservas_{reserva}', [
                         'negocio' => $negocio,
                         'usuario' => $usuario,
+                        'reserva' => $reserva,
                     ]);
                 },
             )->name('{negocio}.reservas.{reserva}');
@@ -1324,7 +1288,7 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
             // Cancelar reserva en un negocio
             Route::post(
                 'cancelar',
-                static function (Negocio $negocio, string $reserva): RedirectResponse {
+                static function (Negocio $negocio, Reserva $reserva): RedirectResponse {
                     return to_route('{negocio}.reservas', ['negocio' => $negocio]);
                 },
             );
