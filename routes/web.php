@@ -248,9 +248,13 @@ define('IDS_NEGOCIO', array_map(
 
 define('IDS_EMPLEADOS', array_map(
     static fn(array $empleado): string => $empleado['id'],
-    PDO
-        ->query('SELECT id FROM usuarios WHERE roles NOT LIKE "%Administrador%" AND (roles LIKE "%Encargado%" OR roles LIKE "%Vendedor%")')
-        ->fetchAll(),
+    PDO->query('
+        SELECT id FROM usuarios
+        WHERE roles NOT LIKE "%Administrador%" AND (
+            roles LIKE "%Encargado%"
+            OR roles LIKE "%Vendedor%"
+        )
+    ')->fetchAll(),
 ));
 
 define('IDS_PROVEEDORES', array_map(
@@ -395,7 +399,10 @@ Route::get('/panel/negocios', static function (): View {
         $negocio['imagenes'] = json_decode($negocio['imagenes'], true);
 
         $sucursales = PDO
-            ->query("SELECT * FROM sucursales WHERE negocio_id = '{$negocio['id']}'")
+            ->query("
+                SELECT * FROM sucursales
+                WHERE negocio_id = '{$negocio['id']}'
+            ")
             ->fetchAll();
 
         foreach ($sucursales as &$sucursal) {
@@ -472,577 +479,736 @@ Route::post('/panel/negocios', static function (): void {
 });
 
 // Editar negocio
-Route::get('/panel/negocios/{negocio}/editar', static function (string $negocio): View {
-    $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
-    $stmt->execute([$negocio]);
-    $negocio = $stmt->fetch();
-    session_start();
-    $usuario = $_SESSION['panel']['usuario'];
+Route::get(
+    '/panel/negocios/{negocio}/editar',
+    static function (string $negocio): View {
+        $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
+        $stmt->execute([$negocio]);
+        $negocio = $stmt->fetch();
+        session_start();
+        $usuario = $_SESSION['panel']['usuario'];
 
-    return view('panel_negocios_{negocio}_editar', [
-        'negocio' => $negocio,
-        'usuario' => $usuario,
-    ]);
-})
+        return view('panel_negocios_{negocio}_editar', [
+            'negocio' => $negocio,
+            'usuario' => $usuario,
+        ]);
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Actualizar negocio
-Route::post('/panel/negocios/{negocio}', static function (string $negocio): void {
-    $nombre = $_POST['nombre'];
-    $rif = $_POST['rif'];
-    $direccion = $_POST['direccion'];
-    $telefono = $_POST['telefono'];
-    $slug = $_POST['slug'];
-    $cargaInicialCerrada = ($_POST['carga_inicial_cerrada'] ?? '') === 'on' ? 1 : 0;
+Route::post(
+    '/panel/negocios/{negocio}',
+    static function (string $negocio): void {
+        $nombre = $_POST['nombre'];
+        $rif = $_POST['rif'];
+        $direccion = $_POST['direccion'];
+        $telefono = $_POST['telefono'];
+        $slug = $_POST['slug'];
+        $cargaInicialCerrada = ($_POST['carga_inicial_cerrada'] ?? '') === 'on' ? 1 : 0;
 
-    PDO->prepare('UPDATE negocios SET
-        nombre = :nombre,
-        rif = :rif,
-        direccion = :direccion,
-        telefono = :telefono,
-        slug = :slug,
-        carga_inicial_cerrada = :carga_inicial_cerrada,
-        actualizado_en = CURRENT_TIMESTAMP
-        WHERE id = :id
-    ')->execute([
-        ':nombre' => $nombre,
-        ':rif' => $rif,
-        ':direccion' => $direccion,
-        ':telefono' => $telefono,
-        ':slug' => $slug,
-        ':carga_inicial_cerrada' => $cargaInicialCerrada,
-        ':id' => $negocio,
-    ]);
-})
+        PDO->prepare('UPDATE negocios SET
+            nombre = :nombre,
+            rif = :rif,
+            direccion = :direccion,
+            telefono = :telefono,
+            slug = :slug,
+            carga_inicial_cerrada = :carga_inicial_cerrada,
+            actualizado_en = CURRENT_TIMESTAMP
+            WHERE id = :id
+        ')->execute([
+            ':nombre' => $nombre,
+            ':rif' => $rif,
+            ':direccion' => $direccion,
+            ':telefono' => $telefono,
+            ':slug' => $slug,
+            ':carga_inicial_cerrada' => $cargaInicialCerrada,
+            ':id' => $negocio,
+        ]);
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Editar perfil
-Route::get('/panel/negocios/{negocio}/perfil', static function (string $negocio): View {
-    $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
-    $stmt->execute([$negocio]);
-    $negocio = $stmt->fetch();
+Route::get(
+    '/panel/negocios/{negocio}/perfil',
+    static function (string $negocio): View {
+        $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
+        $stmt->execute([$negocio]);
+        $negocio = $stmt->fetch();
 
-    session_start();
-    $usuario = $_SESSION['panel']['usuario'];
+        session_start();
+        $usuario = $_SESSION['panel']['usuario'];
 
-    return view('panel_negocios_{negocio}_perfil', [
-        'negocio' => $negocio,
-        'usuario' => $usuario,
-    ]);
-})
+        return view('panel_negocios_{negocio}_perfil', [
+            'negocio' => $negocio,
+            'usuario' => $usuario,
+        ]);
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Actualizar perfil
-Route::post('/panel/negocios/{negocio}/perfil', static function (string $negocio): void {
-    session_start();
-    $usuario = &$_SESSION['panel']['usuario'];
-    $usuario['nombre'] = $_POST['nombre'];
-    $usuario['apellido'] = $_POST['apellido'];
-    $usuario['correo'] = $_POST['correo'];
-    $usuario['telefono'] = $_POST['telefono'];
+Route::post(
+    '/panel/negocios/{negocio}/perfil',
+    static function (string $negocio): void {
+        session_start();
+        $usuario = &$_SESSION['panel']['usuario'];
+        $usuario['nombre'] = $_POST['nombre'];
+        $usuario['apellido'] = $_POST['apellido'];
+        $usuario['correo'] = $_POST['correo'];
+        $usuario['telefono'] = $_POST['telefono'];
 
-    PDO->prepare('UPDATE usuarios SET
-        nombre = :nombre,
-        apellido = :apellido,
-        correo = :correo,
-        telefono = :telefono,
-        actualizado_en = CURRENT_TIMESTAMP
-        WHERE id = :id
-    ')->execute([
-        ':nombre' => $usuario['nombre'],
-        ':apellido' => $usuario['apellido'],
-        ':correo' => $usuario['correo'],
-        ':telefono' => $usuario['telefono'],
-        ':id' => $usuario['id'],
-    ]);
-})
+        PDO->prepare('UPDATE usuarios SET
+            nombre = :nombre,
+            apellido = :apellido,
+            correo = :correo,
+            telefono = :telefono,
+            actualizado_en = CURRENT_TIMESTAMP
+            WHERE id = :id
+        ')->execute([
+            ':nombre' => $usuario['nombre'],
+            ':apellido' => $usuario['apellido'],
+            ':correo' => $usuario['correo'],
+            ':telefono' => $usuario['telefono'],
+            ':id' => $usuario['id'],
+        ]);
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Actualizar clave
-Route::post('/panel/negocios/{negocio}/perfil/clave', static function (string $negocio): void {
-    session_start();
-    $usuario = &$_SESSION['panel']['usuario'];
-    $clave = $_POST['clave'] ?? '';
-    $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
+Route::post(
+    '/panel/negocios/{negocio}/perfil/clave',
+    static function (string $negocio): void {
+        session_start();
+        $usuario = &$_SESSION['panel']['usuario'];
+        $clave = $_POST['clave'] ?? '';
+        $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
 
-    PDO->prepare('UPDATE usuarios SET
-        clave = :clave,
-        actualizado_en = CURRENT_TIMESTAMP
-        WHERE id = :id
-    ')->execute([':clave' => $usuario['clave'], ':id' => $usuario['id']]);
-})
+        PDO->prepare('UPDATE usuarios SET
+            clave = :clave,
+            actualizado_en = CURRENT_TIMESTAMP
+            WHERE id = :id
+        ')->execute([':clave' => $usuario['clave'], ':id' => $usuario['id']]);
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Panel administrativo de un negocio
-Route::get('/panel/negocios/{negocio}', static function (string $negocio): View {
-    $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
-    $stmt->execute([$negocio]);
-    $negocio = $stmt->fetch();
+Route::get(
+    '/panel/negocios/{negocio}',
+    static function (string $negocio): View {
+        $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
+        $stmt->execute([$negocio]);
+        $negocio = $stmt->fetch();
 
-    session_start();
-    $usuario = $_SESSION['panel']['usuario'];
+        session_start();
+        $usuario = $_SESSION['panel']['usuario'];
 
-    return view('panel_negocios_{negocio}', [
-        'negocio' => $negocio,
-        'usuario' => $usuario,
-    ]);
-})
+        return view('panel_negocios_{negocio}', [
+            'negocio' => $negocio,
+            'usuario' => $usuario,
+        ]);
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Ver empleados
-Route::get('/panel/negocios/{negocio}/empleados', static function (string $negocio): View {
-    return view('panel_negocios_{negocio}_empleados');
-})
+Route::get(
+    '/panel/negocios/{negocio}/empleados',
+    static function (string $negocio): View {
+        return view('panel_negocios_{negocio}_empleados');
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Registrar empleado
-Route::post('/panel/negocios/{negocio}/empleados', static function (string $negocio): void {})
+Route::post(
+    '/panel/negocios/{negocio}/empleados',
+    static function (string $negocio): void {},
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Actualizar empleado
-Route::post('/panel/negocios/{negocio}/empleados/{empleado}', static function (string $negocio, string $empleado): void {})
+Route::post(
+    '/panel/negocios/{negocio}/empleados/{empleado}',
+    static function (string $negocio, string $empleado): void {},
+)
     ->whereIn('negocio', IDS_NEGOCIO)
     ->whereIn('empleado', IDS_EMPLEADOS);
 
 // Ver proveedores
-Route::get('/panel/negocios/{negocio}/proveedores', static function (string $negocio): View {
-    return view('panel_negocios_{negocio}_proveedores');
-})
+Route::get(
+    '/panel/negocios/{negocio}/proveedores',
+    static function (string $negocio): View {
+        return view('panel_negocios_{negocio}_proveedores');
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Registrar proveedor
-Route::post('/panel/negocios/{negocio}/proveedores', static function (string $negocio): void {})
+Route::post(
+    '/panel/negocios/{negocio}/proveedores',
+    static function (string $negocio): void {},
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Actualizar proveedor
-Route::post('/panel/negocios/{negocio}/proveedores/{proveedor}', static function (string $negocio, string $proveedor): void {})
+Route::post(
+    '/panel/negocios/{negocio}/proveedores/{proveedor}',
+    static function (string $negocio, string $proveedor): void {},
+)
     ->whereIn('negocio', IDS_NEGOCIO)
     ->whereIn('proveedor', IDS_PROVEEDORES);
 
 // Ver clientes
-Route::get('/panel/negocios/{negocio}/clientes', static function (string $negocio): View {
-    return view('panel_negocios_{negocio}_clientes');
-})
+Route::get(
+    '/panel/negocios/{negocio}/clientes',
+    static function (string $negocio): View {
+        return view('panel_negocios_{negocio}_clientes');
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Registrar cliente
-Route::post('/panel/negocios/{negocio}/clientes', static function (string $negocio): void {})
+Route::post(
+    '/panel/negocios/{negocio}/clientes',
+    static function (string $negocio): void {},
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Actualizar cliente
-Route::post('/panel/negocios/{negocio}/clientes/{cliente}', static function (string $negocio, string $cliente): void {})
+Route::post(
+    '/panel/negocios/{negocio}/clientes/{cliente}',
+    static function (string $negocio, string $cliente): void {},
+)
     ->whereIn('negocio', IDS_NEGOCIO)
     ->whereIn('cliente', IDS_CLIENTES);
 
 // Ver productos
-Route::get('/panel/negocios/{negocio}/productos', static function (string $negocio): View {
-    $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
-    $stmt->execute([$negocio]);
-    $negocio = $stmt->fetch();
+Route::get(
+    '/panel/negocios/{negocio}/productos',
+    static function (string $negocio): View {
+        $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
+        $stmt->execute([$negocio]);
+        $negocio = $stmt->fetch();
 
-    $negocio['productos'] = PDO
-        ->query("SELECT * FROM productos WHERE negocio_id = '{$negocio['id']}'")
-        ->fetchAll();
+        $negocio['productos'] = PDO
+            ->query("
+                SELECT * FROM productos
+                WHERE negocio_id = '{$negocio['id']}'
+            ")
+            ->fetchAll();
 
-    session_start();
-    $usuario = $_SESSION['panel']['usuario'];
+        session_start();
+        $usuario = $_SESSION['panel']['usuario'];
 
-    return view('panel_negocios_{negocio}_productos', [
-        'negocio' => $negocio,
-        'usuario' => $usuario,
-    ]);
-})
+        return view('panel_negocios_{negocio}_productos', [
+            'negocio' => $negocio,
+            'usuario' => $usuario,
+        ]);
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Registrar producto
-Route::post('/panel/negocios/{negocio}/productos', static function (string $negocio): void {
-    $nombre = $_POST['nombre'] ?? '';
-    $descripcion = $_POST['descripcion'] ?? '';
-    $precio = $_POST['precio'] ?? '';
-    $imagenes = [];
-    $stock = $_POST['stock'] ?? null;
+Route::post(
+    '/panel/negocios/{negocio}/productos',
+    static function (string $negocio): void {
+        $nombre = $_POST['nombre'] ?? '';
+        $descripcion = $_POST['descripcion'] ?? '';
+        $precio = $_POST['precio'] ?? '';
+        $imagenes = [];
+        $stock = $_POST['stock'] ?? null;
 
-    $producto = [
-        'id' => uniqid(),
-        'negocio_id' => $negocio,
-        'nombre' => $nombre,
-        'descripcion' => $descripcion,
-        'precio' => $precio,
-        'imagenes' => $imagenes,
-    ];
+        $producto = [
+            'id' => uniqid(),
+            'negocio_id' => $negocio,
+            'nombre' => $nombre,
+            'descripcion' => $descripcion,
+            'precio' => $precio,
+            'imagenes' => $imagenes,
+        ];
 
-    PDO->beginTransaction();
+        PDO->beginTransaction();
 
-    PDO->prepare('INSERT INTO productos
-        (id, negocio_id, nombre, descripcion, precio, imagenes) VALUES
-        (:id, :negocio_id, :nombre, :descripcion, :precio, :imagenes)
-    ')->execute([
-        ':id' => $producto['id'],
-        ':negocio_id' => $producto['negocio_id'],
-        ':nombre' => $producto['nombre'],
-        ':descripcion' => $producto['descripcion'],
-        ':precio' => $producto['precio'],
-        ':imagenes' => json_encode($producto['imagenes']),
-    ]);
-
-    if ($stock !== null) {
-        PDO->prepare('INSERT INTO inventarios
-            (id, establecimiento_tipo, establecimiento_id, producto_id, stock) VALUES
-            (:id, :establecimiento_tipo, :establecimiento_id, :producto_id, :stock)
+        PDO->prepare('INSERT INTO productos
+            (id, negocio_id, nombre, descripcion, precio, imagenes) VALUES
+            (:id, :negocio_id, :nombre, :descripcion, :precio, :imagenes)
         ')->execute([
-            ':id' => uniqid(),
-            ':establecimiento_tipo' => 'negocio',
-            ':establecimiento_id' => $negocio,
-            ':producto_id' => $producto['id'],
-            ':stock' => $stock,
+            ':id' => $producto['id'],
+            ':negocio_id' => $producto['negocio_id'],
+            ':nombre' => $producto['nombre'],
+            ':descripcion' => $producto['descripcion'],
+            ':precio' => $producto['precio'],
+            ':imagenes' => json_encode($producto['imagenes']),
         ]);
-    }
 
-    PDO->commit();
-})
+        if ($stock !== null) {
+            PDO->prepare('INSERT INTO inventarios
+                (id, establecimiento_tipo, establecimiento_id, producto_id, stock) VALUES
+                (:id, :establecimiento_tipo, :establecimiento_id, :producto_id, :stock)
+            ')->execute([
+                ':id' => uniqid(),
+                ':establecimiento_tipo' => 'negocio',
+                ':establecimiento_id' => $negocio,
+                ':producto_id' => $producto['id'],
+                ':stock' => $stock,
+            ]);
+        }
+
+        PDO->commit();
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Editar producto
-Route::get('/panel/negocios/{negocio}/productos/{producto}', static function (string $negocio, string $producto): View {
-    $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
-    $stmt->execute([$negocio]);
-    $negocio = $stmt->fetch();
+Route::get(
+    '/panel/negocios/{negocio}/productos/{producto}',
+    static function (string $negocio, string $producto): View {
+        $stmt = PDO->prepare('SELECT * FROM negocios WHERE id = ?');
+        $stmt->execute([$negocio]);
+        $negocio = $stmt->fetch();
 
-    $stmt = PDO->prepare('SELECT * FROM productos WHERE id = ?');
-    $stmt->execute([$producto]);
-    $producto = $stmt->fetch();
+        $stmt = PDO->prepare('SELECT * FROM productos WHERE id = ?');
+        $stmt->execute([$producto]);
+        $producto = $stmt->fetch();
 
-    $producto['stock'] = PDO
-        ->query("SELECT stock FROM inventarios WHERE establecimiento_id = '{$negocio['id']}' AND producto_id = '{$producto['id']}'")
-        ->fetchColumn();
+        $producto['stock'] = PDO
+            ->query("
+                SELECT stock FROM inventarios
+                WHERE (
+                    establecimiento_id = '{$negocio['id']}'
+                    AND producto_id = '{$producto['id']}
+                )'
+            ")
+            ->fetchColumn();
 
-    session_start();
-    $usuario = $_SESSION['panel']['usuario'];
+        session_start();
+        $usuario = $_SESSION['panel']['usuario'];
 
-    return view('panel_negocios_{negocio}_productos_{producto}', [
-        'negocio' => $negocio,
-        'producto' => $producto,
-        'usuario' => $usuario,
-    ]);
-})
+        return view('panel_negocios_{negocio}_productos_{producto}', [
+            'negocio' => $negocio,
+            'producto' => $producto,
+            'usuario' => $usuario,
+        ]);
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO)
     ->whereIn('producto', IDS_PRODUCTOS);
 
 // Actualizar producto
-Route::post('/panel/negocios/{negocio}/productos/{producto}', static function (string $negocio, string $producto): void {
-    $nombre = $_POST['nombre'] ?? '';
-    $descripcion = $_POST['descripcion'] ?? '';
-    $precio = $_POST['precio'] ?? '';
-    $stock = $_POST['stock'] ?? null;
+Route::post(
+    '/panel/negocios/{negocio}/productos/{producto}',
+    static function (string $negocio, string $producto): void {
+        $nombre = $_POST['nombre'] ?? '';
+        $descripcion = $_POST['descripcion'] ?? '';
+        $precio = $_POST['precio'] ?? '';
+        $stock = $_POST['stock'] ?? null;
 
-    PDO->beginTransaction();
+        PDO->beginTransaction();
 
-    PDO->prepare('UPDATE productos SET
-        nombre = :nombre,
-        descripcion = :descripcion,
-        precio = :precio,
-        actualizado_en = CURRENT_TIMESTAMP
-        WHERE id = :id
-    ')->execute([
-        ':nombre' => $nombre,
-        ':descripcion' => $descripcion,
-        ':precio' => $precio,
-        ':id' => $producto,
-    ]);
-
-    if ($stock !== null) {
-        PDO->prepare('UPDATE inventarios SET
-            stock = :stock,
+        PDO->prepare('UPDATE productos SET
+            nombre = :nombre,
+            descripcion = :descripcion,
+            precio = :precio,
             actualizado_en = CURRENT_TIMESTAMP
-            WHERE establecimiento_id = :establecimiento_id AND producto_id = :producto_id
+            WHERE id = :id
         ')->execute([
-            ':stock' => $stock,
-            ':establecimiento_id' => $negocio,
-            ':producto_id' => $producto,
+            ':nombre' => $nombre,
+            ':descripcion' => $descripcion,
+            ':precio' => $precio,
+            ':id' => $producto,
         ]);
-    }
 
-    PDO->commit();
-})
+        if ($stock !== null) {
+            PDO->prepare('UPDATE inventarios SET
+                stock = :stock,
+                actualizado_en = CURRENT_TIMESTAMP
+                WHERE establecimiento_id = :establecimiento_id AND producto_id = :producto_id
+            ')->execute([
+                ':stock' => $stock,
+                ':establecimiento_id' => $negocio,
+                ':producto_id' => $producto,
+            ]);
+        }
+
+        PDO->commit();
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO)
     ->whereIn('producto', IDS_PRODUCTOS);
 
 // Activar producto
-Route::get('/panel/negocios/{negocio}/productos/{producto}/activar', static function (string $negocio, string $producto): void {
-    PDO->prepare('UPDATE productos SET
-        activo = 1,
-        actualizado_en = CURRENT_TIMESTAMP
-        WHERE id = :id
-    ')->execute([':id' => $producto]);
-})
+Route::get(
+    '/panel/negocios/{negocio}/productos/{producto}/activar',
+    static function (string $negocio, string $producto): void {
+        PDO->prepare('UPDATE productos SET
+            activo = 1,
+            actualizado_en = CURRENT_TIMESTAMP
+            WHERE id = :id
+        ')->execute([':id' => $producto]);
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO)
     ->whereIn('producto', IDS_PRODUCTOS);
 
 // Desactivar producto
-Route::get('/panel/negocios/{negocio}/productos/{producto}/desactivar', static function (string $negocio, string $producto): void {
-    PDO->prepare('UPDATE productos SET
-        activo = 0,
-        actualizado_en = CURRENT_TIMESTAMP
-        WHERE id = :id
-    ')->execute([':id' => $producto]);
-})
+Route::get(
+    '/panel/negocios/{negocio}/productos/{producto}/desactivar',
+    static function (string $negocio, string $producto): void {
+        PDO->prepare('UPDATE productos SET
+            activo = 0,
+            actualizado_en = CURRENT_TIMESTAMP
+            WHERE id = :id
+        ')->execute([':id' => $producto]);
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO)
     ->whereIn('producto', IDS_PRODUCTOS);
 
 // Ver sucursales
-Route::get('/panel/negocios/{negocio}/sucursales', static function (string $negocio): View {
-    return view('panel_negocios_{negocio}_sucursales');
-})
+Route::get(
+    '/panel/negocios/{negocio}/sucursales',
+    static function (string $negocio): View {
+        return view('panel_negocios_{negocio}_sucursales');
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Panel administrativo de una sucursal
-Route::get('/panel/negocios/{negocio}/sucursales/{sucursal}', static function (string $negocio, string $sucursal): View {
-    return view('panel_negocios_{negocio}_sucursales_{sucursal}');
-})
+Route::get(
+    '/panel/negocios/{negocio}/sucursales/{sucursal}',
+    static function (string $negocio, string $sucursal): View {
+        return view('panel_negocios_{negocio}_sucursales_{sucursal}');
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO)
     ->whereIn('sucursal', IDS_SUCURSALES);
 
 // Actualizar sucursal
-Route::post('/panel/negocios/{negocio}/sucursales/{sucursal}', static function (string $negocio, string $sucursal): void {})
+Route::post(
+    '/panel/negocios/{negocio}/sucursales/{sucursal}',
+    static function (string $negocio, string $sucursal): void {},
+)
     ->whereIn('negocio', IDS_NEGOCIO)
     ->whereIn('sucursal', IDS_SUCURSALES);
 
 // Ver compras
-Route::get('/panel/negocios/{negocio}/compras', static function (string $negocio): View {
-    return view('panel_negocios_{negocio}_compras');
-})
+Route::get(
+    '/panel/negocios/{negocio}/compras',
+    static function (string $negocio): View {
+        return view('panel_negocios_{negocio}_compras');
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Registrar compra
-Route::post('/panel/negocios/{negocio}/compras', static function (string $negocio): void {})
+Route::post(
+    '/panel/negocios/{negocio}/compras',
+    static function (string $negocio): void {},
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Ver ventas
-Route::get('/panel/negocios/{negocio}/ventas', static function (string $negocio): View {
-    return view('panel_negocios_{negocio}_ventas');
-})
+Route::get(
+    '/panel/negocios/{negocio}/ventas',
+    static function (string $negocio): View {
+        return view('panel_negocios_{negocio}_ventas');
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Registrar venta
-Route::post('/panel/negocios/{negocio}/ventas', static function (string $negocio): void {})
+Route::post(
+    '/panel/negocios/{negocio}/ventas',
+    static function (string $negocio): void {},
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Vender productos reservados
-Route::post('/panel/negocios/{negocio}/ventas/{reserva}', static function (string $negocio, string $reserva): void {})
+Route::post(
+    '/panel/negocios/{negocio}/ventas/{reserva}',
+    static function (string $negocio, string $reserva): void {},
+)
     ->whereIn('negocio', IDS_NEGOCIO)
     ->whereIn('reserva', IDS_RESERVAS);
 
 // Ver reservas
-Route::get('/panel/negocios/{negocio}/reservas', static function (string $negocio): View {
-    return view('panel_negocios_{negocio}_reservas');
-})
+Route::get(
+    '/panel/negocios/{negocio}/reservas',
+    static function (string $negocio): View {
+        return view('panel_negocios_{negocio}_reservas');
+    },
+)
     ->whereIn('negocio', IDS_NEGOCIO);
 
 // Ecommerce de un negocio
-Route::get('/{negocio}', static function (string $negocio): View {
-    $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
-    $stmt->execute([$negocio]);
-    $negocio = $stmt->fetch();
+Route::get(
+    '/{negocio}',
+    static function (string $negocio): View {
+        $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
+        $stmt->execute([$negocio]);
+        $negocio = $stmt->fetch();
 
-    session_start();
-    $usuario = $_SESSION['ecommerce'][$negocio]['usuario'] ?? [];
+        session_start();
+        $usuario = $_SESSION['ecommerce'][$negocio]['usuario'] ?? [];
 
-    return view('{negocio}', ['negocio' => $negocio, 'usuario' => $usuario]);
-})
+        return view('{negocio}', [
+            'negocio' => $negocio,
+            'usuario' => $usuario,
+        ]);
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Ver productos de un negocio
-Route::get('/{negocio}/productos', static function (string $negocio): View {
-    return view('{negocio}_productos');
-})
+Route::get(
+    '/{negocio}/productos',
+    static function (string $negocio): View {
+        return view('{negocio}_productos');
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Ver producto de un negocio
-Route::get('/{negocio}/productos/{producto}', static function (string $negocio, string $producto): View {
-    return view('{negocio}_productos_{producto}');
-})
+Route::get(
+    '/{negocio}/productos/{producto}',
+    static function (string $negocio, string $producto): View {
+        return view('{negocio}_productos_{producto}');
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS)
     ->whereIn('producto', IDS_PRODUCTOS);
 
 // Ver inicio de sesión en un negocio
-Route::get('/{negocio}/iniciar-sesion', static function (string $negocio): View {
-    $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
-    $stmt->execute([$negocio]);
-    $negocio = $stmt->fetch();
+Route::get(
+    '/{negocio}/iniciar-sesion',
+    static function (string $negocio): View {
+        $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
+        $stmt->execute([$negocio]);
+        $negocio = $stmt->fetch();
 
-    return view('{negocio}_iniciar-sesion', ['negocio' => $negocio]);
-})
+        return view('{negocio}_iniciar-sesion', ['negocio' => $negocio]);
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Iniciar sesión en un negocio
-Route::post('/{negocio}/iniciar-sesion', static function (string $negocio): void {
-    $correo = $_POST['correo'] ?? '';
-    $clave = $_POST['clave'] ?? '';
+Route::post(
+    '/{negocio}/iniciar-sesion',
+    static function (string $negocio): void {
+        $correo = $_POST['correo'] ?? '';
+        $clave = $_POST['clave'] ?? '';
 
-    $stmt = PDO->prepare('SELECT * FROM clientes WHERE correo = ?');
-    $stmt->execute([$correo]);
-    $usuario = $stmt->fetch();
+        $stmt = PDO->prepare('SELECT * FROM clientes WHERE correo = ?');
+        $stmt->execute([$correo]);
+        $usuario = $stmt->fetch();
 
-    if ($usuario && password_verify($clave, $usuario['clave'])) {
-        session_start();
-        $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
-        $_SESSION['ecommerce'][$negocio]['usuario'] = $usuario;
-    }
-})
+        if ($usuario && password_verify($clave, $usuario['clave'])) {
+            session_start();
+            $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+            $_SESSION['ecommerce'][$negocio]['usuario'] = $usuario;
+        }
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Ver registro de cliente en un negocio
-Route::get('/{negocio}/registrarse', static function (string $negocio): View {
-    $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
-    $stmt->execute([$negocio]);
-    $negocio = $stmt->fetch();
+Route::get(
+    '/{negocio}/registrarse',
+    static function (string $negocio): View {
+        $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
+        $stmt->execute([$negocio]);
+        $negocio = $stmt->fetch();
 
-    return view('{negocio}_registrarse', ['negocio' => $negocio]);
-})
+        return view('{negocio}_registrarse', ['negocio' => $negocio]);
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Registrarse como cliente en un negocio
-Route::post('/{negocio}/registrarse', static function (string $negocio): void {
-    $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
-    $stmt->execute([$negocio]);
-    $negocio = $stmt->fetch();
-    $nombre = $_POST['nombre'] ?? '';
-    $apellido = $_POST['apellido'] ?? '';
-    $correo = $_POST['correo'] ?? '';
-    $clave = $_POST['clave'] ?? '';
-    $telefono = $_POST['telefono'] ?? '';
-    $imagenes = [];
+Route::post(
+    '/{negocio}/registrarse',
+    static function (string $negocio): void {
+        $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
+        $stmt->execute([$negocio]);
+        $negocio = $stmt->fetch();
+        $nombre = $_POST['nombre'] ?? '';
+        $apellido = $_POST['apellido'] ?? '';
+        $correo = $_POST['correo'] ?? '';
+        $clave = $_POST['clave'] ?? '';
+        $telefono = $_POST['telefono'] ?? '';
+        $imagenes = [];
 
-    $cliente = [
-        'id' => uniqid(),
-        'nombre' => $nombre,
-        'apellido' => $apellido,
-        'correo' => $correo,
-        'clave' => password_hash($clave, PASSWORD_DEFAULT),
-        'telefono' => $telefono,
-        'imagenes' => $imagenes,
-    ];
+        $cliente = [
+            'id' => uniqid(),
+            'nombre' => $nombre,
+            'apellido' => $apellido,
+            'correo' => $correo,
+            'clave' => password_hash($clave, PASSWORD_DEFAULT),
+            'telefono' => $telefono,
+            'imagenes' => $imagenes,
+        ];
 
-    PDO->prepare('INSERT INTO clientes
-        (id, negocio_id, nombre, apellido, correo, telefono, clave, imagenes) VALUES
-        (:id, :negocio_id, :nombre, :apellido, :correo, :telefono, :clave, :imagenes)
-    ')->execute([
-        ':id' => $cliente['id'],
-        ':negocio_id' => $negocio['id'],
-        ':nombre' => $cliente['nombre'],
-        ':apellido' => $cliente['apellido'],
-        ':correo' => $cliente['correo'],
-        ':clave' => $cliente['clave'],
-        ':telefono' => $cliente['telefono'],
-        ':imagenes' => json_encode($cliente['imagenes']),
-    ]);
+        PDO->prepare('INSERT INTO clientes
+            (id, negocio_id, nombre, apellido, correo, telefono, clave, imagenes) VALUES
+            (:id, :negocio_id, :nombre, :apellido, :correo, :telefono, :clave, :imagenes)
+        ')->execute([
+            ':id' => $cliente['id'],
+            ':negocio_id' => $negocio['id'],
+            ':nombre' => $cliente['nombre'],
+            ':apellido' => $cliente['apellido'],
+            ':correo' => $cliente['correo'],
+            ':clave' => $cliente['clave'],
+            ':telefono' => $cliente['telefono'],
+            ':imagenes' => json_encode($cliente['imagenes']),
+        ]);
 
-    session_start();
-    $_SESSION['ecommerce'][$negocio]['usuario'] = $cliente;
-})
+        session_start();
+        $_SESSION['ecommerce'][$negocio]['usuario'] = $cliente;
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Cerrar sesión en un negocio
-Route::get('/{negocio}/cerrar-sesion', static function (string $negocio): void {
-    session_start();
-    unset($_SESSION['ecommerce'][$negocio]);
-})
+Route::get(
+    '/{negocio}/cerrar-sesion',
+    static function (string $negocio): void {
+        session_start();
+        unset($_SESSION['ecommerce'][$negocio]);
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Editar perfil en un negocio
-Route::get('/{negocio}/perfil', static function (string $negocio): View {
-    $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
-    $stmt->execute([$negocio]);
-    $negocio = $stmt->fetch();
-    session_start();
-    $usuario = $_SESSION['ecommerce'][$negocio]['usuario'];
+Route::get(
+    '/{negocio}/perfil',
+    static function (string $negocio): View {
+        $stmt = PDO->prepare('SELECT * FROM negocios WHERE slug = ?');
+        $stmt->execute([$negocio]);
+        $negocio = $stmt->fetch();
+        session_start();
+        $usuario = $_SESSION['ecommerce'][$negocio]['usuario'];
 
-    return view('{negocio}_perfil', [
-        'negocio' => $negocio,
-        'usuario' => $usuario,
-    ]);
-})
+        return view('{negocio}_perfil', [
+            'negocio' => $negocio,
+            'usuario' => $usuario,
+        ]);
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Actualizar perfil en un negocio
-Route::post('/{negocio}/perfil', static function (string $negocio): void {
-    session_start();
-    $usuario = &$_SESSION['ecommerce'][$negocio]['usuario'];
-    $usuario['nombre'] = $_POST['nombre'];
-    $usuario['apellido'] = $_POST['apellido'];
-    $usuario['correo'] = $_POST['correo'];
-    $usuario['telefono'] = $_POST['telefono'];
+Route::post(
+    '/{negocio}/perfil',
+    static function (string $negocio): void {
+        session_start();
+        $usuario = &$_SESSION['ecommerce'][$negocio]['usuario'];
+        $usuario['nombre'] = $_POST['nombre'];
+        $usuario['apellido'] = $_POST['apellido'];
+        $usuario['correo'] = $_POST['correo'];
+        $usuario['telefono'] = $_POST['telefono'];
 
-    PDO->prepare('UPDATE clientes SET
-        nombre = :nombre,
-        apellido = :apellido,
-        correo = :correo,
-        telefono = :telefono,
-        actualizado_en = CURRENT_TIMESTAMP
-        WHERE id = :id
-    ')->execute([
-        ':nombre' => $usuario['nombre'],
-        ':apellido' => $usuario['apellido'],
-        ':correo' => $usuario['correo'],
-        ':telefono' => $usuario['telefono'],
-        ':id' => $usuario['id'],
-    ]);
-})
+        PDO->prepare('UPDATE clientes SET
+            nombre = :nombre,
+            apellido = :apellido,
+            correo = :correo,
+            telefono = :telefono,
+            actualizado_en = CURRENT_TIMESTAMP
+            WHERE id = :id
+        ')->execute([
+            ':nombre' => $usuario['nombre'],
+            ':apellido' => $usuario['apellido'],
+            ':correo' => $usuario['correo'],
+            ':telefono' => $usuario['telefono'],
+            ':id' => $usuario['id'],
+        ]);
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Actualizar clave en un negocio
-Route::post('/{negocio}/perfil/clave', static function (string $negocio): void {
-    session_start();
-    $usuario = &$_SESSION['ecommerce'][$negocio]['usuario'];
-    $clave = $_POST['clave'] ?? '';
-    $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
+Route::post(
+    '/{negocio}/perfil/clave',
+    static function (string $negocio): void {
+        session_start();
+        $usuario = &$_SESSION['ecommerce'][$negocio]['usuario'];
+        $clave = $_POST['clave'] ?? '';
+        $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
 
-    PDO->prepare('UPDATE clientes SET
-        clave = :clave,
-        actualizado_en = CURRENT_TIMESTAMP
-        WHERE id = :id
-    ')->execute([':clave' => $usuario['clave'], ':id' => $usuario['id']]);
-})
+        PDO->prepare('UPDATE clientes SET
+            clave = :clave,
+            actualizado_en = CURRENT_TIMESTAMP
+            WHERE id = :id
+        ')->execute([':clave' => $usuario['clave'], ':id' => $usuario['id']]);
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Ver carrito en un negocio
-Route::get('/{negocio}/carrito', static function (string $negocio): View {
-    return view('{negocio}_carrito');
-})
+Route::get(
+    '/{negocio}/carrito',
+    static function (string $negocio): View {
+        return view('{negocio}_carrito');
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Añadir producto al carrito en un negocio
-Route::post('/{negocio}/carrito/productos', static function (string $negocio): void {})
+Route::post(
+    '/{negocio}/carrito/productos',
+    static function (string $negocio): void {},
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Actualizar cantidad de producto en el carrito en un negocio
-Route::post('/{negocio}/carrito/productos/{producto}', static function (string $negocio): void {})
+Route::post(
+    '/{negocio}/carrito/productos/{producto}',
+    static function (string $negocio): void {},
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS)
     ->whereIn('producto', IDS_PRODUCTOS);
 
 // Eliminar un producto del carrito en un negocio
-Route::post('/{negocio}/carrito/productos/{producto}/eliminar', static function (string $negocio): void {})
+Route::post(
+    '/{negocio}/carrito/productos/{producto}/eliminar',
+    static function (string $negocio): void {},
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS)
     ->whereIn('producto', IDS_PRODUCTOS);
 
 // Ver reservas en un negocio
-Route::get('/{negocio}/reservas', static function (string $negocio): View {
-    return view('{negocio}_reservas');
-})
+Route::get(
+    '/{negocio}/reservas',
+    static function (string $negocio): View {
+        return view('{negocio}_reservas');
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Reservar en un negocio
-Route::post('/{negocio}/reservas', static function (string $negocio): void {})
+Route::post(
+    '/{negocio}/reservas',
+    static function (string $negocio): void {},
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS);
 
 // Ver reserva en un negocio
-Route::get('/{negocio}/reservas/{reserva}', static function (string $negocio, string $reserva): View {
-    return view('{negocio}_reservas_{reserva}');
-})
+Route::get(
+    '/{negocio}/reservas/{reserva}',
+    static function (string $negocio, string $reserva): View {
+        return view('{negocio}_reservas_{reserva}');
+    },
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS)
     ->whereIn('reserva', IDS_RESERVAS);
 
 // Cancelar reserva en un negocio
-Route::post('/{negocio}/reservas/{reserva}/cancelar', static function (string $negocio, string $reserva): void {})
+Route::post(
+    '/{negocio}/reservas/{reserva}/cancelar',
+    static function (string $negocio, string $reserva): void {},
+)
     ->whereIn('negocio', SLUGS_NEGOCIOS)
     ->whereIn('reserva', IDS_RESERVAS);
