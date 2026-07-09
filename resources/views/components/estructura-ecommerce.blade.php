@@ -39,6 +39,13 @@
                         </a>
                     </h1>
                 </li>
+                <li class="w3-bar-item">
+                    <a
+                        href="{{ route('{negocio}.productos', ['negocio' => $negocio['slug']]) }}"
+                        class="w3-button">
+                        Productos
+                    </a>
+                </li>
                 @if (empty($usuario))
                     <li class="w3-bar-item w3-right">
                         <a
@@ -75,6 +82,24 @@
                             ]) }}"
                             class="w3-button">
                             Editar perfil
+                        </a>
+                    </li>
+                    <li class="w3-bar-item w3-right">
+                        <a
+                            href="{{ route('{negocio}.carrito', [
+                                'negocio' => $negocio['slug'],
+                            ]) }}"
+                            class="w3-button">
+                            Carrito
+                        </a>
+                    </li>
+                    <li class="w3-bar-item w3-right">
+                        <a
+                            href="{{ route('{negocio}.reservas', [
+                                'negocio' => $negocio['slug'],
+                            ]) }}"
+                            class="w3-button">
+                            Reservas
                         </a>
                     </li>
                 @endif

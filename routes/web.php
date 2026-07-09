@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\Negocio;
+use App\Models\Producto;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -684,12 +685,9 @@ Route::prefix('panel')->group(static function (): void {
                 Route::get(
                     '/',
                     static function (Negocio $negocio): View {
-                        $negocio['productos'] = PDO
-                            ->query("
-                                SELECT * FROM productos
-                                WHERE negocio_id = '{$negocio['id']}'
-                            ")
-                            ->fetchAll();
+                        $negocio['productos'] = Producto::query()
+                            ->where('negocio_id', $negocio->id)
+                            ->get();
 
                         session_start();
                         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -713,28 +711,17 @@ Route::prefix('panel')->group(static function (): void {
                         $imagenes = [];
                         $stock = $_POST['stock'] ?? null;
 
-                        $producto = [
-                            'id' => uniqid(),
-                            'negocio_id' => $negocio->id,
-                            'nombre' => $nombre,
-                            'descripcion' => $descripcion,
-                            'precio' => $precio,
-                            'imagenes' => $imagenes,
-                        ];
+                        $producto = new Producto;
+                        $producto->id = uniqid();
+                        $producto->negocio_id = $negocio->id;
+                        $producto->nombre = $nombre;
+                        $producto->descripcion = $descripcion;
+                        $producto->precio = $precio;
+                        $producto->imagenes = json_encode($imagenes);
 
                         PDO->beginTransaction();
 
-                        PDO->prepare('INSERT INTO productos
-                            (id, negocio_id, nombre, descripcion, precio, imagenes) VALUES
-                            (:id, :negocio_id, :nombre, :descripcion, :precio, :imagenes)
-                        ')->execute([
-                            ':id' => $producto['id'],
-                            ':negocio_id' => $producto['negocio_id'],
-                            ':nombre' => $producto['nombre'],
-                            ':descripcion' => $producto['descripcion'],
-                            ':precio' => $producto['precio'],
-                            ':imagenes' => json_encode($producto['imagenes']),
-                        ]);
+                        $producto->save();
 
                         if ($stock !== null) {
                             PDO->prepare('INSERT INTO inventarios
@@ -744,7 +731,7 @@ Route::prefix('panel')->group(static function (): void {
                                 ':id' => uniqid(),
                                 ':establecimiento_tipo' => 'negocio',
                                 ':establecimiento_id' => $negocio->id,
-                                ':producto_id' => $producto['id'],
+                                ':producto_id' => $producto->id,
                                 ':stock' => $stock,
                             ]);
                         }
@@ -761,18 +748,17 @@ Route::prefix('panel')->group(static function (): void {
                     // Editar producto
                     Route::get(
                         '/',
-                        static function (Negocio $negocio, string $producto): View {
-                            $stmt = PDO->prepare('SELECT * FROM productos WHERE id = ?');
-                            $stmt->execute([$producto]);
-                            $producto = $stmt->fetch();
-
+                        static function (
+                            Negocio $negocio,
+                            Producto $producto,
+                        ): View {
                             $producto['stock'] = PDO
                                 ->query("
                                     SELECT stock FROM inventarios
                                     WHERE (
-                                        establecimiento_id = '{$negocio['id']}'
-                                        AND producto_id = '{$producto['id']}
-                                    )'
+                                        establecimiento_id = '$negocio->id'
+                                        AND producto_id = '$producto->id'
+                                    )
                                 ")
                                 ->fetchColumn();
 
@@ -792,26 +778,22 @@ Route::prefix('panel')->group(static function (): void {
                     // Actualizar producto
                     Route::post(
                         '/',
-                        static function (Negocio $negocio, string $producto): RedirectResponse {
+                        static function (
+                            Negocio $negocio,
+                            Producto $producto,
+                        ): RedirectResponse {
                             $nombre = $_POST['nombre'] ?? '';
                             $descripcion = $_POST['descripcion'] ?? '';
                             $precio = $_POST['precio'] ?? '';
                             $stock = $_POST['stock'] ?? null;
 
+                            $producto->nombre = $nombre;
+                            $producto->descripcion = $descripcion;
+                            $producto->precio = $precio;
+
                             PDO->beginTransaction();
 
-                            PDO->prepare('UPDATE productos SET
-                                nombre = :nombre,
-                                descripcion = :descripcion,
-                                precio = :precio,
-                                actualizado_en = CURRENT_TIMESTAMP
-                                WHERE id = :id
-                            ')->execute([
-                                ':nombre' => $nombre,
-                                ':descripcion' => $descripcion,
-                                ':precio' => $precio,
-                                ':id' => $producto,
-                            ]);
+                            $producto->save();
 
                             if ($stock !== null) {
                                 PDO->prepare('UPDATE inventarios SET
@@ -824,28 +806,32 @@ Route::prefix('panel')->group(static function (): void {
                                 ')->execute([
                                     ':stock' => $stock,
                                     ':establecimiento_id' => $negocio->id,
-                                    ':producto_id' => $producto,
+                                    ':producto_id' => $producto->id,
                                 ]);
                             }
 
                             PDO->commit();
 
-                            return to_route('panel.negocios.{negocio}.productos.{producto}', [
-                                'negocio' => $negocio,
-                                'producto' => $producto,
-                            ]);
+                            return to_route(
+                                'panel.negocios.{negocio}.productos.{producto}',
+                                [
+                                    'negocio' => $negocio,
+                                    'producto' => $producto,
+                                ],
+                            );
                         },
                     );
 
                     // Activar producto
                     Route::get(
                         'activar',
-                        static function (string $negocio, string $producto): RedirectResponse {
-                            PDO->prepare('UPDATE productos SET
-                                activo = 1,
-                                actualizado_en = CURRENT_TIMESTAMP
-                                WHERE id = ?
-                            ')->execute([$producto]);
+                        static function (
+                            string $negocio,
+                            Producto $producto,
+                        ): RedirectResponse {
+                            $producto->activo = 1;
+
+                            $producto->save();
 
                             return to_route('panel.negocios.{negocio}.productos', [
                                 'negocio' => $negocio,
@@ -856,16 +842,20 @@ Route::prefix('panel')->group(static function (): void {
                     // Desactivar producto
                     Route::get(
                         'desactivar',
-                        static function (Negocio $negocio, string $producto): RedirectResponse {
-                            PDO->prepare('UPDATE productos SET
-                                activo = 0,
-                                actualizado_en = CURRENT_TIMESTAMP
-                                WHERE id = ?
-                            ')->execute([$producto]);
+                        static function (
+                            Negocio $negocio,
+                            Producto $producto,
+                        ): RedirectResponse {
+                            $producto->activo = 0;
 
-                            return to_route('panel.negocios.{negocio}.productos', [
-                                'negocio' => $negocio,
-                            ]);
+                            $producto->save();
+
+                            return to_route(
+                                'panel.negocios.{negocio}.productos',
+                                [
+                                    'negocio' => $negocio,
+                                ],
+                            );
                         },
                     )->name('panel.negocios.{negocio}.productos.{producto}.desactivar');
                 });
@@ -1056,8 +1046,17 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
     Route::get(
         'productos',
         static function (Negocio $negocio): View {
+            $productos = Producto::query()
+                ->where('negocio_id', $negocio->id)
+                ->get();
+
+            session_start();
+            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+
             return view('{negocio}_productos', [
                 'negocio' => $negocio,
+                'productos' => $productos,
+                'usuario' => $usuario,
             ]);
         },
     )->name('{negocio}.productos');
@@ -1065,9 +1064,14 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
     // Ver producto de un negocio
     Route::get(
         'productos/{producto}',
-        static function (Negocio $negocio, string $producto): View {
+        static function (Negocio $negocio, Producto $producto): View {
+            session_start();
+            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+
             return view('{negocio}_productos_{producto}', [
                 'negocio' => $negocio,
+                'producto' => $producto,
+                'usuario' => $usuario,
             ]);
         },
     )->name('{negocio}.productos.{producto}');
@@ -1234,8 +1238,12 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
     Route::get(
         'carrito',
         static function (Negocio $negocio): View {
+            session_start();
+            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+
             return view('{negocio}_carrito', [
                 'negocio' => $negocio,
+                'usuario' => $usuario,
             ]);
         },
     )->name('{negocio}.carrito');
@@ -1251,15 +1259,28 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
     // Actualizar cantidad de producto en el carrito en un negocio
     Route::post(
         'carrito/productos/{producto}',
-        static function (Negocio $negocio): RedirectResponse {
-            return to_route('{negocio}.carrito', ['negocio' => $negocio]);
+        static function (
+            Negocio $negocio,
+            Producto $producto,
+        ): RedirectResponse {
+            session_start();
+            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+
+            return to_route('{negocio}.carrito', [
+                'negocio' => $negocio,
+                'producto' => $producto,
+                'usuario' => $usuario,
+            ]);
         },
     );
 
     // Eliminar un producto del carrito en un negocio
     Route::post(
         'carrito/productos/{producto}/eliminar',
-        static function (Negocio $negocio): RedirectResponse {
+        static function (
+            Negocio $negocio,
+            Producto $producto,
+        ): RedirectResponse {
             return to_route('{negocio}.carrito', ['negocio' => $negocio]);
         },
     );
@@ -1268,8 +1289,12 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
     Route::get(
         'reservas',
         static function (Negocio $negocio): View {
+            session_start();
+            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+
             return view('{negocio}_reservas', [
                 'negocio' => $negocio,
+                'usuario' => $usuario,
             ]);
         },
     )->name('{negocio}.reservas');
@@ -1289,8 +1314,12 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
     Route::get(
         'reservas/{reserva}',
         static function (Negocio $negocio, string $reserva): View {
+            session_start();
+            $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
+
             return view('{negocio}_reservas_{reserva}', [
                 'negocio' => $negocio,
+                'usuario' => $usuario,
             ]);
         },
     )->name('{negocio}.reservas.{reserva}');
