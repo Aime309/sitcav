@@ -387,11 +387,9 @@ Route::prefix('panel')->group(static function (): void {
             session_start();
             $usuario = $_SESSION['panel']['usuario'];
 
-            $negocios = PDO
-                ->query("SELECT * FROM negocios WHERE usuario_id = '{$usuario['id']}'")
-                ->fetchAll();
-
-            $usuario['negocios'] = $negocios;
+            $usuario['negocios'] = Negocio::query()
+                ->where('usuario_id', $usuario['id'])
+                ->get();
 
             foreach ($usuario['negocios'] as &$negocio) {
                 $negocio['imagenes'] = json_decode($negocio['imagenes'], true);
@@ -450,30 +448,17 @@ Route::prefix('panel')->group(static function (): void {
 
             session_start();
 
-            $negocio = [
-                'id' => uniqid(),
-                'usuario_id' => $_SESSION['panel']['usuario']['id'],
-                'nombre' => $nombre,
-                'rif' => $rif,
-                'direccion' => $direccion,
-                'telefono' => $telefono,
-                'slug' => $slug,
-                'imagenes' => $imagenes,
-            ];
+            $negocio = new Negocio;
+            $negocio->id = uniqid();
+            $negocio->usuario_id = $_SESSION['panel']['usuario']['id'];
+            $negocio->nombre = $nombre;
+            $negocio->rif = $rif;
+            $negocio->direccion = $direccion;
+            $negocio->telefono = $telefono;
+            $negocio->slug = $slug;
+            $negocio->imagenes = json_encode($imagenes);
 
-            PDO->prepare('INSERT INTO negocios
-                (id, usuario_id, nombre, rif, direccion, telefono, slug, imagenes) VALUES
-                (:id, :usuario_id, :nombre, :rif, :direccion, :telefono, :slug, :imagenes)
-            ')->execute([
-                ':id' => $negocio['id'],
-                ':usuario_id' => $negocio['usuario_id'],
-                ':nombre' => $negocio['nombre'],
-                ':rif' => $negocio['rif'],
-                ':direccion' => $negocio['direccion'],
-                ':telefono' => $negocio['telefono'],
-                ':slug' => $negocio['slug'],
-                ':imagenes' => json_encode($negocio['imagenes']),
-            ]);
+            $negocio->save();
 
             return to_route('panel.negocios');
         });
@@ -521,24 +506,14 @@ Route::prefix('panel')->group(static function (): void {
                         ? 1
                         : 0;
 
-                    PDO->prepare('UPDATE negocios SET
-                        nombre = :nombre,
-                        rif = :rif,
-                        direccion = :direccion,
-                        telefono = :telefono,
-                        slug = :slug,
-                        carga_inicial_cerrada = :carga_inicial_cerrada,
-                        actualizado_en = CURRENT_TIMESTAMP
-                        WHERE id = :id
-                    ')->execute([
-                        ':nombre' => $nombre,
-                        ':rif' => $rif,
-                        ':direccion' => $direccion,
-                        ':telefono' => $telefono,
-                        ':slug' => $slug,
-                        ':carga_inicial_cerrada' => $cargaInicialCerrada,
-                        ':id' => $negocio->id,
-                    ]);
+                    $negocio->nombre = $nombre;
+                    $negocio->rif = $rif;
+                    $negocio->direccion = $direccion;
+                    $negocio->telefono = $telefono;
+                    $negocio->slug = $slug;
+                    $negocio->carga_inicial_cerrada = $cargaInicialCerrada;
+
+                    $negocio->save();
 
                     return to_route('panel.negocios.{negocio}.editar', [
                         'negocio' => $negocio,
