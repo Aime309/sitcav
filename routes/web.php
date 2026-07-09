@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Negocio;
 use App\Models\Producto;
+use App\Models\Sucursal;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -373,25 +374,12 @@ Route::prefix('panel')->group(static function (): void {
             $usuario['roles'] = json_decode($usuario['roles'], true);
             $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
 
-            $usuario['negocios'] = Negocio::query()
-                ->where('usuario_id', $usuario['id'])
-                ->get();
-
-            foreach ($usuario['negocios'] as &$negocio) {
+            foreach ($usuario->negocios as $negocio) {
                 $negocio['imagenes'] = json_decode($negocio['imagenes'], true);
 
-                $sucursales = PDO
-                    ->query("
-                        SELECT * FROM sucursales
-                        WHERE negocio_id = '{$negocio['id']}'
-                    ")
-                    ->fetchAll();
-
-                foreach ($sucursales as &$sucursal) {
+                foreach ($negocio->sucursales as $sucursal) {
                     $sucursal['imagenes'] = json_decode($sucursal['imagenes'], true);
                 }
-
-                $negocio['sucursales'] = $sucursales;
             }
 
             return view('panel_negocios', ['usuario' => $usuario]);
@@ -596,7 +584,7 @@ Route::prefix('panel')->group(static function (): void {
                 // Actualizar empleado
                 Route::post(
                     '{empleado}',
-                    static function (Negocio $negocio, string $empleado): RedirectResponse {
+                    static function (Negocio $negocio, Usuario $empleado): RedirectResponse {
                         return to_route('panel_negocios_{negocio}_empleados', [
                             'negocio' => $negocio,
                         ]);
@@ -685,10 +673,6 @@ Route::prefix('panel')->group(static function (): void {
                 Route::get(
                     '/',
                     static function (Negocio $negocio): View {
-                        $negocio['productos'] = Producto::query()
-                            ->where('negocio_id', $negocio->id)
-                            ->get();
-
                         session_start();
                         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
                         $usuario['roles'] = json_decode($usuario['roles'], true);
@@ -826,7 +810,7 @@ Route::prefix('panel')->group(static function (): void {
                     Route::get(
                         'activar',
                         static function (
-                            string $negocio,
+                            Negocio $negocio,
                             Producto $producto,
                         ): RedirectResponse {
                             $producto->activo = 1;
@@ -884,7 +868,7 @@ Route::prefix('panel')->group(static function (): void {
                         '/',
                         static function (
                             Negocio $negocio,
-                            string $sucursal,
+                            Sucursal $sucursal,
                         ): View {
                             session_start();
                             $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -896,6 +880,7 @@ Route::prefix('panel')->group(static function (): void {
                                 [
                                     'negocio' => $negocio,
                                     'usuario' => $usuario,
+                                    'sucursal' => $sucursal,
                                 ],
                             );
                         },
@@ -906,7 +891,7 @@ Route::prefix('panel')->group(static function (): void {
                         'editar',
                         static function (
                             Negocio $negocio,
-                            string $sucursal,
+                            Sucursal $sucursal,
                         ): View {
                             session_start();
                             $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -918,6 +903,7 @@ Route::prefix('panel')->group(static function (): void {
                                 [
                                     'negocio' => $negocio,
                                     'usuario' => $usuario,
+                                    'sucursal' => $sucursal,
                                 ],
                             );
                         },
@@ -928,7 +914,7 @@ Route::prefix('panel')->group(static function (): void {
                         '/',
                         static function (
                             Negocio $negocio,
-                            string $sucursal,
+                            Sucursal $sucursal,
                         ): RedirectResponse {
                             return to_route(
                                 'panel.negocios.{negocio}.sucursales.{sucursal}.editar',
@@ -1047,16 +1033,11 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
         Route::get(
             '/',
             static function (Negocio $negocio): View {
-                $productos = Producto::query()
-                    ->where('negocio_id', $negocio->id)
-                    ->get();
-
                 session_start();
                 $usuario = $_SESSION['ecommerce'][$negocio['slug']]['usuario'] ?? [];
 
                 return view('{negocio}_productos', [
                     'negocio' => $negocio,
-                    'productos' => $productos,
                     'usuario' => $usuario,
                 ]);
             },

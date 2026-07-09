@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string $id
@@ -19,19 +21,21 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $activo
  * @property string $creado_en
  * @property string $actualizado_en
+ * @property Collection<int, Negocio> $negocios
  */
 #[Table(keyType: 'string', incrementing: false)]
 final class Usuario extends Model
 {
-    /** The name of the "created at" column. */
     public const ?string CREATED_AT = 'creado_en';
-
-    /** The name of the "updated at" column. */
     public const ?string UPDATED_AT = 'actualizado_en';
 
-    /** The model's default values for attributes. */
     protected $attributes = [
         'activo' => 1,
         'imagenes' => '[]',
     ];
+
+    public function negocios(): HasMany
+    {
+        return $this->hasMany(Negocio::class);
+    }
 }
