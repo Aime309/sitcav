@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -17,8 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $direccion
  * @property string $telefono
  * @property string $slug
- * @property string[] $imagenes
- * @property int $carga_inicial_cerrada
+ * @property int $carga_inicial_abierta
  * @property int $activo
  * @property string $creado_en
  * @property string $actualizado_en
@@ -27,17 +27,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Collection<int, Proveedor> $proveedores
  * @property Collection<int, Cliente> $clientes
  * @property Collection<int, Reserva> $reservas
+ * @property Collection<int, NegocioImagen> $imagenes
  */
 #[Table(keyType: 'string', incrementing: false)]
+#[Fillable('id', 'nombre', 'rif', 'direccion', 'telefono', 'slug')]
 final class Negocio extends Model
 {
     public const ?string CREATED_AT = 'creado_en';
     public const ?string UPDATED_AT = 'actualizado_en';
 
     protected $attributes = [
-        'carga_inicial_cerrada' => 0,
+        'carga_inicial_abierta' => 1,
         'activo' => 1,
-        'imagenes' => '[]',
     ];
 
     public function productos(): HasMany
@@ -63,5 +64,11 @@ final class Negocio extends Model
     public function reservas(): HasMany
     {
         return $this->hasMany(Reserva::class);
+    }
+
+    /** @return HasMany<NegocioImagen> */
+    public function imagenes(): HasMany
+    {
+        return $this->hasMany(NegocioImagen::class);
     }
 }

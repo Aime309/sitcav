@@ -58,7 +58,7 @@
                             </h1>
                         @endif
                     </li>
-                    @if (in_array('Administrador', $usuario['roles']))
+                    @if (in_array('administrador', $usuario['roles']))
                         <li class="w3-bar-item">
                             <a
                                 href="{{ route(
@@ -80,7 +80,7 @@
                             </a>
                         </li>
                     @endif
-                    @if (in_array('Encargado', $usuario['roles']))
+                    @if (in_array('encargado', $usuario['roles']))
                         <li class="w3-bar-item">
                             <a
                                 href="{{ route(
@@ -159,7 +159,7 @@
                             Editar perfil
                         </a>
                     </li>
-                    @if (in_array('Administrador', $usuario['roles']))
+                    @if (in_array('administrador', $usuario['roles']))
                         <li class="w3-bar-item w3-right">
                             <a
                                 href="{{ route(

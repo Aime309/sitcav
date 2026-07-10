@@ -17,11 +17,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $telefono
  * @property string $clave
  * @property array<int, 'Administrador'|'Encargado'|'Vendedor'> $roles
- * @property string[] $imagenes
+ * @property string $imagen
  * @property int $activo
  * @property string $creado_en
  * @property string $actualizado_en
  * @property Collection<int, Negocio> $negocios
+ * @property ?Negocio $negocio
+ * @property ?Sucursal $sucursal
  */
 #[Table(keyType: 'string', incrementing: false)]
 final class Usuario extends Model
@@ -31,9 +33,9 @@ final class Usuario extends Model
 
     protected $attributes = [
         'activo' => 1,
-        'imagenes' => '[]',
     ];
 
+    /** @return HasMany<Negocio> */
     public function negocios(): HasMany
     {
         return $this->hasMany(Negocio::class);

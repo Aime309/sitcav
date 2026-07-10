@@ -41,10 +41,7 @@ PDO->query('CREATE TABLE IF NOT EXISTS usuarios (
             OR json_extract(roles, "$[4]") IN ("administrador", "empleado", "vendedor")
         )
     ),
-    imagenes TEXT NOT NULL CHECK (
-        json_valid(imagenes)
-        AND json_array_length(imagenes) >= 0
-    ),
+    imagen BLOB,
     activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
     creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en),
@@ -65,12 +62,16 @@ PDO->query('CREATE TABLE IF NOT EXISTS negocios (
         OR telefono LIKE "+58426_______"
     ),
     slug TEXT NOT NULL UNIQUE CHECK (length(slug) > 0),
-    imagenes TEXT NOT NULL CHECK (
-        json_valid(imagenes)
-        AND json_array_length(imagenes) >= 0
-    ),
-    carga_inicial_cerrada INT NOT NULL DEFAULT 0 CHECK (carga_inicial_cerrada IN (0, 1)),
+    carga_inicial_abierta INT NOT NULL DEFAULT 1 CHECK (carga_inicial_abierta IN (0, 1)),
     activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
+    creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
+) STRICT')->execute();
+
+PDO->query('CREATE TABLE IF NOT EXISTS negocios_imagenes (
+    id TEXT PRIMARY KEY,
+    negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
+    imagen BLOB NOT NULL,
     creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
 ) STRICT')->execute();
@@ -99,8 +100,8 @@ PDO->query('CREATE TABLE IF NOT EXISTS sucursales (
 PDO->query('CREATE TABLE IF NOT EXISTS asignaciones (
     id TEXT PRIMARY KEY,
     usuario_id TEXT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-    establecimiento_tipo TEXT NOT NULL,
-    establecimiento_id TEXT NOT NULL,
+    negocio_id TEXT REFERENCES negocios(id),
+    sucursal_id TEXT REFERENCES sucursales(id),
     creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) STRICT')->execute();
@@ -261,13 +262,10 @@ Route::prefix('panel')->group(static function (): void {
         Route::post('/', static function (): RedirectResponse {
             $correo = $_POST['correo'] ?? '';
             $clave = $_POST['clave'] ?? '';
-
             $usuario = Usuario::query()->where('correo', $correo)->first();
 
-            if ($usuario && password_verify($clave, $usuario['clave'])) {
-                session_start();
-                $usuario['roles'] = json_decode($usuario['roles'], true);
-                $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+            if ($usuario && password_verify($clave, $usuario->clave)) {
+                $usuario->roles = json_decode($usuario['roles'], true);
 
                 $usuario['asignacion'] = PDO
                     ->query("
@@ -276,29 +274,12 @@ Route::prefix('panel')->group(static function (): void {
                     ")
                     ->fetch();
 
+                session_start();
                 $_SESSION['panel']['usuario']['id'] = $usuario->id;
 
-                if (in_array('Administrador', $usuario['roles'])) {
+                if (in_array('administrador', $usuario->roles)) {
                     return to_route('panel.negocios');
                 }
-
-                if ($usuario['asignacion']['establecimiento_tipo'] === 'negocio') {
-                    return to_route('panel.negocios.{negocio}', [
-                        'negocio' => $usuario['asignacion']['establecimiento_id'],
-                    ]);
-                }
-
-                $sucursal = PDO
-                    ->query("
-                        SELECT * FROM sucursales
-                        WHERE id = '{$usuario['asignacion']['establecimiento_id']}'
-                    ")
-                    ->fetch();
-
-                return to_route('panel.negocios.{negocio}.sucursales.{sucursal}', [
-                    'negocio' => $sucursal['negocio_id'],
-                    'sucursal' => $sucursal['id'],
-                ]);
             }
 
             return to_route('panel.iniciar-sesion');
@@ -318,33 +299,7 @@ Route::prefix('panel')->group(static function (): void {
             $correo = $_POST['correo'] ?? '';
             $clave = $_POST['clave'] ?? '';
             $telefono = $_POST['telefono'] ?? '';
-            $imagenes = [];
-
-            foreach ($_FILES['imagenes']['error'] as $indice => $error) {
-                if ($error === UPLOAD_ERR_OK) {
-                    $imagenes[] = [
-                        'name' => $_FILES['imagenes']['name'][$indice],
-                        'full_path' => $_FILES['imagenes']['full_path'][$indice],
-                        'type' => $_FILES['imagenes']['type'][$indice],
-                        'tmp_name' => $_FILES['imagenes']['tmp_name'][$indice],
-                        'error' => $_FILES['imagenes']['error'][$indice],
-                        'size' => $_FILES['imagenes']['size'][$indice],
-                    ];
-                }
-            }
-
-            foreach ($imagenes as &$imagen) {
-                if (!is_dir(__DIR__ . '/../public/storage')) {
-                    mkdir(__DIR__ . '/../public/storage');
-                }
-
-                move_uploaded_file(
-                    $imagen['tmp_name'],
-                    __DIR__ . "/../public/storage/{$imagen['name']}",
-                );
-
-                $imagen = "./storage/{$imagen['name']}";
-            }
+            $imagen = $_FILES['imagen'] ?? [];
 
             $usuario = new Usuario;
             $usuario->id = uniqid();
@@ -353,8 +308,16 @@ Route::prefix('panel')->group(static function (): void {
             $usuario->correo = $correo;
             $usuario->clave = password_hash($clave, PASSWORD_DEFAULT);
             $usuario->telefono = $telefono;
-            $usuario->roles = json_encode(['Administrador', 'Encargado', 'Vendedor']);
-            $usuario->imagenes = json_encode($imagenes);
+
+            $usuario->roles = json_encode([
+                'administrador',
+                'encargado',
+                'vendedor',
+            ]);
+
+            if ($imagen['error'] === UPLOAD_ERR_OK) {
+                $usuario->imagen = fopen($imagen['tmp_name'], 'rb');
+            }
 
             $usuario->save();
 
@@ -375,14 +338,11 @@ Route::prefix('panel')->group(static function (): void {
         Route::get('/', static function (): View {
             session_start();
             $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-            $usuario['roles'] = json_decode($usuario['roles'], true);
-            $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+            $usuario->roles = json_decode($usuario['roles'], true);
 
             foreach ($usuario->negocios as $negocio) {
-                $negocio['imagenes'] = json_decode($negocio['imagenes'], true);
-
                 foreach ($negocio->sucursales as $sucursal) {
-                    $sucursal['imagenes'] = json_decode($sucursal['imagenes'], true);
+                    $sucursal->imagenes = json_decode($sucursal['imagenes'], true);
                 }
             }
 
@@ -396,47 +356,31 @@ Route::prefix('panel')->group(static function (): void {
             $direccion = $_POST['direccion'] ?? '';
             $telefono = $_POST['telefono'] ?? '';
             $slug = $_POST['slug'] ?? '';
-            $imagenes = [];
+
+            PDO->beginTransaction();
+
+            session_start();
+            $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+
+            $negocio = $usuario->negocios()->create([
+                'id' => uniqid(),
+                'nombre' => $nombre,
+                'rif' => $rif,
+                'direccion' => $direccion,
+                'telefono' => $telefono,
+                'slug' => $slug,
+            ]);
 
             foreach ($_FILES['imagenes']['error'] as $indice => $error) {
                 if ($error === UPLOAD_ERR_OK) {
-                    $imagenes[] = [
-                        'name' => $_FILES['imagenes']['name'][$indice],
-                        'full_path' => $_FILES['imagenes']['full_path'][$indice],
-                        'type' => $_FILES['imagenes']['type'][$indice],
-                        'tmp_name' => $_FILES['imagenes']['tmp_name'][$indice],
-                        'error' => $_FILES['imagenes']['error'][$indice],
-                        'size' => $_FILES['imagenes']['size'][$indice],
-                    ];
+                    $negocio->imagenes()->create([
+                        'id' => uniqid(),
+                        'imagen' => fopen($_FILES['imagenes']['tmp_name'][$indice], 'rb'),
+                    ]);
                 }
             }
 
-            foreach ($imagenes as &$imagen) {
-                if (!is_dir(__DIR__ . '/../public/storage')) {
-                    mkdir(__DIR__ . '/../public/storage');
-                }
-
-                move_uploaded_file(
-                    $imagen['tmp_name'],
-                    __DIR__ . "/../public/storage/{$imagen['name']}",
-                );
-
-                $imagen = "./storage/{$imagen['name']}";
-            }
-
-            session_start();
-
-            $negocio = new Negocio;
-            $negocio->id = uniqid();
-            $negocio->usuario_id = $_SESSION['panel']['usuario']['id'];
-            $negocio->nombre = $nombre;
-            $negocio->rif = $rif;
-            $negocio->direccion = $direccion;
-            $negocio->telefono = $telefono;
-            $negocio->slug = $slug;
-            $negocio->imagenes = json_encode($imagenes);
-
-            $negocio->save();
+            PDO->commit();
 
             return to_route('panel.negocios');
         });
@@ -448,8 +392,7 @@ Route::prefix('panel')->group(static function (): void {
                 static function (Negocio $negocio): View {
                     session_start();
                     $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                    $usuario['roles'] = json_decode($usuario['roles'], true);
-                    $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                    $usuario->roles = json_decode($usuario['roles'], true);
 
                     return view('panel_negocios_{negocio}', [
                         'negocio' => $negocio,
@@ -464,8 +407,7 @@ Route::prefix('panel')->group(static function (): void {
                 static function (Negocio $negocio): View {
                     session_start();
                     $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                    $usuario['roles'] = json_decode($usuario['roles'], true);
-                    $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                    $usuario->roles = json_decode($usuario['roles'], true);
 
                     return view('panel_negocios_{negocio}_editar', [
                         'negocio' => $negocio,
@@ -484,7 +426,7 @@ Route::prefix('panel')->group(static function (): void {
                     $telefono = $_POST['telefono'];
                     $slug = $_POST['slug'];
 
-                    $cargaInicialCerrada = ($_POST['carga_inicial_cerrada'] ?? '') === 'on'
+                    $cargaInicialAbierta = ($_POST['carga_inicial_abierta'] ?? '') === 'on'
                         ? 1
                         : 0;
 
@@ -493,7 +435,7 @@ Route::prefix('panel')->group(static function (): void {
                     $negocio->direccion = $direccion;
                     $negocio->telefono = $telefono;
                     $negocio->slug = $slug;
-                    $negocio->carga_inicial_cerrada = $cargaInicialCerrada;
+                    $negocio->carga_inicial_abierta = $cargaInicialAbierta;
 
                     $negocio->save();
 
@@ -510,8 +452,7 @@ Route::prefix('panel')->group(static function (): void {
                     static function (Negocio $negocio): View {
                         session_start();
                         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario['roles'] = json_decode($usuario['roles'], true);
-                        $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                        $usuario->roles = json_decode($usuario['roles'], true);
 
                         return view('panel_negocios_{negocio}_perfil', [
                             'negocio' => $negocio,
@@ -565,8 +506,7 @@ Route::prefix('panel')->group(static function (): void {
                     static function (Negocio $negocio): View {
                         session_start();
                         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario['roles'] = json_decode($usuario['roles'], true);
-                        $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                        $usuario->roles = json_decode($usuario['roles'], true);
 
                         return view('panel_negocios_{negocio}_empleados', [
                             'negocio' => $negocio,
@@ -603,8 +543,7 @@ Route::prefix('panel')->group(static function (): void {
                     static function (Negocio $negocio): View {
                         session_start();
                         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario['roles'] = json_decode($usuario['roles'], true);
-                        $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                        $usuario->roles = json_decode($usuario['roles'], true);
 
                         return view('panel_negocios_{negocio}_proveedores', [
                             'negocio' => $negocio,
@@ -641,8 +580,7 @@ Route::prefix('panel')->group(static function (): void {
                     static function (Negocio $negocio): View {
                         session_start();
                         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario['roles'] = json_decode($usuario['roles'], true);
-                        $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                        $usuario->roles = json_decode($usuario['roles'], true);
 
                         return view('panel_negocios_{negocio}_clientes', [
                             'negocio' => $negocio,
@@ -679,8 +617,7 @@ Route::prefix('panel')->group(static function (): void {
                     static function (Negocio $negocio): View {
                         session_start();
                         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario['roles'] = json_decode($usuario['roles'], true);
-                        $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                        $usuario->roles = json_decode($usuario['roles'], true);
 
                         return view('panel_negocios_{negocio}_productos', [
                             'negocio' => $negocio,
@@ -752,8 +689,7 @@ Route::prefix('panel')->group(static function (): void {
 
                             session_start();
                             $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                            $usuario['roles'] = json_decode($usuario['roles'], true);
-                            $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                            $usuario->roles = json_decode($usuario['roles'], true);
 
                             return view('panel_negocios_{negocio}_productos_{producto}', [
                                 'negocio' => $negocio,
@@ -856,8 +792,7 @@ Route::prefix('panel')->group(static function (): void {
                     static function (Negocio $negocio): View {
                         session_start();
                         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario['roles'] = json_decode($usuario['roles'], true);
-                        $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                        $usuario->roles = json_decode($usuario['roles'], true);
 
                         return view('panel_negocios_{negocio}_sucursales', [
                             'negocio' => $negocio,
@@ -876,8 +811,7 @@ Route::prefix('panel')->group(static function (): void {
                         ): View {
                             session_start();
                             $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                            $usuario['roles'] = json_decode($usuario['roles'], true);
-                            $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                            $usuario->roles = json_decode($usuario['roles'], true);
 
                             return view(
                                 'panel_negocios_{negocio}_sucursales_{sucursal}',
@@ -899,8 +833,7 @@ Route::prefix('panel')->group(static function (): void {
                         ): View {
                             session_start();
                             $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                            $usuario['roles'] = json_decode($usuario['roles'], true);
-                            $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                            $usuario->roles = json_decode($usuario['roles'], true);
 
                             return view(
                                 'panel_negocios_{negocio}_sucursales_{sucursal}_editar',
@@ -939,8 +872,7 @@ Route::prefix('panel')->group(static function (): void {
                     static function (Negocio $negocio): View {
                         session_start();
                         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario['roles'] = json_decode($usuario['roles'], true);
-                        $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                        $usuario->roles = json_decode($usuario['roles'], true);
 
                         return view('panel_negocios_{negocio}_compras', [
                             'negocio' => $negocio,
@@ -967,8 +899,7 @@ Route::prefix('panel')->group(static function (): void {
                     static function (Negocio $negocio): View {
                         session_start();
                         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario['roles'] = json_decode($usuario['roles'], true);
-                        $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                        $usuario->roles = json_decode($usuario['roles'], true);
 
                         return view('panel_negocios_{negocio}_ventas', [
                             'negocio' => $negocio,
@@ -1004,8 +935,7 @@ Route::prefix('panel')->group(static function (): void {
                 static function (Negocio $negocio): View {
                     session_start();
                     $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                    $usuario['roles'] = json_decode($usuario['roles'], true);
-                    $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
+                    $usuario->roles = json_decode($usuario['roles'], true);
 
                     return view('panel_negocios_{negocio}_reservas', [
                         'negocio' => $negocio,

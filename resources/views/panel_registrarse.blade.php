@@ -48,10 +48,9 @@
             title="El número de teléfono debe tener el formato +58(416|426|414|424) seguido de 7 dígitos."
         />
         <input
-            name="imagenes[]"
+            name="imagen"
             type="file"
             accept="image/*"
-            multiple
         />
         <input
             type="submit"

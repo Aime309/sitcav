@@ -52,13 +52,13 @@
         />
         <label>
             <input
-                name="carga_inicial_cerrada"
+                name="carga_inicial_abierta"
                 type="checkbox"
                 class="w3-check"
-                {{ $negocio['carga_inicial_cerrada'] ? 'checked' : '' }}
+                {{ $negocio['carga_inicial_abierta'] ? 'checked' : '' }}
             />
 
-            Carga inicial cerrada
+            Carga inicial abierta
         </label>
         <input
             type="submit"
