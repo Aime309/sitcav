@@ -4,29 +4,23 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property string $id
- * @property string $negocio_id
- * @property string $nombre
- * @property string $rif
- * @property string $telefono
- * @property string $direccion
- * @property string $correo
+ * @property string $sucursal_id
  * @property string $imagen
- * @property int $activo
  * @property string $creado_en
  * @property string $actualizado_en
  */
-#[Table(name: 'proveedores', keyType: 'string', incrementing: false)]
-final class Proveedor extends Model
+#[Table(name: 'sucursales_imagenes', keyType: 'string', incrementing: false)]
+#[Fillable('id', 'imagen')]
+final class SucursalImagen extends Model
 {
     public const ?string CREATED_AT = 'creado_en';
     public const ?string UPDATED_AT = 'actualizado_en';
 
-    protected $attributes = [
-        'activo' => 1,
-    ];
+    protected $attributes = [];
 }

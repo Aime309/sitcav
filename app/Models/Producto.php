@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string $id
@@ -13,10 +15,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $nombre
  * @property string $descripcion
  * @property float $precio
- * @property string $imagenes
  * @property int $activo
  * @property string $creado_end
  * @property string $actualizado_en
+ * @property Collection<int, ProductoImagen> $imagenes
  */
 #[Table(keyType: 'string', incrementing: false)]
 final class Producto extends Model
@@ -26,6 +28,11 @@ final class Producto extends Model
 
     protected $attributes = [
         'activo' => 1,
-        'imagenes' => '[]',
     ];
+
+    /** @return HasMany<ProductoImagen> */
+    public function imagenes(): HasMany
+    {
+        return $this->hasMany(ProductoImagen::class);
+    }
 }

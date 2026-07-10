@@ -88,11 +88,15 @@ PDO->query('CREATE TABLE IF NOT EXISTS sucursales (
         OR telefono LIKE "+58424_______"
         OR telefono LIKE "+58426_______"
     ),
-    imagenes BLOB NOT NULL CHECK (
-        json_valid(imagenes)
-        AND json_array_length(imagenes) >= 0
-    ),
     activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
+    creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
+) STRICT')->execute();
+
+PDO->query('CREATE TABLE IF NOT EXISTS sucursales_imagenes (
+    id TEXT PRIMARY KEY,
+    sucursal_id TEXT NOT NULL REFERENCES sucursales(id) ON DELETE CASCADE,
+    imagen BLOB NOT NULL,
     creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
 ) STRICT')->execute();
@@ -119,10 +123,7 @@ PDO->query('CREATE TABLE IF NOT EXISTS clientes (
         OR telefono LIKE "+58424_______"
         OR telefono LIKE "+58426_______"
     ),
-    imagenes TEXT NOT NULL CHECK (
-        json_valid(imagenes)
-        AND json_array_length(imagenes) >= 0
-    ),
+    imagen BLOB,
     activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
     creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
@@ -136,7 +137,7 @@ PDO->query('CREATE TABLE IF NOT EXISTS proveedores (
     telefono TEXT NOT NULL UNIQUE,
     direccion TEXT NOT NULL,
     correo TEXT NOT NULL UNIQUE,
-    imagenes BLOB NOT NULL,
+    imagen BLOB,
     activo INT NOT NULL DEFAULT 1,
     creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -148,11 +149,15 @@ PDO->query('CREATE TABLE IF NOT EXISTS productos (
     nombre TEXT NOT NULL CHECK (length(nombre) > 0),
     descripcion TEXT NOT NULL,
     precio REAL NOT NULL CHECK (precio >= 0),
-    imagenes TEXT NOT NULL CHECK (
-        json_valid(imagenes)
-        AND json_array_length(imagenes) >= 0
-    ),
     activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
+    creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
+) STRICT')->execute();
+
+PDO->query('CREATE TABLE IF NOT EXISTS productos_imagenes (
+    id TEXT PRIMARY KEY,
+    producto_id TEXT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
+    imagen BLOB NOT NULL,
     creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
 ) STRICT')->execute();
@@ -339,12 +344,6 @@ Route::prefix('panel')->group(static function (): void {
             session_start();
             $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
             $usuario->roles = json_decode($usuario['roles'], true);
-
-            foreach ($usuario->negocios as $negocio) {
-                foreach ($negocio->sucursales as $sucursal) {
-                    $sucursal->imagenes = json_decode($sucursal['imagenes'], true);
-                }
-            }
 
             return view('panel_negocios', ['usuario' => $usuario]);
         })->name('panel.negocios');

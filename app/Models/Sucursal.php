@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string $id
@@ -14,10 +16,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $rif
  * @property string $direccion
  * @property string $telefono
- * @property string[] $imagenes
  * @property int $activo
  * @property string $creado_en
  * @property string $actualizado_en
+ * @property Collection<int, SucursalImagen> $imagenes
  */
 #[Table(name: 'sucursales', keyType: 'string', incrementing: false)]
 final class Sucursal extends Model
@@ -27,6 +29,11 @@ final class Sucursal extends Model
 
     protected $attributes = [
         'activo' => 1,
-        'imagenes' => '[]',
     ];
+
+    /** @return HasMany<SucursalImagen> */
+    public function imagenes(): HasMany
+    {
+        return $this->hasMany(SucursalImagen::class);
+    }
 }
