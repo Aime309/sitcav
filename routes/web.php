@@ -632,8 +632,8 @@ Route::prefix('panel')->group(static function (): void {
                             actualizado_en = CURRENT_TIMESTAMP
                             WHERE usuario_id = :usuario_id'
                         )->execute([
-                            ':negocio_id' => $_POST['establecimiento'] ?? null,
-                            ':sucursal_id' => $_POST['establecimiento'] ?? null,
+                            ':negocio_id' => Negocio::query()->find($_POST['establecimiento'] ?? null)?->id,
+                            ':sucursal_id' => Sucursal::query()->find($_POST['establecimiento'] ?? null)?->id,
                             ':usuario_id' => $empleado->id,
                         ]);
 
@@ -743,7 +743,6 @@ Route::prefix('panel')->group(static function (): void {
                         $nombre = $_POST['nombre'] ?? '';
                         $descripcion = $_POST['descripcion'] ?? '';
                         $precio = $_POST['precio'] ?? '';
-                        $imagenes = [];
                         $stock = $_POST['stock'] ?? null;
 
                         $producto = new Producto;
@@ -752,7 +751,6 @@ Route::prefix('panel')->group(static function (): void {
                         $producto->nombre = $nombre;
                         $producto->descripcion = $descripcion;
                         $producto->precio = $precio;
-                        $producto->imagenes = json_encode($imagenes);
 
                         PDO->beginTransaction();
 
@@ -911,6 +909,42 @@ Route::prefix('panel')->group(static function (): void {
                     },
                 )->name('panel.negocios.{negocio}.sucursales');
 
+                // Registrar sucursal
+                Route::post(
+                    '/',
+                    static function (Negocio $negocio): RedirectResponse {
+                        $nombre = $_POST['nombre'] ?? '';
+                        $rif = $_POST['rif'] ?? '';
+                        $direccion = $_POST['direccion'] ?? '';
+                        $telefono = $_POST['telefono'] ?? '';
+
+                        PDO->beginTransaction();
+
+                        $sucursal = $negocio->sucursales()->create([
+                            'id' => uniqid(),
+                            'nombre' => $nombre,
+                            'rif' => $rif,
+                            'direccion' => $direccion,
+                            'telefono' => $telefono,
+                        ]);
+
+                        foreach ($_FILES['imagenes']['error'] as $indice => $error) {
+                            if ($error === UPLOAD_ERR_OK) {
+                                $sucursal->imagenes()->create([
+                                    'id' => uniqid(),
+                                    'imagen' => fopen($_FILES['imagenes']['tmp_name'][$indice], 'rb'),
+                                ]);
+                            }
+                        }
+
+                        PDO->commit();
+
+                        return to_route('panel.negocios.{negocio}.sucursales', [
+                            'negocio' => $negocio,
+                        ]);
+                    },
+                );
+
                 Route::prefix('{sucursal}')->group(static function (): void {
                     // Panel administrativo de una sucursal
                     Route::get(
@@ -963,6 +997,18 @@ Route::prefix('panel')->group(static function (): void {
                             Negocio $negocio,
                             Sucursal $sucursal,
                         ): RedirectResponse {
+                            $nombre = $_POST['nombre'] ?? '';
+                            $rif = $_POST['rif'] ?? '';
+                            $direccion = $_POST['direccion'] ?? '';
+                            $telefono = $_POST['telefono'] ?? '';
+
+                            $sucursal->nombre = $nombre;
+                            $sucursal->rif = $rif;
+                            $sucursal->direccion = $direccion;
+                            $sucursal->telefono = $telefono;
+
+                            $sucursal->save();
+
                             return to_route(
                                 'panel.negocios.{negocio}.sucursales.{sucursal}.editar',
                                 [

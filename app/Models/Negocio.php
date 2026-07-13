@@ -48,6 +48,7 @@ final class Negocio extends Model
         return $this->hasMany(Producto::class);
     }
 
+    /** @return HasMany<Sucursal> */
     public function sucursales(): HasMany
     {
         return $this->hasMany(Sucursal::class);
