@@ -287,6 +287,21 @@ Route::prefix('panel')->group(static function (): void {
                 if (in_array('administrador', $usuario->roles)) {
                     return to_route('panel.negocios');
                 }
+
+                if ($usuario['asignacion']) {
+                    if ($usuario['asignacion']['negocio_id']) {
+                        return to_route('panel.negocios.{negocio}', [
+                            'negocio' => $usuario['asignacion']['negocio_id'],
+                        ]);
+                    }
+
+                    $sucursal = Sucursal::query()->find($usuario['asignacion']['sucursal_id']);
+
+                    return to_route('panel.negocios.{negocio}.sucursales.{sucursal}', [
+                        'negocio' => $sucursal->negocio->id,
+                        'sucursal' => $sucursal->id,
+                    ]);
+                }
             }
 
             return to_route('panel.iniciar-sesion');
