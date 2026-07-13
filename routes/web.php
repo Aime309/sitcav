@@ -256,6 +256,8 @@ PDO->query('CREATE TABLE IF NOT EXISTS reservas_detalles (
     actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) STRICT')->execute();
 
+Route::redirect('/', 'panel/iniciar-sesion');
+
 Route::prefix('panel')->group(static function (): void {
     Route::prefix('iniciar-sesion')->group(static function (): void {
         // Ver inicio de sesión del panel
