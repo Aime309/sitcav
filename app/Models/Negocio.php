@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Collection<int, Cliente> $clientes
  * @property Collection<int, Reserva> $reservas
  * @property Collection<int, NegocioImagen> $imagenes
+ * @property Collection<int, Usuario> $empleados
  */
 #[Table(keyType: 'string', incrementing: false)]
 #[Fillable('id', 'nombre', 'rif', 'direccion', 'telefono', 'slug')]
@@ -70,5 +72,10 @@ final class Negocio extends Model
     public function imagenes(): HasMany
     {
         return $this->hasMany(NegocioImagen::class);
+    }
+
+    public function empleados(): BelongsToMany
+    {
+        return $this->belongsToMany(Usuario::class, 'asignaciones');
     }
 }

@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $creado_en
  * @property string $actualizado_en
  * @property Collection<int, SucursalImagen> $imagenes
+ * @property Collection<int, Usuario> $empleados
  */
 #[Table(name: 'sucursales', keyType: 'string', incrementing: false)]
 final class Sucursal extends Model
@@ -35,5 +37,10 @@ final class Sucursal extends Model
     public function imagenes(): HasMany
     {
         return $this->hasMany(SucursalImagen::class);
+    }
+
+    public function empleados(): BelongsToMany
+    {
+        return $this->belongsToMany(Usuario::class, 'asignaciones');
     }
 }
