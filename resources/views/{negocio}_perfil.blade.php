@@ -33,27 +33,6 @@
                 value="{{ $usuario['correo'] }}"
             />
             <input
-                name="telefono"
-                placeholder="Teléfono"
-                required
-                type="tel"
-                class="w3-input"
-                pattern="+58(416|426|414|424)\d{7}"
-                title="El número de teléfono debe tener el formato +58(416|426|414|424) seguido de 7 dígitos."
-                value="{{ $usuario['telefono'] }}"
-            />
-            <input
-                type="submit"
-                value="Actualizar"
-                class="w3-button w3-blue w3-hover-light-blue w3-block"
-            />
-        </form>
-
-        <form
-            method="post"
-            action="./{{ $negocio['slug'] }}/perfil/clave"
-            class="w3-half">
-            <input
                 name="clave"
                 placeholder="Contraseña"
                 required
@@ -62,6 +41,16 @@
                 minlength="8"
                 pattern=".{8,}"
                 title="La contraseña debe tener al menos 8 caracteres."
+            />
+            <input
+                name="telefono"
+                placeholder="Teléfono"
+                required
+                type="tel"
+                class="w3-input"
+                pattern="+58(416|426|414|424)\d{7}"
+                title="El número de teléfono debe tener el formato +58(416|426|414|424) seguido de 7 dígitos."
+                value="{{ $usuario['telefono'] }}"
             />
             <input
                 type="submit"

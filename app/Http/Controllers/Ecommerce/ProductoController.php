@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers\Ecommerce;
+
+use App\Http\Controllers\Controller;
+use App\Models\Cliente;
+use App\Models\Negocio;
+use App\Models\Producto;
+use Illuminate\Contracts\View\View;
+
+final class ProductoController extends Controller
+{
+    public function index(Negocio $negocio): View
+    {
+        session_start();
+        $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
+
+        return view('{negocio}_productos', [
+            'negocio' => $negocio,
+            'usuario' => $usuario,
+        ]);
+    }
+
+    public function show(Negocio $negocio, Producto $producto): View
+    {
+        session_start();
+        $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
+
+        return view('{negocio}_productos_{producto}', [
+            'negocio' => $negocio,
+            'producto' => $producto,
+            'usuario' => $usuario,
+        ]);
+    }
+}

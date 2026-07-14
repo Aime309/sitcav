@@ -12,21 +12,6 @@
                             Editar
                         </a>
                     </td>
-                    <td>
-                        @if ($producto['activo'])
-                            <a
-                                href="{{ route('panel.negocios.{negocio}.productos.{producto}.desactivar', ['negocio' => $negocio['id'], 'producto' => $producto['id']]) }}"
-                                class="w3-button w3-danger">
-                                Desactivar
-                            </a>
-                        @else
-                            <a
-                                href="{{ route('panel.negocios.{negocio}.productos.{producto}.activar', ['negocio' => $negocio['id'], 'producto' => $producto['id']]) }}"
-                                class="w3-button w3-success">
-                                Activar
-                            </a>
-                        @endif
-                    </td>
                 </tr>
             @endforeach
         </table>

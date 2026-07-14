@@ -2,11 +2,25 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Ecommerce\CarritoController;
+use App\Http\Controllers\Ecommerce\ClienteController as EcommerceClienteController;
+use App\Http\Controllers\Ecommerce\NegocioController as EcommerceNegocioController;
+use App\Http\Controllers\Ecommerce\ProductoController as EcommerceProductoController;
+use App\Http\Controllers\Ecommerce\ReservaController as EcommerceReservaController;
+use App\Http\Controllers\Panel\AdministradorController;
+use App\Http\Controllers\Panel\ClienteController;
+use App\Http\Controllers\Panel\CompraController;
+use App\Http\Controllers\Panel\EmpleadoController;
+use App\Http\Controllers\Panel\InventarioController;
+use App\Http\Controllers\Panel\NegocioController;
+use App\Http\Controllers\Panel\PerfilController;
+use App\Http\Controllers\Panel\ProductoController;
+use App\Http\Controllers\Panel\ProveedorController;
+use App\Http\Controllers\Panel\ReservaController;
+use App\Http\Controllers\Panel\SucursalController;
+use App\Http\Controllers\Panel\VentaController;
 use App\Models\Cliente;
 use App\Models\Negocio;
-use App\Models\Producto;
-use App\Models\Proveedor;
-use App\Models\Reserva;
 use App\Models\Sucursal;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
@@ -311,41 +325,10 @@ Route::prefix('panel')->group(static function (): void {
 
     Route::prefix('registrarse')->group(static function (): void {
         // Ver registro de administrador del panel
-        Route::get('/', static function (): View {
-            return view('panel_registrarse');
-        })->name('panel.registrarse');
+        Route::get('/', [AdministradorController::class, 'create'])->name('panel.registrarse');
 
         // Registrarse como administrador en el panel
-        Route::post('/', static function (): RedirectResponse {
-            $nombre = $_POST['nombre'] ?? '';
-            $apellido = $_POST['apellido'] ?? '';
-            $correo = $_POST['correo'] ?? '';
-            $clave = $_POST['clave'] ?? '';
-            $telefono = $_POST['telefono'] ?? '';
-            $imagen = $_FILES['imagen'] ?? [];
-
-            $usuario = new Usuario;
-            $usuario->id = uniqid();
-            $usuario->nombre = $nombre;
-            $usuario->apellido = $apellido;
-            $usuario->correo = $correo;
-            $usuario->clave = password_hash($clave, PASSWORD_DEFAULT);
-            $usuario->telefono = $telefono;
-
-            $usuario->roles = json_encode([
-                'administrador',
-                'encargado',
-                'vendedor',
-            ]);
-
-            if ($imagen['error'] === UPLOAD_ERR_OK) {
-                $usuario->imagen = fopen($imagen['tmp_name'], 'rb');
-            }
-
-            $usuario->save();
-
-            return to_route('panel.iniciar-sesion');
-        });
+        Route::post('/', [AdministradorController::class, 'store']);
     });
 
     // Cerrar sesión en el panel
@@ -358,292 +341,49 @@ Route::prefix('panel')->group(static function (): void {
 
     Route::prefix('negocios')->group(static function (): void {
         // Seleccionar establecimiento
-        Route::get('/', static function (): View {
-            session_start();
-            $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-            $usuario->roles = json_decode($usuario['roles'], true);
-
-            return view('panel_negocios', ['usuario' => $usuario]);
-        })->name('panel.negocios');
+        Route::get('/', [NegocioController::class, 'index'])->name('panel.negocios');
 
         // Registrar negocio
-        Route::post('/', static function (): RedirectResponse {
-            $nombre = $_POST['nombre'] ?? '';
-            $rif = $_POST['rif'] ?? '';
-            $direccion = $_POST['direccion'] ?? '';
-            $telefono = $_POST['telefono'] ?? '';
-            $slug = $_POST['slug'] ?? '';
-
-            PDO->beginTransaction();
-
-            session_start();
-            $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-
-            $negocio = $usuario->negocios()->create([
-                'id' => uniqid(),
-                'nombre' => $nombre,
-                'rif' => $rif,
-                'direccion' => $direccion,
-                'telefono' => $telefono,
-                'slug' => $slug,
-            ]);
-
-            foreach ($_FILES['imagenes']['error'] as $indice => $error) {
-                if ($error === UPLOAD_ERR_OK) {
-                    $negocio->imagenes()->create([
-                        'id' => uniqid(),
-                        'imagen' => fopen($_FILES['imagenes']['tmp_name'][$indice], 'rb'),
-                    ]);
-                }
-            }
-
-            PDO->commit();
-
-            return to_route('panel.negocios');
-        });
+        Route::post('/', [NegocioController::class, 'store']);
 
         Route::prefix('{negocio}')->group(static function (): void {
             // Panel administrativo de un negocio
-            Route::get(
-                '/',
-                static function (Negocio $negocio): View {
-                    session_start();
-                    $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                    $usuario->roles = json_decode($usuario['roles'], true);
-
-                    return view('panel_negocios_{negocio}', [
-                        'negocio' => $negocio,
-                        'usuario' => $usuario,
-                    ]);
-                },
-            )->name('panel.negocios.{negocio}');
+            Route::get('/', [NegocioController::class, 'show'])->name('panel.negocios.{negocio}');
 
             // Editar negocio
             Route::get(
                 'editar',
-                static function (Negocio $negocio): View {
-                    session_start();
-                    $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                    $usuario->roles = json_decode($usuario['roles'], true);
-
-                    return view('panel_negocios_{negocio}_editar', [
-                        'negocio' => $negocio,
-                        'usuario' => $usuario,
-                    ]);
-                },
+                [NegocioController::class, 'edit'],
             )->name('panel.negocios.{negocio}.editar');
 
             // Actualizar negocio
-            Route::post(
-                '/',
-                static function (Negocio $negocio): RedirectResponse {
-                    $nombre = $_POST['nombre'];
-                    $rif = $_POST['rif'];
-                    $direccion = $_POST['direccion'];
-                    $telefono = $_POST['telefono'];
-                    $slug = $_POST['slug'];
-
-                    $cargaInicialAbierta = ($_POST['carga_inicial_abierta'] ?? '') === 'on'
-                        ? 1
-                        : 0;
-
-                    $negocio->nombre = $nombre;
-                    $negocio->rif = $rif;
-                    $negocio->direccion = $direccion;
-                    $negocio->telefono = $telefono;
-                    $negocio->slug = $slug;
-                    $negocio->carga_inicial_abierta = $cargaInicialAbierta;
-
-                    $negocio->save();
-
-                    return to_route('panel.negocios.{negocio}.editar', [
-                        'negocio' => $negocio,
-                    ]);
-                },
-            );
+            Route::post('/', [NegocioController::class, 'update']);
 
             Route::prefix('perfil')->group(static function (): void {
                 // Editar perfil
                 Route::get(
                     '/',
-                    static function (Negocio $negocio): View {
-                        session_start();
-                        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario->roles = json_decode($usuario['roles'], true);
-
-                        return view('panel_negocios_{negocio}_perfil', [
-                            'negocio' => $negocio,
-                            'usuario' => $usuario,
-                        ]);
-                    },
+                    [PerfilController::class, 'edit'],
                 )->name('panel.negocios.{negocio}.perfil');
 
                 // Actualizar perfil
-                Route::post(
-                    '/',
-                    static function (Negocio $negocio): RedirectResponse {
-                        session_start();
-                        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-
-                        $usuario['nombre'] = $_POST['nombre'];
-                        $usuario['apellido'] = $_POST['apellido'];
-                        $usuario['correo'] = $_POST['correo'];
-                        $usuario['telefono'] = $_POST['telefono'];
-
-                        $usuario->save();
-
-                        return to_route('panel.negocios.{negocio}.perfil', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
-                );
-
-                // Actualizar clave
-                Route::post(
-                    'clave',
-                    static function (Negocio $negocio): RedirectResponse {
-                        session_start();
-                        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $clave = $_POST['clave'] ?? '';
-                        $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
-
-                        $usuario->save();
-
-                        return to_route('panel.negocios.{negocio}.perfil', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
-                )->name('panel.negocios.{negocio}.perfil.clave');
+                Route::post('/', [PerfilController::class, 'update']);
             });
 
             Route::prefix('empleados')->group(static function (): void {
                 // Ver empleados
                 Route::get(
                     '/',
-                    static function (Negocio $negocio): View {
-                        session_start();
-                        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario->roles = json_decode($usuario['roles'], true);
-                        $empleados = [];
-
-                        foreach ($negocio->empleados as $empleado) {
-                            $empleados[] = $empleado;
-                        }
-
-                        foreach ($negocio->sucursales as $sucursal) {
-                            foreach ($sucursal->empleados as $empleado) {
-                                $empleados[] = $empleado;
-                            }
-                        }
-
-                        foreach ($empleados as $empleado) {
-                            $empleado['asignaciones'] = PDO
-                                ->query("
-                                    SELECT * FROM asignaciones
-                                    WHERE usuario_id = '{$empleado['id']}'
-                                ")
-                                ->fetchAll();
-
-                            $empleado->roles = json_decode($empleado['roles'], true);
-                        }
-
-                        return view('panel_negocios_{negocio}_empleados', [
-                            'negocio' => $negocio,
-                            'usuario' => $usuario,
-                            'empleados' => $empleados,
-                        ]);
-                    },
+                    [EmpleadoController::class, 'index'],
                 )->name('panel.negocios.{negocio}.empleados');
 
                 // Registrar empleado
-                Route::post(
-                    '/',
-                    static function (Negocio $negocio): RedirectResponse {
-                        $rol = $_POST['rol'] ?? '';
-                        $nombre = $_POST['nombre'] ?? '';
-                        $apellido = $_POST['apellido'] ?? '';
-                        $correo = $_POST['correo'] ?? '';
-                        $clave = $_POST['clave'] ?? '';
-                        $telefono = $_POST['telefono'] ?? '';
-                        $imagen = $_FILES['imagen'] ?? [];
-                        $establecimiento = $_POST['establecimiento'] ?? '';
-                        $negocio = Negocio::query()->find($establecimiento);
-                        $sucursal = Sucursal::query()->find($establecimiento);
-
-                        PDO->beginTransaction();
-
-                        $empleado = new Usuario;
-                        $empleado->id = uniqid();
-                        $empleado->nombre = $nombre;
-                        $empleado->apellido = $apellido;
-                        $empleado->correo = $correo;
-                        $empleado->clave = password_hash($clave, PASSWORD_DEFAULT);
-                        $empleado->telefono = $telefono;
-
-                        $empleado->roles = json_encode(match ($rol) {
-                            'encargado' => ['encargado', 'vendedor'],
-                            'vendedor' => ['vendedor'],
-                        });
-
-                        if ($imagen['error'] === UPLOAD_ERR_OK) {
-                            $empleado->imagen = fopen($imagen['tmp_name'], 'rb');
-                        }
-
-                        $empleado->save();
-
-                        PDO->prepare('INSERT INTO asignaciones
-                            (id, usuario_id, negocio_id, sucursal_id) VALUES
-                            (:id, :usuario_id, :negocio_id, :sucursal_id)'
-                        )->execute([
-                            ':id' => uniqid(),
-                            ':usuario_id' => $empleado->id,
-                            ':negocio_id' => $negocio?->id,
-                            ':sucursal_id' => $sucursal?->id,
-                        ]);
-
-                        PDO->commit();
-
-                        return to_route('panel.negocios.{negocio}.empleados', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
-                );
+                Route::post('/', [EmpleadoController::class, 'store']);
 
                 // Actualizar empleado
                 Route::post(
                     '{empleado}',
-                    static function (Negocio $negocio, Usuario $empleado): RedirectResponse {
-                        PDO->beginTransaction();
-
-                        $empleado->activo = ($_POST['activo'] ?? '') === 'on'
-                            ? 1
-                            : 0;
-
-                        $empleado->roles = match ($_POST['rol'] ?? '') {
-                            'encargado' => json_encode(['encargado', 'vendedor']),
-                            'vendedor' => json_encode(['vendedor']),
-                            default => $empleado->roles,
-                        };
-
-                        $empleado->save();
-
-                        PDO->prepare('UPDATE asignaciones SET
-                            negocio_id = :negocio_id,
-                            sucursal_id = :sucursal_id,
-                            actualizado_en = CURRENT_TIMESTAMP
-                            WHERE usuario_id = :usuario_id'
-                        )->execute([
-                            ':negocio_id' => Negocio::query()->find($_POST['establecimiento'] ?? null)?->id,
-                            ':sucursal_id' => Sucursal::query()->find($_POST['establecimiento'] ?? null)?->id,
-                            ':usuario_id' => $empleado->id,
-                        ]);
-
-                        PDO->commit();
-
-                        return to_route('panel.negocios.{negocio}.empleados', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
+                    [EmpleadoController::class, 'update'],
                 )->name('panel.negocios.{negocio}.empleados.{empleado}');
             });
 
@@ -651,194 +391,49 @@ Route::prefix('panel')->group(static function (): void {
                 // Ver proveedores
                 Route::get(
                     '/',
-                    static function (Negocio $negocio): View {
-                        session_start();
-                        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario->roles = json_decode($usuario['roles'], true);
-
-                        return view('panel_negocios_{negocio}_proveedores', [
-                            'negocio' => $negocio,
-                            'usuario' => $usuario,
-                        ]);
-                    },
+                    [ProveedorController::class, 'index'],
                 )->name('panel.negocios.{negocio}.proveedores');
 
                 // Registrar proveedor
-                Route::post(
-                    '/',
-                    static function (Negocio $negocio): RedirectResponse {
-                        return to_route('panel.negocios.{negocio}.proveedores', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
-                );
+                Route::post('/', [ProveedorController::class, 'store']);
 
                 // Actualizar proveedor
-                Route::post(
-                    '{proveedor}',
-                    static function (Negocio $negocio, Proveedor $proveedor): RedirectResponse {
-                        return to_route('panel.negocios.{negocio}.proveedores', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
-                );
+                Route::post('{proveedor}', [ProveedorController::class, 'update']);
             });
 
             Route::prefix('clientes')->group(static function (): void {
                 // Ver clientes
                 Route::get(
                     '/',
-                    static function (Negocio $negocio): View {
-                        session_start();
-                        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario->roles = json_decode($usuario['roles'], true);
-
-                        return view('panel_negocios_{negocio}_clientes', [
-                            'negocio' => $negocio,
-                            'usuario' => $usuario,
-                        ]);
-                    },
+                    [ClienteController::class, 'index'],
                 )->name('panel.negocios.{negocio}.clientes');
 
                 // Registrar cliente
-                Route::post(
-                    '/',
-                    static function (Negocio $negocio): RedirectResponse {
-                        return to_route('panel_negocios_{negocio}_clientes', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
-                );
+                Route::post('/', [ClienteController::class, 'store']);
 
                 // Actualizar cliente
-                Route::post(
-                    '{cliente}',
-                    static function (Negocio $negocio, Cliente $cliente): RedirectResponse {
-                        return to_route('panel_negocios_{negocio}_clientes', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
-                );
+                Route::post('{cliente}', [ClienteController::class, 'update']);
             });
 
             Route::prefix('productos')->group(static function (): void {
                 // Ver productos
                 Route::get(
                     '/',
-                    static function (Negocio $negocio): View {
-                        session_start();
-                        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario->roles = json_decode($usuario['roles'], true);
-
-                        return view('panel_negocios_{negocio}_productos', [
-                            'negocio' => $negocio,
-                            'usuario' => $usuario,
-                        ]);
-                    },
+                    [ProductoController::class, 'index'],
                 )->name('panel.negocios.{negocio}.productos');
 
                 // Registrar producto
-                Route::post(
-                    '/',
-                    static function (Negocio $negocio): RedirectResponse {
-                        $nombre = $_POST['nombre'] ?? '';
-                        $descripcion = $_POST['descripcion'] ?? '';
-                        $precio = $_POST['precio'] ?? '';
-
-                        $producto = new Producto;
-                        $producto->id = uniqid();
-                        $producto->negocio_id = $negocio->id;
-                        $producto->nombre = $nombre;
-                        $producto->descripcion = $descripcion;
-                        $producto->precio = $precio;
-                        $producto->save();
-
-                        return to_route('panel.negocios.{negocio}.productos', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
-                );
+                Route::post('/', [ProductoController::class, 'store']);
 
                 Route::prefix('{producto}')->group(static function (): void {
                     // Editar producto
                     Route::get(
                         '/',
-                        static function (
-                            Negocio $negocio,
-                            Producto $producto,
-                        ): View {
-                            session_start();
-                            $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                            $usuario->roles = json_decode($usuario['roles'], true);
-
-                            return view('panel_negocios_{negocio}_productos_{producto}', [
-                                'negocio' => $negocio,
-                                'producto' => $producto,
-                                'usuario' => $usuario,
-                            ]);
-                        },
+                        [ProductoController::class, 'edit'],
                     )->name('panel.negocios.{negocio}.productos.{producto}');
 
                     // Actualizar producto
-                    Route::post(
-                        '/',
-                        static function (
-                            Negocio $negocio,
-                            Producto $producto,
-                        ): RedirectResponse {
-                            $nombre = $_POST['nombre'] ?? '';
-                            $descripcion = $_POST['descripcion'] ?? '';
-                            $precio = $_POST['precio'] ?? '';
-
-                            $producto->nombre = $nombre;
-                            $producto->descripcion = $descripcion;
-                            $producto->precio = $precio;
-                            $producto->save();
-
-                            return to_route(
-                                'panel.negocios.{negocio}.productos.{producto}',
-                                [
-                                    'negocio' => $negocio,
-                                    'producto' => $producto,
-                                ],
-                            );
-                        },
-                    );
-
-                    // Activar producto
-                    Route::get(
-                        'activar',
-                        static function (
-                            Negocio $negocio,
-                            Producto $producto,
-                        ): RedirectResponse {
-                            $producto->activo = 1;
-                            $producto->save();
-
-                            return to_route('panel.negocios.{negocio}.productos', [
-                                'negocio' => $negocio,
-                            ]);
-                        },
-                    )->name('panel.negocios.{negocio}.productos.{producto}.activar');
-
-                    // Desactivar producto
-                    Route::get(
-                        'desactivar',
-                        static function (
-                            Negocio $negocio,
-                            Producto $producto,
-                        ): RedirectResponse {
-                            $producto->activo = 0;
-                            $producto->save();
-
-                            return to_route(
-                                'panel.negocios.{negocio}.productos',
-                                [
-                                    'negocio' => $negocio,
-                                ],
-                            );
-                        },
-                    )->name('panel.negocios.{negocio}.productos.{producto}.desactivar');
+                    Route::post('/', [ProductoController::class, 'update']);
                 });
             });
 
@@ -846,69 +441,13 @@ Route::prefix('panel')->group(static function (): void {
                 // Ver inventario
                 Route::get(
                     '/',
-                    static function (Negocio $negocio): View {
-                        session_start();
-                        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario->roles = json_decode($usuario['roles'], true);
-
-                        foreach ($negocio->productos as $producto) {
-                            $producto['stock'] = PDO
-                                ->query("
-                                    SELECT stock
-                                    FROM inventarios
-                                    WHERE negocio_id = '{$negocio['id']}'
-                                    AND producto_id = '{$producto['id']}'
-                                ")->fetchColumn() ?: 0;
-                        }
-
-                        return view('panel_negocios_{negocio}_inventario', [
-                            'negocio' => $negocio,
-                            'usuario' => $usuario,
-                        ]);
-                    },
+                    [InventarioController::class, 'index'],
                 )->name('panel.negocios.{negocio}.inventario');
 
                 // Actualizar producto en el inventario
                 Route::post(
                     '{producto}',
-                    static function (Negocio $negocio, Producto $producto): RedirectResponse {
-                        $stock = $_POST['stock'] ?? 0;
-
-                        $inventario = PDO
-                            ->query("
-                                SELECT * FROM inventarios
-                                WHERE negocio_id = '{$negocio['id']}'
-                                AND producto_id = '{$producto['id']}'
-                            ")
-                            ->fetch();
-
-                        if ($inventario) {
-                            PDO->prepare('UPDATE inventarios SET
-                                stock = :stock,
-                                actualizado_en = CURRENT_TIMESTAMP
-                                WHERE negocio_id = :negocio_id
-                                AND producto_id = :producto_id'
-                            )->execute([
-                                ':stock' => $stock,
-                                ':negocio_id' => $negocio->id,
-                                ':producto_id' => $producto->id,
-                            ]);
-                        } else {
-                            PDO->prepare('INSERT INTO inventarios
-                                (id, negocio_id, producto_id, stock) VALUES
-                                (:id, :negocio_id, :producto_id, :stock)'
-                            )->execute([
-                                ':id' => uniqid(),
-                                ':negocio_id' => $negocio->id,
-                                ':producto_id' => $producto->id,
-                                ':stock' => $stock,
-                            ]);
-                        }
-
-                        return to_route('panel.negocios.{negocio}.inventario', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
+                    [InventarioController::class, 'update'],
                 )->name('panel.negocios.{negocio}.inventario.{producto}');
             });
 
@@ -916,127 +455,27 @@ Route::prefix('panel')->group(static function (): void {
                 // Ver sucursales
                 Route::get(
                     '/',
-                    static function (Negocio $negocio): View {
-                        session_start();
-                        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario->roles = json_decode($usuario['roles'], true);
-
-                        return view('panel_negocios_{negocio}_sucursales', [
-                            'negocio' => $negocio,
-                            'usuario' => $usuario,
-                        ]);
-                    },
+                    [SucursalController::class, 'index'],
                 )->name('panel.negocios.{negocio}.sucursales');
 
                 // Registrar sucursal
-                Route::post(
-                    '/',
-                    static function (Negocio $negocio): RedirectResponse {
-                        $nombre = $_POST['nombre'] ?? '';
-                        $rif = $_POST['rif'] ?? '';
-                        $direccion = $_POST['direccion'] ?? '';
-                        $telefono = $_POST['telefono'] ?? '';
-
-                        PDO->beginTransaction();
-
-                        $sucursal = $negocio->sucursales()->create([
-                            'id' => uniqid(),
-                            'nombre' => $nombre,
-                            'rif' => $rif,
-                            'direccion' => $direccion,
-                            'telefono' => $telefono,
-                        ]);
-
-                        foreach ($_FILES['imagenes']['error'] as $indice => $error) {
-                            if ($error === UPLOAD_ERR_OK) {
-                                $sucursal->imagenes()->create([
-                                    'id' => uniqid(),
-                                    'imagen' => fopen($_FILES['imagenes']['tmp_name'][$indice], 'rb'),
-                                ]);
-                            }
-                        }
-
-                        PDO->commit();
-
-                        return to_route('panel.negocios.{negocio}.sucursales', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
-                );
+                Route::post('/', [SucursalController::class, 'store']);
 
                 Route::prefix('{sucursal}')->group(static function (): void {
                     // Panel administrativo de una sucursal
                     Route::get(
                         '/',
-                        static function (
-                            Negocio $negocio,
-                            Sucursal $sucursal,
-                        ): View {
-                            session_start();
-                            $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                            $usuario->roles = json_decode($usuario['roles'], true);
-
-                            return view(
-                                'panel_negocios_{negocio}_sucursales_{sucursal}',
-                                [
-                                    'negocio' => $negocio,
-                                    'usuario' => $usuario,
-                                    'sucursal' => $sucursal,
-                                ],
-                            );
-                        },
+                        [SucursalController::class, 'show'],
                     )->name('panel.negocios.{negocio}.sucursales.{sucursal}');
 
                     // Editar sucursal
                     Route::get(
                         'editar',
-                        static function (
-                            Negocio $negocio,
-                            Sucursal $sucursal,
-                        ): View {
-                            session_start();
-                            $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                            $usuario->roles = json_decode($usuario['roles'], true);
-
-                            return view(
-                                'panel_negocios_{negocio}_sucursales_{sucursal}_editar',
-                                [
-                                    'negocio' => $negocio,
-                                    'usuario' => $usuario,
-                                    'sucursal' => $sucursal,
-                                ],
-                            );
-                        },
+                        [SucursalController::class, 'edit'],
                     )->name('panel.negocios.{negocio}.sucursales.{sucursal}.editar');
 
                     // Actualizar sucursal
-                    Route::post(
-                        '/',
-                        static function (
-                            Negocio $negocio,
-                            Sucursal $sucursal,
-                        ): RedirectResponse {
-                            $nombre = $_POST['nombre'] ?? '';
-                            $rif = $_POST['rif'] ?? '';
-                            $direccion = $_POST['direccion'] ?? '';
-                            $telefono = $_POST['telefono'] ?? '';
-
-                            $sucursal->nombre = $nombre;
-                            $sucursal->rif = $rif;
-                            $sucursal->direccion = $direccion;
-                            $sucursal->telefono = $telefono;
-
-                            $sucursal->save();
-
-                            return to_route(
-                                'panel.negocios.{negocio}.sucursales.{sucursal}.editar',
-                                [
-                                    'negocio' => $negocio,
-                                    'sucursal' => $sucursal,
-                                ],
-                            );
-                        },
-                    );
+                    Route::post('/', [SucursalController::class, 'update']);
                 });
             });
 
@@ -1044,79 +483,28 @@ Route::prefix('panel')->group(static function (): void {
                 // Ver compras
                 Route::get(
                     '/',
-                    static function (Negocio $negocio): View {
-                        session_start();
-                        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario->roles = json_decode($usuario['roles'], true);
-
-                        return view('panel_negocios_{negocio}_compras', [
-                            'negocio' => $negocio,
-                            'usuario' => $usuario,
-                        ]);
-                    },
+                    [CompraController::class, 'index'],
                 )->name('panel.negocios.{negocio}.compras');
 
                 // Registrar compra
-                Route::post(
-                    '/',
-                    static function (Negocio $negocio): RedirectResponse {
-                        return to_route('panel.negocios.{negocio}.compras', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
-                );
+                Route::post('/', [CompraController::class, 'store']);
             });
 
             Route::prefix('ventas')->group(static function (): void {
                 // Ver ventas
                 Route::get(
                     '/',
-                    static function (Negocio $negocio): View {
-                        session_start();
-                        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                        $usuario->roles = json_decode($usuario['roles'], true);
-
-                        return view('panel_negocios_{negocio}_ventas', [
-                            'negocio' => $negocio,
-                            'usuario' => $usuario,
-                        ]);
-                    },
+                    [VentaController::class, 'index'],
                 )->name('panel.negocios.{negocio}.ventas');
 
                 // Registrar venta
-                Route::post(
-                    '/',
-                    static function (Negocio $negocio): RedirectResponse {
-                        return to_route('panel.negocios.{negocio}.ventas', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
-                );
-
-                // Vender productos reservados
-                Route::post(
-                    '{reserva}',
-                    static function (Negocio $negocio, Reserva $reserva): RedirectResponse {
-                        return to_route('panel.negocios.{negocio}.ventas', [
-                            'negocio' => $negocio,
-                        ]);
-                    },
-                );
+                Route::post('/', [VentaController::class, 'store']);
             });
 
             // Ver reservas
             Route::get(
                 'reservas',
-                static function (Negocio $negocio): View {
-                    session_start();
-                    $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-                    $usuario->roles = json_decode($usuario['roles'], true);
-
-                    return view('panel_negocios_{negocio}_reservas', [
-                        'negocio' => $negocio,
-                        'usuario' => $usuario,
-                    ]);
-                },
+                [ReservaController::class, 'index'],
             )->name('panel.negocios.{negocio}.reservas');
         });
     });
@@ -1126,45 +514,20 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
     // Ecommerce de un negocio
     Route::get(
         '/',
-        static function (Negocio $negocio): View {
-            session_start();
-            $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
-
-            return view('{negocio}', [
-                'negocio' => $negocio,
-                'usuario' => $usuario,
-            ]);
-        },
+        [EcommerceNegocioController::class, 'show'],
     )->name('{negocio}');
 
     Route::prefix('productos')->group(static function (): void {
         // Ver productos de un negocio
         Route::get(
             '/',
-            static function (Negocio $negocio): View {
-                session_start();
-                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
-
-                return view('{negocio}_productos', [
-                    'negocio' => $negocio,
-                    'usuario' => $usuario,
-                ]);
-            },
+            [EcommerceProductoController::class, 'index'],
         )->name('{negocio}.productos');
 
         // Ver producto de un negocio
         Route::get(
             '{producto}',
-            static function (Negocio $negocio, Producto $producto): View {
-                session_start();
-                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
-
-                return view('{negocio}_productos_{producto}', [
-                    'negocio' => $negocio,
-                    'producto' => $producto,
-                    'usuario' => $usuario,
-                ]);
-            },
+            [EcommerceProductoController::class, 'show'],
         )->name('{negocio}.productos.{producto}');
     });
 
@@ -1203,38 +566,11 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
         // Ver registro de cliente en un negocio
         Route::get(
             '/',
-            static function (Negocio $negocio): View {
-                return view('{negocio}_registrarse', ['negocio' => $negocio]);
-            },
+            [EcommerceClienteController::class, 'create'],
         )->name('{negocio}.registrarse');
 
         // Registrarse como cliente en un negocio
-        Route::post(
-            '/',
-            static function (Negocio $negocio): RedirectResponse {
-                $nombre = $_POST['nombre'] ?? '';
-                $apellido = $_POST['apellido'] ?? '';
-                $correo = $_POST['correo'] ?? '';
-                $clave = $_POST['clave'] ?? '';
-                $telefono = $_POST['telefono'] ?? '';
-                $imagenes = [];
-
-                $cliente = new Cliente;
-                $cliente->id = uniqid();
-                $cliente->nombre = $nombre;
-                $cliente->apellido = $apellido;
-                $cliente->correo = $correo;
-                $cliente->clave = password_hash($clave, PASSWORD_DEFAULT);
-                $cliente->telefono = $telefono;
-                $cliente->imagenes = json_encode($imagenes);
-
-                $cliente->save();
-
-                return to_route('{negocio}.iniciar-sesion', [
-                    'negocio' => $negocio['slug'],
-                ]);
-            },
-        );
+        Route::post('/', [EcommerceClienteController::class, 'store']);
     });
 
     // Cerrar sesión en un negocio
@@ -1252,99 +588,27 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
         // Editar perfil en un negocio
         Route::get(
             '/',
-            static function (Negocio $negocio): View {
-                session_start();
-                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
-
-                return view('{negocio}_perfil', [
-                    'negocio' => $negocio,
-                    'usuario' => $usuario,
-                ]);
-            },
+            [EcommerceClienteController::class, 'edit'],
         )->name('{negocio}.perfil');
 
         // Actualizar perfil en un negocio
-        Route::post(
-            '/',
-            static function (Negocio $negocio): RedirectResponse {
-                session_start();
-                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
-                $usuario['nombre'] = $_POST['nombre'];
-                $usuario['apellido'] = $_POST['apellido'];
-                $usuario['correo'] = $_POST['correo'];
-                $usuario['telefono'] = $_POST['telefono'];
-
-                $usuario->save();
-
-                return to_route('{negocio}.perfil', ['negocio' => $negocio]);
-            },
-        );
-
-        // Actualizar clave en un negocio
-        Route::post(
-            'clave',
-            static function (Negocio $negocio): RedirectResponse {
-                session_start();
-                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
-                $clave = $_POST['clave'] ?? '';
-                $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
-
-                $usuario->save();
-
-                return to_route('{negocio}.perfil', ['negocio' => $negocio]);
-            },
-        );
+        Route::post('/', [EcommerceClienteController::class, 'update']);
     });
 
     Route::prefix('carrito')->group(static function (): void {
         // Ver carrito en un negocio
         Route::get(
             '/',
-            static function (Negocio $negocio): View {
-                session_start();
-                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
-
-                return view('{negocio}_carrito', [
-                    'negocio' => $negocio,
-                    'usuario' => $usuario,
-                ]);
-            },
+            [CarritoController::class, 'index'],
         )->name('{negocio}.carrito');
 
         Route::prefix('productos')->group(static function (): void {
             // Añadir producto al carrito en un negocio
-            Route::post(
-                'productos',
-                static function (Negocio $negocio): RedirectResponse {
-                    return to_route('{negocio}.carrito', ['negocio' => $negocio]);
-                },
-            );
+            Route::post('productos', [CarritoController::class, 'update']);
 
             Route::prefix('{producto}')->group(static function (): void {
-                // Actualizar cantidad de producto en el carrito en un negocio
-                Route::post(
-                    '/',
-                    static function (
-                        Negocio $negocio,
-                        Producto $producto,
-                    ): RedirectResponse {
-                        return to_route('{negocio}.carrito', [
-                            'negocio' => $negocio,
-                            'producto' => $producto,
-                        ]);
-                    },
-                );
-
-                // Eliminar un producto del carrito en un negocio
-                Route::post(
-                    'eliminar',
-                    static function (
-                        Negocio $negocio,
-                        Producto $producto,
-                    ): RedirectResponse {
-                        return to_route('{negocio}.carrito', ['negocio' => $negocio]);
-                    },
-                );
+                // Actualizar/Eliminar producto en el carrito en un negocio
+                Route::post('/', [CarritoController::class, 'update']);
             });
         });
     });
@@ -1353,51 +617,21 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
         // Ver reservas en un negocio
         Route::get(
             '/',
-            static function (Negocio $negocio): View {
-                session_start();
-                $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
-
-                return view('{negocio}_reservas', [
-                    'negocio' => $negocio,
-                    'usuario' => $usuario,
-                ]);
-            },
+            [EcommerceReservaController::class, 'index'],
         )->name('{negocio}.reservas');
 
         // Reservar en un negocio
-        Route::post(
-            '/',
-            static function (Negocio $negocio): RedirectResponse {
-                return to_route('{negocio}.reservas.{reserva}', [
-                    'negocio' => $negocio,
-                    'reserva' => uniqid(),
-                ]);
-            },
-        );
+        Route::post('/', [EcommerceReservaController::class, 'store']);
 
         Route::prefix('{reserva}')->group(static function (): void {
             // Ver reserva en un negocio
             Route::get(
                 '/',
-                static function (Negocio $negocio, Reserva $reserva): View {
-                    session_start();
-                    $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
-
-                    return view('{negocio}_reservas_{reserva}', [
-                        'negocio' => $negocio,
-                        'usuario' => $usuario,
-                        'reserva' => $reserva,
-                    ]);
-                },
+                [EcommerceReservaController::class, 'show'],
             )->name('{negocio}.reservas.{reserva}');
 
             // Cancelar reserva en un negocio
-            Route::post(
-                'cancelar',
-                static function (Negocio $negocio, Reserva $reserva): RedirectResponse {
-                    return to_route('{negocio}.reservas', ['negocio' => $negocio]);
-                },
-            );
+            Route::post('/', [EcommerceReservaController::class, 'update']);
         });
     });
 });

@@ -26,6 +26,14 @@
             class="w3-input"
             value="{{ $producto['precio'] }}"
         />
+        <label>
+            <input
+                type="checkbox"
+                name="activo"
+                @checked($producto->activo)
+            />
+            Activo
+        </label>
         <input
             type="submit"
             value="Actualizar"
