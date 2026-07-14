@@ -48,6 +48,11 @@
             title="El número de teléfono debe tener el formato +58(416|426|414|424) seguido de 7 dígitos."
         />
         <input
+            name="imagen"
+            type="file"
+            accept="image/*"
+        />
+        <input
             type="submit"
             value="Registrarse"
             class="w3-button w3-blue w3-hover-light-blue w3-block"

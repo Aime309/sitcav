@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,11 +16,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $correo
  * @property string $clave
  * @property string $telefono
- * @property string[] $imagenes
+ * @property string $imagen
  * @property int $activo
  * @property string $creado_en
  * @property string $actualizado_en
  */
+#[Fillable('id', 'nombre', 'apellido', 'correo', 'clave', 'telefono', 'imagen')]
 #[Table(keyType: 'string', incrementing: false)]
 final class Cliente extends Model
 {
@@ -28,6 +30,5 @@ final class Cliente extends Model
 
     protected $attributes = [
         'activo' => 1,
-        'imagenes' => '[]',
     ];
 }

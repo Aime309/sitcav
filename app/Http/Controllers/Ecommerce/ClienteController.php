@@ -25,17 +25,19 @@ final class ClienteController extends Controller
         $correo = $_POST['correo'] ?? '';
         $clave = $_POST['clave'] ?? '';
         $telefono = $_POST['telefono'] ?? '';
-        $imagenes = [];
+        $imagen = $_FILES['imagen'] ?? ['error' => UPLOAD_ERR_NO_FILE];
 
-        $cliente = new Cliente;
-        $cliente->id = uniqid();
-        $cliente->nombre = $nombre;
-        $cliente->apellido = $apellido;
-        $cliente->correo = $correo;
-        $cliente->clave = password_hash($clave, PASSWORD_DEFAULT);
-        $cliente->telefono = $telefono;
-        $cliente->imagenes = json_encode($imagenes);
-        $cliente->save();
+        $negocio->clientes()->create([
+            'id' => uniqid(),
+            'nombre' => $nombre,
+            'apellido' => $apellido,
+            'correo' => $correo,
+            'clave' => password_hash($clave, PASSWORD_DEFAULT),
+            'telefono' => $telefono,
+            'imagen' => $imagen['error'] === UPLOAD_ERR_OK
+                ? fopen($imagen['tmp_name'], 'rb')
+                : null,
+        ]);
 
         return to_route('{negocio}.iniciar-sesion', [
             'negocio' => $negocio['slug'],

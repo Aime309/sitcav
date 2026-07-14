@@ -552,7 +552,6 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
 
                 if ($usuario && password_verify($clave, $usuario['clave'])) {
                     session_start();
-                    $usuario['imagenes'] = json_decode($usuario['imagenes'], true);
                     $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'] = $usuario->id;
 
                     return to_route('{negocio}', ['negocio' => $negocio]);
