@@ -9,10 +9,11 @@ use App\Models\Negocio;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 final class PerfilController extends Controller
 {
-    public function edit(Negocio $negocio): View
+    public function edit(Request $request, Negocio $negocio): View
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -24,7 +25,7 @@ final class PerfilController extends Controller
         ]);
     }
 
-    public function update(Negocio $negocio): RedirectResponse
+    public function update(Request $request, Negocio $negocio): RedirectResponse
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);

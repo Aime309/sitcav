@@ -9,10 +9,11 @@ use App\Models\Negocio;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 final class NegocioController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -21,7 +22,7 @@ final class NegocioController extends Controller
         return view('panel_negocios', ['usuario' => $usuario]);
     }
 
-    public function store(): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $nombre = $_POST['nombre'] ?? '';
         $rif = $_POST['rif'] ?? '';
@@ -57,7 +58,7 @@ final class NegocioController extends Controller
         return to_route('panel.negocios');
     }
 
-    public function show(Negocio $negocio): View
+    public function show(Request $request, Negocio $negocio): View
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -69,7 +70,7 @@ final class NegocioController extends Controller
         ]);
     }
 
-    public function edit(Negocio $negocio): View
+    public function edit(Request $request, Negocio $negocio): View
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -81,7 +82,7 @@ final class NegocioController extends Controller
         ]);
     }
 
-    public function update(Negocio $negocio): RedirectResponse
+    public function update(Request $request, Negocio $negocio): RedirectResponse
     {
         $nombre = $_POST['nombre'];
         $rif = $_POST['rif'];

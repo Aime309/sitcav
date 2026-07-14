@@ -10,10 +10,11 @@ use App\Models\Producto;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 final class InventarioController extends Controller
 {
-    public function index(Negocio $negocio): View
+    public function index(Request $request, Negocio $negocio): View
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -35,7 +36,7 @@ final class InventarioController extends Controller
         ]);
     }
 
-    public function update(Negocio $negocio, Producto $producto): RedirectResponse
+    public function update(Request $request, Negocio $negocio, Producto $producto): RedirectResponse
     {
         $stock = $_POST['stock'] ?? 0;
 

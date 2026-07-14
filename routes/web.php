@@ -25,6 +25,7 @@ use App\Models\Sucursal;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -276,12 +277,12 @@ Route::redirect('/', 'panel/iniciar-sesion');
 Route::prefix('panel')->group(static function (): void {
     Route::prefix('iniciar-sesion')->group(static function (): void {
         // Ver inicio de sesión del panel
-        Route::get('/', static function (): View {
+        Route::get('/', static function (Request $request): View {
             return view('panel_iniciar-sesion');
         })->name('panel.iniciar-sesion');
 
         // Iniciar sesión en el panel
-        Route::post('/', static function (): RedirectResponse {
+        Route::post('/', static function (Request $request): RedirectResponse {
             $correo = $_POST['correo'] ?? '';
             $clave = $_POST['clave'] ?? '';
             $usuario = Usuario::query()->where('correo', $correo)->first();
@@ -332,7 +333,7 @@ Route::prefix('panel')->group(static function (): void {
     });
 
     // Cerrar sesión en el panel
-    Route::get('cerrar-sesion', static function (): RedirectResponse {
+    Route::get('cerrar-sesion', static function (Request $request): RedirectResponse {
         session_start();
         unset($_SESSION['panel']);
 
@@ -535,7 +536,7 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
         // Ver inicio de sesión en un negocio
         Route::get(
             '/',
-            static function (Negocio $negocio): View {
+            static function (Request $request, Negocio $negocio): View {
                 return view('{negocio}_iniciar-sesion', ['negocio' => $negocio]);
             },
         )->name('{negocio}.iniciar-sesion');
@@ -543,7 +544,7 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
         // Iniciar sesión en un negocio
         Route::post(
             '/',
-            static function (Negocio $negocio): RedirectResponse {
+            static function (Request $request, Negocio $negocio): RedirectResponse {
                 $correo = $_POST['correo'] ?? '';
                 $clave = $_POST['clave'] ?? '';
 
@@ -576,7 +577,7 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
     // Cerrar sesión en un negocio
     Route::get(
         'cerrar-sesion',
-        static function (Negocio $negocio): RedirectResponse {
+        static function (Request $request, Negocio $negocio): RedirectResponse {
             session_start();
             unset($_SESSION['ecommerce'][$negocio->slug]);
 

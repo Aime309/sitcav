@@ -9,10 +9,11 @@ use App\Models\Cliente;
 use App\Models\Negocio;
 use App\Models\Producto;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 final class ProductoController extends Controller
 {
-    public function index(Negocio $negocio): View
+    public function index(Request $request, Negocio $negocio): View
     {
         session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
@@ -23,7 +24,7 @@ final class ProductoController extends Controller
         ]);
     }
 
-    public function show(Negocio $negocio, Producto $producto): View
+    public function show(Request $request, Negocio $negocio, Producto $producto): View
     {
         session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);

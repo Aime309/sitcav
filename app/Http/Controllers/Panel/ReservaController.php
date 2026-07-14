@@ -8,10 +8,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Negocio;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 final class ReservaController extends Controller
 {
-    public function index(Negocio $negocio): View
+    public function index(Request $request, Negocio $negocio): View
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);

@@ -10,10 +10,11 @@ use App\Models\Sucursal;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 final class SucursalController extends Controller
 {
-    public function index(Negocio $negocio): View
+    public function index(Request $request, Negocio $negocio): View
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -25,7 +26,7 @@ final class SucursalController extends Controller
         ]);
     }
 
-    public function store(Negocio $negocio): RedirectResponse
+    public function store(Request $request, Negocio $negocio): RedirectResponse
     {
         $nombre = $_POST['nombre'] ?? '';
         $rif = $_POST['rif'] ?? '';
@@ -58,7 +59,7 @@ final class SucursalController extends Controller
         ]);
     }
 
-    public function show(Negocio $negocio, Sucursal $sucursal): View
+    public function show(Request $request, Negocio $negocio, Sucursal $sucursal): View
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -74,7 +75,7 @@ final class SucursalController extends Controller
         );
     }
 
-    public function edit(Negocio $negocio, Sucursal $sucursal): View
+    public function edit(Request $request, Negocio $negocio, Sucursal $sucursal): View
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -90,7 +91,7 @@ final class SucursalController extends Controller
         );
     }
 
-    public function update(Negocio $negocio, Sucursal $sucursal): RedirectResponse
+    public function update(Request $request, Negocio $negocio, Sucursal $sucursal): RedirectResponse
     {
         $nombre = $_POST['nombre'] ?? '';
         $rif = $_POST['rif'] ?? '';

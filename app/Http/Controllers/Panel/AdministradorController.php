@@ -8,15 +8,16 @@ use App\Http\Controllers\Controller;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 final class AdministradorController extends Controller
 {
-    public function create(): View
+    public function create(Request $request): View
     {
         return view('panel_registrarse');
     }
 
-    public function store(): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $nombre = $_POST['nombre'] ?? '';
         $apellido = $_POST['apellido'] ?? '';

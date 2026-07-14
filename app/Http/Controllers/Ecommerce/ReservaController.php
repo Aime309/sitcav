@@ -10,10 +10,11 @@ use App\Models\Negocio;
 use App\Models\Reserva;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 final class ReservaController extends Controller
 {
-    public function index(Negocio $negocio): View
+    public function index(Request $request, Negocio $negocio): View
     {
         session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
@@ -24,7 +25,7 @@ final class ReservaController extends Controller
         ]);
     }
 
-    public function store(Negocio $negocio): RedirectResponse
+    public function store(Request $request, Negocio $negocio): RedirectResponse
     {
         return to_route('{negocio}.reservas.{reserva}', [
             'negocio' => $negocio,
@@ -32,7 +33,7 @@ final class ReservaController extends Controller
         ]);
     }
 
-    public function show(Negocio $negocio, Reserva $reserva): View
+    public function show(Request $request, Negocio $negocio, Reserva $reserva): View
     {
         session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
@@ -44,7 +45,7 @@ final class ReservaController extends Controller
         ]);
     }
 
-    public function update(Negocio $negocio, Reserva $reserva): RedirectResponse
+    public function update(Request $request, Negocio $negocio, Reserva $reserva): RedirectResponse
     {
         return to_route('{negocio}.reservas', ['negocio' => $negocio]);
     }

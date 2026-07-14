@@ -10,10 +10,11 @@ use App\Models\Producto;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 final class ProductoController extends Controller
 {
-    public function index(Negocio $negocio): View
+    public function index(Request $request, Negocio $negocio): View
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -25,7 +26,7 @@ final class ProductoController extends Controller
         ]);
     }
 
-    public function store(Negocio $negocio): RedirectResponse
+    public function store(Request $request, Negocio $negocio): RedirectResponse
     {
         $nombre = $_POST['nombre'] ?? '';
         $descripcion = $_POST['descripcion'] ?? '';
@@ -44,7 +45,7 @@ final class ProductoController extends Controller
         ]);
     }
 
-    public function edit(Negocio $negocio, Producto $producto): View
+    public function edit(Request $request, Negocio $negocio, Producto $producto): View
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -57,7 +58,7 @@ final class ProductoController extends Controller
         ]);
     }
 
-    public function update(Negocio $negocio, Producto $producto): RedirectResponse
+    public function update(Request $request, Negocio $negocio, Producto $producto): RedirectResponse
     {
         $nombre = $_POST['nombre'] ?? $producto->nombre;
         $descripcion = $_POST['descripcion'] ?? $producto->descripcion;

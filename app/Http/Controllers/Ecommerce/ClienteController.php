@@ -9,15 +9,16 @@ use App\Models\Cliente;
 use App\Models\Negocio;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 final class ClienteController extends Controller
 {
-    public function create(Negocio $negocio): View
+    public function create(Request $request, Negocio $negocio): View
     {
         return view('{negocio}_registrarse', ['negocio' => $negocio]);
     }
 
-    public function store(Negocio $negocio): RedirectResponse
+    public function store(Request $request, Negocio $negocio): RedirectResponse
     {
         $nombre = $_POST['nombre'] ?? '';
         $apellido = $_POST['apellido'] ?? '';
@@ -41,7 +42,7 @@ final class ClienteController extends Controller
         ]);
     }
 
-    public function edit(Negocio $negocio): View
+    public function edit(Request $request, Negocio $negocio): View
     {
         session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
@@ -52,7 +53,7 @@ final class ClienteController extends Controller
         ]);
     }
 
-    public function update(Negocio $negocio): RedirectResponse
+    public function update(Request $request, Negocio $negocio): RedirectResponse
     {
         session_start();
         $cliente = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);

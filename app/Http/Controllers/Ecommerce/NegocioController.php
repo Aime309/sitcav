@@ -8,10 +8,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Cliente;
 use App\Models\Negocio;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 final class NegocioController extends Controller
 {
-    public function show(Negocio $negocio): View
+    public function show(Request $request, Negocio $negocio): View
     {
         session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);

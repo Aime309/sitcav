@@ -10,10 +10,11 @@ use App\Models\Negocio;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 final class ClienteController extends Controller
 {
-    public function index(Negocio $negocio): View
+    public function index(Request $request, Negocio $negocio): View
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
@@ -25,14 +26,14 @@ final class ClienteController extends Controller
         ]);
     }
 
-    public function store(Negocio $negocio): RedirectResponse
+    public function store(Request $request, Negocio $negocio): RedirectResponse
     {
         return to_route('panel_negocios_{negocio}_clientes', [
             'negocio' => $negocio,
         ]);
     }
 
-    public function update(Negocio $negocio, Cliente $cliente): RedirectResponse
+    public function update(Request $request, Negocio $negocio, Cliente $cliente): RedirectResponse
     {
         return to_route('panel_negocios_{negocio}_clientes', [
             'negocio' => $negocio,
