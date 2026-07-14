@@ -55,16 +55,6 @@
                 min="0.01"
                 class="w3-input"
             />
-            @if (!$negocio['carga_inicial_cerrada'])
-                <input
-                    type="number"
-                    name="stock"
-                    placeholder="Unidades disponibles"
-                    required
-                    min="0"
-                    class="w3-input"
-                />
-            @endif
             <input
                 type="submit"
                 value="Agregar Producto"

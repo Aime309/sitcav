@@ -164,8 +164,8 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS inventarios (
         id TEXT PRIMARY KEY,
-        establecimiento_tipo TEXT NOT NULL CHECK (establecimiento_tipo IN ("negocio", "sucursal")),
-        establecimiento_id TEXT NOT NULL,
+        negocio_id TEXT REFERENCES negocios(id) ON DELETE CASCADE,
+        sucursal_id TEXT REFERENCES sucursales(id) ON DELETE CASCADE,
         producto_id TEXT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
         stock INT NOT NULL CHECK (stock >= 0),
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -744,7 +744,6 @@ Route::prefix('panel')->group(static function (): void {
                         $nombre = $_POST['nombre'] ?? '';
                         $descripcion = $_POST['descripcion'] ?? '';
                         $precio = $_POST['precio'] ?? '';
-                        $stock = $_POST['stock'] ?? null;
 
                         $producto = new Producto;
                         $producto->id = uniqid();
@@ -752,25 +751,7 @@ Route::prefix('panel')->group(static function (): void {
                         $producto->nombre = $nombre;
                         $producto->descripcion = $descripcion;
                         $producto->precio = $precio;
-
-                        PDO->beginTransaction();
-
                         $producto->save();
-
-                        if ($stock !== null) {
-                            PDO->prepare('INSERT INTO inventarios
-                                (id, establecimiento_tipo, establecimiento_id, producto_id, stock) VALUES
-                                (:id, :establecimiento_tipo, :establecimiento_id, :producto_id, :stock)
-                            ')->execute([
-                                ':id' => uniqid(),
-                                ':establecimiento_tipo' => 'negocio',
-                                ':establecimiento_id' => $negocio->id,
-                                ':producto_id' => $producto->id,
-                                ':stock' => $stock,
-                            ]);
-                        }
-
-                        PDO->commit();
 
                         return to_route('panel.negocios.{negocio}.productos', [
                             'negocio' => $negocio,
@@ -786,16 +767,6 @@ Route::prefix('panel')->group(static function (): void {
                             Negocio $negocio,
                             Producto $producto,
                         ): View {
-                            $producto['stock'] = PDO
-                                ->query("
-                                    SELECT stock FROM inventarios
-                                    WHERE (
-                                        establecimiento_id = '$negocio->id'
-                                        AND producto_id = '$producto->id'
-                                    )
-                                ")
-                                ->fetchColumn();
-
                             session_start();
                             $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
                             $usuario->roles = json_decode($usuario['roles'], true);
@@ -818,32 +789,11 @@ Route::prefix('panel')->group(static function (): void {
                             $nombre = $_POST['nombre'] ?? '';
                             $descripcion = $_POST['descripcion'] ?? '';
                             $precio = $_POST['precio'] ?? '';
-                            $stock = $_POST['stock'] ?? null;
 
                             $producto->nombre = $nombre;
                             $producto->descripcion = $descripcion;
                             $producto->precio = $precio;
-
-                            PDO->beginTransaction();
-
                             $producto->save();
-
-                            if ($stock !== null) {
-                                PDO->prepare('UPDATE inventarios SET
-                                    stock = :stock,
-                                    actualizado_en = CURRENT_TIMESTAMP
-                                    WHERE (
-                                        establecimiento_id = :establecimiento_id
-                                        AND producto_id = :producto_id
-                                    )
-                                ')->execute([
-                                    ':stock' => $stock,
-                                    ':establecimiento_id' => $negocio->id,
-                                    ':producto_id' => $producto->id,
-                                ]);
-                            }
-
-                            PDO->commit();
 
                             return to_route(
                                 'panel.negocios.{negocio}.productos.{producto}',
@@ -863,7 +813,6 @@ Route::prefix('panel')->group(static function (): void {
                             Producto $producto,
                         ): RedirectResponse {
                             $producto->activo = 1;
-
                             $producto->save();
 
                             return to_route('panel.negocios.{negocio}.productos', [
@@ -880,7 +829,6 @@ Route::prefix('panel')->group(static function (): void {
                             Producto $producto,
                         ): RedirectResponse {
                             $producto->activo = 0;
-
                             $producto->save();
 
                             return to_route(
@@ -892,6 +840,76 @@ Route::prefix('panel')->group(static function (): void {
                         },
                     )->name('panel.negocios.{negocio}.productos.{producto}.desactivar');
                 });
+            });
+
+            Route::prefix('inventario')->group(static function (): void {
+                // Ver inventario
+                Route::get(
+                    '/',
+                    static function (Negocio $negocio): View {
+                        session_start();
+                        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+                        $usuario->roles = json_decode($usuario['roles'], true);
+
+                        foreach ($negocio->productos as $producto) {
+                            $producto['stock'] = PDO
+                                ->query("
+                                    SELECT stock
+                                    FROM inventarios
+                                    WHERE negocio_id = '{$negocio['id']}'
+                                    AND producto_id = '{$producto['id']}'
+                                ")->fetchColumn() ?: 0;
+                        }
+
+                        return view('panel_negocios_{negocio}_inventario', [
+                            'negocio' => $negocio,
+                            'usuario' => $usuario,
+                        ]);
+                    },
+                )->name('panel.negocios.{negocio}.inventario');
+
+                // Actualizar producto en el inventario
+                Route::post(
+                    '{producto}',
+                    static function (Negocio $negocio, Producto $producto): RedirectResponse {
+                        $stock = $_POST['stock'] ?? 0;
+
+                        $inventario = PDO
+                            ->query("
+                                SELECT * FROM inventarios
+                                WHERE negocio_id = '{$negocio['id']}'
+                                AND producto_id = '{$producto['id']}'
+                            ")
+                            ->fetch();
+
+                        if ($inventario) {
+                            PDO->prepare('UPDATE inventarios SET
+                                stock = :stock,
+                                actualizado_en = CURRENT_TIMESTAMP
+                                WHERE negocio_id = :negocio_id
+                                AND producto_id = :producto_id'
+                            )->execute([
+                                ':stock' => $stock,
+                                ':negocio_id' => $negocio->id,
+                                ':producto_id' => $producto->id,
+                            ]);
+                        } else {
+                            PDO->prepare('INSERT INTO inventarios
+                                (id, negocio_id, producto_id, stock) VALUES
+                                (:id, :negocio_id, :producto_id, :stock)'
+                            )->execute([
+                                ':id' => uniqid(),
+                                ':negocio_id' => $negocio->id,
+                                ':producto_id' => $producto->id,
+                                ':stock' => $stock,
+                            ]);
+                        }
+
+                        return to_route('panel.negocios.{negocio}.inventario', [
+                            'negocio' => $negocio,
+                        ]);
+                    },
+                )->name('panel.negocios.{negocio}.inventario.{producto}');
             });
 
             Route::prefix('sucursales')->group(static function (): void {

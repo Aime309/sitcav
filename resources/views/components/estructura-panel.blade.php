@@ -131,6 +131,16 @@
                                 Reservas
                             </a>
                         </li>
+                        <li class="w3-bar-item">
+                            <a
+                                href="{{ route(
+                                    'panel.negocios.{negocio}.inventario',
+                                    ['negocio' => $negocio['id']],
+                                ) }}"
+                                class="w3-button">
+                                Inventario
+                            </a>
+                        </li>
                     @endif
                     <li class="w3-bar-item">
                         <a

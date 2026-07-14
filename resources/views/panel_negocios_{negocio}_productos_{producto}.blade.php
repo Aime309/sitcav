@@ -26,17 +26,6 @@
             class="w3-input"
             value="{{ $producto['precio'] }}"
         />
-        @if (!$negocio['carga_inicial_cerrada'])
-            <input
-                type="number"
-                name="stock"
-                placeholder="Unidades disponibles"
-                required
-                min="0"
-                class="w3-input"
-                value="{{ $producto['stock'] }}"
-            />
-        @endif
         <input
             type="submit"
             value="Actualizar"
