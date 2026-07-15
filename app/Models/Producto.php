@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -16,10 +17,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $descripcion
  * @property float $precio
  * @property int $activo
- * @property string $creado_end
+ * @property string $creado_en
  * @property string $actualizado_en
  * @property Collection<int, ProductoImagen> $imagenes
  */
+#[Fillable('id', 'nombre', 'descripcion', 'precio')]
 #[Table(keyType: 'string', incrementing: false)]
 final class Producto extends Model
 {

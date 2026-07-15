@@ -32,13 +32,25 @@ final class ProductoController extends Controller
         $descripcion = $_POST['descripcion'] ?? '';
         $precio = $_POST['precio'] ?? '';
 
-        $producto = new Producto;
-        $producto->id = uniqid();
-        $producto->negocio_id = $negocio->id;
-        $producto->nombre = $nombre;
-        $producto->descripcion = $descripcion;
-        $producto->precio = $precio;
-        $producto->save();
+        PDO->beginTransaction();
+
+        $producto = $negocio->productos()->create([
+            'id' => uniqid(),
+            'nombre' => $nombre,
+            'descripcion' => $descripcion,
+            'precio' => $precio,
+        ]);
+
+        foreach ($_FILES['imagenes']['error'] as $indice => $error) {
+            if ($error === UPLOAD_ERR_OK) {
+                $producto->imagenes()->create([
+                    'id' => uniqid(),
+                    'imagen' => fopen($_FILES['imagenes']['tmp_name'][$indice], 'rb'),
+                ]);
+            }
+        }
+
+        PDO->commit();
 
         return to_route('panel.negocios.{negocio}.productos', [
             'negocio' => $negocio,

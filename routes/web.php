@@ -233,7 +233,6 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS carritos (
         id TEXT PRIMARY KEY,
-        negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
         cliente_id TEXT NOT NULL REFERENCES clientes(id) ON DELETE CASCADE,
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -243,8 +242,8 @@ DB::transaction(static function (): void {
         id TEXT PRIMARY KEY,
         carrito_id TEXT NOT NULL REFERENCES carritos(id) ON DELETE CASCADE,
         producto_id TEXT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
-        establecimiento_tipo TEXT NOT NULL,
-        establecimiento_id TEXT NOT NULL,
+        negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
+        sucursal_id TEXT NOT NULL REFERENCES sucursales(id) ON DELETE CASCADE,
         cantidad INT NOT NULL,
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -604,11 +603,13 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
 
         Route::prefix('productos')->group(static function (): void {
             // Añadir producto al carrito en un negocio
-            Route::post('productos', [CarritoController::class, 'update']);
+            Route::post('/', [CarritoController::class, 'update'])
+                ->name('{negocio}.carrito.productos');
 
             Route::prefix('{producto}')->group(static function (): void {
                 // Actualizar/Eliminar producto en el carrito en un negocio
-                Route::post('/', [CarritoController::class, 'update']);
+                Route::post('/', [CarritoController::class, 'update'])
+                    ->name('{negocio}.carrito.productos.{producto}');
             });
         });
     });

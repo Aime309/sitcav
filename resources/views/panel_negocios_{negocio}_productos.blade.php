@@ -41,6 +41,12 @@
                 class="w3-input"
             />
             <input
+                name="imagenes[]"
+                type="file"
+                accept="image/*"
+                multiple
+            />
+            <input
                 type="submit"
                 value="Agregar Producto"
                 class="w3-button w3-blue w3-hover-light-blue w3-block"

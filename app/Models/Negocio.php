@@ -43,6 +43,7 @@ final class Negocio extends Model
         'activo' => 1,
     ];
 
+    /** @return HasMany<Producto> */
     public function productos(): HasMany
     {
         return $this->hasMany(Producto::class);

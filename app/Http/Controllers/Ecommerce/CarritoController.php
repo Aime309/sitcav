@@ -27,6 +27,8 @@ final class CarritoController extends Controller
 
     public function update(Request $request, Negocio $negocio, ?Producto $producto = null): RedirectResponse
     {
+        $stocks = $_POST['stocks'] ?? [];
+
         return to_route('{negocio}.carrito', ['negocio' => $negocio]);
     }
 }
