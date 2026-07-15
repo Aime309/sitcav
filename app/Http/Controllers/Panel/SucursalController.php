@@ -106,10 +106,9 @@ final class SucursalController extends Controller
         $sucursal->save();
 
         return to_route(
-            'panel.negocios.{negocio}.sucursales.{sucursal}.editar',
+            'panel.negocios.{negocio}.sucursales',
             [
                 'negocio' => $negocio,
-                'sucursal' => $sucursal,
             ],
         );
     }
