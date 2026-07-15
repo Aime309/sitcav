@@ -48,7 +48,7 @@
         />
         <input
             type="submit"
-            value="Agregar sucursal"
+            value="Actualizar"
             class="w3-button w3-blue w3-hover-light-blue w3-block"
         />
     </form>
