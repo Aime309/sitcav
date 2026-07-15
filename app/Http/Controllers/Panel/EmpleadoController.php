@@ -97,7 +97,7 @@ final class EmpleadoController extends Controller
         PDO->commit();
 
         return to_route('panel.negocios.{negocio}.empleados', [
-            'negocio' => $negocio,
+            'negocio' => $negocio ?: $sucursal->negocio,
         ]);
     }
 
