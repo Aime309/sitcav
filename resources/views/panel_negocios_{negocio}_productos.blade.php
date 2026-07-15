@@ -1,6 +1,6 @@
 <x-estructura-panel titulo="Productos" :negocio="$negocio" :usuario="$usuario">
     <main class="w3-row-padding">
-        <table class="w3-half w3-table-all">
+        <table class="w3-half w3-table">
             @foreach ($negocio['productos'] as $producto)
                 <tr>
                     <td>{{ $producto['nombre'] }}</td>
