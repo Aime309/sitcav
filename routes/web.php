@@ -284,17 +284,15 @@ Route::prefix('panel')->group(static function (): void {
         Route::post('/', static function (Request $request): RedirectResponse {
             $correo = $_POST['correo'] ?? '';
             $clave = $_POST['clave'] ?? '';
-            $usuario = Usuario::query()->where('correo', $correo)->first();
+            $usuario = Usuario::query()->where('correo', $correo)->firstOrFail();
 
-            if ($usuario && password_verify($clave, $usuario->clave)) {
+            if (password_verify($clave, $usuario->clave)) {
                 $usuario->roles = json_decode($usuario['roles'], true);
 
-                $usuario['asignacion'] = PDO
-                    ->query("
-                        SELECT * FROM asignaciones
-                        WHERE usuario_id = '{$usuario['id']}'
-                    ")
-                    ->fetch();
+                $usuario['asignacion'] = (array) (DB::select(
+                    'SELECT * FROM asignaciones WHERE usuario_id = ?',
+                    [$usuario->id],
+                )[0] ?? new stdClass);
 
                 session_start();
                 $_SESSION['panel']['usuario']['id'] = $usuario->id;
@@ -547,7 +545,7 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
                 $correo = $_POST['correo'] ?? '';
                 $clave = $_POST['clave'] ?? '';
 
-                $usuario = Cliente::query()->where('correo', $correo)->first();
+                $usuario = Cliente::query()->where('correo', $correo)->firstOrFail();
 
                 if ($usuario && password_verify($clave, $usuario['clave'])) {
                     session_start();
@@ -556,7 +554,9 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
                     return to_route('{negocio}', ['negocio' => $negocio]);
                 }
 
-                return to_route('{negocio}.iniciar-sesion', ['negocio' => $negocio]);
+                return to_route('{negocio}.iniciar-sesion', [
+                    'negocio' => $negocio,
+                ]);
             },
         );
     });
