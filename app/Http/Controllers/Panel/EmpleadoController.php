@@ -65,7 +65,6 @@ final class EmpleadoController extends Controller
         PDO->beginTransaction();
 
         $empleado = new Usuario;
-        $empleado->id = uniqid();
         $empleado->nombre = $nombre;
         $empleado->apellido = $apellido;
         $empleado->correo = $correo;

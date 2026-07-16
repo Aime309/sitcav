@@ -34,7 +34,7 @@ define('PDO', DB::getPdo());
 
 DB::transaction(static function (): void {
     DB::statement('CREATE TABLE IF NOT EXISTS usuarios (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT NOT NULL CHECK (length(nombre) > 0),
         apellido TEXT NOT NULL CHECK (length(apellido) > 0),
         correo TEXT NOT NULL UNIQUE CHECK (correo LIKE "%@gmail.com"),
@@ -66,7 +66,7 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS negocios (
         id TEXT PRIMARY KEY,
-        usuario_id TEXT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+        usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
         nombre TEXT NOT NULL CHECK (length(nombre) > 0),
         rif TEXT NOT NULL UNIQUE CHECK (length(rif) > 0),
         direccion TEXT NOT NULL CHECK (length(direccion) > 0),
@@ -118,7 +118,7 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS asignaciones (
         id TEXT PRIMARY KEY,
-        usuario_id TEXT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+        usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
         negocio_id TEXT REFERENCES negocios(id),
         sucursal_id TEXT REFERENCES sucursales(id),
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -193,7 +193,7 @@ DB::transaction(static function (): void {
         establecimiento_tipo TEXT NOT NULL,
         establecimiento_id TEXT NOT NULL,
         proveedor_id TEXT NOT NULL REFERENCES proveedores(id) ON DELETE CASCADE,
-        usuario_id TEXT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+        usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
         observaciones TEXT NOT NULL,
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -214,7 +214,7 @@ DB::transaction(static function (): void {
         negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
         establecimiento_tipo TEXT NOT NULL,
         establecimiento_id TEXT NOT NULL,
-        usuario_id TEXT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+        usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
         cliente_id TEXT NOT NULL REFERENCES clientes(id) ON DELETE CASCADE,
         reserva_id TEXT REFERENCES reservas(id) ON DELETE SET NULL,
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,

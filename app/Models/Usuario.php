@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string $id
+ * @property-read int $id
  * @property string $nombre
  * @property string $apellido
  * @property string $correo
@@ -25,7 +24,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?Negocio $negocio
  * @property ?Sucursal $sucursal
  */
-#[Table(keyType: 'string', incrementing: false)]
 final class Usuario extends Model
 {
     public const ?string CREATED_AT = 'creado_en';

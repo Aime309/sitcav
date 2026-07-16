@@ -27,7 +27,6 @@ final class AdministradorController extends Controller
         $imagen = $_FILES['imagen'] ?? [];
 
         $usuario = new Usuario;
-        $usuario->id = uniqid();
         $usuario->nombre = $nombre;
         $usuario->apellido = $apellido;
         $usuario->correo = $correo;
