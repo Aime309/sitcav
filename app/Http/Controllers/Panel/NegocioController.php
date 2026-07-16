@@ -17,7 +17,6 @@ final class NegocioController extends Controller
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-        $usuario->roles = json_decode($usuario['roles'], true);
 
         return view('panel_negocios', ['usuario' => $usuario]);
     }
@@ -62,7 +61,6 @@ final class NegocioController extends Controller
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-        $usuario->roles = json_decode($usuario['roles'], true);
 
         return view('panel_negocios_{negocio}', [
             'negocio' => $negocio,
@@ -74,7 +72,6 @@ final class NegocioController extends Controller
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-        $usuario->roles = json_decode($usuario['roles'], true);
 
         return view('panel_negocios_{negocio}_editar', [
             'negocio' => $negocio,

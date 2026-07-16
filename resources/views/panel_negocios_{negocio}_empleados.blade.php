@@ -35,12 +35,12 @@
                             <select name="rol" required class="w3-select">
                                 <option
                                     value="encargado"
-                                    @selected($empleado->roles === ['encargado', 'vendedor'])>
+                                    @selected($empleado->roles->contains('rol', 'encargado'))>
                                     Encargado
                                 </option>
                                 <option
                                     value="vendedor"
-                                    @selected($empleado->roles === ['vendedor'])>
+                                    @selected($empleado->roles->doesntContain('rol', 'encargado'))>
                                     Vendedor
                                 </option>
                             </select>

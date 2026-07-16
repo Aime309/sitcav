@@ -18,7 +18,6 @@ final class SucursalController extends Controller
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-        $usuario->roles = json_decode($usuario['roles'], true);
 
         return view('panel_negocios_{negocio}_sucursales', [
             'negocio' => $negocio,
@@ -63,7 +62,6 @@ final class SucursalController extends Controller
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-        $usuario->roles = json_decode($usuario['roles'], true);
 
         return view(
             'panel_negocios_{negocio}_sucursales_{sucursal}',
@@ -79,7 +77,6 @@ final class SucursalController extends Controller
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-        $usuario->roles = json_decode($usuario['roles'], true);
 
         return view(
             'panel_negocios_{negocio}_sucursales_{sucursal}_editar',

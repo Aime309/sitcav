@@ -17,7 +17,6 @@ final class CompraController extends Controller
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-        $usuario->roles = json_decode($usuario['roles'], true);
 
         return view('panel_negocios_{negocio}_compras', [
             'negocio' => $negocio,

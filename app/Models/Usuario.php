@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $correo
  * @property string $telefono
  * @property string $clave
- * @property array<int, 'Administrador'|'Encargado'|'Vendedor'> $roles
+ * @property-read Collection<UsuarioRol> $roles
  * @property string $imagen
  * @property int $activo
  * @property string $creado_en
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?Negocio $negocio
  * @property ?Sucursal $sucursal
  */
+#[Fillable('nombre', 'apellido', 'correo', 'telefono', 'clave', 'imagen', 'activo')]
 final class Usuario extends Model
 {
     public const ?string CREATED_AT = 'creado_en';
@@ -32,6 +34,12 @@ final class Usuario extends Model
     protected $attributes = [
         'activo' => 1,
     ];
+
+    /** @return HasMany<UsuarioRol> */
+    public function roles(): HasMany
+    {
+        return $this->hasMany(UsuarioRol::class);
+    }
 
     /** @return HasMany<Negocio> */
     public function negocios(): HasMany

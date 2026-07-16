@@ -18,7 +18,6 @@ final class InventarioController extends Controller
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-        $usuario->roles = json_decode($usuario['roles'], true);
 
         foreach ($negocio->productos as $producto) {
             $producto['stock'] = PDO

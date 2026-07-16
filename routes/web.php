@@ -45,23 +45,18 @@ DB::transaction(static function (): void {
             OR telefono LIKE "+58426_______"
         ),
         clave TEXT NOT NULL UNIQUE CHECK (length(clave) >= 8),
-        roles TEXT NOT NULL CHECK (
-            json_valid(roles)
-            AND json_array_length(roles) > 0
-            AND (
-                json_extract(roles, "$[0]") IN ("administrador", "empleado", "vendedor")
-                OR json_extract(roles, "$[1]") IN ("administrador", "empleado", "vendedor")
-                OR json_extract(roles, "$[2]") IN ("administrador", "empleado", "vendedor")
-                OR json_extract(roles, "$[3]") IN ("administrador", "empleado", "vendedor")
-                OR json_extract(roles, "$[4]") IN ("administrador", "empleado", "vendedor")
-            )
-        ),
         imagen BLOB,
         activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en),
 
         UNIQUE (nombre, apellido)
+    ) STRICT');
+
+    DB::statement('CREATE TABLE IF NOT EXISTS usuarios_roles (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+        rol TEXT NOT NULL CHECK (rol IN ("administrador", "encargado", "vendedor"))
     ) STRICT');
 
     DB::statement('CREATE TABLE IF NOT EXISTS negocios (
@@ -287,8 +282,6 @@ Route::prefix('panel')->group(static function (): void {
             $usuario = Usuario::query()->where('correo', $correo)->firstOrFail();
 
             if (password_verify($clave, $usuario->clave)) {
-                $usuario->roles = json_decode($usuario['roles'], true);
-
                 $usuario['asignacion'] = (array) (DB::select(
                     'SELECT * FROM asignaciones WHERE usuario_id = ?',
                     [$usuario->id],
@@ -297,7 +290,7 @@ Route::prefix('panel')->group(static function (): void {
                 session_start();
                 $_SESSION['panel']['usuario']['id'] = $usuario->id;
 
-                if (in_array('administrador', $usuario->roles)) {
+                if ($usuario->roles->contains('rol', 'administrador')) {
                     return to_route('panel.negocios');
                 }
 

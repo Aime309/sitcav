@@ -9,6 +9,7 @@ use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 final class AdministradorController extends Controller
 {
@@ -19,31 +20,24 @@ final class AdministradorController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $nombre = $_POST['nombre'] ?? '';
-        $apellido = $_POST['apellido'] ?? '';
-        $correo = $_POST['correo'] ?? '';
-        $clave = $_POST['clave'] ?? '';
-        $telefono = $_POST['telefono'] ?? '';
-        $imagen = $_FILES['imagen'] ?? [];
+        DB::transaction(static function (): void {
+            $imagen = $_FILES['imagen'] ?? ['error' => UPLOAD_ERR_NO_FILE];
 
-        $usuario = new Usuario;
-        $usuario->nombre = $nombre;
-        $usuario->apellido = $apellido;
-        $usuario->correo = $correo;
-        $usuario->clave = password_hash($clave, PASSWORD_DEFAULT);
-        $usuario->telefono = $telefono;
+            $usuario = Usuario::query()->create([
+                'nombre' => $_POST['nombre'] ?? '',
+                'apellido' => $_POST['apellido'] ?? '',
+                'correo' => $_POST['correo'] ?? '',
+                'clave' => password_hash($_POST['clave'] ?? '', PASSWORD_DEFAULT),
+                'telefono' => $_POST['telefono'] ?? '',
+                'imagen' => $imagen['error'] === UPLOAD_ERR_OK
+                    ? fopen($imagen['tmp_name'], 'rb')
+                    : null,
+            ]);
 
-        $usuario->roles = json_encode([
-            'administrador',
-            'encargado',
-            'vendedor',
-        ]);
-
-        if ($imagen['error'] === UPLOAD_ERR_OK) {
-            $usuario->imagen = fopen($imagen['tmp_name'], 'rb');
-        }
-
-        $usuario->save();
+            $usuario->roles()->create(['rol' => 'administrador']);
+            $usuario->roles()->create(['rol' => 'encargado']);
+            $usuario->roles()->create(['rol' => 'vendedor']);
+        });
 
         return to_route('panel.iniciar-sesion');
     }

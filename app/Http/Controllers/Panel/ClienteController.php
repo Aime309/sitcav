@@ -18,7 +18,6 @@ final class ClienteController extends Controller
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-        $usuario->roles = json_decode($usuario['roles'], true);
 
         return view('panel_negocios_{negocio}_clientes', [
             'negocio' => $negocio,
