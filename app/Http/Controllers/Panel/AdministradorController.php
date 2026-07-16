@@ -21,24 +21,21 @@ final class AdministradorController extends Controller
     public function store(Request $request): RedirectResponse
     {
         DB::transaction(static function (): void {
-            $imagen = $_FILES['imagen'] ?? ['error' => UPLOAD_ERR_NO_FILE];
-
             $usuario = Usuario::query()->create([
-                'nombre' => $_POST['nombre'] ?? '',
-                'apellido' => $_POST['apellido'] ?? '',
                 'correo' => $_POST['correo'] ?? '',
                 'clave' => password_hash($_POST['clave'] ?? '', PASSWORD_DEFAULT),
-                'telefono' => $_POST['telefono'] ?? '',
-                'imagen' => $imagen['error'] === UPLOAD_ERR_OK
-                    ? fopen($imagen['tmp_name'], 'rb')
-                    : null,
             ]);
 
-            $usuario->roles()->create(['rol' => 'administrador']);
-            $usuario->roles()->create(['rol' => 'encargado']);
-            $usuario->roles()->create(['rol' => 'vendedor']);
+            $usuario->roles()->createMany([
+                ['rol' => 'administrador'],
+                ['rol' => 'encargado'],
+                ['rol' => 'vendedor'],
+            ]);
+
+            session_start();
+            $_SESSION['panel']['usuario']['id'] = $usuario->id;
         });
 
-        return to_route('panel.iniciar-sesion');
+        return to_route('panel.negocios');
     }
 }

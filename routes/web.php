@@ -3,14 +3,18 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Ecommerce\CarritoController;
+use App\Http\Controllers\Ecommerce\CerrarSesion as EcommerceCerrarSesion;
 use App\Http\Controllers\Ecommerce\ClienteController as EcommerceClienteController;
+use App\Http\Controllers\Ecommerce\IniciarSesion as EcommerceIniciarSesion;
 use App\Http\Controllers\Ecommerce\NegocioController as EcommerceNegocioController;
 use App\Http\Controllers\Ecommerce\ProductoController as EcommerceProductoController;
 use App\Http\Controllers\Ecommerce\ReservaController as EcommerceReservaController;
 use App\Http\Controllers\Panel\AdministradorController;
+use App\Http\Controllers\Panel\CerrarSesion;
 use App\Http\Controllers\Panel\ClienteController;
 use App\Http\Controllers\Panel\CompraController;
 use App\Http\Controllers\Panel\EmpleadoController;
+use App\Http\Controllers\Panel\IniciarSesion;
 use App\Http\Controllers\Panel\InventarioController;
 use App\Http\Controllers\Panel\NegocioController;
 use App\Http\Controllers\Panel\PerfilController;
@@ -19,12 +23,8 @@ use App\Http\Controllers\Panel\ProveedorController;
 use App\Http\Controllers\Panel\ReservaController;
 use App\Http\Controllers\Panel\SucursalController;
 use App\Http\Controllers\Panel\VentaController;
-use App\Models\Cliente;
 use App\Models\Negocio;
-use App\Models\Sucursal;
-use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -35,22 +35,9 @@ define('PDO', DB::getPdo());
 DB::transaction(static function (): void {
     DB::statement('CREATE TABLE IF NOT EXISTS usuarios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT NOT NULL CHECK (length(nombre) > 0),
-        apellido TEXT NOT NULL CHECK (length(apellido) > 0),
         correo TEXT NOT NULL UNIQUE CHECK (correo LIKE "%@gmail.com"),
-        telefono TEXT NOT NULL UNIQUE CHECK (
-            telefono LIKE "+58416_______"
-            OR telefono LIKE "+58414_______"
-            OR telefono LIKE "+58424_______"
-            OR telefono LIKE "+58426_______"
-        ),
         clave TEXT NOT NULL UNIQUE CHECK (length(clave) >= 8),
-        imagen BLOB,
-        activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
-        creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en),
-
-        UNIQUE (nombre, apellido)
+        activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1))
     ) STRICT');
 
     DB::statement('CREATE TABLE IF NOT EXISTS usuarios_roles (
@@ -271,64 +258,24 @@ Route::redirect('/', 'panel/iniciar-sesion');
 Route::prefix('panel')->group(static function (): void {
     Route::prefix('iniciar-sesion')->group(static function (): void {
         // Ver inicio de sesión del panel
-        Route::get('/', static function (Request $request): View {
-            return view('panel_iniciar-sesion');
-        })->name('panel.iniciar-sesion');
+        Route::view('/', 'panel_iniciar-sesion')->name('panel.iniciar-sesion');
 
         // Iniciar sesión en el panel
-        Route::post('/', static function (Request $request): RedirectResponse {
-            $correo = $_POST['correo'] ?? '';
-            $clave = $_POST['clave'] ?? '';
-            $usuario = Usuario::query()->where('correo', $correo)->firstOrFail();
-
-            if (password_verify($clave, $usuario->clave)) {
-                $usuario['asignacion'] = (array) (DB::select(
-                    'SELECT * FROM asignaciones WHERE usuario_id = ?',
-                    [$usuario->id],
-                )[0] ?? new stdClass);
-
-                session_start();
-                $_SESSION['panel']['usuario']['id'] = $usuario->id;
-
-                if ($usuario->roles->contains('rol', 'administrador')) {
-                    return to_route('panel.negocios');
-                }
-
-                if ($usuario['asignacion']) {
-                    if ($usuario['asignacion']['negocio_id']) {
-                        return to_route('panel.negocios.{negocio}', [
-                            'negocio' => $usuario['asignacion']['negocio_id'],
-                        ]);
-                    }
-
-                    $sucursal = Sucursal::query()->find($usuario['asignacion']['sucursal_id']);
-
-                    return to_route('panel.negocios.{negocio}.sucursales.{sucursal}', [
-                        'negocio' => $sucursal->negocio->id,
-                        'sucursal' => $sucursal->id,
-                    ]);
-                }
-            }
-
-            return to_route('panel.iniciar-sesion');
-        });
+        Route::post('/', IniciarSesion::class);
     });
 
     Route::prefix('registrarse')->group(static function (): void {
         // Ver registro de administrador del panel
-        Route::get('/', [AdministradorController::class, 'create'])->name('panel.registrarse');
+        Route::get('/', [AdministradorController::class, 'create'])
+            ->name('panel.registrarse');
 
         // Registrarse como administrador en el panel
         Route::post('/', [AdministradorController::class, 'store']);
     });
 
     // Cerrar sesión en el panel
-    Route::get('cerrar-sesion', static function (Request $request): RedirectResponse {
-        session_start();
-        unset($_SESSION['panel']);
-
-        return to_route('panel.iniciar-sesion');
-    })->name('panel.cerrar-sesion');
+    Route::get('cerrar-sesion', CerrarSesion::class)
+        ->name('panel.cerrar-sesion');
 
     Route::prefix('negocios')->group(static function (): void {
         // Seleccionar establecimiento
@@ -352,10 +299,8 @@ Route::prefix('panel')->group(static function (): void {
 
             Route::prefix('perfil')->group(static function (): void {
                 // Editar perfil
-                Route::get(
-                    '/',
-                    [PerfilController::class, 'edit'],
-                )->name('panel.negocios.{negocio}.perfil');
+                Route::get('/', [PerfilController::class, 'edit'])
+                    ->name('panel.negocios.{negocio}.perfil');
 
                 // Actualizar perfil
                 Route::post('/', [PerfilController::class, 'update']);
@@ -363,27 +308,21 @@ Route::prefix('panel')->group(static function (): void {
 
             Route::prefix('empleados')->group(static function (): void {
                 // Ver empleados
-                Route::get(
-                    '/',
-                    [EmpleadoController::class, 'index'],
-                )->name('panel.negocios.{negocio}.empleados');
+                Route::get('/', [EmpleadoController::class, 'index'])
+                    ->name('panel.negocios.{negocio}.empleados');
 
                 // Registrar empleado
                 Route::post('/', [EmpleadoController::class, 'store']);
 
                 // Actualizar empleado
-                Route::post(
-                    '{empleado}',
-                    [EmpleadoController::class, 'update'],
-                )->name('panel.negocios.{negocio}.empleados.{empleado}');
+                Route::post('{empleado}', [EmpleadoController::class, 'update'])
+                    ->name('panel.negocios.{negocio}.empleados.{empleado}');
             });
 
             Route::prefix('proveedores')->group(static function (): void {
                 // Ver proveedores
-                Route::get(
-                    '/',
-                    [ProveedorController::class, 'index'],
-                )->name('panel.negocios.{negocio}.proveedores');
+                Route::get('/', [ProveedorController::class, 'index'])
+                    ->name('panel.negocios.{negocio}.proveedores');
 
                 // Registrar proveedor
                 Route::post('/', [ProveedorController::class, 'store']);
@@ -394,10 +333,8 @@ Route::prefix('panel')->group(static function (): void {
 
             Route::prefix('clientes')->group(static function (): void {
                 // Ver clientes
-                Route::get(
-                    '/',
-                    [ClienteController::class, 'index'],
-                )->name('panel.negocios.{negocio}.clientes');
+                Route::get('/', [ClienteController::class, 'index'])
+                    ->name('panel.negocios.{negocio}.clientes');
 
                 // Registrar cliente
                 Route::post('/', [ClienteController::class, 'store']);
@@ -408,20 +345,16 @@ Route::prefix('panel')->group(static function (): void {
 
             Route::prefix('productos')->group(static function (): void {
                 // Ver productos
-                Route::get(
-                    '/',
-                    [ProductoController::class, 'index'],
-                )->name('panel.negocios.{negocio}.productos');
+                Route::get('/', [ProductoController::class, 'index'])
+                    ->name('panel.negocios.{negocio}.productos');
 
                 // Registrar producto
                 Route::post('/', [ProductoController::class, 'store']);
 
                 Route::prefix('{producto}')->group(static function (): void {
                     // Editar producto
-                    Route::get(
-                        '/',
-                        [ProductoController::class, 'edit'],
-                    )->name('panel.negocios.{negocio}.productos.{producto}');
+                    Route::get('/', [ProductoController::class, 'edit'])
+                        ->name('panel.negocios.{negocio}.productos.{producto}');
 
                     // Actualizar producto
                     Route::post('/', [ProductoController::class, 'update']);
@@ -430,40 +363,30 @@ Route::prefix('panel')->group(static function (): void {
 
             Route::prefix('inventario')->group(static function (): void {
                 // Ver inventario
-                Route::get(
-                    '/',
-                    [InventarioController::class, 'index'],
-                )->name('panel.negocios.{negocio}.inventario');
+                Route::get('/', [InventarioController::class, 'index'])
+                    ->name('panel.negocios.{negocio}.inventario');
 
                 // Actualizar producto en el inventario
-                Route::post(
-                    '{producto}',
-                    [InventarioController::class, 'update'],
-                )->name('panel.negocios.{negocio}.inventario.{producto}');
+                Route::post('{producto}', [InventarioController::class, 'update'])
+                    ->name('panel.negocios.{negocio}.inventario.{producto}');
             });
 
             Route::prefix('sucursales')->group(static function (): void {
                 // Ver sucursales
-                Route::get(
-                    '/',
-                    [SucursalController::class, 'index'],
-                )->name('panel.negocios.{negocio}.sucursales');
+                Route::get('/', [SucursalController::class, 'index'])
+                    ->name('panel.negocios.{negocio}.sucursales');
 
                 // Registrar sucursal
                 Route::post('/', [SucursalController::class, 'store']);
 
                 Route::prefix('{sucursal}')->group(static function (): void {
                     // Panel administrativo de una sucursal
-                    Route::get(
-                        '/',
-                        [SucursalController::class, 'show'],
-                    )->name('panel.negocios.{negocio}.sucursales.{sucursal}');
+                    Route::get('/', [SucursalController::class, 'show'])
+                        ->name('panel.negocios.{negocio}.sucursales.{sucursal}');
 
                     // Editar sucursal
-                    Route::get(
-                        'editar',
-                        [SucursalController::class, 'edit'],
-                    )->name('panel.negocios.{negocio}.sucursales.{sucursal}.editar');
+                    Route::get('editar', [SucursalController::class, 'edit'])
+                        ->name('panel.negocios.{negocio}.sucursales.{sucursal}.editar');
 
                     // Actualizar sucursal
                     Route::post('/', [SucursalController::class, 'update']);
@@ -472,10 +395,8 @@ Route::prefix('panel')->group(static function (): void {
 
             Route::prefix('compras')->group(static function (): void {
                 // Ver compras
-                Route::get(
-                    '/',
-                    [CompraController::class, 'index'],
-                )->name('panel.negocios.{negocio}.compras');
+                Route::get('/', [CompraController::class, 'index'])
+                    ->name('panel.negocios.{negocio}.compras');
 
                 // Registrar compra
                 Route::post('/', [CompraController::class, 'store']);
@@ -483,43 +404,33 @@ Route::prefix('panel')->group(static function (): void {
 
             Route::prefix('ventas')->group(static function (): void {
                 // Ver ventas
-                Route::get(
-                    '/',
-                    [VentaController::class, 'index'],
-                )->name('panel.negocios.{negocio}.ventas');
+                Route::get('/', [VentaController::class, 'index'])
+                    ->name('panel.negocios.{negocio}.ventas');
 
                 // Registrar venta
                 Route::post('/', [VentaController::class, 'store']);
             });
 
             // Ver reservas
-            Route::get(
-                'reservas',
-                [ReservaController::class, 'index'],
-            )->name('panel.negocios.{negocio}.reservas');
+            Route::get('reservas', [ReservaController::class, 'index'])
+                ->name('panel.negocios.{negocio}.reservas');
         });
     });
 });
 
 Route::prefix('{negocio:slug}')->group(static function (): void {
     // Ecommerce de un negocio
-    Route::get(
-        '/',
-        [EcommerceNegocioController::class, 'show'],
-    )->name('{negocio}');
+    Route::get('/', [EcommerceNegocioController::class, 'show'])
+        ->name('{negocio}');
 
     Route::prefix('productos')->group(static function (): void {
         // Ver productos de un negocio
-        Route::get(
-            '/',
-            [EcommerceProductoController::class, 'index'],
-        )->name('{negocio}.productos');
+        Route::get('/', [EcommerceProductoController::class, 'index'])
+            ->name('{negocio}.productos');
 
         // Ver producto de un negocio
-        Route::get(
-            '{producto}',
-            [EcommerceProductoController::class, 'show'],
-        )->name('{negocio}.productos.{producto}');
+        Route::get('{producto}', [EcommerceProductoController::class, 'show'])
+            ->name('{negocio}.productos.{producto}');
     });
 
     Route::prefix('iniciar-sesion')->group(static function (): void {
@@ -527,61 +438,33 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
         Route::get(
             '/',
             static function (Request $request, Negocio $negocio): View {
-                return view('{negocio}_iniciar-sesion', ['negocio' => $negocio]);
+                return view('{negocio}_iniciar-sesion', [
+                    'negocio' => $negocio,
+                ]);
             },
         )->name('{negocio}.iniciar-sesion');
 
         // Iniciar sesión en un negocio
-        Route::post(
-            '/',
-            static function (Request $request, Negocio $negocio): RedirectResponse {
-                $correo = $_POST['correo'] ?? '';
-                $clave = $_POST['clave'] ?? '';
-
-                $usuario = Cliente::query()->where('correo', $correo)->firstOrFail();
-
-                if ($usuario && password_verify($clave, $usuario['clave'])) {
-                    session_start();
-                    $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'] = $usuario->id;
-
-                    return to_route('{negocio}', ['negocio' => $negocio]);
-                }
-
-                return to_route('{negocio}.iniciar-sesion', [
-                    'negocio' => $negocio,
-                ]);
-            },
-        );
+        Route::post('/', EcommerceIniciarSesion::class);
     });
 
     Route::prefix('registrarse')->group(static function (): void {
         // Ver registro de cliente en un negocio
-        Route::get(
-            '/',
-            [EcommerceClienteController::class, 'create'],
-        )->name('{negocio}.registrarse');
+        Route::get('/', [EcommerceClienteController::class, 'create'])
+            ->name('{negocio}.registrarse');
 
         // Registrarse como cliente en un negocio
         Route::post('/', [EcommerceClienteController::class, 'store']);
     });
 
     // Cerrar sesión en un negocio
-    Route::get(
-        'cerrar-sesion',
-        static function (Request $request, Negocio $negocio): RedirectResponse {
-            session_start();
-            unset($_SESSION['ecommerce'][$negocio->slug]);
-
-            return to_route('{negocio}', ['negocio' => $negocio]);
-        },
-    )->name('{negocio}.cerrar-sesion');
+    Route::get('cerrar-sesion', EcommerceCerrarSesion::class)
+        ->name('{negocio}.cerrar-sesion');
 
     Route::prefix('perfil')->group(static function (): void {
         // Editar perfil en un negocio
-        Route::get(
-            '/',
-            [EcommerceClienteController::class, 'edit'],
-        )->name('{negocio}.perfil');
+        Route::get('/', [EcommerceClienteController::class, 'edit'])
+            ->name('{negocio}.perfil');
 
         // Actualizar perfil en un negocio
         Route::post('/', [EcommerceClienteController::class, 'update']);
@@ -589,10 +472,8 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
 
     Route::prefix('carrito')->group(static function (): void {
         // Ver carrito en un negocio
-        Route::get(
-            '/',
-            [CarritoController::class, 'index'],
-        )->name('{negocio}.carrito');
+        Route::get('/', [CarritoController::class, 'index'])
+            ->name('{negocio}.carrito');
 
         Route::prefix('productos')->group(static function (): void {
             // Añadir producto al carrito en un negocio
@@ -609,20 +490,16 @@ Route::prefix('{negocio:slug}')->group(static function (): void {
 
     Route::prefix('reservas')->group(static function (): void {
         // Ver reservas en un negocio
-        Route::get(
-            '/',
-            [EcommerceReservaController::class, 'index'],
-        )->name('{negocio}.reservas');
+        Route::get('/', [EcommerceReservaController::class, 'index'])
+            ->name('{negocio}.reservas');
 
         // Reservar en un negocio
         Route::post('/', [EcommerceReservaController::class, 'store']);
 
         Route::prefix('{reserva}')->group(static function (): void {
             // Ver reserva en un negocio
-            Route::get(
-                '/',
-                [EcommerceReservaController::class, 'show'],
-            )->name('{negocio}.reservas.{reserva}');
+            Route::get('/', [EcommerceReservaController::class, 'show'])
+                ->name('{negocio}.reservas.{reserva}');
 
             // Cancelar reserva en un negocio
             Route::post('/', [EcommerceReservaController::class, 'update']);

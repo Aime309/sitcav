@@ -28,11 +28,7 @@ final class PerfilController extends Controller
     {
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-
-        $usuario->nombre = $_POST['nombre'] ?? $usuario->nombre;
-        $usuario->apellido = $_POST['apellido'] ?? $usuario->apellido;
         $usuario->correo = $_POST['correo'] ?? $usuario->correo;
-        $usuario->telefono = $_POST['telefono'] ?? $usuario->telefono;
 
         if (!empty($_POST['clave'])) {
             $usuario->clave = password_hash($_POST['clave'], PASSWORD_DEFAULT);

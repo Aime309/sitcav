@@ -55,23 +55,17 @@ final class EmpleadoController extends Controller
         $sucursal = Sucursal::query()->find($establecimiento);
 
         DB::transaction(static function () use ($negocio, $sucursal): void {
-            $imagen = $_FILES['imagen'] ?? ['error' => UPLOAD_ERR_NO_FILE];
-
             $empleado = Usuario::query()->create([
-                'nombre' => $_POST['nombre'] ?? '',
-                'apellido' => $_POST['apellido'] ?? '',
                 'correo' => $_POST['correo'] ?? '',
                 'clave' => password_hash($_POST['clave'] ?? '', PASSWORD_DEFAULT),
-                'telefono' => $_POST['telefono'] ?? '',
-                'imagen' => $imagen['error'] === UPLOAD_ERR_OK
-                    ? fopen($imagen['tmp_name'], 'rb')
-                    : null,
             ]);
 
             switch ($_POST['rol'] ?? '') {
                 case 'encargado':
-                    $empleado->roles()->create(['rol' => 'encargado']);
-                    $empleado->roles()->create(['rol' => 'vendedor']);
+                    $empleado->roles()->createMany([
+                        ['rol' => 'encargado'],
+                        ['rol' => 'vendedor'],
+                    ]);
 
                     break;
                 default:
