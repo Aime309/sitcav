@@ -5,24 +5,20 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string $id
- * @property string $usuario_id
+ * @property-read int $id
  * @property string $nombre
  * @property string $rif
  * @property string $direccion
  * @property string $telefono
  * @property string $slug
- * @property int $carga_inicial_abierta
- * @property int $activo
- * @property string $creado_en
- * @property string $actualizado_en
+ * @property 0|1 $carga_inicial_abierta
  * @property Collection<int, Producto> $productos
  * @property Collection<int, Sucursal> $sucursales
  * @property Collection<int, Proveedor> $proveedores
@@ -31,18 +27,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Collection<int, NegocioImagen> $imagenes
  * @property Collection<int, Usuario> $empleados
  */
-#[Table(keyType: 'string', incrementing: false)]
-#[Fillable('id', 'nombre', 'rif', 'direccion', 'telefono', 'slug')]
+#[WithoutTimestamps]
+#[Fillable(
+    'nombre',
+    'rif',
+    'direccion',
+    'telefono',
+    'slug',
+    'carga_inicial_abierta',
+)]
 final class Negocio extends Model
 {
-    public const ?string CREATED_AT = 'creado_en';
-    public const ?string UPDATED_AT = 'actualizado_en';
-
-    protected $attributes = [
-        'carga_inicial_abierta' => 1,
-        'activo' => 1,
-    ];
-
     /** @return HasMany<Producto> */
     public function productos(): HasMany
     {

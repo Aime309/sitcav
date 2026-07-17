@@ -34,7 +34,7 @@ define('PDO', DB::getPdo());
 
 DB::transaction(static function (): void {
     DB::statement('CREATE TABLE IF NOT EXISTS negocios (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
         nombre TEXT NOT NULL CHECK (length(nombre) > 0),
         rif TEXT NOT NULL UNIQUE CHECK (length(rif) > 0),
@@ -46,23 +46,18 @@ DB::transaction(static function (): void {
             OR telefono LIKE "+58426_______"
         ),
         slug TEXT NOT NULL UNIQUE CHECK (length(slug) > 0),
-        carga_inicial_abierta INT NOT NULL DEFAULT 1 CHECK (carga_inicial_abierta IN (0, 1)),
-        activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
-        creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
+        carga_inicial_abierta INT NOT NULL DEFAULT 1 CHECK (carga_inicial_abierta IN (0, 1))
     ) STRICT');
 
     DB::statement('CREATE TABLE IF NOT EXISTS negocios_imagenes (
-        id TEXT PRIMARY KEY,
-        negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
-        imagen BLOB NOT NULL,
-        creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
+        imagen BLOB NOT NULL
     ) STRICT');
 
     DB::statement('CREATE TABLE IF NOT EXISTS sucursales (
         id TEXT PRIMARY KEY,
-        negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
+        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
         nombre TEXT NOT NULL CHECK (length(nombre) > 0),
         rif TEXT NOT NULL UNIQUE CHECK (length(rif) > 0),
         direccion TEXT NOT NULL CHECK (length(direccion) > 0),
@@ -88,7 +83,7 @@ DB::transaction(static function (): void {
     DB::statement('CREATE TABLE IF NOT EXISTS asignaciones (
         id TEXT PRIMARY KEY,
         usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-        negocio_id TEXT REFERENCES negocios(id),
+        negocio_id INTEGER REFERENCES negocios(id),
         sucursal_id TEXT REFERENCES sucursales(id),
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
@@ -96,7 +91,7 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS clientes (
         id TEXT PRIMARY KEY,
-        negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
+        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
         nombre TEXT NOT NULL CHECK (length(nombre) > 0),
         apellido TEXT NOT NULL CHECK (length(apellido) > 0),
         correo TEXT NOT NULL UNIQUE CHECK (correo LIKE "%@gmail.com"),
@@ -115,7 +110,7 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS proveedores (
         id TEXT PRIMARY KEY,
-        negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
+        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
         nombre TEXT NOT NULL,
         rif TEXT NOT NULL UNIQUE,
         telefono TEXT NOT NULL UNIQUE,
@@ -129,7 +124,7 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS productos (
         id TEXT PRIMARY KEY,
-        negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
+        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
         nombre TEXT NOT NULL CHECK (length(nombre) > 0),
         descripcion TEXT NOT NULL,
         precio REAL NOT NULL CHECK (precio >= 0),
@@ -148,7 +143,7 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS inventarios (
         id TEXT PRIMARY KEY,
-        negocio_id TEXT REFERENCES negocios(id) ON DELETE CASCADE,
+        negocio_id INTEGER REFERENCES negocios(id) ON DELETE CASCADE,
         sucursal_id TEXT REFERENCES sucursales(id) ON DELETE CASCADE,
         producto_id TEXT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
         stock INT NOT NULL CHECK (stock >= 0),
@@ -158,7 +153,7 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS compras (
         id TEXT PRIMARY KEY,
-        negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
+        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
         establecimiento_tipo TEXT NOT NULL,
         establecimiento_id TEXT NOT NULL,
         proveedor_id TEXT NOT NULL REFERENCES proveedores(id) ON DELETE CASCADE,
@@ -180,7 +175,7 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS ventas (
         id TEXT PRIMARY KEY,
-        negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
+        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
         establecimiento_tipo TEXT NOT NULL,
         establecimiento_id TEXT NOT NULL,
         usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -211,7 +206,7 @@ DB::transaction(static function (): void {
         id TEXT PRIMARY KEY,
         carrito_id TEXT NOT NULL REFERENCES carritos(id) ON DELETE CASCADE,
         producto_id TEXT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
-        negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
+        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
         sucursal_id TEXT NOT NULL REFERENCES sucursales(id) ON DELETE CASCADE,
         cantidad INT NOT NULL,
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -220,7 +215,7 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS reservas (
         id TEXT PRIMARY KEY,
-        negocio_id TEXT NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
+        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
         cliente_id TEXT NOT NULL REFERENCES clientes(id) ON DELETE CASCADE,
         estado TEXT NOT NULL DEFAULT "activa",
         expira_en TEXT NOT NULL,

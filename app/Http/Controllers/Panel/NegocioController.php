@@ -10,6 +10,7 @@ use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 final class NegocioController extends Controller
 {
@@ -23,36 +24,26 @@ final class NegocioController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $nombre = $_POST['nombre'] ?? '';
-        $rif = $_POST['rif'] ?? '';
-        $direccion = $_POST['direccion'] ?? '';
-        $telefono = $_POST['telefono'] ?? '';
-        $slug = $_POST['slug'] ?? '';
+        DB::transaction(static function (): void {
+            session_start();
+            $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
-        PDO->beginTransaction();
+            $negocio = $usuario->negocios()->create([
+                'nombre' => $_POST['nombre'] ?? '',
+                'rif' => $_POST['rif'] ?? '',
+                'direccion' => $_POST['direccion'] ?? '',
+                'telefono' => $_POST['telefono'] ?? '',
+                'slug' => $_POST['slug'] ?? '',
+            ]);
 
-        session_start();
-        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-
-        $negocio = $usuario->negocios()->create([
-            'id' => uniqid(),
-            'nombre' => $nombre,
-            'rif' => $rif,
-            'direccion' => $direccion,
-            'telefono' => $telefono,
-            'slug' => $slug,
-        ]);
-
-        foreach ($_FILES['imagenes']['error'] as $indice => $error) {
-            if ($error === UPLOAD_ERR_OK) {
-                $negocio->imagenes()->create([
-                    'id' => uniqid(),
-                    'imagen' => fopen($_FILES['imagenes']['tmp_name'][$indice], 'rb'),
-                ]);
+            foreach ($_FILES['imagenes']['error'] as $indice => $error) {
+                if ($error === UPLOAD_ERR_OK) {
+                    $negocio->imagenes()->create([
+                        'imagen' => fopen($_FILES['imagenes']['tmp_name'][$indice], 'rb'),
+                    ]);
+                }
             }
-        }
-
-        PDO->commit();
+        });
 
         return to_route('panel.negocios');
     }
@@ -81,24 +72,16 @@ final class NegocioController extends Controller
 
     public function update(Request $request, Negocio $negocio): RedirectResponse
     {
-        $nombre = $_POST['nombre'];
-        $rif = $_POST['rif'];
-        $direccion = $_POST['direccion'];
-        $telefono = $_POST['telefono'];
-        $slug = $_POST['slug'];
-
-        $cargaInicialAbierta = ($_POST['carga_inicial_abierta'] ?? '') === 'on'
-            ? 1
-            : 0;
-
-        $negocio->nombre = $nombre;
-        $negocio->rif = $rif;
-        $negocio->direccion = $direccion;
-        $negocio->telefono = $telefono;
-        $negocio->slug = $slug;
-        $negocio->carga_inicial_abierta = $cargaInicialAbierta;
-
-        $negocio->save();
+        $negocio->update([
+            'nombre' => $_POST['nombre'] ?? $negocio->nombre,
+            'rif' => $_POST['rif'] ?? $negocio->rif,
+            'direccion' => $_POST['direccion'] ?? $negocio->direccion,
+            'telefono' => $_POST['telefono'] ?? $negocio->telefono,
+            'slug' => $_POST['slug'] ?? $negocio->slug,
+            'carga_inicial_abierta' => ($_POST['carga_inicial_abierta'] ?? '') === 'on'
+                ? 1
+                : 0,
+        ]);
 
         return to_route('panel.negocios.{negocio}.editar', [
             'negocio' => $negocio,
