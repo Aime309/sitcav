@@ -33,18 +33,6 @@ use Illuminate\Support\Facades\Route;
 define('PDO', DB::getPdo());
 
 DB::transaction(static function (): void {
-    DB::statement('CREATE TABLE IF NOT EXISTS usuarios (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        correo TEXT NOT NULL UNIQUE CHECK (correo LIKE "%@gmail.com"),
-        clave TEXT NOT NULL UNIQUE CHECK (length(clave) >= 8)
-    ) STRICT');
-
-    DB::statement('CREATE TABLE IF NOT EXISTS usuarios_roles (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-        rol TEXT NOT NULL CHECK (rol IN ("administrador", "encargado", "vendedor"))
-    ) STRICT');
-
     DB::statement('CREATE TABLE IF NOT EXISTS negocios (
         id TEXT PRIMARY KEY,
         usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,

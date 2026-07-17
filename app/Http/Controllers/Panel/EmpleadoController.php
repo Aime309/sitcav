@@ -95,12 +95,16 @@ final class EmpleadoController extends Controller
         Usuario $empleado,
     ): RedirectResponse {
         DB::transaction(static function () use ($empleado): void {
-            $empleado->roles->each(static fn(UsuarioRol $rol) => $rol->delete());
+            $empleado
+                ->roles
+                ->each(static fn(UsuarioRol $rol): ?bool => $rol->delete());
 
             switch ($_POST['rol'] ?? '') {
                 case 'encargado':
-                    $empleado->roles()->create(['rol' => 'encargado']);
-                    $empleado->roles()->create(['rol' => 'vendedor']);
+                    $empleado->roles()->createMany([
+                        ['rol' => 'encargado'],
+                        ['rol' => 'vendedor'],
+                    ]);
 
                     break;
                 default:

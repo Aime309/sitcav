@@ -23,13 +23,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable('correo', 'clave')]
 final class Usuario extends Model
 {
-    /** @return HasMany<UsuarioRol> */
+    /** @return HasMany<UsuarioRol, $this> */
     public function roles(): HasMany
     {
         return $this->hasMany(UsuarioRol::class);
     }
 
-    /** @return HasMany<Negocio> */
+    /** @return HasMany<Negocio, $this> */
     public function negocios(): HasMany
     {
         return $this->hasMany(Negocio::class);
