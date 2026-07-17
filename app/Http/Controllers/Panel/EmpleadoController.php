@@ -89,13 +89,12 @@ final class EmpleadoController extends Controller
         ]);
     }
 
-    public function update(Request $request, Negocio $negocio, Usuario $empleado): RedirectResponse
-    {
+    public function update(
+        Request $request,
+        Negocio $negocio,
+        Usuario $empleado,
+    ): RedirectResponse {
         DB::transaction(static function () use ($empleado): void {
-            $empleado->activo = ($_POST['activo'] ?? '') === 'on'
-                ? 1
-                : 0;
-
             $empleado->roles->each(static fn(UsuarioRol $rol) => $rol->delete());
 
             switch ($_POST['rol'] ?? '') {

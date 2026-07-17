@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int $id
  * @property string $correo
  * @property string $clave
- * @property 0|1 $activo
  * @property-read Collection<UsuarioRol> $roles
  * @property Collection<int, Negocio> $negocios
  * @property ?Negocio $negocio

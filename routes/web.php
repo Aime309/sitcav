@@ -36,8 +36,7 @@ DB::transaction(static function (): void {
     DB::statement('CREATE TABLE IF NOT EXISTS usuarios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         correo TEXT NOT NULL UNIQUE CHECK (correo LIKE "%@gmail.com"),
-        clave TEXT NOT NULL UNIQUE CHECK (length(clave) >= 8),
-        activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1))
+        clave TEXT NOT NULL UNIQUE CHECK (length(clave) >= 8)
     ) STRICT');
 
     DB::statement('CREATE TABLE IF NOT EXISTS usuarios_roles (

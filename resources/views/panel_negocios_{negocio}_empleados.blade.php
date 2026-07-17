@@ -5,24 +5,15 @@
                 @foreach ($empleados as $empleado)
                     <article class="w3-third w3-center">
                         {{ $empleado->correo }}
-
                         <form
                             method="post"
                             action="{{ route(
                                 'panel.negocios.{negocio}.empleados.{empleado}',
                                 [
                                     'negocio' => $negocio,
-                                    'empleado' => $empleado
+                                    'empleado' => $empleado,
                                 ],
                             ) }}">
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    name="activo"
-                                    @checked($empleado->activo) />
-                                Activo
-                            </label>
-
                             <select name="rol" required class="w3-select">
                                 <option
                                     value="encargado"
@@ -53,7 +44,6 @@
                                     </optgroup>
                                 @endforeach
                             </select>
-
                             <input
                                 type="submit"
                                 value="Actualizar"
