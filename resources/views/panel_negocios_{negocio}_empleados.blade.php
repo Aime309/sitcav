@@ -31,13 +31,13 @@
                                     <optgroup label="{{ $negocio['nombre'] }}">
                                         <option
                                             value="{{ $negocio['id'] }}"
-                                            @selected($empleado['asignaciones'][0]['negocio_id'] === $negocio['id'])>
+                                            @selected(($empleado->negocios[0]?->id ?? null) === $negocio->id)>
                                             Principal
                                         </option>
                                         @foreach ($negocio->sucursales as $sucursal)
                                             <option
                                                 value="{{ $sucursal['id'] }}"
-                                                @selected($empleado['asignaciones'][0]['sucursal_id'] === $sucursal['id'])>
+                                                @selected(($empleado->sucursales[0]?->id ?? null) === $sucursal->id)>
                                                 {{ $sucursal['nombre'] }}
                                             </option>
                                         @endforeach
@@ -57,7 +57,6 @@
 
         <form
             method="post"
-            enctype="multipart/form-data"
             class="w3-half w3-card-4">
             <select name="rol" required class="w3-select">
                 <option value="encargado">Encargado</option>

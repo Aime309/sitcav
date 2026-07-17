@@ -43,9 +43,10 @@ final class Sucursal extends Model
         return $this->hasMany(SucursalImagen::class);
     }
 
+    /** @return BelongsToMany<Usuario, $this> */
     public function empleados(): BelongsToMany
     {
-        return $this->belongsToMany(Usuario::class, 'asignaciones');
+        return $this->belongsToMany(Usuario::class, 'usuarios_establecimientos');
     }
 
     public function negocio(): BelongsTo

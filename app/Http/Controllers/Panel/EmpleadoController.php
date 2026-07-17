@@ -23,22 +23,21 @@ final class EmpleadoController extends Controller
         $empleados = [];
 
         foreach ($negocio->empleados as $empleado) {
+            if ($empleado->is($usuario)) {
+                continue;
+            }
+
             $empleados[] = $empleado;
         }
 
         foreach ($negocio->sucursales as $sucursal) {
             foreach ($sucursal->empleados as $empleado) {
+                if ($empleado->is($usuario)) {
+                    continue;
+                }
+
                 $empleados[] = $empleado;
             }
-        }
-
-        foreach ($empleados as $empleado) {
-            $empleado['asignaciones'] = PDO
-                ->query("
-                    SELECT * FROM asignaciones
-                    WHERE usuario_id = '{$empleado['id']}'
-                ")
-                ->fetchAll();
         }
 
         return view('panel_negocios_{negocio}_empleados', [
@@ -73,11 +72,10 @@ final class EmpleadoController extends Controller
             }
 
             DB::insert('
-                INSERT INTO asignaciones
-                (id, usuario_id, negocio_id, sucursal_id) VALUES
-                (:id, :usuario_id, :negocio_id, :sucursal_id)
+                INSERT INTO usuarios_establecimientos
+                (usuario_id, negocio_id, sucursal_id) VALUES
+                (:usuario_id, :negocio_id, :sucursal_id)
             ', [
-                ':id' => uniqid(),
                 ':usuario_id' => $empleado->id,
                 ':negocio_id' => $negocio?->id,
                 ':sucursal_id' => $sucursal?->id,
@@ -99,6 +97,9 @@ final class EmpleadoController extends Controller
                 ->roles
                 ->each(static fn(UsuarioRol $rol): ?bool => $rol->delete());
 
+            $negocio = Negocio::query()->find($_POST['establecimiento'] ?? null);
+            $sucursal = Sucursal::query()->find($_POST['establecimiento'] ?? null);
+
             switch ($_POST['rol'] ?? '') {
                 case 'encargado':
                     $empleado->roles()->createMany([
@@ -114,14 +115,13 @@ final class EmpleadoController extends Controller
             $empleado->save();
 
             DB::update('
-                UPDATE asignaciones SET
+                UPDATE usuarios_establecimientos SET
                 negocio_id = :negocio_id,
-                sucursal_id = :sucursal_id,
-                actualizado_en = CURRENT_TIMESTAMP
+                sucursal_id = :sucursal_id
                 WHERE usuario_id = :usuario_id
             ', [
-                ':negocio_id' => Negocio::query()->find($_POST['establecimiento'] ?? null)?->id,
-                ':sucursal_id' => Sucursal::query()->find($_POST['establecimiento'] ?? null)?->id,
+                ':negocio_id' => $negocio?->id,
+                ':sucursal_id' => $sucursal?->id,
                 ':usuario_id' => $empleado->id,
             ]);
         });

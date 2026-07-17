@@ -73,6 +73,6 @@ final class Negocio extends Model
 
     public function empleados(): BelongsToMany
     {
-        return $this->belongsToMany(Usuario::class, 'asignaciones');
+        return $this->belongsToMany(Usuario::class, 'usuarios_establecimientos');
     }
 }

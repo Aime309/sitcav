@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Models\Negocio;
+use App\Models\Sucursal;
 use App\Models\Usuario;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -25,11 +27,22 @@ return new class extends Migration
                 $table->enum('rol', ['administrador', 'encargado', 'vendedor']);
             },
         );
+
+        Schema::create(
+            'usuarios_establecimientos',
+            static function (Blueprint $table): void {
+                $table->id();
+                $table->foreignIdFor(Usuario::class);
+                $table->foreignIdFor(Negocio::class)->nullable();
+                $table->foreignIdFor(Sucursal::class)->nullable();
+            },
+        );
     }
 
     public function down(): void
     {
         Schema::dropIfExists('usuarios');
         Schema::dropIfExists('usuarios_roles');
+        Schema::dropIfExists('usuarios_establecimientos');
     }
 };

@@ -21,11 +21,6 @@ final class IniciarSesion extends Controller
         $usuario = Usuario::query()->where('correo', $correo)->firstOrFail();
 
         if (password_verify($clave, $usuario->clave)) {
-            $usuario['asignacion'] = (array) (DB::select(
-                'SELECT * FROM asignaciones WHERE usuario_id = ?',
-                [$usuario->id],
-            )[0] ?? new stdClass);
-
             session_start();
             $_SESSION['panel']['usuario']['id'] = $usuario->id;
 
@@ -33,20 +28,16 @@ final class IniciarSesion extends Controller
                 return to_route('panel.negocios');
             }
 
-            if ($usuario['asignacion']) {
-                if ($usuario['asignacion']['negocio_id']) {
-                    return to_route('panel.negocios.{negocio}', [
-                        'negocio' => $usuario['asignacion']['negocio_id'],
-                    ]);
-                }
-
-                $sucursal = Sucursal::query()->find($usuario['asignacion']['sucursal_id']);
-
-                return to_route('panel.negocios.{negocio}.sucursales.{sucursal}', [
-                    'negocio' => $sucursal->negocio->id,
-                    'sucursal' => $sucursal->id,
+            if ($usuario->negocios->count()) {
+                return to_route('panel.negocios.{negocio}', [
+                    'negocio' => $usuario->negocios[0],
                 ]);
             }
+
+            return to_route('panel.negocios.{negocio}.sucursales.{sucursal}', [
+                'negocio' => $usuario->sucursales[0]->negocio->id,
+                'sucursal' => $usuario->sucursales[0]->id,
+            ]);
         }
 
         return to_route('panel.iniciar-sesion');

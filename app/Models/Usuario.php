@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -15,9 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $correo
  * @property string $clave
  * @property-read Collection<UsuarioRol> $roles
- * @property Collection<int, Negocio> $negocios
- * @property ?Negocio $negocio
- * @property ?Sucursal $sucursal
+ * @property-read Collection<int, Negocio> $negocios
+ * @property-read Collection<int, Sucursal> $sucursales
  */
 #[WithoutTimestamps]
 #[Fillable('correo', 'clave')]
@@ -29,9 +29,15 @@ final class Usuario extends Model
         return $this->hasMany(UsuarioRol::class);
     }
 
-    /** @return HasMany<Negocio, $this> */
-    public function negocios(): HasMany
+    /** @return BelongsToMany<Negocio, $this> */
+    public function negocios(): BelongsToMany
     {
-        return $this->hasMany(Negocio::class);
+        return $this->belongsToMany(Negocio::class, 'usuarios_establecimientos');
+    }
+
+    /** @return BelongsToMany<Sucursal, $this> */
+    public function sucursales(): BelongsToMany
+    {
+        return $this->belongsToMany(Sucursal::class, 'usuarios_establecimientos');
     }
 }

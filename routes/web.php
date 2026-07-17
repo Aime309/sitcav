@@ -35,7 +35,6 @@ define('PDO', DB::getPdo());
 DB::transaction(static function (): void {
     DB::statement('CREATE TABLE IF NOT EXISTS negocios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
         nombre TEXT NOT NULL CHECK (length(nombre) > 0),
         rif TEXT NOT NULL UNIQUE CHECK (length(rif) > 0),
         direccion TEXT NOT NULL CHECK (length(direccion) > 0),
@@ -76,15 +75,6 @@ DB::transaction(static function (): void {
         id TEXT PRIMARY KEY,
         sucursal_id TEXT NOT NULL REFERENCES sucursales(id) ON DELETE CASCADE,
         imagen BLOB NOT NULL,
-        creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
-    ) STRICT');
-
-    DB::statement('CREATE TABLE IF NOT EXISTS asignaciones (
-        id TEXT PRIMARY KEY,
-        usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-        negocio_id INTEGER REFERENCES negocios(id),
-        sucursal_id TEXT REFERENCES sucursales(id),
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
     ) STRICT');
