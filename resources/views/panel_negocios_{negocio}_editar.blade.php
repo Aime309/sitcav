@@ -1,9 +1,17 @@
 <x-estructura-panel titulo="Editar negocio" :negocio="$negocio" :usuario="$usuario">
     <form
         method="post"
-        enctype="multipart/form-data"
         class="w3-container"
-        action="{{ route('panel.negocios.{negocio}', ['negocio' => $negocio['id']]) }}">
+        action="{{ route('panel.negocios.{negocio}', [
+            'negocio' => $negocio['id']
+        ]) }}"
+        x-data='{
+            nombre: @json($negocio->nombre),
+
+            get slug() {
+                return this.nombre.toLowerCase().replace(/\s+/, "-");
+            },
+        }'>
         <input
             name="nombre"
             placeholder="Nombre"
@@ -12,7 +20,7 @@
             pattern="[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+"
             title="El nombre debe contener solo letras y espacios."
             class="w3-input"
-            value="{{ $negocio['nombre'] }}"
+            x-model="nombre"
         />
         <input
             name="rif"
@@ -41,14 +49,10 @@
             value="{{ $negocio['telefono'] }}"
         />
         <input
-            name="slug"
             placeholder="Slug"
-            required
-            minlength="1"
-            pattern="[a-z0-9\-]+"
-            title="El slug debe contener solo letras minúsculas, números y guiones."
             class="w3-input"
-            value="{{ $negocio['slug'] }}"
+            x-model="slug"
+            disabled
         />
         <label>
             <input

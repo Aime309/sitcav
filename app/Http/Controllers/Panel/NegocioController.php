@@ -27,22 +27,16 @@ final class NegocioController extends Controller
         DB::transaction(static function (): void {
             session_start();
             $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+            $nombre = $_POST['nombre'] ?? '';
+            $slug = preg_replace('/\\s+/', '-', strtolower($nombre));
 
-            $negocio = $usuario->negocios()->create([
-                'nombre' => $_POST['nombre'] ?? '',
+            $usuario->negocios()->create([
+                'nombre' => $nombre,
                 'rif' => $_POST['rif'] ?? '',
                 'direccion' => $_POST['direccion'] ?? '',
                 'telefono' => $_POST['telefono'] ?? '',
-                'slug' => $_POST['slug'] ?? '',
+                'slug' => $slug,
             ]);
-
-            foreach ($_FILES['imagenes']['error'] as $indice => $error) {
-                if ($error === UPLOAD_ERR_OK) {
-                    $negocio->imagenes()->create([
-                        'imagen' => fopen($_FILES['imagenes']['tmp_name'][$indice], 'rb'),
-                    ]);
-                }
-            }
         });
 
         return to_route('panel.negocios');
@@ -72,12 +66,15 @@ final class NegocioController extends Controller
 
     public function update(Request $request, Negocio $negocio): RedirectResponse
     {
+        $nombre = $_POST['nombre'] ?? $negocio->nombre;
+        $slug = preg_replace('/\\s+/', '-', strtolower($nombre));
+
         $negocio->update([
-            'nombre' => $_POST['nombre'] ?? $negocio->nombre,
+            'nombre' => $nombre,
             'rif' => $_POST['rif'] ?? $negocio->rif,
             'direccion' => $_POST['direccion'] ?? $negocio->direccion,
             'telefono' => $_POST['telefono'] ?? $negocio->telefono,
-            'slug' => $_POST['slug'] ?? $negocio->slug,
+            'slug' => $slug,
             'carga_inicial_abierta' => ($_POST['carga_inicial_abierta'] ?? '') === 'on'
                 ? 1
                 : 0,

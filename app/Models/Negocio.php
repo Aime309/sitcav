@@ -24,7 +24,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Collection<int, Proveedor> $proveedores
  * @property Collection<int, Cliente> $clientes
  * @property Collection<int, Reserva> $reservas
- * @property Collection<int, NegocioImagen> $imagenes
  * @property Collection<int, Usuario> $empleados
  */
 #[WithoutTimestamps]
@@ -65,12 +64,7 @@ final class Negocio extends Model
         return $this->hasMany(Reserva::class);
     }
 
-    /** @return HasMany<NegocioImagen> */
-    public function imagenes(): HasMany
-    {
-        return $this->hasMany(NegocioImagen::class);
-    }
-
+    /** @return BelongsToMany<Usuario, $this> */
     public function empleados(): BelongsToMany
     {
         return $this->belongsToMany(Usuario::class, 'usuarios_establecimientos');

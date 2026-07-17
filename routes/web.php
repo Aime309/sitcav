@@ -33,27 +33,6 @@ use Illuminate\Support\Facades\Route;
 define('PDO', DB::getPdo());
 
 DB::transaction(static function (): void {
-    DB::statement('CREATE TABLE IF NOT EXISTS negocios (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT NOT NULL CHECK (length(nombre) > 0),
-        rif TEXT NOT NULL UNIQUE CHECK (length(rif) > 0),
-        direccion TEXT NOT NULL CHECK (length(direccion) > 0),
-        telefono TEXT NOT NULL UNIQUE CHECK (
-            telefono LIKE "+58416_______"
-            OR telefono LIKE "+58414_______"
-            OR telefono LIKE "+58424_______"
-            OR telefono LIKE "+58426_______"
-        ),
-        slug TEXT NOT NULL UNIQUE CHECK (length(slug) > 0),
-        carga_inicial_abierta INT NOT NULL DEFAULT 1 CHECK (carga_inicial_abierta IN (0, 1))
-    ) STRICT');
-
-    DB::statement('CREATE TABLE IF NOT EXISTS negocios_imagenes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
-        imagen BLOB NOT NULL
-    ) STRICT');
-
     DB::statement('CREATE TABLE IF NOT EXISTS sucursales (
         id TEXT PRIMARY KEY,
         negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
