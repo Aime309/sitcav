@@ -11,6 +11,7 @@ use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 final class SucursalController extends Controller
 {
@@ -27,31 +28,17 @@ final class SucursalController extends Controller
 
     public function store(Request $request, Negocio $negocio): RedirectResponse
     {
-        $nombre = $_POST['nombre'] ?? '';
-        $rif = $_POST['rif'] ?? '';
-        $direccion = $_POST['direccion'] ?? '';
-        $telefono = $_POST['telefono'] ?? '';
+        DB::transaction(static function () use ($negocio): void {
+            session_start();
+            $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
-        PDO->beginTransaction();
-
-        $sucursal = $negocio->sucursales()->create([
-            'id' => uniqid(),
-            'nombre' => $nombre,
-            'rif' => $rif,
-            'direccion' => $direccion,
-            'telefono' => $telefono,
-        ]);
-
-        foreach ($_FILES['imagenes']['error'] as $indice => $error) {
-            if ($error === UPLOAD_ERR_OK) {
-                $sucursal->imagenes()->create([
-                    'id' => uniqid(),
-                    'imagen' => fopen($_FILES['imagenes']['tmp_name'][$indice], 'rb'),
-                ]);
-            }
-        }
-
-        PDO->commit();
+            $usuario->sucursales()->create([
+                'nombre' => $_POST['nombre'] ?? '',
+                'direccion' => $_POST['direccion'] ?? '',
+                'telefono' => $_POST['telefono'] ?? '',
+                'negocio_id' => $negocio->id,
+            ]);
+        });
 
         return to_route('panel.negocios.{negocio}.sucursales', [
             'negocio' => $negocio,
@@ -63,14 +50,11 @@ final class SucursalController extends Controller
         session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
-        return view(
-            'panel_negocios_{negocio}_sucursales_{sucursal}',
-            [
-                'negocio' => $negocio,
-                'usuario' => $usuario,
-                'sucursal' => $sucursal,
-            ],
-        );
+        return view('panel_negocios_{negocio}_sucursales_{sucursal}', [
+            'negocio' => $negocio,
+            'usuario' => $usuario,
+            'sucursal' => $sucursal,
+        ]);
     }
 
     public function edit(Request $request, Negocio $negocio, Sucursal $sucursal): View
@@ -90,23 +74,14 @@ final class SucursalController extends Controller
 
     public function update(Request $request, Negocio $negocio, Sucursal $sucursal): RedirectResponse
     {
-        $nombre = $_POST['nombre'] ?? '';
-        $rif = $_POST['rif'] ?? '';
-        $direccion = $_POST['direccion'] ?? '';
-        $telefono = $_POST['telefono'] ?? '';
+        $sucursal->update([
+            'nombre' => $_POST['nombre'] ?? $sucursal->nombre,
+            'direccion' => $_POST['direccion'] ?? $sucursal->direccion,
+            'telefono' => $_POST['telefono'] ?? $sucursal->telefono,
+        ]);
 
-        $sucursal->nombre = $nombre;
-        $sucursal->rif = $rif;
-        $sucursal->direccion = $direccion;
-        $sucursal->telefono = $telefono;
-
-        $sucursal->save();
-
-        return to_route(
-            'panel.negocios.{negocio}.sucursales',
-            [
-                'negocio' => $negocio,
-            ],
-        );
+        return to_route('panel.negocios.{negocio}.sucursales', [
+            'negocio' => $negocio,
+        ]);
     }
 }

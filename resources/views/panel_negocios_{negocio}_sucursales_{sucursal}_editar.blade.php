@@ -5,7 +5,6 @@
     <form
         method="post"
         class="w3-container"
-        enctype="multipart/form-data"
         action="{{ route('panel.negocios.{negocio}.sucursales.{sucursal}', [
             'negocio' => $negocio,
             'sucursal' => $sucursal,
@@ -19,14 +18,6 @@
             title="El nombre debe contener solo letras y espacios."
             class="w3-input"
             value="{{ $sucursal->nombre }}"
-        />
-        <input
-            name="rif"
-            placeholder="RIF"
-            required
-            minlength="1"
-            class="w3-input"
-            value="{{ $sucursal->rif }}"
         />
         <input
             name="direccion"

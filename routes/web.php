@@ -33,31 +33,6 @@ use Illuminate\Support\Facades\Route;
 define('PDO', DB::getPdo());
 
 DB::transaction(static function (): void {
-    DB::statement('CREATE TABLE IF NOT EXISTS sucursales (
-        id TEXT PRIMARY KEY,
-        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
-        nombre TEXT NOT NULL CHECK (length(nombre) > 0),
-        rif TEXT NOT NULL UNIQUE CHECK (length(rif) > 0),
-        direccion TEXT NOT NULL CHECK (length(direccion) > 0),
-        telefono TEXT NOT NULL UNIQUE CHECK (
-            telefono LIKE "+58416_______"
-            OR telefono LIKE "+58414_______"
-            OR telefono LIKE "+58424_______"
-            OR telefono LIKE "+58426_______"
-        ),
-        activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
-        creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
-    ) STRICT');
-
-    DB::statement('CREATE TABLE IF NOT EXISTS sucursales_imagenes (
-        id TEXT PRIMARY KEY,
-        sucursal_id TEXT NOT NULL REFERENCES sucursales(id) ON DELETE CASCADE,
-        imagen BLOB NOT NULL,
-        creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
-    ) STRICT');
-
     DB::statement('CREATE TABLE IF NOT EXISTS clientes (
         id TEXT PRIMARY KEY,
         negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
@@ -113,7 +88,7 @@ DB::transaction(static function (): void {
     DB::statement('CREATE TABLE IF NOT EXISTS inventarios (
         id TEXT PRIMARY KEY,
         negocio_id INTEGER REFERENCES negocios(id) ON DELETE CASCADE,
-        sucursal_id TEXT REFERENCES sucursales(id) ON DELETE CASCADE,
+        sucursal_id INTEGER REFERENCES sucursales(id) ON DELETE CASCADE,
         producto_id TEXT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
         stock INT NOT NULL CHECK (stock >= 0),
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -122,9 +97,8 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS compras (
         id TEXT PRIMARY KEY,
-        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
-        establecimiento_tipo TEXT NOT NULL,
-        establecimiento_id TEXT NOT NULL,
+        negocio_id INTEGER REFERENCES negocios(id) ON DELETE CASCADE,
+        sucursal_id INTEGER REFERENCES sucursales(id) ON DELETE CASCADE,
         proveedor_id TEXT NOT NULL REFERENCES proveedores(id) ON DELETE CASCADE,
         usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
         observaciones TEXT NOT NULL,
@@ -144,9 +118,8 @@ DB::transaction(static function (): void {
 
     DB::statement('CREATE TABLE IF NOT EXISTS ventas (
         id TEXT PRIMARY KEY,
-        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
-        establecimiento_tipo TEXT NOT NULL,
-        establecimiento_id TEXT NOT NULL,
+        negocio_id INTEGER REFERENCES negocios(id) ON DELETE CASCADE,
+        sucursal_id INTEGER REFERENCES sucursales(id) ON DELETE CASCADE,
         usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
         cliente_id TEXT NOT NULL REFERENCES clientes(id) ON DELETE CASCADE,
         reserva_id TEXT REFERENCES reservas(id) ON DELETE SET NULL,
@@ -175,8 +148,8 @@ DB::transaction(static function (): void {
         id TEXT PRIMARY KEY,
         carrito_id TEXT NOT NULL REFERENCES carritos(id) ON DELETE CASCADE,
         producto_id TEXT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
-        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
-        sucursal_id TEXT NOT NULL REFERENCES sucursales(id) ON DELETE CASCADE,
+        negocio_id INTEGER REFERENCES negocios(id) ON DELETE CASCADE,
+        sucursal_id INTEGER REFERENCES sucursales(id) ON DELETE CASCADE,
         cantidad INT NOT NULL,
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -196,8 +169,8 @@ DB::transaction(static function (): void {
         id TEXT PRIMARY KEY,
         reserva_id TEXT NOT NULL REFERENCES reservas(id) ON DELETE CASCADE,
         producto_id TEXT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
-        establecimiento_tipo TEXT NOT NULL,
-        establecimiento_id TEXT NOT NULL,
+        negocio_id INTEGER REFERENCES negocios(id) ON DELETE CASCADE,
+        sucursal_id INTEGER REFERENCES sucursales(id) ON DELETE CASCADE,
         cantidad INT NOT NULL,
         creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -240,10 +213,8 @@ Route::prefix('panel')->group(static function (): void {
             Route::get('/', [NegocioController::class, 'show'])->name('panel.negocios.{negocio}');
 
             // Editar negocio
-            Route::get(
-                'editar',
-                [NegocioController::class, 'edit'],
-            )->name('panel.negocios.{negocio}.editar');
+            Route::get('editar', [NegocioController::class, 'edit'])
+                ->name('panel.negocios.{negocio}.editar');
 
             // Actualizar negocio
             Route::post('/', [NegocioController::class, 'update']);
