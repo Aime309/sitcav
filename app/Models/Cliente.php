@@ -5,30 +5,17 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string $id
- * @property string $negocio_id
+ * @property-read int $id
  * @property string $nombre
  * @property string $apellido
  * @property string $correo
  * @property string $clave
  * @property string $telefono
- * @property string $imagen
- * @property int $activo
- * @property string $creado_en
- * @property string $actualizado_en
  */
-#[Fillable('id', 'nombre', 'apellido', 'correo', 'clave', 'telefono', 'imagen')]
-#[Table(keyType: 'string', incrementing: false)]
-final class Cliente extends Model
-{
-    public const ?string CREATED_AT = 'creado_en';
-    public const ?string UPDATED_AT = 'actualizado_en';
-
-    protected $attributes = [
-        'activo' => 1,
-    ];
-}
+#[WithoutTimestamps]
+#[Fillable('nombre', 'apellido', 'correo', 'clave', 'telefono')]
+final class Cliente extends Model {}

@@ -1,5 +1,5 @@
 <x-estructura-ecommerce titulo="Registrarse" :negocio="$negocio">
-    <form method="post" enctype="multipart/form-data" class="w3-container">
+    <form method="post" class="w3-container">
         <input
             name="nombre"
             placeholder="Nombre"
@@ -46,11 +46,6 @@
             class="w3-input"
             pattern="+58(416|426|414|424)\d{7}"
             title="El número de teléfono debe tener el formato +58(416|426|414|424) seguido de 7 dígitos."
-        />
-        <input
-            name="imagen"
-            type="file"
-            accept="image/*"
         />
         <input
             type="submit"

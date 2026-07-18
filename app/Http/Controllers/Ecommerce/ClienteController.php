@@ -20,26 +20,18 @@ final class ClienteController extends Controller
 
     public function store(Request $request, Negocio $negocio): RedirectResponse
     {
-        $nombre = $_POST['nombre'] ?? '';
-        $apellido = $_POST['apellido'] ?? '';
-        $correo = $_POST['correo'] ?? '';
-        $clave = $_POST['clave'] ?? '';
-        $telefono = $_POST['telefono'] ?? '';
-        $imagen = $_FILES['imagen'] ?? ['error' => UPLOAD_ERR_NO_FILE];
-
-        $negocio->clientes()->create([
-            'id' => uniqid(),
-            'nombre' => $nombre,
-            'apellido' => $apellido,
-            'correo' => $correo,
-            'clave' => password_hash($clave, PASSWORD_DEFAULT),
-            'telefono' => $telefono,
-            'imagen' => $imagen['error'] === UPLOAD_ERR_OK
-                ? fopen($imagen['tmp_name'], 'rb')
-                : null,
+        $cliente = $negocio->clientes()->create([
+            'nombre' => $_POST['nombre'] ?? '',
+            'apellido' => $_POST['apellido'] ?? '',
+            'correo' => $_POST['correo'] ?? '',
+            'clave' => password_hash($_POST['clave'] ?? '', PASSWORD_DEFAULT),
+            'telefono' => $_POST['telefono'] ?? '',
         ]);
 
-        return to_route('{negocio}.iniciar-sesion', [
+        session_start();
+        $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'] = $cliente->id;
+
+        return to_route('{negocio}', [
             'negocio' => $negocio['slug'],
         ]);
     }
@@ -47,7 +39,7 @@ final class ClienteController extends Controller
     public function edit(Request $request, Negocio $negocio): View
     {
         session_start();
-        $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
+        $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id']);
 
         return view('{negocio}_perfil', [
             'negocio' => $negocio,
@@ -58,7 +50,8 @@ final class ClienteController extends Controller
     public function update(Request $request, Negocio $negocio): RedirectResponse
     {
         session_start();
-        $cliente = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
+        $cliente = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id']);
+
         $cliente->nombre = $_POST['nombre'] ?? $cliente->nombre;
         $cliente->apellido = $_POST['apellido'] ?? $cliente->apellido;
         $cliente->correo = $_POST['correo'] ?? $cliente->correo;

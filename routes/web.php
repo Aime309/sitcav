@@ -33,25 +33,6 @@ use Illuminate\Support\Facades\Route;
 define('PDO', DB::getPdo());
 
 DB::transaction(static function (): void {
-    DB::statement('CREATE TABLE IF NOT EXISTS clientes (
-        id TEXT PRIMARY KEY,
-        negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,
-        nombre TEXT NOT NULL CHECK (length(nombre) > 0),
-        apellido TEXT NOT NULL CHECK (length(apellido) > 0),
-        correo TEXT NOT NULL UNIQUE CHECK (correo LIKE "%@gmail.com"),
-        clave TEXT NOT NULL UNIQUE CHECK (length(clave) >= 8),
-        telefono TEXT NOT NULL UNIQUE CHECK (
-            telefono LIKE "+58416_______"
-            OR telefono LIKE "+58414_______"
-            OR telefono LIKE "+58424_______"
-            OR telefono LIKE "+58426_______"
-        ),
-        imagen BLOB,
-        activo INT NOT NULL DEFAULT 1 CHECK (activo IN (0, 1)),
-        creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP CHECK (actualizado_en >= creado_en)
-    ) STRICT');
-
     DB::statement('CREATE TABLE IF NOT EXISTS proveedores (
         id TEXT PRIMARY KEY,
         negocio_id INTEGER NOT NULL REFERENCES negocios(id) ON DELETE CASCADE,

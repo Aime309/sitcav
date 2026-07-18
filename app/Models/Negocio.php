@@ -19,12 +19,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $telefono
  * @property string $slug
  * @property 0|1 $carga_inicial_abierta
- * @property Collection<int, Producto> $productos
- * @property Collection<int, Sucursal> $sucursales
- * @property Collection<int, Proveedor> $proveedores
- * @property Collection<int, Cliente> $clientes
- * @property Collection<int, Reserva> $reservas
- * @property Collection<int, Usuario> $empleados
+ * @property-read Collection<int, Producto> $productos
+ * @property-read Collection<int, Sucursal> $sucursales
+ * @property-read Collection<int, Proveedor> $proveedores
+ * @property-read Collection<int, Cliente> $clientes
+ * @property-read Collection<int, Reserva> $reservas
+ * @property-read Collection<int, Usuario> $empleados
  */
 #[WithoutTimestamps]
 #[Fillable(
@@ -54,6 +54,7 @@ final class Negocio extends Model
         return $this->hasMany(Proveedor::class);
     }
 
+    /** @return HasMany<Cliente, $this> */
     public function clientes(): HasMany
     {
         return $this->hasMany(Cliente::class);
