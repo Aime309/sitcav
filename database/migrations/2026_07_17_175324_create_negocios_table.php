@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('negocios', static function (Blueprint $table): void {
             $table->id();
-            $table->string('nombre');
+            $table->string('nombre')->unique();
             $table->string('rif')->unique();
             $table->string('direccion')->unique();
             $table->string('telefono')->unique();

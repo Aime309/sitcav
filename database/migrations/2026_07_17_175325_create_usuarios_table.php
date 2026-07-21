@@ -23,8 +23,18 @@ return new class extends Migration
             'usuarios_roles',
             static function (Blueprint $table): void {
                 $table->id();
-                $table->foreignIdFor(Usuario::class);
-                $table->enum('rol', ['administrador', 'encargado', 'vendedor']);
+
+                $table
+                    ->foreignIdFor(Usuario::class)
+                    ->constrained()
+                    ->cascadeOnDelete()
+                    ->cascadeOnUpdate();
+
+                $table->enum('rol', [
+                    'administrador',
+                    'encargado',
+                    'vendedor'
+                ]);
             },
         );
 
@@ -32,9 +42,26 @@ return new class extends Migration
             'usuarios_establecimientos',
             static function (Blueprint $table): void {
                 $table->id();
-                $table->foreignIdFor(Usuario::class);
-                $table->foreignIdFor(Negocio::class)->nullable();
-                $table->foreignIdFor(Sucursal::class)->nullable();
+
+                $table
+                    ->foreignIdFor(Usuario::class)
+                    ->constrained()
+                    ->cascadeOnDelete()
+                    ->cascadeOnUpdate();
+
+                $table
+                    ->foreignIdFor(Negocio::class)
+                    ->nullable()
+                    ->constrained()
+                    ->cascadeOnDelete()
+                    ->cascadeOnUpdate();
+
+                $table
+                    ->foreignIdFor(Sucursal::class)
+                    ->nullable()
+                    ->constrained()
+                    ->cascadeOnDelete()
+                    ->cascadeOnUpdate();
             },
         );
     }

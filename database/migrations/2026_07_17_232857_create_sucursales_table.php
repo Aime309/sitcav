@@ -13,8 +13,14 @@ return new class extends Migration
     {
         Schema::create('sucursales', static function (Blueprint $table): void {
             $table->id();
-            $table->foreignIdFor(Negocio::class);
-            $table->string('nombre');
+
+            $table
+                ->foreignIdFor(Negocio::class)
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->string('nombre')->unique();
             $table->string('direccion')->unique();
             $table->string('telefono')->unique();
         });

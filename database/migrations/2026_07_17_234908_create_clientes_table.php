@@ -13,12 +13,19 @@ return new class extends Migration
     {
         Schema::create('clientes', static function (Blueprint $table): void {
             $table->id();
-            $table->foreignIdFor(Negocio::class);
+
+            $table
+                ->foreignIdFor(Negocio::class)
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
             $table->string('nombre');
             $table->string('apellido');
             $table->string('correo')->unique();
             $table->string('clave')->unique();
             $table->string('telefono')->unique();
+            $table->unique(['nombre', 'apellido']);
         });
     }
 
