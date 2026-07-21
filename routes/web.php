@@ -37,7 +37,8 @@ Route::redirect('/', 'panel/iniciar-sesion');
 Route::prefix('panel')->group(static function (): void {
     Route::prefix('iniciar-sesion')->group(static function (): void {
         // Ver inicio de sesión del panel
-        Route::view('/', 'panel_iniciar-sesion')->name('panel.iniciar-sesion');
+        Route::view('/', 'panel_iniciar-sesion')
+            ->name('panel.iniciar-sesion');
 
         // Iniciar sesión en el panel
         Route::post('/', IniciarSesion::class);
@@ -58,14 +59,16 @@ Route::prefix('panel')->group(static function (): void {
 
     Route::prefix('negocios')->group(static function (): void {
         // Seleccionar establecimiento
-        Route::get('/', [NegocioController::class, 'index'])->name('panel.negocios');
+        Route::get('/', [NegocioController::class, 'index'])
+            ->name('panel.negocios');
 
         // Registrar negocio
         Route::post('/', [NegocioController::class, 'store']);
 
         Route::prefix('{negocio}')->group(static function (): void {
             // Panel administrativo de un negocio
-            Route::get('/', [NegocioController::class, 'show'])->name('panel.negocios.{negocio}');
+            Route::get('/', [NegocioController::class, 'show'])
+                ->name('panel.negocios.{negocio}');
 
             // Editar negocio
             Route::get('editar', [NegocioController::class, 'edit'])
@@ -92,7 +95,10 @@ Route::prefix('panel')->group(static function (): void {
                 Route::post('/', [EmpleadoController::class, 'store']);
 
                 // Actualizar empleado
-                Route::post('{empleado}', [EmpleadoController::class, 'update'])
+                Route::post(
+                    '{empleado}',
+                    [EmpleadoController::class, 'update'],
+                )
                     ->name('panel.negocios.{negocio}.empleados.{empleado}');
             });
 
@@ -105,7 +111,10 @@ Route::prefix('panel')->group(static function (): void {
                 Route::post('/', [ProveedorController::class, 'store']);
 
                 // Actualizar proveedor
-                Route::post('{proveedor}', [ProveedorController::class, 'update']);
+                Route::post(
+                    '{proveedor}',
+                    [ProveedorController::class, 'update'],
+                );
             });
 
             Route::prefix('clientes')->group(static function (): void {
@@ -117,7 +126,10 @@ Route::prefix('panel')->group(static function (): void {
                 Route::post('/', [ClienteController::class, 'store']);
 
                 // Actualizar cliente
-                Route::post('{cliente}', [ClienteController::class, 'update']);
+                Route::post(
+                    '{cliente}',
+                    [ClienteController::class, 'update'],
+                );
             });
 
             Route::prefix('productos')->group(static function (): void {
@@ -144,7 +156,10 @@ Route::prefix('panel')->group(static function (): void {
                     ->name('panel.negocios.{negocio}.inventario');
 
                 // Actualizar producto en el inventario
-                Route::post('{producto}', [InventarioController::class, 'update'])
+                Route::post(
+                    '{producto}',
+                    [InventarioController::class, 'update'],
+                )
                     ->name('panel.negocios.{negocio}.inventario.{producto}');
             });
 
