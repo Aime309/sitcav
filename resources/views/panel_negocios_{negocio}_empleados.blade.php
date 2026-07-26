@@ -17,28 +17,34 @@
                             <select name="rol" required class="w3-select">
                                 <option
                                     value="encargado"
-                                    @selected($empleado->roles->contains('rol', 'encargado'))>
+                                    @selected($empleado->roles->contains(
+                                        'rol',
+                                        'encargado'
+                                    ))>
                                     Encargado
                                 </option>
                                 <option
                                     value="vendedor"
-                                    @selected($empleado->roles->doesntContain('rol', 'encargado'))>
+                                    @selected($empleado->roles->doesntContain(
+                                        'rol',
+                                        'encargado'
+                                    ))>
                                     Vendedor
                                 </option>
                             </select>
                             <select name="establecimiento" required class="w3-select">
                                 @foreach ($usuario->negocios as $negocio)
-                                    <optgroup label="{{ $negocio['nombre'] }}">
+                                    <optgroup label="{{ $negocio->nombre }}">
                                         <option
-                                            value="{{ $negocio['id'] }}"
-                                            @selected(($empleado->negocios[0]?->id ?? null) === $negocio->id)>
+                                            value="{{ $negocio->slug }}"
+                                            @selected(($empleado->negocios[0]?->slug ?? null) === $negocio->slug)>
                                             Principal
                                         </option>
                                         @foreach ($negocio->sucursales as $sucursal)
                                             <option
-                                                value="{{ $sucursal['id'] }}"
+                                                value="{{ $sucursal->id }}"
                                                 @selected(($empleado->sucursales[0]?->id ?? null) === $sucursal->id)>
-                                                {{ $sucursal['nombre'] }}
+                                                {{ $sucursal->nombre }}
                                             </option>
                                         @endforeach
                                     </optgroup>
@@ -64,13 +70,13 @@
             </select>
             <select name="establecimiento" required class="w3-select">
                 @foreach ($usuario->negocios as $negocio)
-                    <optgroup label="{{ $negocio['nombre'] }}">
-                        <option value="{{ $negocio['id'] }}">
+                    <optgroup label="{{ $negocio->nombre }}">
+                        <option value="{{ $negocio->slug }}">
                             Principal
                         </option>
                         @foreach ($negocio->sucursales as $sucursal)
-                            <option value="{{ $sucursal['id'] }}">
-                                {{ $sucursal['nombre'] }}
+                            <option value="{{ $sucursal->id }}">
+                                {{ $sucursal->nombre }}
                             </option>
                         @endforeach
                     </optgroup>

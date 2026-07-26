@@ -73,11 +73,11 @@ final class EmpleadoController extends Controller
 
             DB::insert('
                 INSERT INTO usuarios_establecimientos
-                (usuario_id, negocio_id, sucursal_id) VALUES
-                (:usuario_id, :negocio_id, :sucursal_id)
+                (usuario_id, negocio_slug, sucursal_id) VALUES
+                (:usuario_id, :negocio_slug, :sucursal_id)
             ', [
                 ':usuario_id' => $empleado->id,
-                ':negocio_id' => $negocio?->id,
+                ':negocio_slug' => $negocio?->slug,
                 ':sucursal_id' => $sucursal?->id,
             ]);
         });
@@ -116,11 +116,11 @@ final class EmpleadoController extends Controller
 
             DB::update('
                 UPDATE usuarios_establecimientos SET
-                negocio_id = :negocio_id,
+                negocio_slug = :negocio_slug,
                 sucursal_id = :sucursal_id
                 WHERE usuario_id = :usuario_id
             ', [
-                ':negocio_id' => $negocio?->id,
+                ':negocio_slug' => $negocio?->slug,
                 ':sucursal_id' => $sucursal?->id,
                 ':usuario_id' => $empleado->id,
             ]);

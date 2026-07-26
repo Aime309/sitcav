@@ -1,4 +1,7 @@
-<x-estructura-panel titulo="Sucursales" :negocio="$negocio" :usuario="$usuario">
+<x-estructura-panel
+    titulo="Sucursales"
+    :negocio="$negocio"
+    :usuario="$usuario">
     <main class="w3-row-padding">
         <section class="w3-half">
             <div class="w3-row-padding">
@@ -7,12 +10,12 @@
                         href="{{ route(
                             'panel.negocios.{negocio}.sucursales.{sucursal}.editar',
                             [
-                                'negocio' => $negocio['id'],
-                                'sucursal' => $sucursal['id'],
+                                'negocio' => $negocio,
+                                'sucursal' => $sucursal,
                             ],
                         ) }}"
                         class="w3-third w3-button">
-                        {{ $sucursal['nombre'] }}
+                        {{ $sucursal->nombre }}
                     </a>
                 @endforeach
             </div>

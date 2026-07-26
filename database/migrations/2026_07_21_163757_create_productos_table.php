@@ -25,7 +25,6 @@ return new class extends Migration
             $table->string('descripcion')->unique();
             $table->float('precio')->unique();
             $table->boolean('activo')->default(true);
-            $table->timestamps();
         });
 
         Schema::create(

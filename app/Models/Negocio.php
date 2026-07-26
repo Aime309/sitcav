@@ -5,38 +5,50 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
+use Illuminate\Support\Str;
 
 /**
- * @property-read int $id
- * @property string $nombre
- * @property string $rif
- * @property string $direccion
- * @property string $telefono
- * @property string $slug
- * @property 0|1 $carga_inicial_abierta
- * @property-read Collection<int, Producto> $productos
- * @property-read Collection<int, Sucursal> $sucursales
- * @property-read Collection<int, Proveedor> $proveedores
- * @property-read Collection<int, Cliente> $clientes
- * @property-read Collection<int, Reserva> $reservas
- * @property-read Collection<int, Usuario> $empleados
+ * @property-read string $slug
+ * @property-read string $nombre
+ * @property-read string $rif
+ * @property-read string $direccion
+ * @property-read string $telefono
+ * @property-read bool $carga_inicial_abierta
  */
-#[WithoutTimestamps]
 #[Fillable(
+    'slug',
     'nombre',
     'rif',
     'direccion',
     'telefono',
-    'slug',
     'carga_inicial_abierta',
 )]
+#[Table(key: 'slug', keyType: 'string')]
+#[WithoutIncrementing]
+#[WithoutTimestamps]
 final class Negocio extends Model
 {
+    public $usesUniqueIds = true;
+
+    #[Override]
+    public function newUniqueId()
+    {
+        return Str::slug($this->nombre);
+    }
+
+    #[Override]
+    public function uniqueIds()
+    {
+        return ['slug'];
+    }
+
     /** @return HasMany<Producto> */
     public function productos(): HasMany
     {

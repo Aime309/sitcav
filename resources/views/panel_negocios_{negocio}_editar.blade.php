@@ -1,9 +1,12 @@
-<x-estructura-panel titulo="Editar negocio" :negocio="$negocio" :usuario="$usuario">
+<x-estructura-panel
+    titulo="Editar negocio"
+    :negocio="$negocio"
+    :usuario="$usuario">
     <form
         method="post"
         class="w3-container"
         action="{{ route('panel.negocios.{negocio}', [
-            'negocio' => $negocio['id']
+            'negocio' => $negocio,
         ]) }}"
         x-data='{
             nombre: @json($negocio->nombre),
@@ -20,6 +23,7 @@
             pattern="[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+"
             title="El nombre debe contener solo letras y espacios."
             class="w3-input"
+            value="{{ $negocio->nombre }}"
             x-model="nombre"
         />
         <input
@@ -28,7 +32,7 @@
             required
             minlength="1"
             class="w3-input"
-            value="{{ $negocio['rif'] }}"
+            value="{{ $negocio->rif }}"
         />
         <input
             name="direccion"
@@ -36,7 +40,7 @@
             required
             minlength="1"
             class="w3-input"
-            value="{{ $negocio['direccion'] }}"
+            value="{{ $negocio->direccion }}"
         />
         <input
             name="telefono"
@@ -46,11 +50,12 @@
             class="w3-input"
             pattern="\+58(416|426|414|424)\d{7}"
             title="El número de teléfono debe tener el formato +58(416|426|414|424) seguido de 7 dígitos."
-            value="{{ $negocio['telefono'] }}"
+            value="{{ $negocio->telefono }}"
         />
         <input
             placeholder="Slug"
             class="w3-input"
+            value="{{ $negocio->slug }}"
             x-model="slug"
             disabled
         />
@@ -59,7 +64,7 @@
                 name="carga_inicial_abierta"
                 type="checkbox"
                 class="w3-check"
-                {{ $negocio['carga_inicial_abierta'] ? 'checked' : '' }}
+                @checked($negocio->carga_inicial_abierta)
             />
 
             Carga inicial abierta

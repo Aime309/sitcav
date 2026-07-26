@@ -5,22 +5,22 @@
                 @foreach ($usuario['negocios'] as $negocio)
                     <a
                         href="{{ route('panel.negocios.{negocio}', [
-                            'negocio' => $negocio['id']]
-                        ) }}"
+                            'negocio' => $negocio,
+                        ]) }}"
                         class="w3-half w3-button">
-                        {{ $negocio['nombre'] }}
+                        {{ $negocio->nombre }}
                         <div class="w3-row-padding">
-                            @foreach ($negocio['sucursales'] as $sucursal)
+                            @foreach ($negocio->sucursales as $sucursal)
                                 <a
                                     href="{{ route(
                                         'panel.negocios.{negocio}.sucursales.{sucursal}',
                                         [
-                                            'negocio' => $negocio['id'],
-                                            'sucursal' => $sucursal['id']
+                                            'negocio' => $negocio,
+                                            'sucursal' => $sucursal,
                                         ],
                                     ) }}"
                                     class="w3-quarter w3-button">
-                                    {{ $sucursal['nombre'] }}
+                                    {{ $sucursal->nombre }}
                                 </a>
                             @endforeach
                         </div>

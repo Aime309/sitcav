@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 #[Table(name: 'sucursales')]
 #[WithoutTimestamps]
-#[Fillable('nombre', 'direccion', 'telefono', 'negocio_id')]
+#[Fillable('nombre', 'direccion', 'telefono', 'negocio_slug')]
 final class Sucursal extends Model
 {
     /** @return BelongsToMany<Usuario, $this> */

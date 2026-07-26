@@ -11,12 +11,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('negocios', static function (Blueprint $table): void {
-            $table->id();
+            $table->string('slug')->primary();
             $table->string('nombre')->unique();
             $table->string('rif')->unique();
             $table->string('direccion')->unique();
             $table->string('telefono')->unique();
-            $table->string('slug')->unique();
             $table->boolean('carga_inicial_abierta')->default(true);
         });
     }

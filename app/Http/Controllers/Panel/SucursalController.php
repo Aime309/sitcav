@@ -36,7 +36,7 @@ final class SucursalController extends Controller
                 'nombre' => $_POST['nombre'] ?? '',
                 'direccion' => $_POST['direccion'] ?? '',
                 'telefono' => $_POST['telefono'] ?? '',
-                'negocio_id' => $negocio->id,
+                'negocio_slug' => $negocio->slug,
             ]);
         });
 

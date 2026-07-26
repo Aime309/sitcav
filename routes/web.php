@@ -210,7 +210,7 @@ Route::prefix('panel')->group(static function (): void {
     });
 });
 
-Route::prefix('{negocio:slug}')->group(static function (): void {
+Route::prefix('{negocio}')->group(static function (): void {
     // Ecommerce de un negocio
     Route::get('/', [EcommerceNegocioController::class, 'show'])
         ->name('{negocio}');

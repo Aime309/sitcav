@@ -11,6 +11,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 final class NegocioController extends Controller
 {
@@ -27,15 +28,12 @@ final class NegocioController extends Controller
         DB::transaction(static function (): void {
             session_start();
             $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
-            $nombre = $_POST['nombre'] ?? '';
-            $slug = preg_replace('/\\s+/', '-', strtolower($nombre));
 
             $usuario->negocios()->create([
-                'nombre' => $nombre,
+                'nombre' => $_POST['nombre'] ?? '',
                 'rif' => $_POST['rif'] ?? '',
                 'direccion' => $_POST['direccion'] ?? '',
                 'telefono' => $_POST['telefono'] ?? '',
-                'slug' => $slug,
             ]);
         });
 
@@ -67,14 +65,13 @@ final class NegocioController extends Controller
     public function update(Request $request, Negocio $negocio): RedirectResponse
     {
         $nombre = $_POST['nombre'] ?? $negocio->nombre;
-        $slug = preg_replace('/\\s+/', '-', strtolower($nombre));
 
         $negocio->update([
             'nombre' => $nombre,
             'rif' => $_POST['rif'] ?? $negocio->rif,
             'direccion' => $_POST['direccion'] ?? $negocio->direccion,
             'telefono' => $_POST['telefono'] ?? $negocio->telefono,
-            'slug' => $slug,
+            'slug' => $negocio->newUniqueId(),
             'carga_inicial_abierta' => ($_POST['carga_inicial_abierta'] ?? '') === 'on'
                 ? 1
                 : 0,

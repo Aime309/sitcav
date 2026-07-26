@@ -2,26 +2,34 @@
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     x-data='{
-        tema: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+        tema: matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light",
     }'
     x-init='
-        matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
-            tema = event.matches ? "dark" : "light";
-        });
+        matchMedia("(prefers-color-scheme: dark)").addEventListener(
+            "change",
+            event => {
+                tema = event.matches ? "dark" : "light";
+            },
+        );
     '>
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width" />
         <meta name="color-scheme" content="light dark" />
         <title>{{ $titulo }} - {{ config('app.name') }}</title>
-        <base href="{{ str_replace('index.php', '', $_SERVER['SCRIPT_NAME']) }}" />
+        <base href="{{ str_replace(
+            'index.php',
+            '',
+            $_SERVER['SCRIPT_NAME']
+        ) }}" />
         <link rel="icon" href="./favicon.png" />
         @fonts
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <link
             rel="stylesheet"
-            href="https://www.w3schools.com/w3css/5/w3.css"
-        />
+            href="https://www.w3schools.com/w3css/5/w3.css" />
         <script
             src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.12/dist/cdn.min.js"
             defer>
@@ -35,11 +43,14 @@
                         @if (empty($sucursal))
                             <h1>
                                 <a
-                                    href="{{ route('panel.negocios.{negocio}', [
-                                        'negocio' => $negocio['id'],
-                                    ]) }}"
+                                    href="{{ route(
+                                        'panel.negocios.{negocio}',
+                                        [
+                                            'negocio' => $negocio,
+                                        ]
+                                    ) }}"
                                     class="w3-button">
-                                    {{ $negocio['nombre'] }}
+                                    {{ $negocio->nombre }}
                                 </a>
                             </h1>
                         @else
@@ -48,12 +59,12 @@
                                     href="{{ route(
                                         'panel.negocios.{negocio}.sucursales.{sucursal}',
                                         [
-                                            'negocio' => $negocio['id'],
-                                            'sucursal' => $sucursal['id'],
+                                            'negocio' => $negocio,
+                                            'sucursal' => $sucursal,
                                         ],
                                     ) }}"
                                     class="w3-button">
-                                    {{ $sucursal['nombre'] }}
+                                    {{ $sucursal->nombre }}
                                 </a>
                             </h1>
                         @endif
@@ -63,7 +74,7 @@
                             <a
                                 href="{{ route(
                                     'panel.negocios.{negocio}.empleados',
-                                    ['negocio' => $negocio['id']],
+                                    ['negocio' => $negocio],
                                 ) }}"
                                 class="w3-button">
                                 Empleados
@@ -73,7 +84,7 @@
                             <a
                                 href="{{ route(
                                     'panel.negocios.{negocio}.sucursales',
-                                    ['negocio' => $negocio['id']],
+                                    ['negocio' => $negocio],
                                 ) }}"
                                 class="w3-button">
                                 Sucursales
@@ -85,7 +96,7 @@
                             <a
                                 href="{{ route(
                                     'panel.negocios.{negocio}.proveedores',
-                                    ['negocio' => $negocio['id']],
+                                    ['negocio' => $negocio],
                                 ) }}"
                                 class="w3-button">
                                 Proveedores
@@ -95,7 +106,7 @@
                             <a
                                 href="{{ route(
                                     'panel.negocios.{negocio}.clientes',
-                                    ['negocio' => $negocio['id']],
+                                    ['negocio' => $negocio],
                                 ) }}"
                                 class="w3-button">
                                 Clientes
@@ -105,7 +116,7 @@
                             <a
                                 href="{{ route(
                                     'panel.negocios.{negocio}.compras',
-                                    ['negocio' => $negocio['id']],
+                                    ['negocio' => $negocio],
                                 ) }}"
                                 class="w3-button">
                                 Compras
@@ -115,7 +126,7 @@
                             <a
                                 href="{{ route(
                                     'panel.negocios.{negocio}.ventas',
-                                    ['negocio' => $negocio['id']],
+                                    ['negocio' => $negocio],
                                 ) }}"
                                 class="w3-button">
                                 Ventas
@@ -125,7 +136,7 @@
                             <a
                                 href="{{ route(
                                     'panel.negocios.{negocio}.reservas',
-                                    ['negocio' => $negocio['id']],
+                                    ['negocio' => $negocio],
                                 ) }}"
                                 class="w3-button">
                                 Reservas
@@ -135,7 +146,7 @@
                             <a
                                 href="{{ route(
                                     'panel.negocios.{negocio}.inventario',
-                                    ['negocio' => $negocio['id']],
+                                    ['negocio' => $negocio],
                                 ) }}"
                                 class="w3-button">
                                 Inventario
@@ -146,7 +157,7 @@
                         <a
                             href="{{ route(
                                 'panel.negocios.{negocio}.productos',
-                                ['negocio' => $negocio['id']],
+                                ['negocio' => $negocio],
                             ) }}"
                             class="w3-button">
                             Productos
@@ -163,7 +174,7 @@
                         <a
                             href="{{ route(
                                 'panel.negocios.{negocio}.perfil',
-                                ['negocio' => $negocio['id']],
+                                ['negocio' => $negocio],
                             ) }}"
                             class="w3-button">
                             Editar perfil
@@ -174,7 +185,7 @@
                             <a
                                 href="{{ route(
                                     'panel.negocios.{negocio}.editar',
-                                    ['negocio' => $negocio['id']],
+                                    ['negocio' => $negocio],
                                 ) }}"
                                 class="w3-button">
                                 Editar negocio
