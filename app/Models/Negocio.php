@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,6 +22,8 @@ use Illuminate\Support\Str;
  * @property-read string $direccion
  * @property-read string $telefono
  * @property-read bool $carga_inicial_abierta
+ * @property-read Collection<int, Usuario> $empleados
+ * @property-read Collection<int, Sucursal> $sucursales
  */
 #[Fillable(
     'slug',
@@ -80,6 +83,9 @@ final class Negocio extends Model
     /** @return BelongsToMany<Usuario, $this> */
     public function empleados(): BelongsToMany
     {
-        return $this->belongsToMany(Usuario::class, 'usuarios_establecimientos');
+        return $this->belongsToMany(
+            Usuario::class,
+            'usuarios_establecimientos',
+        );
     }
 }

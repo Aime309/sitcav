@@ -11,14 +11,14 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 final class NegocioController extends Controller
 {
     public function index(Request $request): View
     {
         session_start();
-        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+        $usuarioId = $_SESSION['panel']['usuario']['id'];
+        $usuario = Usuario::query()->findOrFail($usuarioId);
 
         return view('panel_negocios', ['usuario' => $usuario]);
     }
@@ -27,7 +27,8 @@ final class NegocioController extends Controller
     {
         DB::transaction(static function (): void {
             session_start();
-            $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+            $usuarioId = $_SESSION['panel']['usuario']['id'];
+            $usuario = Usuario::query()->findOrFail($usuarioId);
 
             $usuario->negocios()->create([
                 'nombre' => $_POST['nombre'] ?? '',
@@ -43,7 +44,8 @@ final class NegocioController extends Controller
     public function show(Request $request, Negocio $negocio): View
     {
         session_start();
-        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+        $usuarioId = $_SESSION['panel']['usuario']['id'];
+        $usuario = Usuario::query()->findOrFail($usuarioId);
 
         return view('panel_negocios_{negocio}', [
             'negocio' => $negocio,
@@ -54,7 +56,8 @@ final class NegocioController extends Controller
     public function edit(Request $request, Negocio $negocio): View
     {
         session_start();
-        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+        $usuarioId = $_SESSION['panel']['usuario']['id'];
+        $usuario = Usuario::query()->findOrFail($usuarioId);
 
         return view('panel_negocios_{negocio}_editar', [
             'negocio' => $negocio,
@@ -62,17 +65,19 @@ final class NegocioController extends Controller
         ]);
     }
 
-    public function update(Request $request, Negocio $negocio): RedirectResponse
-    {
-        $nombre = $_POST['nombre'] ?? $negocio->nombre;
+    public function update(
+        Request $request,
+        Negocio $negocio,
+    ): RedirectResponse {
+        $cargaInicialAbierta = $_POST['carga_inicial_abierta'] ?? '';
 
         $negocio->update([
-            'nombre' => $nombre,
+            'nombre' => $_POST['nombre'] ?? $negocio->nombre,
             'rif' => $_POST['rif'] ?? $negocio->rif,
             'direccion' => $_POST['direccion'] ?? $negocio->direccion,
             'telefono' => $_POST['telefono'] ?? $negocio->telefono,
             'slug' => $negocio->newUniqueId(),
-            'carga_inicial_abierta' => ($_POST['carga_inicial_abierta'] ?? '') === 'on'
+            'carga_inicial_abierta' => $cargaInicialAbierta === 'on'
                 ? 1
                 : 0,
         ]);

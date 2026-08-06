@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Panel;
 
 use App\Http\Controllers\Controller;
-use App\Models\Sucursal;
 use App\Models\Usuario;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use stdClass;
 
 final class IniciarSesion extends Controller
 {
@@ -35,8 +32,8 @@ final class IniciarSesion extends Controller
             }
 
             return to_route('panel.negocios.{negocio}.sucursales.{sucursal}', [
-                'negocio' => $usuario->sucursales[0]->negocio->id,
-                'sucursal' => $usuario->sucursales[0]->id,
+                'negocio' => $usuario->sucursales[0]->negocio,
+                'sucursal' => $usuario->sucursales[0],
             ]);
         }
 

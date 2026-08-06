@@ -23,7 +23,10 @@ final class AdministradorController extends Controller
         DB::transaction(static function (): void {
             $usuario = Usuario::query()->create([
                 'correo' => $_POST['correo'] ?? '',
-                'clave' => password_hash($_POST['clave'] ?? '', PASSWORD_DEFAULT),
+                'clave' => password_hash(
+                    $_POST['clave'] ?? '',
+                    PASSWORD_DEFAULT,
+                ),
             ]);
 
             $usuario->roles()->createMany([

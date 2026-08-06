@@ -19,7 +19,8 @@ final class EmpleadoController extends Controller
     public function index(Request $request, Negocio $negocio): View
     {
         session_start();
-        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+        $usuarioId = $_SESSION['panel']['usuario']['id'];
+        $usuario = Usuario::query()->findOrFail($usuarioId);
         $empleados = [];
 
         foreach ($negocio->empleados as $empleado) {
@@ -47,8 +48,10 @@ final class EmpleadoController extends Controller
         ]);
     }
 
-    public function store(Request $request, Negocio $negocio): RedirectResponse
-    {
+    public function store(
+        Request $request,
+        Negocio $negocio,
+    ): RedirectResponse {
         $establecimiento = $_POST['establecimiento'] ?? '';
         $negocio = Negocio::query()->find($establecimiento);
         $sucursal = Sucursal::query()->find($establecimiento);
@@ -56,7 +59,10 @@ final class EmpleadoController extends Controller
         DB::transaction(static function () use ($negocio, $sucursal): void {
             $empleado = Usuario::query()->create([
                 'correo' => $_POST['correo'] ?? '',
-                'clave' => password_hash($_POST['clave'] ?? '', PASSWORD_DEFAULT),
+                'clave' => password_hash(
+                    $_POST['clave'] ?? '',
+                    PASSWORD_DEFAULT,
+                ),
             ]);
 
             switch ($_POST['rol'] ?? '') {
@@ -93,12 +99,14 @@ final class EmpleadoController extends Controller
         Usuario $empleado,
     ): RedirectResponse {
         DB::transaction(static function () use ($empleado): void {
+            $establecimiento = $_POST['establecimiento'] ?? null;
+
             $empleado
                 ->roles
                 ->each(static fn(UsuarioRol $rol): ?bool => $rol->delete());
 
-            $negocio = Negocio::query()->find($_POST['establecimiento'] ?? null);
-            $sucursal = Sucursal::query()->find($_POST['establecimiento'] ?? null);
+            $negocio = Negocio::query()->find($establecimiento);
+            $sucursal = Sucursal::query()->find($establecimiento);
 
             switch ($_POST['rol'] ?? '') {
                 case 'encargado':
