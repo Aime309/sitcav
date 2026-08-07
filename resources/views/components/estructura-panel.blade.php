@@ -13,7 +13,8 @@
                 tema = event.matches ? "dark" : "light";
             },
         );
-    '>
+    '
+    x-bind:data-theme="tema">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width" />
@@ -27,9 +28,12 @@
         <link rel="icon" href="./favicon.png" />
         @fonts
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        <link
-            rel="stylesheet"
-            href="https://www.w3schools.com/w3css/5/w3.css" />
+        <script defer="defer" src="./runtime.js"></script>
+        <script defer="defer" src="./vendor-fullcalendar.js"></script>
+        <script defer="defer" src="./vendor-chartjs.js"></script>
+        <script defer="defer" src="./vendors.js"></script>
+        <script defer="defer" src="./2026.js"></script>
+        <link href="./style.css" rel="stylesheet" />
         <script
             src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.12/dist/cdn.min.js"
             defer>
