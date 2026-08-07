@@ -12,8 +12,10 @@ use Illuminate\Http\Request;
 
 final class IniciarSesion extends Controller
 {
-    public function __invoke(Request $request, Negocio $negocio): RedirectResponse
-    {
+    public function __invoke(
+        Request $request,
+        Negocio $negocio,
+    ): RedirectResponse {
         $correo = $_POST['correo'] ?? '';
         $clave = $_POST['clave'] ?? '';
 
