@@ -1,4 +1,4 @@
-<x-estructura-panel titulo="Seleccionar establecimiento" :usuario="$usuario">
+<x-estructura-panel titulo="Seleccionar establecimiento">
     <main class="w3-row-padding">
         <section class="w3-half">
             <div class="w3-row-padding">
