@@ -2,7 +2,9 @@
     <div class="auth-shell">
         <aside class="auth-aside">
             <div class="auth-brand">
-                <img src="./favicon.png" width="12.5%" />
+                {{-- <div class="logo">
+                    <x-panel.logo-marca />
+                </div> --}}
                 <div class="name">SITCAV</div>
             </div>
             <div class="auth-aside-body">

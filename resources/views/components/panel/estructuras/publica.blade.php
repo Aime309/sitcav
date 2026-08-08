@@ -2,9 +2,9 @@
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     x-data='{
-        tema: $persist(matchMedia("(prefers-color-scheme: dark)").matches
+        tema: matchMedia("(prefers-color-scheme: dark)").matches
             ? "dark"
-            : "light"),
+            : "light",
     }'
     x-init='
         matchMedia("(prefers-color-scheme: dark)").addEventListener(

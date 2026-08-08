@@ -3,7 +3,7 @@
         <aside class="auth-aside">
             <div class="auth-brand">
                 {{-- <div class="logo">
-                    <x-iconos.a />
+                    <x-panel.logo-marca />
                 </div> --}}
                 <div class="name">SITCAV</div>
             </div>
