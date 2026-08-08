@@ -107,7 +107,14 @@ $crumbs ??= [];
                         </a>
                     @endforeach
                 </div>
-            <a class="dd-footer" href="#">Ver todas las reservas →</a>
+            <a
+                class="dd-footer"
+                href="{{ route(
+                    'panel.negocios.{negocio}.reservas',
+                    ['negocio' => $negocio],
+                ) }}">
+                Ver todas las reservas →
+            </a>
         </div>
     </div>
 
