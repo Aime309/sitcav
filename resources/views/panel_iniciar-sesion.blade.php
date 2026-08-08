@@ -1,4 +1,4 @@
-<x-estructura-panel titulo="Iniciar sesión">
+<x-estructura-panel-publico titulo="Iniciar sesión">
     <div class="auth-shell">
         <aside class="auth-aside">
             <div class="auth-brand">
@@ -142,4 +142,4 @@
             </div> --}}
         </main>
     </div>
-</x-estructura-panel>
+</x-estructura-panel-publico>

@@ -14,10 +14,20 @@ $dataNav = [
             [
                 'key' => 'dashboard',
                 'text' => 'Inicio',
-                'href' => empty($negocio) ?: route(
-                    'panel.negocios.{negocio}',
-                    ['negocio' => $negocio],
-                ),
+                'href' => match (true) {
+                    !empty($sucursal) => route(
+                        'panel.negocios.{negocio}.sucursales.{sucursal}',
+                        [
+                            'negocio' => $sucursal->negocio,
+                            'sucursal' => $sucursal,
+                        ],
+                    ),
+                    !empty($negocio) => route(
+                        'panel.negocios.{negocio}',
+                        ['negocio' => $negocio],
+                    ),
+                    default => '',
+                },
                 'icon' => '<path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/>',
             ],
             // [
@@ -290,8 +300,8 @@ if (!empty($negocio)) {
 }
 
 $crumbs = match (true) {
-    !empty($negocio) => $negocio->nombre,
     !empty($sucursal) => $sucursal->nombre,
+    !empty($negocio) => $negocio->nombre,
     default => '',
 };
 
@@ -364,19 +374,15 @@ if (!empty($negocio)) {
     <body
         data-crumbs="{{ $crumbs ?? '' }}"
         data-active="{{ $paginaActiva ?? '' }}">
-        @if(isset($usuario))
-            <div class="shell">
-                <div data-shell-sidebar></div>
-                <div class="main">
-                    <div data-shell-topbar></div>
-                    <main class="content">
-                        {{ $slot }}
-                    </main>
-                    <div data-shell-footer></div>
-                </div>
+        <div class="shell">
+            <div data-shell-sidebar></div>
+            <div class="main">
+                <div data-shell-topbar></div>
+                <main class="content">
+                    {{ $slot }}
+                </main>
+                <div data-shell-footer></div>
             </div>
-        @else
-            {{ $slot }}
-        @endif
+        </div>
     </body>
 </html>
