@@ -1,5 +1,6 @@
 <x-estructura-panel
     titulo="Editar sucursal"
+    :crumbs="['Editar']"
     :negocio="$negocio"
     :usuario="$usuario">
     <form

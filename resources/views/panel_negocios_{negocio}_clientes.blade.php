@@ -1,6 +1,6 @@
 <x-estructura-panel
     titulo="Clientes"
-    paginaActiva="clientes"
+    :crumbs="['Clientes']"
     :negocio="$negocio"
     :usuario="$usuario">
 

@@ -1,6 +1,6 @@
 <x-estructura-panel
     titulo="Inventario"
-    paginaActiva="inventario"
+    :crumbs="['Inventario']"
     :negocio="$negocio"
     :usuario="$usuario">
     <table class="w3-container w3-table">

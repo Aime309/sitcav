@@ -1,4 +1,8 @@
-<x-estructura-panel titulo="{{ $producto['nombre'] }}" :negocio="$negocio" :usuario="$usuario">
+<x-estructura-panel
+    titulo="{{ $producto['nombre'] }}"
+    :crumbs="['Productos', $producto['nombre']]"
+    :negocio="$negocio"
+    :usuario="$usuario">
     <form method="post" enctype="multipart/form-data" class="w3-container">
         <input
             name="nombre"

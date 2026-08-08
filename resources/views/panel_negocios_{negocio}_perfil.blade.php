@@ -1,4 +1,8 @@
-<x-estructura-panel titulo="Editar perfil" :negocio="$negocio" :usuario="$usuario">
+<x-estructura-panel
+    titulo="Editar perfil"
+    :crumbs="['Perfil']"
+    :negocio="$negocio"
+    :usuario="$usuario">
     <form method="post" enctype="multipart/form-data" class="w3-container">
         <input
             name="correo"

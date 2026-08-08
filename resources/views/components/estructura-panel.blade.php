@@ -1,42 +1,10 @@
 @php
 
-$dataUsuario = [
-    'iniciales' => '',
-    'nombre' => '',
-    'rol' => $usuario?->roles[0]?->rol ?? '',
-    'correo' => $usuario?->correo ?? '',
-];
-
-$crumbs = match (true) {
+$nombreEstablecimiento = match (true) {
     !empty($sucursal) => $sucursal->nombre,
     !empty($negocio) => $negocio->nombre,
     default => '',
 };
-
-$dataTopBar = [];
-
-if (!empty($negocio)) {
-    $dataTopBar['reservas'] = route(
-        'panel.negocios.{negocio}.reservas',
-        ['negocio' => $negocio],
-    );
-
-    $dataTopBar['perfil'] = route(
-        'panel.negocios.{negocio}.perfil',
-        ['negocio' => $negocio],
-    );
-
-    $dataTopBar['cerrarSesion'] = route('panel.cerrar-sesion');
-
-    if ($usuario?->roles?->contains('rol', 'administrador')) {
-        $dataTopBar['configuraciones'] = route(
-            'panel.negocios.{negocio}.editar',
-            ['negocio' => $negocio],
-        );
-
-        $dataTopBar['negocios'] = route('panel.negocios');
-    }
-}
 
 @endphp
 
@@ -56,10 +24,7 @@ if (!empty($negocio)) {
             },
         );
     '
-    x-bind:data-theme="tema"
-    data-app-name="{{ config('app.name') }}"
-    data-usuario='@json($dataUsuario)'
-    data-topbar='@json($dataTopBar)'>
+    x-bind:data-theme="tema">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width" />
@@ -78,13 +43,17 @@ if (!empty($negocio)) {
             'resources/scss/index.scss',
         ])
     </head>
-    <body data-crumbs="{{ $crumbs ?? '' }}">
+    <body>
         <div class="shell">
             <x-panel.barra-lateral
                 :usuario="$usuario"
-                :negocio="$negocio" />
+                :negocio="$negocio"
+                :sucursal="$sucursal ?? null" />
             <div class="main">
-                <div data-shell-topbar></div>
+                <x-panel.barra-superior
+                    :crumbs="[$nombreEstablecimiento, ...$crumbs ?? []]"
+                    :negocio="$negocio"
+                    :usuario="$usuario" />
                 <main class="content">
                     {{ $slot }}
                 </main>

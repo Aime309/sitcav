@@ -1,6 +1,6 @@
 <x-estructura-panel
     titulo="Productos"
-    paginaActiva="productos"
+    :crumbs="['Productos']"
     :negocio="$negocio"
     :usuario="$usuario">
     <main class="w3-row-padding">

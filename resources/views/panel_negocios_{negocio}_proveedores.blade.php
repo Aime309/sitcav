@@ -1,6 +1,6 @@
 <x-estructura-panel
     titulo="Proveedores"
-    paginaActiva="proveedores"
+    :crumbs="['Proveedores']"
     :negocio="$negocio"
     :usuario="$usuario">
 

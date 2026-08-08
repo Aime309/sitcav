@@ -92,4 +92,42 @@
             icono=""
             texto="Productos" />
     </x-panel.seccion>
+    <div class="sidebar-footer">
+        <{{ $usuario->roles->contains('rol', 'administrador')
+            ? 'a'
+            : 'div'
+        }} class="workspace" href="{{ $usuario->roles->contains('rol', 'administrador') ? route('panel.negocios') : 'javascript:' }}">
+            <div class="workspace-avatar"></div>
+            <div class="workspace-text">
+                <div class="workspace-name">
+                    @if (!empty($sucursal))
+                        {{ $sucursal->nombre }}
+                    @else
+                        {{ $negocio->nombre }}
+                    @endif
+                </div>
+                @if (!empty($sucursal))
+                    <div class="workspace-role">
+                        {{ $sucursal->negocio->nombre }}
+                    </div>
+                @endif
+            </div>
+            @if ($usuario->roles->contains('rol', 'administrador'))
+                <svg
+                    class="workspace-chev"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8">
+                    <path d="m7 9 5-5 5 5" />
+                    <path d="m7 15 5 5 5-5" />
+                </svg>
+            @endif
+        </{{ $usuario->roles->contains('rol', 'administrador')
+            ? 'a'
+            : 'div'
+        }}>
+    </div>
 </aside>
