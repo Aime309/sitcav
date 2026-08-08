@@ -239,17 +239,6 @@ function renderTopbar(crumbsAttr) {
     </header>`;
 }
 
-function renderFooter() {
-  return `
-    <footer class="d-footer">
-      <div>© 2026 · Designed by <a href="https://colorlib.com" target="_blank" rel="nofollow noopener noreferrer">Colorlib</a></div>
-      <div class="d-footer-meta">
-        <span>v4.3.0</span>
-        <span>preview build</span>
-      </div>
-    </footer>`;
-}
-
 export function mountShell() {
   const body = document.body;
   const activeKey = body.getAttribute('data-active') || '';
@@ -257,9 +246,7 @@ export function mountShell() {
 
   const sidebarHost = document.querySelector('[data-shell-sidebar]');
   const topbarHost  = document.querySelector('[data-shell-topbar]');
-  const footerHost  = document.querySelector('[data-shell-footer]');
 
   if (sidebarHost) sidebarHost.outerHTML = renderSidebar(activeKey);
   if (topbarHost)  topbarHost.outerHTML  = renderTopbar(crumbs);
-  if (footerHost)  footerHost.outerHTML  = renderFooter();
 }
