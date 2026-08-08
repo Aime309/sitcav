@@ -9,7 +9,7 @@
             </div>
             <div class="auth-aside-body">
                 <span class="auth-aside-eyebrow">
-                    {{ date('Y') }} · v3.1 preview
+                    {{ date('Y') }} · v4.3.0 preview
                 </span>
                 <h1>
                     El panel administrativo que tu equipo actualmente quiere abrir.

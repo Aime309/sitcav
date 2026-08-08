@@ -1,4 +1,8 @@
-<x-estructura-panel titulo="Empleados" :negocio="$negocio" :usuario="$usuario">
+<x-estructura-panel
+    titulo="Empleados"
+    paginaActiva="empleados"
+    :negocio="$negocio"
+    :usuario="$usuario">
     <main class="w3-row-padding">
         <section class="w3-half">
             <div class="w3-row-padding">

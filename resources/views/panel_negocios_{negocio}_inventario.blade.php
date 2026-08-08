@@ -1,4 +1,8 @@
-<x-estructura-panel titulo="Inventario" :negocio="$negocio" :usuario="$usuario">
+<x-estructura-panel
+    titulo="Inventario"
+    paginaActiva="inventario"
+    :negocio="$negocio"
+    :usuario="$usuario">
     <table class="w3-container w3-table">
         @foreach ($negocio->productos as $producto)
             <tr>

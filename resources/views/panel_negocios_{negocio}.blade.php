@@ -1,7 +1,6 @@
 <x-estructura-panel
     titulo="{{ $negocio->nombre }}"
-    paginaActiva="blank"
-    crumbs="Pages | Blank"
+    paginaActiva="dashboard"
     :usuario="$usuario"
     :negocio="$negocio">
     <section class="hero">
