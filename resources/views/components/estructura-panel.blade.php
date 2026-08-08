@@ -326,9 +326,9 @@ if (!empty($negocio)) {
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     x-data='{
-        tema: matchMedia("(prefers-color-scheme: dark)").matches
+        tema: $persist(matchMedia("(prefers-color-scheme: dark)").matches
             ? "dark"
-            : "light",
+            : "light"),
     }'
     x-init='
         matchMedia("(prefers-color-scheme: dark)").addEventListener(
@@ -360,10 +360,6 @@ if (!empty($negocio)) {
             'resources/js/app.js',
             'resources/scss/index.scss',
         ])
-        <script
-            src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.12/dist/cdn.min.js"
-            defer>
-        </script>
     </head>
     <body
         data-crumbs="{{ $crumbs ?? '' }}"
