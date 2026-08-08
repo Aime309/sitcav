@@ -1,7 +1,7 @@
-<x-estructura-panel
+<x-panel.estructuras.privada
     titulo="Proveedores"
     :crumbs="['Proveedores']"
     :negocio="$negocio"
     :usuario="$usuario">
 
-</x-estructura-panel>
+</x-panel.estructuras.privada>

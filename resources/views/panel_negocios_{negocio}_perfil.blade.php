@@ -1,4 +1,4 @@
-<x-estructura-panel
+<x-panel.estructuras.privada
     titulo="Editar perfil"
     :crumbs="['Perfil']"
     :negocio="$negocio"
@@ -31,4 +31,4 @@
             class="w3-button w3-blue w3-hover-light-blue w3-block"
         />
     </form>
-</x-estructura-panel>
+</x-panel.estructuras.privada>

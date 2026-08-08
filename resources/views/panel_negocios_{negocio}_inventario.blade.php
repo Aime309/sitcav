@@ -1,4 +1,4 @@
-<x-estructura-panel
+<x-panel.estructuras.privada
     titulo="Inventario"
     :crumbs="['Inventario']"
     :negocio="$negocio"
@@ -37,4 +37,4 @@
             </tr>
         @endforeach
     </table>
-</x-estructura-panel>
+</x-panel.estructuras.privada>

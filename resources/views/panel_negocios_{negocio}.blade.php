@@ -1,4 +1,4 @@
-<x-estructura-panel
+<x-panel.estructuras.privada
     titulo="{{ $negocio->nombre }}"
     :crumbs="['Inicio']"
     :usuario="$usuario"
@@ -84,4 +84,4 @@
             </div>
         </div>
     </section>
-</x-estructura-panel>
+</x-panel.estructuras.privada>

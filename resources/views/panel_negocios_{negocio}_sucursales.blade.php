@@ -1,4 +1,4 @@
-<x-estructura-panel
+<x-panel.estructuras.privada
     titulo="Sucursales"
     :crumbs="['Sucursales']"
     :negocio="$negocio"
@@ -55,4 +55,4 @@
             />
         </form>
     </main>
-</x-estructura-panel>
+</x-panel.estructuras.privada>

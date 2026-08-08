@@ -1,4 +1,4 @@
-<x-estructura-panel-publico titulo="Seleccionar establecimiento">
+<x-panel.estructuras.publica titulo="Seleccionar establecimiento">
     <main class="w3-row-padding">
         <section class="w3-half">
             <div class="w3-row-padding">
@@ -86,4 +86,4 @@
             />
         </form>
     </main>
-</x-estructura-publico>
+</x-panel.estructuras.publica>

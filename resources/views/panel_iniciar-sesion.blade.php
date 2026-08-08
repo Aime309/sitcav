@@ -1,16 +1,11 @@
-<x-estructura-panel-publico titulo="Iniciar sesión">
+<x-panel.estructuras.publica titulo="Iniciar sesión">
     <div class="auth-shell">
         <aside class="auth-aside">
             <div class="auth-brand">
-                {{-- <div class="logo">
-                    <x-iconos.a />
-                </div> --}}
+                <img src="./favicon.png" width="12.5%" />
                 <div class="name">SITCAV</div>
             </div>
             <div class="auth-aside-body">
-                <span class="auth-aside-eyebrow">
-                    {{ date('Y') }} · v4.3.0 preview
-                </span>
                 <h1>
                     El panel administrativo que tu equipo actualmente quiere abrir.
                 </h1>
@@ -142,4 +137,4 @@
             </div> --}}
         </main>
     </div>
-</x-estructura-panel-publico>
+</x-panel.estructuras.publica>

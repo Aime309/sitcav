@@ -1,7 +1,7 @@
-<x-estructura-panel
+<x-panel.estructuras.privada
     titulo="{{ $sucursal->nombre }}"
     :usuario="$usuario"
     :negocio="$negocio"
     :sucursal="$sucursal">
 
-</x-estructura>
+</x-panel.estructuras.privada>

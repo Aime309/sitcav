@@ -1,4 +1,4 @@
-<x-estructura-panel-publico titulo="Registrarse">
+<x-panel.estructuras.publica titulo="Registrarse">
     <div class="auth-shell">
         <aside class="auth-aside">
             <div class="auth-brand">
@@ -211,4 +211,4 @@
             </div>
         </main>
     </div>
-</x-estructura-panel-publico>
+</x-panel.estructuras.publica>
