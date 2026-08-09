@@ -5,36 +5,12 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Table;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string $id
- * @property string $negocio_id
- * @property string $nombre
- * @property string $descripcion
- * @property float $precio
- * @property int $activo
- * @property string $creado_en
- * @property string $actualizado_en
- * @property Collection<int, ProductoImagen> $imagenes
+ * @property-read int $id
+ * @property-read string $nombre
+ * @property-read float $precio
  */
-#[Fillable('id', 'nombre', 'descripcion', 'precio')]
-#[Table(keyType: 'string', incrementing: false)]
-final class Producto extends Model
-{
-    public const ?string CREATED_AT = 'creado_en';
-    public const ?string UPDATED_AT = 'actualizado_en';
-
-    protected $attributes = [
-        'activo' => 1,
-    ];
-
-    /** @return HasMany<ProductoImagen> */
-    public function imagenes(): HasMany
-    {
-        return $this->hasMany(ProductoImagen::class);
-    }
-}
+#[Fillable('nombre', 'precio')]
+final class Producto extends Model {}

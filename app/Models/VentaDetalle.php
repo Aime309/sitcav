@@ -6,14 +6,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
-use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property-read int $id
- * @property-read string $nombre
+ * @property-read int $cantidad
+ * @property-read float $precio
  */
-#[Fillable('nombre')]
-#[Table(name: 'proveedores')]
-#[WithoutTimestamps]
-final class Proveedor extends Model {}
+#[Fillable('cantidad', 'precio')]
+#[Table(name: 'ventas_detalles')]
+final class VentaDetalle extends Model {}

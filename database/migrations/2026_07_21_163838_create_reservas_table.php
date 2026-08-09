@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Models\Carrito;
 use App\Models\Cliente;
 use App\Models\Negocio;
 use App\Models\Producto;
@@ -68,7 +67,6 @@ return new class extends Migration
                     ->cascadeOnUpdate();
 
                 $table->integer('cantidad');
-                $table->timestamps();
             },
         );
     }

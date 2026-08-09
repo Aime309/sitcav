@@ -23,8 +23,6 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-
-            $table->timestamps();
         });
 
         Schema::create(
@@ -59,7 +57,6 @@ return new class extends Migration
                     ->cascadeOnUpdate();
 
                 $table->integer('cantidad');
-                $table->timestamps();
             },
         );
     }

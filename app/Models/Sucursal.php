@@ -17,16 +17,16 @@ use Illuminate\Support\Str;
 
 /**
  * @property-read string $slug
- * @property string $nombre
- * @property string $direccion
- * @property string $telefono
- * @property Collection<int, Usuario> $empleados
+ * @property-read string $nombre
+ * @property-read string $direccion
+ * @property-read string $telefono
+ * @property-read Collection<int, Usuario> $empleados
  * @property-read Negocio $negocio
  */
+#[Fillable('nombre', 'direccion', 'telefono', 'negocio_slug')]
 #[Table(name: 'sucursales', key: 'slug', keyType: 'string')]
 #[WithoutIncrementing]
 #[WithoutTimestamps]
-#[Fillable('nombre', 'direccion', 'telefono', 'negocio_slug')]
 final class Sucursal extends Model
 {
     public $usesUniqueIds = true;

@@ -23,12 +23,6 @@ return new class extends Migration
                     ->cascadeOnUpdate();
 
                 $table->string('nombre')->unique();
-                $table->string('rif')->unique();
-                $table->string('telefono')->unique();
-                $table->string('direccion')->unique();
-                $table->binary('imagen')->unique();
-                $table->boolean('activo')->default(true);
-                $table->timestamps();
             }
         );
     }

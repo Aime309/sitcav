@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property-read int $id
- * @property string $nombre
- * @property string $apellido
- * @property string $correo
- * @property string $clave
- * @property string $telefono
+ * @property-read string $nombre
+ * @property-read string $apellido
+ * @property-read string $correo
+ * @property-read string $clave
+ * @property-read string $telefono
  */
-#[WithoutTimestamps]
 #[Fillable('nombre', 'apellido', 'correo', 'clave', 'telefono')]
+#[WithoutTimestamps]
 final class Cliente extends Model {}

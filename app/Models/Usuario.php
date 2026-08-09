@@ -20,10 +20,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Collection<int, Negocio> $negocios
  * @property-read Collection<int, Sucursal> $sucursales
  */
-#[Table(key: 'correo', keyType: 'string')]
-#[WithoutTimestamps]
-#[WithoutIncrementing]
 #[Fillable('correo', 'clave')]
+#[Table(key: 'correo', keyType: 'string')]
+#[WithoutIncrementing]
+#[WithoutTimestamps]
 final class Usuario extends Model
 {
     /** @return HasMany<UsuarioRol, $this> */
@@ -35,12 +35,18 @@ final class Usuario extends Model
     /** @return BelongsToMany<Negocio, $this> */
     public function negocios(): BelongsToMany
     {
-        return $this->belongsToMany(Negocio::class, 'usuarios_establecimientos');
+        return $this->belongsToMany(
+            Negocio::class,
+            'usuarios_establecimientos',
+        );
     }
 
     /** @return BelongsToMany<Sucursal, $this> */
     public function sucursales(): BelongsToMany
     {
-        return $this->belongsToMany(Sucursal::class, 'usuarios_establecimientos');
+        return $this->belongsToMany(
+            Sucursal::class,
+            'usuarios_establecimientos',
+        );
     }
 }

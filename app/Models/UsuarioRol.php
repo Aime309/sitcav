@@ -11,9 +11,9 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property-read int $id
- * @property 'administrador'|'encargado'|'vendedor' $rol
+ * @property-read 'administrador'|'encargado'|'vendedor' $rol
  */
+#[Fillable('rol')]
 #[Table(name: 'usuarios_roles')]
 #[WithoutTimestamps]
-#[Fillable('rol')]
 final class UsuarioRol extends Model {}

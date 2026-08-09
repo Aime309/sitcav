@@ -7,7 +7,6 @@ use App\Models\Negocio;
 use App\Models\Producto;
 use App\Models\Reserva;
 use App\Models\Sucursal;
-use App\Models\Usuario;
 use App\Models\Venta;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -36,12 +35,6 @@ return new class extends Migration
 
             $table
                 ->foreignIdFor(Cliente::class)
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
-            $table
-                ->foreignIdFor(Usuario::class)
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
