@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sucursales', static function (Blueprint $table): void {
-            $table->id();
+            $table->string('slug')->primary();
 
             $table
                 ->foreignIdFor(Negocio::class)
