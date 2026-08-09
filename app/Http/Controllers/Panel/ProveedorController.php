@@ -18,7 +18,7 @@ final class ProveedorController extends Controller
     {
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
-        return view('panel_negocios_{negocio}_proveedores', [
+        return view('paginas.panel.proveedores', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);

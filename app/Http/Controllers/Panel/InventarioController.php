@@ -28,7 +28,7 @@ final class InventarioController extends Controller
                 ")->fetchColumn() ?: 0;
         }
 
-        return view('panel_negocios_{negocio}_inventario', [
+        return view('paginas.panel.inventario', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);

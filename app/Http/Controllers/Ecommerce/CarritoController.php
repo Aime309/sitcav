@@ -16,16 +16,20 @@ final class CarritoController extends Controller
 {
     public function index(Request $request, Negocio $negocio): View
     {
-        $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
+        $usuarioId = $_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'];
+        $usuario = Cliente::query()->findOrFail($usuarioId);
 
-        return view('{negocio}_carrito', [
+        return view('paginas.ecommerce.carrito', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);
     }
 
-    public function update(Request $request, Negocio $negocio, ?Producto $producto = null): RedirectResponse
-    {
+    public function update(
+        Request $request,
+        Negocio $negocio,
+        ?Producto $producto = null
+    ): RedirectResponse {
         $stocks = $_POST['stocks'] ?? [];
 
         return to_route('{negocio}.carrito', ['negocio' => $negocio]);

@@ -18,14 +18,17 @@ final class VentaController extends Controller
     {
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
-        return view('panel_negocios_{negocio}_ventas', [
+        return view('paginas.panel.ventas', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);
     }
 
-    public function store(Request $request, Negocio $negocio, ?Reserva $reserva = null): RedirectResponse
-    {
+    public function store(
+        Request $request,
+        Negocio $negocio,
+        ?Reserva $reserva = null,
+    ): RedirectResponse {
         return to_route('panel.negocios.{negocio}.ventas', [
             'negocio' => $negocio,
         ]);

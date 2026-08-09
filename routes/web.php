@@ -46,7 +46,7 @@ Route::prefix('panel')->group(static function (): void {
         ->prefix('iniciar-sesion')
         ->group(static function (): void {
             // Ver inicio de sesión del panel
-            Route::view('/', 'panel_iniciar-sesion')
+            Route::view('/', 'paginas.panel.iniciar-sesion')
                 ->name('panel.iniciar-sesion');
 
             // Iniciar sesión en el panel
@@ -283,7 +283,7 @@ Route::prefix('{negocio}')->group(static function (): void {
             Route::get(
                 '/',
                 static function (Request $request, Negocio $negocio): View {
-                    return view('{negocio}_iniciar-sesion', [
+                    return view('paginas.ecommerce.iniciar-sesion', [
                         'negocio' => $negocio,
                     ]);
                 },
@@ -355,7 +355,10 @@ Route::prefix('{negocio}')->group(static function (): void {
                     ->name('{negocio}.reservas.{reserva}');
 
                 // Cancelar reserva en un negocio
-                Route::post('/', [EcommerceReservaController::class, 'update']);
+                Route::post(
+                    '/',
+                    [EcommerceReservaController::class, 'update'],
+                );
             });
         });
 });

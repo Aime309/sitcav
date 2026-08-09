@@ -15,7 +15,10 @@ final class ClienteController extends Controller
 {
     public function create(Request $request, Negocio $negocio): View
     {
-        return view('{negocio}_registrarse', ['negocio' => $negocio]);
+        return view(
+            'paginas.ecommerce.registrarse',
+            ['negocio' => $negocio],
+        );
     }
 
     public function store(Request $request, Negocio $negocio): RedirectResponse
@@ -37,17 +40,21 @@ final class ClienteController extends Controller
 
     public function edit(Request $request, Negocio $negocio): View
     {
-        $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id']);
+        $usuarioId = $_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'];
+        $usuario = Cliente::query()->findOrFail($usuarioId);
 
-        return view('{negocio}_perfil', [
+        return view('paginas.ecommerce.perfil', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);
     }
 
-    public function update(Request $request, Negocio $negocio): RedirectResponse
-    {
-        $cliente = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id']);
+    public function update(
+        Request $request,
+        Negocio $negocio,
+    ): RedirectResponse {
+        $usuarioId = $_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'];
+        $cliente = Cliente::query()->findOrFail($usuarioId);
 
         $cliente->nombre = $_POST['nombre'] ?? $cliente->nombre;
         $cliente->apellido = $_POST['apellido'] ?? $cliente->apellido;

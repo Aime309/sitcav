@@ -19,7 +19,7 @@ final class SucursalController extends Controller
     {
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
-        return view('panel_negocios_{negocio}_sucursales', [
+        return view('paginas.panel.sucursales', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);
@@ -47,7 +47,7 @@ final class SucursalController extends Controller
     {
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
-        return view('panel_negocios_{negocio}_sucursales_{sucursal}', [
+        return view('paginas.panel.sucursal', [
             'negocio' => $negocio,
             'usuario' => $usuario,
             'sucursal' => $sucursal,
@@ -59,7 +59,7 @@ final class SucursalController extends Controller
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
         return view(
-            'panel_negocios_{negocio}_sucursales_{sucursal}_editar',
+            'paginas.panel.editar-sucursal',
             [
                 'negocio' => $negocio,
                 'usuario' => $usuario,

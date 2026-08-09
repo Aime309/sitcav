@@ -15,7 +15,7 @@ final class AdministradorController extends Controller
 {
     public function create(Request $request): View
     {
-        return view('panel_registrarse');
+        return view('paginas.panel.registrarse');
     }
 
     public function store(Request $request): RedirectResponse

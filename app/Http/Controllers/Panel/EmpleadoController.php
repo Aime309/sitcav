@@ -40,7 +40,7 @@ final class EmpleadoController extends Controller
             }
         }
 
-        return view('panel_negocios_{negocio}_empleados', [
+        return view('paginas.panel.empleados', [
             'negocio' => $negocio,
             'usuario' => $usuario,
             'empleados' => $empleados,

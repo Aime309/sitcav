@@ -16,7 +16,7 @@ final class ReservaController extends Controller
     {
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
-        return view('panel_negocios_{negocio}_reservas', [
+        return view('paginas.panel.reservas', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);

@@ -18,7 +18,7 @@ final class ProductoController extends Controller
     {
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
-        return view('panel_negocios_{negocio}_productos', [
+        return view('paginas.panel.productos', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);
@@ -59,7 +59,7 @@ final class ProductoController extends Controller
     {
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
-        return view('panel_negocios_{negocio}_productos_{producto}', [
+        return view('paginas.panel.editar-producto', [
             'negocio' => $negocio,
             'producto' => $producto,
             'usuario' => $usuario,

@@ -18,7 +18,7 @@ final class PerfilController extends Controller
         $usuarioId = $_SESSION['panel']['usuario']['id'];
         $usuario = Usuario::query()->findOrFail($usuarioId);
 
-        return view('panel_negocios_{negocio}_perfil', [
+        return view('paginas.panel.perfil', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);

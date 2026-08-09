@@ -16,9 +16,10 @@ final class ReservaController extends Controller
 {
     public function index(Request $request, Negocio $negocio): View
     {
-        $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
+        $usuarioId = $_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'];
+        $usuario = Cliente::query()->findOrFail($usuarioId);
 
-        return view('{negocio}_reservas', [
+        return view('paginas.ecommerce.reservas', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);
@@ -34,17 +35,21 @@ final class ReservaController extends Controller
 
     public function show(Request $request, Negocio $negocio, Reserva $reserva): View
     {
-        $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
+        $usuarioId = $_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'];
+        $usuario = Cliente::query()->findOrFail($usuarioId);
 
-        return view('{negocio}_reservas_{reserva}', [
+        return view('paginas.ecommerce.reserva', [
             'negocio' => $negocio,
             'usuario' => $usuario,
             'reserva' => $reserva,
         ]);
     }
 
-    public function update(Request $request, Negocio $negocio, Reserva $reserva): RedirectResponse
-    {
+    public function update(
+        Request $request,
+        Negocio $negocio,
+        Reserva $reserva,
+    ): RedirectResponse {
         return to_route('{negocio}.reservas', ['negocio' => $negocio]);
     }
 }

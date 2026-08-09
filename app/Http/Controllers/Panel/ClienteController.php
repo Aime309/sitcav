@@ -18,7 +18,7 @@ final class ClienteController extends Controller
     {
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
-        return view('panel_negocios_{negocio}_clientes', [
+        return view('paginas.panel.clientes', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);

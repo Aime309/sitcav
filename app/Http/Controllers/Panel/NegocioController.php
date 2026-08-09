@@ -19,7 +19,7 @@ final class NegocioController extends Controller
         $usuarioId = $_SESSION['panel']['usuario']['id'];
         $usuario = Usuario::query()->findOrFail($usuarioId);
 
-        return view('panel_negocios', ['usuario' => $usuario]);
+        return view('paginas.panel.negocios', ['usuario' => $usuario]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -44,7 +44,7 @@ final class NegocioController extends Controller
         $usuarioId = $_SESSION['panel']['usuario']['id'];
         $usuario = Usuario::query()->findOrFail($usuarioId);
 
-        return view('panel_negocios_{negocio}', [
+        return view('paginas.panel.negocio', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);
@@ -55,7 +55,7 @@ final class NegocioController extends Controller
         $usuarioId = $_SESSION['panel']['usuario']['id'];
         $usuario = Usuario::query()->findOrFail($usuarioId);
 
-        return view('panel_negocios_{negocio}_editar', [
+        return view('paginas.panel.editar-negocio', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);

@@ -17,7 +17,7 @@ final class CompraController extends Controller
     {
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
-        return view('panel_negocios_{negocio}_compras', [
+        return view('paginas.panel.compras', [
             'negocio' => $negocio,
             'usuario' => $usuario,
         ]);
