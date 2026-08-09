@@ -3,5 +3,4 @@
     :crumbs="['Proveedores']"
     :negocio="$negocio"
     :usuario="$usuario">
-
 </x-panel.estructuras.privada>

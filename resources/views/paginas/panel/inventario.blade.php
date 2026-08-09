@@ -18,6 +18,7 @@
                                     'producto' => $producto->id,
                                 ]
                             ) }}">
+                            @csrf
                             <input
                                 type="number"
                                 name="stock"

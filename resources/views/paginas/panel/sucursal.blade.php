@@ -3,5 +3,4 @@
     :usuario="$usuario"
     :negocio="$negocio"
     :sucursal="$sucursal">
-
 </x-panel.estructuras.privada>

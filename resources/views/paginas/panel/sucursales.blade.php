@@ -23,6 +23,7 @@
         </section>
 
         <form method="post" class="w3-half">
+            @csrf
             <input
                 name="nombre"
                 placeholder="Nombre"

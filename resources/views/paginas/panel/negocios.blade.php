@@ -39,6 +39,7 @@
                     return this.nombre.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
                 },
             }">
+            @csrf
             <input
                 name="nombre"
                 placeholder="Nombre"

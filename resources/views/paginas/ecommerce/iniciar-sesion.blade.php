@@ -1,5 +1,6 @@
 <x-estructura-ecommerce titulo="Iniciar sesión" :negocio="$negocio">
     <form method="post" class="w3-container">
+        @csrf
         <input
             name="correo"
             placeholder="Correo electrónico"

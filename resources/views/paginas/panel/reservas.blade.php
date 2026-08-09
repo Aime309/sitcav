@@ -3,5 +3,4 @@
     :crumbs="['Reservas']"
     :negocio="$negocio"
     :usuario="$usuario">
-
 </x-panel.estructuras.privada>

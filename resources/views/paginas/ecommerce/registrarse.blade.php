@@ -1,5 +1,6 @@
 <x-estructura-ecommerce titulo="Registrarse" :negocio="$negocio">
     <form method="post" class="w3-container">
+        @csrf
         <input
             name="nombre"
             placeholder="Nombre"

@@ -20,6 +20,7 @@
             @endforeach
         </table>
         <form method="post" enctype="multipart/form-data" class="w3-half">
+            @csrf
             <input
                 name="nombre"
                 placeholder="Nombre"

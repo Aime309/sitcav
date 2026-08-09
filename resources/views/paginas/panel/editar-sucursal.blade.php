@@ -10,6 +10,7 @@
             'negocio' => $negocio,
             'sucursal' => $sucursal,
         ]) }}">
+        @csrf
         <input
             name="nombre"
             placeholder="Nombre"

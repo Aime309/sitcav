@@ -18,6 +18,7 @@
                                     'empleado' => $empleado,
                                 ],
                             ) }}">
+                            @csrf
                             <select name="rol" required class="w3-select">
                                 <option
                                     value="encargado"
@@ -68,6 +69,7 @@
         <form
             method="post"
             class="w3-half w3-card-4">
+            @csrf
             <select name="rol" required class="w3-select">
                 <option value="encargado">Encargado</option>
                 <option value="vendedor">Vendedor</option>
