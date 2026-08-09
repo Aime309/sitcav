@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -12,14 +14,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read int $id
- * @property string $correo
- * @property string $clave
+ * @property-read string $correo
+ * @property-read string $clave
  * @property-read Collection<UsuarioRol> $roles
  * @property-read Collection<int, Negocio> $negocios
  * @property-read Collection<int, Sucursal> $sucursales
  */
+#[Table(key: 'correo', keyType: 'string')]
 #[WithoutTimestamps]
+#[WithoutIncrementing]
 #[Fillable('correo', 'clave')]
 final class Usuario extends Model
 {
