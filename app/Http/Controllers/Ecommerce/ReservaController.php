@@ -16,7 +16,6 @@ final class ReservaController extends Controller
 {
     public function index(Request $request, Negocio $negocio): View
     {
-        session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
         return view('{negocio}_reservas', [
@@ -35,7 +34,6 @@ final class ReservaController extends Controller
 
     public function show(Request $request, Negocio $negocio, Reserva $reserva): View
     {
-        session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
         return view('{negocio}_reservas_{reserva}', [

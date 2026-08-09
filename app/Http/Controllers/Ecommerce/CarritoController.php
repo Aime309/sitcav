@@ -16,7 +16,6 @@ final class CarritoController extends Controller
 {
     public function index(Request $request, Negocio $negocio): View
     {
-        session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
         return view('{negocio}_carrito', [

@@ -28,7 +28,6 @@ final class ClienteController extends Controller
             'telefono' => $_POST['telefono'] ?? '',
         ]);
 
-        session_start();
         $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'] = $cliente->id;
 
         return to_route('{negocio}', [
@@ -38,7 +37,6 @@ final class ClienteController extends Controller
 
     public function edit(Request $request, Negocio $negocio): View
     {
-        session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id']);
 
         return view('{negocio}_perfil', [
@@ -49,7 +47,6 @@ final class ClienteController extends Controller
 
     public function update(Request $request, Negocio $negocio): RedirectResponse
     {
-        session_start();
         $cliente = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id']);
 
         $cliente->nombre = $_POST['nombre'] ?? $cliente->nombre;

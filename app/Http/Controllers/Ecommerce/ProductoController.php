@@ -36,7 +36,6 @@ final class ProductoController extends Controller
             }
         }
 
-        session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
         return view('{negocio}_productos', [
@@ -47,7 +46,6 @@ final class ProductoController extends Controller
 
     public function show(Request $request, Negocio $negocio, Producto $producto): View
     {
-        session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
         return view('{negocio}_productos_{producto}', [

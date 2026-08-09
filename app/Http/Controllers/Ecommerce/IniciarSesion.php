@@ -22,7 +22,6 @@ final class IniciarSesion extends Controller
         $usuario = Cliente::query()->where('correo', $correo)->firstOrFail();
 
         if ($usuario && password_verify($clave, $usuario['clave'])) {
-            session_start();
             $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'] = $usuario->id;
 
             return to_route('{negocio}', ['negocio' => $negocio]);

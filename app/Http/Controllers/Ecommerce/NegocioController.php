@@ -14,7 +14,6 @@ final class NegocioController extends Controller
 {
     public function show(Request $request, Negocio $negocio): View
     {
-        session_start();
         $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
 
         return view('{negocio}', [
