@@ -8,8 +8,4 @@
             Colorlib
         </a>
     </div>
-    <div class="d-footer-meta">
-        <span>v4.3.0</span>
-        <span>preview build</span>
-    </div>
 </footer>

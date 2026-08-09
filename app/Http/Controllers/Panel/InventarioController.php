@@ -16,7 +16,6 @@ final class InventarioController extends Controller
 {
     public function index(Request $request, Negocio $negocio): View
     {
-        session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
         foreach ($negocio->productos as $producto) {

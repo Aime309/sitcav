@@ -35,7 +35,6 @@ final class AdministradorController extends Controller
                 ['rol' => 'vendedor'],
             ]);
 
-            session_start();
             $_SESSION['panel']['usuario']['id'] = $usuario->id;
         });
 

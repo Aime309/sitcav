@@ -14,7 +14,6 @@ final class ReservaController extends Controller
 {
     public function index(Request $request, Negocio $negocio): View
     {
-        session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
         return view('panel_negocios_{negocio}_reservas', [

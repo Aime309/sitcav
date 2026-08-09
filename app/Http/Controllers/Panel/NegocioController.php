@@ -16,7 +16,6 @@ final class NegocioController extends Controller
 {
     public function index(Request $request): View
     {
-        session_start();
         $usuarioId = $_SESSION['panel']['usuario']['id'];
         $usuario = Usuario::query()->findOrFail($usuarioId);
 
@@ -26,7 +25,6 @@ final class NegocioController extends Controller
     public function store(Request $request): RedirectResponse
     {
         DB::transaction(static function (): void {
-            session_start();
             $usuarioId = $_SESSION['panel']['usuario']['id'];
             $usuario = Usuario::query()->findOrFail($usuarioId);
 
@@ -43,7 +41,6 @@ final class NegocioController extends Controller
 
     public function show(Request $request, Negocio $negocio): View
     {
-        session_start();
         $usuarioId = $_SESSION['panel']['usuario']['id'];
         $usuario = Usuario::query()->findOrFail($usuarioId);
 
@@ -55,7 +52,6 @@ final class NegocioController extends Controller
 
     public function edit(Request $request, Negocio $negocio): View
     {
-        session_start();
         $usuarioId = $_SESSION['panel']['usuario']['id'];
         $usuario = Usuario::query()->findOrFail($usuarioId);
 

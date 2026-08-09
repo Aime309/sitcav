@@ -18,23 +18,9 @@ final class IniciarSesion extends Controller
         $usuario = Usuario::query()->where('correo', $correo)->firstOrFail();
 
         if (password_verify($clave, $usuario->clave)) {
-            session_start();
             $_SESSION['panel']['usuario']['id'] = $usuario->id;
 
-            if ($usuario->roles->contains('rol', 'administrador')) {
-                return to_route('panel.negocios');
-            }
-
-            if ($usuario->negocios->count()) {
-                return to_route('panel.negocios.{negocio}', [
-                    'negocio' => $usuario->negocios[0],
-                ]);
-            }
-
-            return to_route('panel.negocios.{negocio}.sucursales.{sucursal}', [
-                'negocio' => $usuario->sucursales[0]->negocio,
-                'sucursal' => $usuario->sucursales[0],
-            ]);
+            return to_route('panel.negocios');
         }
 
         return to_route('panel.iniciar-sesion');

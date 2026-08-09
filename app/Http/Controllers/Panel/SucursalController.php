@@ -17,7 +17,6 @@ final class SucursalController extends Controller
 {
     public function index(Request $request, Negocio $negocio): View
     {
-        session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
         return view('panel_negocios_{negocio}_sucursales', [
@@ -29,7 +28,6 @@ final class SucursalController extends Controller
     public function store(Request $request, Negocio $negocio): RedirectResponse
     {
         DB::transaction(static function () use ($negocio): void {
-            session_start();
             $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
             $usuario->sucursales()->create([
@@ -47,7 +45,6 @@ final class SucursalController extends Controller
 
     public function show(Request $request, Negocio $negocio, Sucursal $sucursal): View
     {
-        session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
         return view('panel_negocios_{negocio}_sucursales_{sucursal}', [
@@ -59,7 +56,6 @@ final class SucursalController extends Controller
 
     public function edit(Request $request, Negocio $negocio, Sucursal $sucursal): View
     {
-        session_start();
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
         return view(

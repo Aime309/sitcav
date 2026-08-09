@@ -18,7 +18,6 @@ final class EmpleadoController extends Controller
 {
     public function index(Request $request, Negocio $negocio): View
     {
-        session_start();
         $usuarioId = $_SESSION['panel']['usuario']['id'];
         $usuario = Usuario::query()->findOrFail($usuarioId);
         $empleados = [];

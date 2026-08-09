@@ -15,7 +15,6 @@ final class PerfilController extends Controller
 {
     public function edit(Request $request, Negocio $negocio): View
     {
-        session_start();
         $usuarioId = $_SESSION['panel']['usuario']['id'];
         $usuario = Usuario::query()->findOrFail($usuarioId);
 
@@ -27,7 +26,6 @@ final class PerfilController extends Controller
 
     public function update(Request $request, Negocio $negocio): RedirectResponse
     {
-        session_start();
         $usuarioId = $_SESSION['panel']['usuario']['id'];
         $usuario = Usuario::query()->findOrFail($usuarioId);
         $usuario->correo = $_POST['correo'] ?? $usuario->correo;
