@@ -43,23 +43,23 @@ Route::redirect('/', 'panel/iniciar-sesion');
 Route::redirect('/panel', 'panel/iniciar-sesion');
 
 Route::prefix('panel')->name('panel')->group(static function (): void {
-    Route::middleware(RedirigirUsuariosAutenticados::class)
-        ->prefix('iniciar-sesion')
+    Route::prefix('iniciar-sesion')
+        ->name('.iniciar-sesion')
+        ->middleware(RedirigirUsuariosAutenticados::class)
         ->group(static function (): void {
             // Ver inicio de sesión del panel
-            Route::view('/', 'paginas.panel.iniciar-sesion')
-                ->name('.iniciar-sesion');
+            Route::view('/', 'paginas.panel.iniciar-sesion');
 
             // Iniciar sesión en el panel
             Route::post('/', IniciarSesion::class);
         });
 
-    Route::middleware(RedirigirUsuariosAutenticados::class)
-        ->prefix('registrarse')
+    Route::prefix('registrarse')
+        ->name('.registrarse')
+        ->middleware(RedirigirUsuariosAutenticados::class)
         ->group(static function (): void {
             // Ver registro de administrador del panel
-            Route::get('/', [AdministradorController::class, 'create'])
-                ->name('.registrarse');
+            Route::get('/', [AdministradorController::class, 'create']);
 
             // Registrarse como administrador en el panel
             Route::post('/', [AdministradorController::class, 'store']);
@@ -69,196 +69,250 @@ Route::prefix('panel')->name('panel')->group(static function (): void {
     Route::get('cerrar-sesion', CerrarSesion::class)
         ->name('.cerrar-sesion');
 
-    Route::middleware(SoloUsuariosAutenticados::class)
-        ->prefix('negocios')
+    Route::prefix('negocios')
+        ->name('.negocios')
+        ->middleware(SoloUsuariosAutenticados::class)
         ->group(static function (): void {
             // Seleccionar establecimiento
             Route::get('/', [NegocioController::class, 'index'])
-                ->name('.negocios')
                 ->middleware(RedirigirAlEstablecimientoAsignado::class);
 
             // Registrar negocio
             Route::post('/', [NegocioController::class, 'store'])
                 ->middleware(SoloAdministradores::class);
 
-            Route::prefix('{negocio}')->group(static function (): void {
-                // Panel administrativo de un negocio
-                Route::get('/', [NegocioController::class, 'show'])
-                    ->name('.negocios.{negocio}')
-                    ->middleware(RedirigirAlEstablecimientoAsignado::class);
+            Route::prefix('{negocio}')
+                ->name('.{negocio}')
+                ->group(static function (): void {
+                    // Panel administrativo de un negocio
+                    Route::get('/', [NegocioController::class, 'show'])
+                        ->middleware(RedirigirAlEstablecimientoAsignado::class);
 
-                // Editar negocio
-                Route::get('editar', [NegocioController::class, 'edit'])
-                    ->name('.negocios.{negocio}.editar')
-                    ->middleware(SoloAdministradores::class);
-
-                // Actualizar negocio
-                Route::post('/', [NegocioController::class, 'update'])
-                    ->middleware(SoloAdministradores::class);
-
-                Route::prefix('perfil')->group(static function (): void {
-                    // Editar perfil
-                    Route::get('/', [PerfilController::class, 'edit'])
-                        ->name('.negocios.{negocio}.perfil');
-
-                    // Actualizar perfil
-                    Route::post('/', [PerfilController::class, 'update']);
-                });
-
-                Route::middleware(SoloAdministradores::class)
-                    ->prefix('empleados')
-                    ->group(static function (): void {
-                        // Ver empleados
-                        Route::get('/', [EmpleadoController::class, 'index'])
-                            ->name('.negocios.{negocio}.empleados');
-
-                        // Registrar empleado
-                        Route::post(
-                            '/',
-                            [EmpleadoController::class, 'store'],
-                        );
-
-                        // Actualizar empleado
-                        Route::post(
-                            '{empleado}',
-                            [EmpleadoController::class, 'update'],
-                        )
-                            ->name('.negocios.{negocio}.empleados.{empleado}');
-                    });
-
-                Route::middleware(SoloEncargados::class)
-                    ->prefix('proveedores')
-                    ->group(static function (): void {
-                        // Ver proveedores
-                        Route::get('/', [ProveedorController::class, 'index'])
-                            ->name('.negocios.{negocio}.proveedores');
-
-                        // Registrar proveedor
-                        Route::post('/', [ProveedorController::class, 'store']);
-
-                        // Actualizar proveedor
-                        Route::post(
-                            '{proveedor}',
-                            [ProveedorController::class, 'update'],
-                        );
-                    });
-
-                Route::middleware(SoloEncargados::class)
-                    ->prefix('clientes')
-                    ->group(static function (): void {
-                        // Ver clientes
-                        Route::get('/', [ClienteController::class, 'index'])
-                            ->name('.negocios.{negocio}.clientes');
-
-                        // Registrar cliente
-                        Route::post('/', [ClienteController::class, 'store']);
-
-                        // Actualizar cliente
-                        Route::post(
-                            '{cliente}',
-                            [ClienteController::class, 'update'],
-                        );
-                    });
-
-                Route::prefix('productos')->group(static function (): void {
-                    // Ver productos
-                    Route::get('/', [ProductoController::class, 'index'])
-                        ->name('.negocios.{negocio}.productos');
-
-                    // Registrar producto
-                    Route::post('/', [ProductoController::class, 'store']);
-
-                    Route::prefix('{producto}')->group(static function (): void {
-                        // Editar producto
-                        Route::get('/', [ProductoController::class, 'edit'])
-                            ->name('.negocios.{negocio}.productos.{producto}');
-
-                        // Actualizar producto
-                        Route::post('/', [ProductoController::class, 'update']);
-                    });
-                });
-
-                Route::middleware(SoloEncargados::class)
-                    ->prefix('inventario')
-                    ->group(static function (): void {
-                        // Ver inventario
-                        Route::get(
-                            '/',
-                            [InventarioController::class, 'index'],
-                        )
-                            ->name('.negocios.{negocio}.inventario');
-
-                        // Actualizar producto en el inventario
-                        Route::post(
-                            '{producto}',
-                            [InventarioController::class, 'update'],
-                        )
-                            ->name('.negocios.{negocio}.inventario.{producto}');
-                    });
-
-                Route::prefix('sucursales')->group(static function (): void {
-                    // Ver sucursales
-                    Route::get('/', [SucursalController::class, 'index'])
-                        ->name('.negocios.{negocio}.sucursales')
+                    // Editar negocio
+                    Route::get('editar', [NegocioController::class, 'edit'])
+                        ->name('.editar')
                         ->middleware(SoloAdministradores::class);
 
-                    // Registrar sucursal
-                    Route::post('/', [SucursalController::class, 'store'])
+                    // Actualizar negocio
+                    Route::post('/', [NegocioController::class, 'update'])
                         ->middleware(SoloAdministradores::class);
 
-                    Route::prefix('{sucursal}')
+                    Route::prefix('perfil')
+                        ->name('.perfil')
                         ->group(static function (): void {
-                            // Panel administrativo de una sucursal
+                            // Editar perfil
                             Route::get(
                                 '/',
-                                [SucursalController::class, 'show'],
-                            )
-                                ->name('.negocios.{negocio}.sucursales.{sucursal}')
-                                ->middleware(RedirigirAlEstablecimientoAsignado::class);
+                                [PerfilController::class, 'edit'],
+                            );
 
-                            // Editar sucursal
-                            Route::get(
-                                'editar',
-                                [SucursalController::class, 'edit'],
-                            )
-                                ->name('.negocios.{negocio}.sucursales.{sucursal}.editar')
-                                ->middleware(SoloAdministradores::class);
-
-                            // Actualizar sucursal
+                            // Actualizar perfil
                             Route::post(
                                 '/',
-                                [SucursalController::class, 'update'],
-                            )->middleware(SoloAdministradores::class);
+                                [PerfilController::class, 'update'],
+                            );
                         });
+
+                    Route::prefix('empleados')
+                        ->name('.empleados')
+                        ->middleware(SoloAdministradores::class)
+                        ->group(static function (): void {
+                            // Ver empleados
+                            Route::get(
+                                '/',
+                                [EmpleadoController::class, 'index'],
+                            );
+
+                            // Registrar empleado
+                            Route::post(
+                                '/',
+                                [EmpleadoController::class, 'store'],
+                            );
+
+                            // Actualizar empleado
+                            Route::post(
+                                '{empleado}',
+                                [EmpleadoController::class, 'update'],
+                            )->name('.{empleado}');
+                        });
+
+                    Route::prefix('proveedores')
+                        ->name('.proveedores')
+                        ->middleware(SoloEncargados::class)
+                        ->group(static function (): void {
+                            // Ver proveedores
+                            Route::get(
+                                '/',
+                                [ProveedorController::class, 'index'],
+                            );
+
+                            // Registrar proveedor
+                            Route::post(
+                                '/',
+                                [ProveedorController::class, 'store'],
+                            );
+
+                            // Actualizar proveedor
+                            Route::post(
+                                '{proveedor}',
+                                [ProveedorController::class, 'update'],
+                            );
+                        });
+
+                    Route::prefix('clientes')
+                        ->name('.clientes')
+                        ->middleware(SoloEncargados::class)
+                        ->group(static function (): void {
+                            // Ver clientes
+                            Route::get(
+                                '/',
+                                [ClienteController::class, 'index'],
+                            );
+
+                            // Registrar cliente
+                            Route::post(
+                                '/',
+                                [ClienteController::class, 'store']
+                            );
+
+                            // Actualizar cliente
+                            Route::post(
+                                '{cliente}',
+                                [ClienteController::class, 'update'],
+                            );
+                        });
+
+                    Route::prefix('productos')
+                        ->name('.productos')
+                        ->group(static function (): void {
+                            // Ver productos
+                            Route::get(
+                                '/',
+                                [ProductoController::class, 'index'],
+                            );
+
+                            // Registrar producto
+                            Route::post(
+                                '/',
+                                [ProductoController::class, 'store'],
+                            );
+
+                            Route::prefix('{producto}')
+                                ->name('.{producto}')
+                                ->group(static function (): void {
+                                    // Editar producto
+                                    Route::get(
+                                        '/',
+                                        [ProductoController::class, 'edit'],
+                                    );
+
+                                    // Actualizar producto
+                                    Route::post(
+                                        '/',
+                                        [ProductoController::class, 'update'],
+                                    );
+                                });
+                        });
+
+                    Route::prefix('inventario')
+                        ->name('.inventario')
+                        ->middleware(SoloEncargados::class)
+                        ->group(static function (): void {
+                            // Ver inventario
+                            Route::get(
+                                '/',
+                                [InventarioController::class, 'index'],
+                            );
+
+                            // Actualizar producto en el inventario
+                            Route::post(
+                                '{producto}',
+                                [InventarioController::class, 'update'],
+                            )->name('.{producto}');
+                        });
+
+                    Route::prefix('sucursales')
+                        ->name('.sucursales')
+                        ->group(static function (): void {
+                            // Ver sucursales
+                            Route::get(
+                                '/',
+                                [SucursalController::class, 'index'],
+                            )->middleware(SoloAdministradores::class);
+
+                            // Registrar sucursal
+                            Route::post(
+                                '/',
+                                [SucursalController::class, 'store']
+                            )->middleware(SoloAdministradores::class);
+
+                            Route::prefix('{sucursal}')
+                                ->name('.{sucursal}')
+                                ->group(static function (): void {
+                                    // Panel administrativo de una sucursal
+                                    Route::get(
+                                        '/',
+                                        [SucursalController::class, 'show'],
+                                    )->middleware(RedirigirAlEstablecimientoAsignado::class);
+
+                                    // Editar sucursal
+                                    Route::get(
+                                        'editar',
+                                        [SucursalController::class, 'edit'],
+                                    )
+                                        ->name('.editar')
+                                        ->middleware(SoloAdministradores::class);
+
+                                    // Actualizar sucursal
+                                    Route::post(
+                                        '/',
+                                        [SucursalController::class, 'update'],
+                                    )->middleware(SoloAdministradores::class);
+                                });
+                        });
+
+                    Route::prefix('compras')
+                        ->name('.compras')
+                        ->middleware(SoloEncargados::class)
+                        ->group(static function (): void {
+                            // Ver compras
+                            Route::get(
+                                '/',
+                                [CompraController::class, 'index'],
+                            );
+
+                            // Registrar compra
+                            Route::post(
+                                '/',
+                                [CompraController::class, 'store'],
+                            );
+                        });
+
+                    Route::prefix('ventas')
+                        ->name('.ventas')
+                        ->middleware(SoloEncargados::class)
+                        ->group(static function (): void {
+                            // Ver ventas
+                            Route::get(
+                                '/',
+                                [VentaController::class, 'index'],
+                            );
+
+                            // Registrar venta
+                            Route::post(
+                                '/',
+                                [VentaController::class, 'store'],
+                            );
+                        });
+
+                    // Ver reservas
+                    Route::get(
+                        'reservas',
+                        [ReservaController::class, 'index'],
+                    )
+                        ->name('.reservas')
+                        ->middleware(SoloEncargados::class);
                 });
-
-                Route::middleware(SoloEncargados::class)
-                    ->prefix('compras')
-                    ->group(static function (): void {
-                        // Ver compras
-                        Route::get('/', [CompraController::class, 'index'])
-                            ->name('.negocios.{negocio}.compras');
-
-                        // Registrar compra
-                        Route::post('/', [CompraController::class, 'store']);
-                    });
-
-                Route::middleware(SoloEncargados::class)
-                    ->prefix('ventas')
-                    ->group(static function (): void {
-                        // Ver ventas
-                        Route::get('/', [VentaController::class, 'index'])
-                            ->name('.negocios.{negocio}.ventas');
-
-                        // Registrar venta
-                        Route::post('/', [VentaController::class, 'store']);
-                    });
-
-                // Ver reservas
-                Route::get('reservas', [ReservaController::class, 'index'])
-                    ->name('.negocios.{negocio}.reservas')
-                    ->middleware(SoloEncargados::class);
-            });
         });
 });
 
