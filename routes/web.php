@@ -42,13 +42,13 @@ define('PDO', DB::getPdo());
 Route::redirect('/', 'panel/iniciar-sesion');
 Route::redirect('/panel', 'panel/iniciar-sesion');
 
-Route::prefix('panel')->group(static function (): void {
+Route::prefix('panel')->name('panel')->group(static function (): void {
     Route::middleware(RedirigirUsuariosAutenticados::class)
         ->prefix('iniciar-sesion')
         ->group(static function (): void {
             // Ver inicio de sesión del panel
             Route::view('/', 'paginas.panel.iniciar-sesion')
-                ->name('panel.iniciar-sesion');
+                ->name('.iniciar-sesion');
 
             // Iniciar sesión en el panel
             Route::post('/', IniciarSesion::class);
@@ -59,7 +59,7 @@ Route::prefix('panel')->group(static function (): void {
         ->group(static function (): void {
             // Ver registro de administrador del panel
             Route::get('/', [AdministradorController::class, 'create'])
-                ->name('panel.registrarse');
+                ->name('.registrarse');
 
             // Registrarse como administrador en el panel
             Route::post('/', [AdministradorController::class, 'store']);
@@ -67,14 +67,14 @@ Route::prefix('panel')->group(static function (): void {
 
     // Cerrar sesión en el panel
     Route::get('cerrar-sesion', CerrarSesion::class)
-        ->name('panel.cerrar-sesion');
+        ->name('.cerrar-sesion');
 
     Route::middleware(SoloUsuariosAutenticados::class)
         ->prefix('negocios')
         ->group(static function (): void {
             // Seleccionar establecimiento
             Route::get('/', [NegocioController::class, 'index'])
-                ->name('panel.negocios')
+                ->name('.negocios')
                 ->middleware(RedirigirAlEstablecimientoAsignado::class);
 
             // Registrar negocio
@@ -84,12 +84,12 @@ Route::prefix('panel')->group(static function (): void {
             Route::prefix('{negocio}')->group(static function (): void {
                 // Panel administrativo de un negocio
                 Route::get('/', [NegocioController::class, 'show'])
-                    ->name('panel.negocios.{negocio}')
+                    ->name('.negocios.{negocio}')
                     ->middleware(RedirigirAlEstablecimientoAsignado::class);
 
                 // Editar negocio
                 Route::get('editar', [NegocioController::class, 'edit'])
-                    ->name('panel.negocios.{negocio}.editar')
+                    ->name('.negocios.{negocio}.editar')
                     ->middleware(SoloAdministradores::class);
 
                 // Actualizar negocio
@@ -99,7 +99,7 @@ Route::prefix('panel')->group(static function (): void {
                 Route::prefix('perfil')->group(static function (): void {
                     // Editar perfil
                     Route::get('/', [PerfilController::class, 'edit'])
-                        ->name('panel.negocios.{negocio}.perfil');
+                        ->name('.negocios.{negocio}.perfil');
 
                     // Actualizar perfil
                     Route::post('/', [PerfilController::class, 'update']);
@@ -110,7 +110,7 @@ Route::prefix('panel')->group(static function (): void {
                     ->group(static function (): void {
                         // Ver empleados
                         Route::get('/', [EmpleadoController::class, 'index'])
-                            ->name('panel.negocios.{negocio}.empleados');
+                            ->name('.negocios.{negocio}.empleados');
 
                         // Registrar empleado
                         Route::post(
@@ -123,7 +123,7 @@ Route::prefix('panel')->group(static function (): void {
                             '{empleado}',
                             [EmpleadoController::class, 'update'],
                         )
-                            ->name('panel.negocios.{negocio}.empleados.{empleado}');
+                            ->name('.negocios.{negocio}.empleados.{empleado}');
                     });
 
                 Route::middleware(SoloEncargados::class)
@@ -131,7 +131,7 @@ Route::prefix('panel')->group(static function (): void {
                     ->group(static function (): void {
                         // Ver proveedores
                         Route::get('/', [ProveedorController::class, 'index'])
-                            ->name('panel.negocios.{negocio}.proveedores');
+                            ->name('.negocios.{negocio}.proveedores');
 
                         // Registrar proveedor
                         Route::post('/', [ProveedorController::class, 'store']);
@@ -148,7 +148,7 @@ Route::prefix('panel')->group(static function (): void {
                     ->group(static function (): void {
                         // Ver clientes
                         Route::get('/', [ClienteController::class, 'index'])
-                            ->name('panel.negocios.{negocio}.clientes');
+                            ->name('.negocios.{negocio}.clientes');
 
                         // Registrar cliente
                         Route::post('/', [ClienteController::class, 'store']);
@@ -163,7 +163,7 @@ Route::prefix('panel')->group(static function (): void {
                 Route::prefix('productos')->group(static function (): void {
                     // Ver productos
                     Route::get('/', [ProductoController::class, 'index'])
-                        ->name('panel.negocios.{negocio}.productos');
+                        ->name('.negocios.{negocio}.productos');
 
                     // Registrar producto
                     Route::post('/', [ProductoController::class, 'store']);
@@ -171,7 +171,7 @@ Route::prefix('panel')->group(static function (): void {
                     Route::prefix('{producto}')->group(static function (): void {
                         // Editar producto
                         Route::get('/', [ProductoController::class, 'edit'])
-                            ->name('panel.negocios.{negocio}.productos.{producto}');
+                            ->name('.negocios.{negocio}.productos.{producto}');
 
                         // Actualizar producto
                         Route::post('/', [ProductoController::class, 'update']);
@@ -186,20 +186,20 @@ Route::prefix('panel')->group(static function (): void {
                             '/',
                             [InventarioController::class, 'index'],
                         )
-                            ->name('panel.negocios.{negocio}.inventario');
+                            ->name('.negocios.{negocio}.inventario');
 
                         // Actualizar producto en el inventario
                         Route::post(
                             '{producto}',
                             [InventarioController::class, 'update'],
                         )
-                            ->name('panel.negocios.{negocio}.inventario.{producto}');
+                            ->name('.negocios.{negocio}.inventario.{producto}');
                     });
 
                 Route::prefix('sucursales')->group(static function (): void {
                     // Ver sucursales
                     Route::get('/', [SucursalController::class, 'index'])
-                        ->name('panel.negocios.{negocio}.sucursales')
+                        ->name('.negocios.{negocio}.sucursales')
                         ->middleware(SoloAdministradores::class);
 
                     // Registrar sucursal
@@ -213,7 +213,7 @@ Route::prefix('panel')->group(static function (): void {
                                 '/',
                                 [SucursalController::class, 'show'],
                             )
-                                ->name('panel.negocios.{negocio}.sucursales.{sucursal}')
+                                ->name('.negocios.{negocio}.sucursales.{sucursal}')
                                 ->middleware(RedirigirAlEstablecimientoAsignado::class);
 
                             // Editar sucursal
@@ -221,7 +221,7 @@ Route::prefix('panel')->group(static function (): void {
                                 'editar',
                                 [SucursalController::class, 'edit'],
                             )
-                                ->name('panel.negocios.{negocio}.sucursales.{sucursal}.editar')
+                                ->name('.negocios.{negocio}.sucursales.{sucursal}.editar')
                                 ->middleware(SoloAdministradores::class);
 
                             // Actualizar sucursal
@@ -237,7 +237,7 @@ Route::prefix('panel')->group(static function (): void {
                     ->group(static function (): void {
                         // Ver compras
                         Route::get('/', [CompraController::class, 'index'])
-                            ->name('panel.negocios.{negocio}.compras');
+                            ->name('.negocios.{negocio}.compras');
 
                         // Registrar compra
                         Route::post('/', [CompraController::class, 'store']);
@@ -248,7 +248,7 @@ Route::prefix('panel')->group(static function (): void {
                     ->group(static function (): void {
                         // Ver ventas
                         Route::get('/', [VentaController::class, 'index'])
-                            ->name('panel.negocios.{negocio}.ventas');
+                            ->name('.negocios.{negocio}.ventas');
 
                         // Registrar venta
                         Route::post('/', [VentaController::class, 'store']);
@@ -256,7 +256,7 @@ Route::prefix('panel')->group(static function (): void {
 
                 // Ver reservas
                 Route::get('reservas', [ReservaController::class, 'index'])
-                    ->name('panel.negocios.{negocio}.reservas')
+                    ->name('.negocios.{negocio}.reservas')
                     ->middleware(SoloEncargados::class);
             });
         });

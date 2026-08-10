@@ -15,7 +15,8 @@ final class InventarioController extends Controller
 {
     public function index(Negocio $negocio): View
     {
-        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
 
         foreach ($negocio->productos as $producto) {
             $producto['stock'] = PDO
