@@ -12,6 +12,7 @@
     'required',
     'title',
     'type',
+    'model',
 ])
 
 @php
@@ -21,12 +22,14 @@ $id = uniqid();
 @endphp
 
 <div class="field">
-    <label class="field-label" for="{{ $id }}">
-        {{ $label ?? '' }}
-        @if ($required ?? false)
-            <span class="req">*</span>
-        @endif
-    </label>
+    @if (!empty($label))
+        <label class="field-label" for="{{ $id }}">
+            {{ $label }}
+            @if ($required ?? false)
+                <span class="req">*</span>
+            @endif
+        </label>
+    @endif
 
     @if (empty($icono))
         <input
@@ -42,6 +45,7 @@ $id = uniqid();
             @required($required ?? false)
             title="{{ $title ?? '' }}"
             type="{{ $type ?? 'text' }}"
+            {{ empty($model) ?: "x-model=$model" }}
         />
     @else
         <div class="input-icon">
@@ -61,6 +65,7 @@ $id = uniqid();
                 @required($required ?? false)
                 title="{{ $title ?? '' }}"
                 type="{{ $type ?? 'text' }}"
+                {{ empty($model) ?: "x-model=$model" }}
             />
         </div>
     @endif

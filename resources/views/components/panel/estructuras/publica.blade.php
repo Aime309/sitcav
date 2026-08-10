@@ -29,6 +29,10 @@
         ) }}" />
         <link rel="icon" href="{{ asset('favicon.png') }}" />
         @fonts
+        <link
+            rel="stylesheet"
+            href="https://www.w3schools.com/w3css/5/w3.css"
+        />
         @vite([
             'resources/css/app.css',
             'resources/js/app.js',

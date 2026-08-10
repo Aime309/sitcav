@@ -9,6 +9,7 @@ use App\Models\Negocio;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 final class NegocioController extends Controller
@@ -21,17 +22,24 @@ final class NegocioController extends Controller
         return view('paginas.panel.negocios', ['usuario' => $usuario]);
     }
 
-    public function store(): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        DB::transaction(static function (): void {
+        $negocio = $request->validate([
+            'nombre' => 'required',
+            'rif' => 'required',
+            'direccion' => 'required',
+            'telefono' => 'required',
+        ]);
+
+        DB::transaction(static function () use ($negocio): void {
             $correo = $_SESSION['panel']['usuario']['correo'];
             $usuario = Usuario::query()->findOrFail($correo);
 
             $usuario->negocios()->create([
-                'nombre' => $_POST['nombre'] ?? '',
-                'rif' => $_POST['rif'] ?? '',
-                'direccion' => $_POST['direccion'] ?? '',
-                'telefono' => $_POST['telefono'] ?? '',
+                'nombre' => $negocio['nombre'],
+                'rif' => $negocio['rif'],
+                'direccion' => $negocio['direccion'],
+                'telefono' => $negocio['telefono'],
             ]);
         });
 

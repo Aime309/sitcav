@@ -17,50 +17,54 @@
             },
         }'>
         @csrf
-        <input
+
+        <x-panel.campo
             name="nombre"
             placeholder="Nombre"
             required
-            minlength="1"
+            :minlength="1"
             pattern="[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+"
             title="El nombre debe contener solo letras y espacios."
-            class="w3-input"
-            value="{{ $negocio->nombre }}"
-            x-model="nombre"
+            :message="$message ?? ''"
+            :value="old('nombre', $negocio->nombre)"
+            model="nombre"
         />
-        <input
+
+        <x-panel.campo
             name="rif"
             placeholder="RIF"
             required
-            minlength="1"
-            class="w3-input"
-            value="{{ $negocio->rif }}"
+            :minlength="1"
+            :message="$message ?? ''"
+            :value="old('rif', $negocio->rif)"
         />
-        <input
+
+        <x-panel.campo
             name="direccion"
             placeholder="Dirección"
             required
-            minlength="1"
-            class="w3-input"
-            value="{{ $negocio->direccion }}"
+            :minlength="1"
+            :message="$message ?? ''"
+            :value="old('direccion', $negocio->direccion)"
         />
-        <input
+
+        <x-panel.campo
             name="telefono"
             placeholder="Teléfono"
             required
             type="tel"
-            class="w3-input"
             pattern="\+58(416|426|414|424)\d{7}"
             title="El número de teléfono debe tener el formato +58(416|426|414|424) seguido de 7 dígitos."
-            value="{{ $negocio->telefono }}"
+            :message="$message ?? ''"
+            :value="old('telefono', $negocio->telefono)"
         />
-        <input
+
+        <x-panel.campo
             placeholder="Slug"
-            class="w3-input"
-            value="{{ $negocio->slug }}"
-            x-model="slug"
+            model="slug"
             disabled
         />
+
         <label>
             <input
                 name="carga_inicial_abierta"

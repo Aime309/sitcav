@@ -198,34 +198,34 @@ Route::prefix('panel')
                                     ->name('.{producto}');
                             });
 
-                        // Route::prefix('sucursales')
-                        //     ->name('.sucursales')
-                        //     ->controller(SucursalController::class)
-                        //     ->group(static function (): void {
-                        //         // Ver sucursales
-                        //         Route::get('/', 'index')
-                        //             ->middleware(SoloAdministradores::class);
+                        Route::prefix('sucursales')
+                            ->name('.sucursales')
+                            ->controller(SucursalController::class)
+                            ->group(static function (): void {
+                                // Ver sucursales
+                                Route::get('/', 'index')
+                                    ->middleware(SoloAdministradores::class);
 
-                        //         // Registrar sucursal
-                        //         Route::post('/', 'store')
-                        //             ->middleware(SoloAdministradores::class);
+                                // Registrar sucursal
+                                Route::post('/', 'store')
+                                    ->middleware(SoloAdministradores::class);
 
-                        //         Route::prefix('{sucursal}')
-                        //             ->name('.{sucursal}')
-                        //             ->group(static function (): void {
-                        //                 // Panel administrativo de una sucursal
-                        //                 Route::get('/', 'show');
+                                Route::prefix('{sucursal}')
+                                    ->name('.{sucursal}')
+                                    ->group(static function (): void {
+                                        // Panel administrativo de una sucursal
+                                        Route::get('/', 'show');
 
-                        //                 // Editar sucursal
-                        //                 Route::get('editar', 'edit')
-                        //                     ->name('.editar')
-                        //                     ->middleware(SoloAdministradores::class);
+                                        // Editar sucursal
+                                        Route::get('editar', 'edit')
+                                            ->name('.editar')
+                                            ->middleware(SoloAdministradores::class);
 
-                        //                 // Actualizar sucursal
-                        //                 Route::post('/', 'update')
-                        //                     ->middleware(SoloAdministradores::class);
-                        //             });
-                        //     });
+                                        // Actualizar sucursal
+                                        Route::post('/', 'update')
+                                            ->middleware(SoloAdministradores::class);
+                                    });
+                            });
 
                         Route::prefix('compras')
                             ->name('.compras')

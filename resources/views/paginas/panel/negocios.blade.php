@@ -2,7 +2,7 @@
     <main class="w3-row-padding">
         <section class="w3-half">
             <div class="w3-row-padding">
-                @foreach ($usuario['negocios'] as $negocio)
+                @foreach ($usuario->negocios as $negocio)
                     <a
                         href="{{ route('panel.negocios.{negocio}', [
                             'negocio' => $negocio,
@@ -41,46 +41,53 @@
             }">
             @csrf
 
-            <input
+            <x-panel.campo
                 name="nombre"
                 placeholder="Nombre"
                 required
-                minlength="1"
+                :minlength="1"
                 pattern="[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+"
                 title="El nombre debe contener solo letras y espacios."
-                class="w3-input"
-                x-model="nombre"
+                :message="$message ?? ''"
+                :value="old('nombre')"
+                model="nombre"
             />
-            <input
+
+            <x-panel.campo
                 name="rif"
                 placeholder="RIF"
                 required
-                minlength="1"
-                class="w3-input"
+                :minlength="1"
+                :message="$message ?? ''"
+                :value="old('rif')"
             />
-            <input
+
+            <x-panel.campo
                 name="direccion"
                 placeholder="Dirección"
                 required
-                minlength="1"
-                class="w3-input"
+                :minlength="1"
+                :message="$message ?? ''"
+                :value="old('direccion')"
             />
-            <input
+
+            <x-panel.campo
                 name="telefono"
                 placeholder="Teléfono"
                 required
                 type="tel"
-                class="w3-input"
                 pattern="\+58(416|426|414|424)\d{7}"
                 title="El número de teléfono debe tener el formato +58(416|426|414|424) seguido de 7 dígitos."
+                :message="$message ?? ''"
+                :value="old('telefono')"
             />
-            <input
+
+            <x-panel.campo
                 placeholder="Slug"
-                minlength="1"
-                class="w3-input"
+                model="slug"
                 disabled
-                x-model="slug"
             />
+
             <input
                 type="submit"
                 value="Agregar negocio"
