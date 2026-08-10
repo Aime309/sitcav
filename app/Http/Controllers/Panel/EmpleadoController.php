@@ -11,6 +11,7 @@ use App\Models\Usuario;
 use App\Models\UsuarioRol;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 final class EmpleadoController extends Controller
@@ -46,21 +47,38 @@ final class EmpleadoController extends Controller
         ]);
     }
 
-    public function store(Negocio $negocio): RedirectResponse {
-        $establecimiento = $_POST['establecimiento'] ?? '';
+    public function store(
+        Request $request,
+        Negocio $negocio,
+    ): RedirectResponse {
+        [
+            'establecimiento' => $establecimiento,
+            'correo' => $correo,
+            'clave' => $clave,
+            'rol' => $rol,
+        ] = $request->validate([
+            'establecimiento' => 'required',
+            'correo' => 'email|unique:usuarios',
+            'clave' => 'required|min:8',
+            'rol' => 'required',
+        ]);
+
         $negocio = Negocio::query()->find($establecimiento);
         $sucursal = Sucursal::query()->find($establecimiento);
 
-        DB::transaction(static function () use ($negocio, $sucursal): void {
+        DB::transaction(static function () use (
+            $negocio,
+            $sucursal,
+            $correo,
+            $clave,
+            $rol,
+        ): void {
             $empleado = Usuario::query()->create([
-                'correo' => $_POST['correo'] ?? '',
-                'clave' => password_hash(
-                    $_POST['clave'] ?? '',
-                    PASSWORD_DEFAULT,
-                ),
+                'correo' => $correo,
+                'clave' => password_hash($clave, PASSWORD_DEFAULT),
             ]);
 
-            switch ($_POST['rol'] ?? '') {
+            switch ($rol) {
                 case 'encargado':
                     $empleado->roles()->createMany([
                         ['rol' => 'encargado'],
@@ -89,12 +107,23 @@ final class EmpleadoController extends Controller
     }
 
     public function update(
+        Request $request,
         Negocio $negocio,
         Usuario $empleado,
     ): RedirectResponse {
-        DB::transaction(static function () use ($empleado): void {
-            $establecimiento = $_POST['establecimiento'] ?? null;
+        [
+            'establecimiento' => $establecimiento,
+            'rol' => $rol,
+        ] = $request->validate([
+            'establecimiento' => 'required',
+            'rol' => 'required',
+        ]);
 
+        DB::transaction(static function () use (
+            $empleado,
+            $establecimiento,
+            $rol,
+        ): void {
             $empleado
                 ->roles
                 ->each(static fn(UsuarioRol $rol): ?bool => $rol->delete());
@@ -102,7 +131,7 @@ final class EmpleadoController extends Controller
             $negocio = Negocio::query()->find($establecimiento);
             $sucursal = Sucursal::query()->find($establecimiento);
 
-            switch ($_POST['rol'] ?? '') {
+            switch ($rol) {
                 case 'encargado':
                     $empleado->roles()->createMany([
                         ['rol' => 'encargado'],

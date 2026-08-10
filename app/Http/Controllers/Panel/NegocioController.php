@@ -24,22 +24,32 @@ final class NegocioController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $negocio = $request->validate([
+        [
+            'nombre' => $nombre,
+            'rif' => $rif,
+            'direccion' => $direccion,
+            'telefono' => $telefono,
+        ] = $request->validate([
             'nombre' => 'required',
             'rif' => 'required',
             'direccion' => 'required',
             'telefono' => 'required',
         ]);
 
-        DB::transaction(static function () use ($negocio): void {
+        DB::transaction(static function () use (
+            $nombre,
+            $rif,
+            $direccion,
+            $telefono,
+        ): void {
             $correo = $_SESSION['panel']['usuario']['correo'];
             $usuario = Usuario::query()->findOrFail($correo);
 
             $usuario->negocios()->create([
-                'nombre' => $negocio['nombre'],
-                'rif' => $negocio['rif'],
-                'direccion' => $negocio['direccion'],
-                'telefono' => $negocio['telefono'],
+                'nombre' => $nombre,
+                'rif' => $rif,
+                'direccion' => $direccion,
+                'telefono' => $telefono,
             ]);
         });
 
@@ -68,14 +78,29 @@ final class NegocioController extends Controller
         ]);
     }
 
-    public function update(Negocio $negocio): RedirectResponse {
+    public function update(
+        Request $request,
+        Negocio $negocio,
+    ): RedirectResponse {
+        [
+            'nombre' => $nombre,
+            'rif' => $rif,
+            'direccion' => $direccion,
+            'telefono' => $telefono,
+        ] = $request->validate([
+            'nombre' => 'required',
+            'rif' => 'required',
+            'direccion' => 'required',
+            'telefono' => 'required',
+        ]);
+
         $cargaInicialAbierta = $_POST['carga_inicial_abierta'] ?? '';
 
         $negocio->update([
-            'nombre' => $_POST['nombre'] ?? $negocio->nombre,
-            'rif' => $_POST['rif'] ?? $negocio->rif,
-            'direccion' => $_POST['direccion'] ?? $negocio->direccion,
-            'telefono' => $_POST['telefono'] ?? $negocio->telefono,
+            'nombre' => $nombre,
+            'rif' => $rif,
+            'direccion' => $direccion,
+            'telefono' => $telefono,
             'slug' => $negocio->newUniqueId(),
             'carga_inicial_abierta' => $cargaInicialAbierta === 'on'
                 ? 1
