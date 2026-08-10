@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\Route;
 define('PDO', DB::getPdo());
 
 Route::redirect('/', 'panel/iniciar-sesion');
+Route::redirect('/panel', 'panel/iniciar-sesion');
 
 Route::prefix('panel')->group(static function (): void {
     Route::middleware(RedirigirUsuariosAutenticados::class)
