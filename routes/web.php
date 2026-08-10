@@ -93,8 +93,7 @@ Route::prefix('panel')
                     ->middleware(SoloEstablecimientosAsignados::class)
                     ->group(static function (): void {
                         // Panel administrativo de un negocio
-                        Route::get('/', 'show')
-                            ->middleware(RedirigirAlEstablecimientoAsignado::class);
+                        Route::get('/', 'show');
 
                         // Editar negocio
                         Route::get('editar', 'edit')
@@ -129,7 +128,8 @@ Route::prefix('panel')
 
                                 // Actualizar empleado
                                 Route::post('{empleado}', 'update')
-                                    ->name('.{empleado}');
+                                    ->name('.{empleado}')
+                                    ->withoutScopedBindings(); // TODO: replicar rutas de {negocio} en {sucursal} o redirigir a {sucursal} o extraer {sucursal} y {negocio} a panel
                             });
 
                         Route::prefix('proveedores')
@@ -214,8 +214,7 @@ Route::prefix('panel')
                                     ->name('.{sucursal}')
                                     ->group(static function (): void {
                                         // Panel administrativo de una sucursal
-                                        Route::get('/', 'show')
-                                            ->middleware(RedirigirAlEstablecimientoAsignado::class);
+                                        Route::get('/', 'show');
 
                                         // Editar sucursal
                                         Route::get('editar', 'edit')

@@ -42,13 +42,19 @@
                                     <optgroup label="{{ $negocio->nombre }}">
                                         <option
                                             value="{{ $negocio->slug }}"
-                                            @selected(($empleado->negocios[0]?->slug ?? null) === $negocio->slug)>
+                                            @selected($empleado
+                                                ->negocios
+                                                ?->contains($negocio)
+                                            )>
                                             Principal
                                         </option>
                                         @foreach ($negocio->sucursales as $sucursal)
                                             <option
-                                                value="{{ $sucursal->id }}"
-                                                @selected(($empleado->sucursales[0]?->id ?? null) === $sucursal->id)>
+                                                value="{{ $sucursal->slug }}"
+                                                @selected($empleado
+                                                    ->sucursales
+                                                    ->contains($sucursal)
+                                                )>
                                                 {{ $sucursal->nombre }}
                                             </option>
                                         @endforeach
@@ -81,7 +87,7 @@
                             Principal
                         </option>
                         @foreach ($negocio->sucursales as $sucursal)
-                            <option value="{{ $sucursal->id }}">
+                            <option value="{{ $sucursal->slug }}">
                                 {{ $sucursal->nombre }}
                             </option>
                         @endforeach

@@ -38,7 +38,7 @@ $id = uniqid();
             name="{{ $name ?? '' }}"
             @disabled($disabled ?? false)
             minlength="{{ $minlength ?? null }}"
-            pattern="{{ $pattern ?? '' }}"
+            {{ empty($pattern) ?: "pattern=$pattern" }}
             @required($required ?? false)
             title="{{ $title ?? '' }}"
             type="{{ $type ?? 'text' }}"
@@ -57,10 +57,10 @@ $id = uniqid();
                 name="{{ $name ?? '' }}"
                 @disabled($disabled ?? false)
                 minlength="{{ $minlength ?? null }}"
-                pattern="{{ $pattern ?? '' }}"
+                {{ empty($pattern) ?: "pattern=$pattern" }}
                 @required($required ?? false)
-            title="{{ $title ?? '' }}"
-            type="{{ $type ?? 'text' }}"
+                title="{{ $title ?? '' }}"
+                type="{{ $type ?? 'text' }}"
             />
         </div>
     @endif
