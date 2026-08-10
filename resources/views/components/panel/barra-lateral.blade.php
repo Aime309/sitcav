@@ -33,13 +33,13 @@
                 ) }}"
                 icono=""
                 texto="Empleados" />
-            <x-panel.enlace-navegacion
+            {{-- <x-panel.enlace-navegacion
                 uri="{{ route(
                     'panel.negocios.{negocio}.sucursales',
                     ['negocio' => $negocio],
                 ) }}"
                 icono=""
-                texto="Sucursales" />
+                texto="Sucursales" /> --}}
         @endif
 
         @if ($usuario->roles->contains('rol', 'encargado'))
