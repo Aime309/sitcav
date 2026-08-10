@@ -42,63 +42,31 @@
                 </p>
                 <form class="auth-form" method="post">
                     @csrf
-                    <div class="field">
-                        <label class="field-label" for="correo">
-                            Correo electrónico
-                        </label>
-                        <div class="input-icon">
-                            <span class="ico">
-                                <x-iconos.correo />
-                            </span>
-                            <input
-                                autocomplete="email"
-                                class="
-                                    input
-                                    @error('correo') is-invalid @enderror
-                                "
-                                id="correo"
-                                name="correo"
-                                placeholder="___@gmail.com"
-                                required
-                                type="email"
-                                value="{{ old('correo') }}"
-                            />
-                        </div>
-                        @error('correo')
-                            <x-panel.mensaje-error-campo>
-                                {{ $message }}
-                            </x-panel.mensaje-error-campo>
-                        @enderror
-                    </div>
-                    <div class="field">
-                        <div class="field-row">
-                            <label class="field-label" for="clave">
-                                Contraseña
-                            </label>
-                        </div>
-                        <div class="input-icon">
-                            <span class="ico">
-                                <x-iconos.clave />
-                            </span>
-                            <input
-                                autocomplete="current-password"
-                                class="
-                                    input
-                                    @error('clave') is-invalid @enderror
-                                "
-                                id="clave"
-                                name="clave"
-                                placeholder="••••••••"
-                                required
-                                type="password"
-                            />
-                        </div>
-                        @error('clave')
-                            <x-panel.mensaje-error-campo>
-                                {{ $message }}
-                            </x-panel.mensaje-error-campo>
-                        @enderror
-                    </div>
+                    <x-panel.campo
+                        label="Correo electrónico"
+                        required
+                        autocomplete="email"
+                        name="correo"
+                        placeholder="_____@gmail.com"
+                        type="email"
+                        :value="old('correo')"
+                        :message="$message ?? ''">
+                        <x-slot:icono>
+                            <x-iconos.correo />
+                        </x-slot:icono>
+                    </x-panel.campo>
+                    <x-panel.campo
+                        label="Contraseña"
+                        required
+                        autocomplete="current-password"
+                        name="clave"
+                        placeholder="••••••••"
+                        type="password"
+                        :message="$message ?? ''">
+                        <x-slot:icono>
+                            <x-iconos.clave />
+                        </x-slot:icono>
+                    </x-panel.campo>
                     <button
                         class="btn btn--primary auth-submit"
                         type="submit">

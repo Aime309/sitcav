@@ -40,6 +40,7 @@
                 },
             }">
             @csrf
+
             <input
                 name="nombre"
                 placeholder="Nombre"

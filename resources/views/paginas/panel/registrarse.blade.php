@@ -39,71 +39,37 @@
                 <h2>Crea tu espacio de trabajo</h2>
                 <form class="auth-form" method="post">
                     @csrf
-                    <div class="field">
-                        <label
-                            class="field-label"
-                            for="correo">
-                            Correo electrónico de trabajo
-                        </label>
-                        <div class="input-icon">
-                            <span class="ico">
-                                <x-iconos.correo />
-                            </span>
-                            <input
-                                autocomplete="email"
-                                class="
-                                    input
-                                    @error('correo') is-invalid @enderror
-                                "
-                                id="correo"
-                                minlength="11"
-                                name="correo"
-                                pattern=".+@gmail.com"
-                                placeholder="_____@gmail.com"
-                                required
-                                title="El correo electrónico debe ser una dirección de Gmail válida."
-                                type="email"
-                                value="{{ old('correo') }}"
-                            />
-                        </div>
-                        @error('correo')
-                            <x-panel.mensaje-error-campo>
-                                {{ $message }}
-                            </x-panel.mensaje-error-campo>
-                        @enderror
-                    </div>
-                    <div class="field">
-                        <label
-                            class="field-label"
-                            for="clave">
-                            Contraseña
-                            <span class="req">*</span>
-                        </label>
-                        <div class="input-icon">
-                            <span class="ico">
-                                <x-iconos.clave />
-                            </span>
-                            <input
-                                id="clave"
-                                name="clave"
-                                class="
-                                    input
-                                    @error('clave') is-invalid @enderror
-                                "
-                                type="password"
-                                placeholder="Al menos 8 caracteres" autocomplete="new-password"
-                                required
-                                minlength="8"
-                                pattern=".{8,}"
-                                title="La contraseña debe tener al menos 8 caracteres."
-                            />
-                        </div>
-                        @error('clave')
-                            <x-panel.mensaje-error-campo>
-                                {{ $message }}
-                            </x-panel.mensaje-error-campo>
-                        @enderror
-                    </div>
+                    <x-panel.campo
+                        label="Correo electrónico de trabajo"
+                        autocomplete="email"
+                        name="correo"
+                        :message="$message ?? ''"
+                        minlength="11"
+                        pattern=".+@gmail.com"
+                        placeholder="_____@gmail.com"
+                        required
+                        title="El correo electrónico debe ser una dirección de Gmail válida."
+                        type="email"
+                        :value="old('correo')">
+                        <x-slot:icono>
+                            <x-iconos.correo />
+                        </x-slot:icono>
+                    </x-panel.campo>
+                    <x-panel.campo
+                        label="Contraseña"
+                        required
+                        name="clave"
+                        type="password"
+                        placeholder="Al menos 8 caracteres"
+                        autocomplete="new-password"
+                        minlength="8"
+                        pattern=".{8,}"
+                        title="La contraseña debe tener al menos 8 caracteres"
+                        :message="$message ?? ''">
+                        <x-slot:icono>
+                            <x-iconos.clave />
+                        </x-slot:icono>
+                    </x-panel.campo>
                     <button
                         class="btn btn--primary auth-submit"
                         type="submit">
