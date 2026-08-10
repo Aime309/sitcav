@@ -1,3 +1,5 @@
+@props(['titulo', 'usuario', 'negocio', 'sucursal', 'crumbs', 'reservas'])
+
 @php
 
 $nombreEstablecimiento = match (true) {
@@ -8,7 +10,7 @@ $nombreEstablecimiento = match (true) {
 
 @endphp
 
-<x-panel.estructuras.publica :titulo="$titulo ?? ''">
+<x-panel.estructuras.publica :titulo="$titulo">
     <div class="shell">
         <x-panel.barra-lateral
             :usuario="$usuario"
@@ -18,7 +20,8 @@ $nombreEstablecimiento = match (true) {
             <x-panel.barra-superior
                 :crumbs="[$nombreEstablecimiento, ...$crumbs ?? []]"
                 :negocio="$negocio"
-                :usuario="$usuario" />
+                :usuario="$usuario"
+                :reservas="$reservas ?? []" />
             <main class="content">
                 {{ $slot }}
             </main>

@@ -1,3 +1,5 @@
+@props(['titulo'])
+
 <!doctype html>
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
@@ -14,8 +16,12 @@
         <meta name="viewport" content="width=device-width" />
         <meta name="color-scheme" content="light dark" />
         <title>{{ $titulo }} - {{ config('app.name') }}</title>
-        <base href="{{ str_replace('index.php', '', $_SERVER['SCRIPT_NAME']) }}" />
-        <link rel="icon" href="./favicon.png" />
+        <base href="{{ str_replace(
+            'index.php',
+            '',
+            $_SERVER['SCRIPT_NAME']
+        ) }}" />
+        <link rel="icon" href="{{ asset('favicon.png') }}" />
         @fonts
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <link

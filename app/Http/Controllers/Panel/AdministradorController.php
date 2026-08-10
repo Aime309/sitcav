@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 final class AdministradorController extends Controller
@@ -17,13 +18,22 @@ final class AdministradorController extends Controller
         return view('paginas.panel.registrarse');
     }
 
-    public function store(): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        DB::transaction(static function (): void {
+        ['correo' => $correo, 'clave' => $clave] = $request->validate([
+            'correo' => 'email|unique:usuarios',
+            'clave' => 'min:8',
+        ], [
+            'correo.email' => 'El correo electrónico no es válido.',
+            'correo.unique' => 'El correo electrónico ya está registrado.',
+            'clave.min' => 'La contraseña debe tener al menos 8 caracteres.',
+        ]);
+
+        DB::transaction(static function () use ($correo, $clave): void {
             $usuario = Usuario::query()->create([
-                'correo' => $_POST['correo'] ?? '',
+                'correo' => $correo,
                 'clave' => password_hash(
-                    $_POST['clave'] ?? '',
+                    $clave,
                     PASSWORD_DEFAULT,
                 ),
             ]);

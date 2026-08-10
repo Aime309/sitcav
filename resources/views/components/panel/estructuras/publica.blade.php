@@ -1,3 +1,5 @@
+@props(['titulo'])
+
 <!doctype html>
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
@@ -25,7 +27,7 @@
             '',
             $_SERVER['SCRIPT_NAME']
         ) }}" />
-        <link rel="icon" href="./favicon.png" />
+        <link rel="icon" href="{{ asset('favicon.png') }}" />
         @fonts
         @vite([
             'resources/css/app.css',

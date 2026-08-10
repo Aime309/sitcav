@@ -39,8 +39,8 @@ use Illuminate\Support\Facades\Route;
 /** @deprecated */
 define('PDO', DB::getPdo());
 
-Route::redirect('/', 'panel/iniciar-sesion');
-Route::redirect('/panel', 'panel/iniciar-sesion');
+Route::redirect('/', '/panel/iniciar-sesion');
+Route::redirect('/panel', '/panel/iniciar-sesion');
 
 Route::prefix('panel')->name('panel')->group(static function (): void {
     Route::prefix('iniciar-sesion')

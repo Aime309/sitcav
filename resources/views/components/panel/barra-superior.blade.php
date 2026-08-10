@@ -1,3 +1,5 @@
+@props(['crumbs', 'usuario', 'reservas', 'negocio'])
+
 <header class="d-topbar">
     <div class="crumbs">
         <button
@@ -14,7 +16,7 @@
                 <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
         </button>
-        @foreach ($crumbs ?? [] as $indice => $crumb)
+        @foreach ($crumbs as $indice => $crumb)
             @if ($indice > 0)
                 <svg
                     class="sep"
@@ -52,7 +54,7 @@
                         <rect x="3" y="5" width="18" height="14" rx="2"/>
                         <path d="m3 7 9 6 9-6"/>
                     </svg>
-                    <span class="count info">{{ count($reservas ?? []) }}</span>
+                    <span class="count info">{{ count($reservas) }}</span>
                 </button>
                 <div class="dd-menu" role="menu">
                     <div class="dd-head">
@@ -63,7 +65,7 @@
                         Reservas
                     </div>
                     <div class="dd-list">
-                        @foreach ($reservas ?? [] as $reserva)
+                        @foreach ($reservas as $reserva)
                             <a class="dd-item" href="#">
                                 <div class="dd-avatar a1">JD</div>
                                 <div class="dd-body">

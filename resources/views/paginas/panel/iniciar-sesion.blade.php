@@ -51,14 +51,24 @@
                                 <x-iconos.correo />
                             </span>
                             <input
+                                autocomplete="email"
+                                class="
+                                    input
+                                    @error('correo') is-invalid @enderror
+                                "
                                 id="correo"
                                 name="correo"
-                                class="input"
-                                type="email"
                                 placeholder="___@gmail.com"
-                                autocomplete="email"
-                                required />
+                                required
+                                type="email"
+                                value="{{ old('correo') }}"
+                            />
                         </div>
+                        @error('correo')
+                            <x-panel.mensaje-error-campo>
+                                {{ $message }}
+                            </x-panel.mensaje-error-campo>
+                        @enderror
                     </div>
                     <div class="field">
                         <div class="field-row">
@@ -71,14 +81,23 @@
                                 <x-iconos.clave />
                             </span>
                             <input
+                                autocomplete="current-password"
+                                class="
+                                    input
+                                    @error('clave') is-invalid @enderror
+                                "
                                 id="clave"
                                 name="clave"
-                                class="input"
-                                type="password"
                                 placeholder="••••••••"
-                                autocomplete="current-password"
-                                required />
+                                required
+                                type="password"
+                            />
                         </div>
+                        @error('clave')
+                            <x-panel.mensaje-error-campo>
+                                {{ $message }}
+                            </x-panel.mensaje-error-campo>
+                        @enderror
                     </div>
                     <button
                         class="btn btn--primary auth-submit"

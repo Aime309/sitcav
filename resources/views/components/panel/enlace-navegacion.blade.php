@@ -1,3 +1,5 @@
+@props(['uri', 'icono', 'texto', 'insignia'])
+
 @php
 
 $activo = str_ends_with($uri, $_SERVER['REQUEST_URI']);

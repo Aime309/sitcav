@@ -1,3 +1,5 @@
+@props(['sucursal', 'negocio', 'usuario'])
+
 <aside class="d-sidebar">
     <div class="brand">
         <div class="brand-text">

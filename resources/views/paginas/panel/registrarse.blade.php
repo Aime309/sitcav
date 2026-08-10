@@ -5,9 +5,6 @@
                 <div class="name">SITCAV</div>
             </div>
             <div class="auth-aside-body">
-                <span class="auth-aside-eyebrow">
-                    {{ date('Y') }} · v4.3.0 preview
-                </span>
                 <h1>
                     El panel administrativo que tu equipo actualmente quiere abrir.
                 </h1>
@@ -41,6 +38,7 @@
             <div class="auth-card">
                 <h2>Crea tu espacio de trabajo</h2>
                 <form class="auth-form" method="post">
+                    @csrf
                     <div class="field">
                         <label
                             class="field-label"
@@ -52,17 +50,27 @@
                                 <x-iconos.correo />
                             </span>
                             <input
-                                name="correo"
-                                id="correo"
-                                class="input"
-                                type="email"
-                                placeholder="_____@gmail.com"
                                 autocomplete="email"
+                                class="
+                                    input
+                                    @error('correo') is-invalid @enderror
+                                "
+                                id="correo"
                                 minlength="11"
+                                name="correo"
                                 pattern=".+@gmail.com"
+                                placeholder="_____@gmail.com"
+                                required
                                 title="El correo electrónico debe ser una dirección de Gmail válida."
-                                required />
+                                type="email"
+                                value="{{ old('correo') }}"
+                            />
                         </div>
+                        @error('correo')
+                            <x-panel.mensaje-error-campo>
+                                {{ $message }}
+                            </x-panel.mensaje-error-campo>
+                        @enderror
                     </div>
                     <div class="field">
                         <label
@@ -78,14 +86,23 @@
                             <input
                                 id="clave"
                                 name="clave"
-                                class="input"
+                                class="
+                                    input
+                                    @error('clave') is-invalid @enderror
+                                "
                                 type="password"
-                                placeholder="Al menos 12 caracteres" autocomplete="new-password"
+                                placeholder="Al menos 8 caracteres" autocomplete="new-password"
                                 required
                                 minlength="8"
                                 pattern=".{8,}"
-                                title="La contraseña debe tener al menos 8 caracteres." />
+                                title="La contraseña debe tener al menos 8 caracteres."
+                            />
                         </div>
+                        @error('clave')
+                            <x-panel.mensaje-error-campo>
+                                {{ $message }}
+                            </x-panel.mensaje-error-campo>
+                        @enderror
                     </div>
                     <button
                         class="btn btn--primary auth-submit"
