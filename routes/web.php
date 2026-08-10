@@ -257,104 +257,105 @@ Route::prefix('panel')->name('panel')->group(static function (): void {
         });
 });
 
-Route::prefix('{negocio}')->group(static function (): void {
-    // Ecommerce de un negocio
-    Route::get('/', [EcommerceNegocioController::class, 'show'])
-        ->name('{negocio}');
+Route::prefix('{negocio}')
+    ->name('{negocio}')
+    ->group(static function (): void {
+        // Ecommerce de un negocio
+        Route::get('/', [EcommerceNegocioController::class, 'show']);
 
-    Route::prefix('productos')->group(static function (): void {
-        // Ver productos de un negocio
-        Route::get('/', [EcommerceProductoController::class, 'index'])
-            ->name('{negocio}.productos');
+        Route::prefix('productos')
+            ->name('.productos')
+            ->controller(EcommerceProductoController::class)
+            ->group(static function (): void {
+                // Ver productos de un negocio
+                Route::get('/', 'index');
 
-        // Ver producto de un negocio
-        Route::get('{producto}', [EcommerceProductoController::class, 'show'])
-            ->name('{negocio}.productos.{producto}');
-    });
+                // Ver producto de un negocio
+                Route::get('{producto}', 'show')->name('.{producto}');
+            });
 
-    Route::middleware(EcommerceRedirigirUsuariosAutenticados::class)
-        ->prefix('iniciar-sesion')
-        ->group(static function (): void {
-            // Ver inicio de sesión en un negocio
-            Route::get(
-                '/',
-                static function (Request $request, Negocio $negocio): View {
+        Route::prefix('iniciar-sesion')
+            ->name('.iniciar-sesion')
+            ->middleware(EcommerceRedirigirUsuariosAutenticados::class)
+            ->group(static function (): void {
+                // Ver inicio de sesión en un negocio
+                Route::get('/', static function (Negocio $negocio): View {
                     return view('paginas.ecommerce.iniciar-sesion', [
                         'negocio' => $negocio,
                     ]);
-                },
-            )->name('{negocio}.iniciar-sesion');
-
-            // Iniciar sesión en un negocio
-            Route::post('/', EcommerceIniciarSesion::class);
-        });
-
-    Route::middleware(EcommerceRedirigirUsuariosAutenticados::class)
-        ->prefix('registrarse')
-        ->group(static function (): void {
-            // Ver registro de cliente en un negocio
-            Route::get('/', [EcommerceClienteController::class, 'create'])
-                ->name('{negocio}.registrarse');
-
-            // Registrarse como cliente en un negocio
-            Route::post('/', [EcommerceClienteController::class, 'store']);
-        });
-
-    // Cerrar sesión en un negocio
-    Route::get('cerrar-sesion', EcommerceCerrarSesion::class)
-        ->name('{negocio}.cerrar-sesion');
-
-    Route::middleware(EcommerceSoloUsuariosAutenticados::class)
-        ->prefix('perfil')
-        ->group(static function (): void {
-            // Editar perfil en un negocio
-            Route::get('/', [EcommerceClienteController::class, 'edit'])
-                ->name('{negocio}.perfil');
-
-            // Actualizar perfil en un negocio
-            Route::post('/', [EcommerceClienteController::class, 'update']);
-        });
-
-    Route::middleware(EcommerceSoloUsuariosAutenticados::class)
-        ->prefix('carrito')
-        ->group(static function (): void {
-            // Ver carrito en un negocio
-            Route::get('/', [CarritoController::class, 'index'])
-                ->name('{negocio}.carrito');
-
-            Route::prefix('productos')->group(static function (): void {
-                // Añadir producto al carrito en un negocio
-                Route::post('/', [CarritoController::class, 'update'])
-                    ->name('{negocio}.carrito.productos');
-
-                Route::prefix('{producto}')->group(static function (): void {
-                    // Actualizar/Eliminar producto en el carrito en un negocio
-                    Route::post('/', [CarritoController::class, 'update'])
-                        ->name('{negocio}.carrito.productos.{producto}');
                 });
+
+                // Iniciar sesión en un negocio
+                Route::post('/', EcommerceIniciarSesion::class);
             });
-        });
 
-    Route::middleware(EcommerceSoloUsuariosAutenticados::class)
-        ->prefix('reservas')
-        ->group(static function (): void {
-            // Ver reservas en un negocio
-            Route::get('/', [EcommerceReservaController::class, 'index'])
-                ->name('{negocio}.reservas');
+        Route::prefix('registrarse')
+            ->name('.registrarse')
+            ->middleware(EcommerceRedirigirUsuariosAutenticados::class)
+            ->controller(EcommerceClienteController::class)
+            ->group(static function (): void {
+                // Ver registro de cliente en un negocio
+                Route::get('/', 'create');
 
-            // Reservar en un negocio
-            Route::post('/', [EcommerceReservaController::class, 'store']);
-
-            Route::prefix('{reserva}')->group(static function (): void {
-                // Ver reserva en un negocio
-                Route::get('/', [EcommerceReservaController::class, 'show'])
-                    ->name('{negocio}.reservas.{reserva}');
-
-                // Cancelar reserva en un negocio
-                Route::post(
-                    '/',
-                    [EcommerceReservaController::class, 'update'],
-                );
+                // Registrarse como cliente en un negocio
+                Route::post('/', 'store');
             });
-        });
-});
+
+        // Cerrar sesión en un negocio
+        Route::get('cerrar-sesion', EcommerceCerrarSesion::class)
+            ->name('.cerrar-sesion');
+
+        Route::prefix('perfil')
+            ->name('.perfil')
+            ->middleware(EcommerceSoloUsuariosAutenticados::class)
+            ->controller(EcommerceClienteController::class)
+            ->group(static function (): void {
+                // Editar perfil en un negocio
+                Route::get('/', 'edit');
+
+                // Actualizar perfil en un negocio
+                Route::post('/', 'update');
+            });
+
+        Route::prefix('carrito')
+            ->name('.carrito')
+            ->middleware(EcommerceSoloUsuariosAutenticados::class)
+            ->controller(CarritoController::class)
+            ->group(static function (): void {
+                // Ver carrito en un negocio
+                Route::get('/', 'index');
+
+                Route::prefix('productos')
+                    ->name('.productos')
+                    ->group(static function (): void {
+                        // Añadir producto al carrito en un negocio
+                        Route::post('/', 'update');
+
+                        // Actualizar/Eliminar producto en el carrito en un negocio
+                        Route::post('{producto}', 'update')
+                            ->name('.{producto}');
+                    });
+            });
+
+        Route::prefix('reservas')
+            ->name('.reservas')
+            ->middleware(EcommerceSoloUsuariosAutenticados::class)
+            ->controller(EcommerceReservaController::class)
+            ->group(static function (): void {
+                // Ver reservas en un negocio
+                Route::get('/', 'index');
+
+                // Reservar en un negocio
+                Route::post('/', 'store');
+
+                Route::prefix('{reserva}')
+                    ->name('.{reserva}')
+                    ->group(static function (): void {
+                        // Ver reserva en un negocio
+                        Route::get('/', 'show');
+
+                        // Cancelar reserva en un negocio
+                        Route::post('/', 'update');
+                    });
+            });
+    });
