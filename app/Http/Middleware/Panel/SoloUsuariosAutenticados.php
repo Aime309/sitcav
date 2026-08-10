@@ -16,7 +16,7 @@ final readonly class SoloUsuariosAutenticados
             session_start();
         }
 
-        if (empty($_SESSION['panel']['usuario']['id'])) {
+        if (empty($_SESSION['panel']['usuario']['correo'])) {
             return to_route('panel.iniciar-sesion');
         }
 

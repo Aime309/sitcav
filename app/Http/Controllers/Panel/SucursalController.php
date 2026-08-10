@@ -10,14 +10,14 @@ use App\Models\Sucursal;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 final class SucursalController extends Controller
 {
-    public function index(Request $request, Negocio $negocio): View
+    public function index(Negocio $negocio): View
     {
-        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
 
         return view('paginas.panel.sucursales', [
             'negocio' => $negocio,
@@ -25,10 +25,11 @@ final class SucursalController extends Controller
         ]);
     }
 
-    public function store(Request $request, Negocio $negocio): RedirectResponse
+    public function store(Negocio $negocio): RedirectResponse
     {
         DB::transaction(static function () use ($negocio): void {
-            $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+            $correo = $_SESSION['panel']['usuario']['correo'];
+            $usuario = Usuario::query()->findOrFail($correo);
 
             $usuario->sucursales()->create([
                 'nombre' => $_POST['nombre'] ?? '',
@@ -43,9 +44,10 @@ final class SucursalController extends Controller
         ]);
     }
 
-    public function show(Request $request, Negocio $negocio, Sucursal $sucursal): View
+    public function show(Negocio $negocio, Sucursal $sucursal): View
     {
-        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->find($correo);
 
         return view('paginas.panel.sucursal', [
             'negocio' => $negocio,
@@ -54,9 +56,10 @@ final class SucursalController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Negocio $negocio, Sucursal $sucursal): View
+    public function edit(Negocio $negocio, Sucursal $sucursal): View
     {
-        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
 
         return view(
             'paginas.panel.editar-sucursal',
@@ -68,8 +71,10 @@ final class SucursalController extends Controller
         );
     }
 
-    public function update(Request $request, Negocio $negocio, Sucursal $sucursal): RedirectResponse
-    {
+    public function update(
+        Negocio $negocio,
+        Sucursal $sucursal,
+    ): RedirectResponse {
         $sucursal->update([
             'nombre' => $_POST['nombre'] ?? $sucursal->nombre,
             'direccion' => $_POST['direccion'] ?? $sucursal->direccion,

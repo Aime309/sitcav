@@ -16,7 +16,7 @@ final readonly class RedirigirUsuariosAutenticados
             session_start();
         }
 
-        if (empty($_SESSION['panel']['usuario']['id'])) {
+        if (empty($_SESSION['panel']['usuario']['correo'])) {
             return $next($request);
         }
 

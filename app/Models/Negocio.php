@@ -24,6 +24,7 @@ use Illuminate\Support\Str;
  * @property-read bool $carga_inicial_abierta
  * @property-read Collection<int, Usuario> $empleados
  * @property-read Collection<int, Sucursal> $sucursales
+ * @property-read Collection<int, Producto> $productos
  */
 #[Fillable(
     'slug',

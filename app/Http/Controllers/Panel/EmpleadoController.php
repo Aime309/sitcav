@@ -11,15 +11,14 @@ use App\Models\Usuario;
 use App\Models\UsuarioRol;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 final class EmpleadoController extends Controller
 {
-    public function index(Request $request, Negocio $negocio): View
+    public function index(Negocio $negocio): View
     {
-        $usuarioId = $_SESSION['panel']['usuario']['id'];
-        $usuario = Usuario::query()->findOrFail($usuarioId);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
         $empleados = [];
 
         foreach ($negocio->empleados as $empleado) {
@@ -47,10 +46,7 @@ final class EmpleadoController extends Controller
         ]);
     }
 
-    public function store(
-        Request $request,
-        Negocio $negocio,
-    ): RedirectResponse {
+    public function store(Negocio $negocio): RedirectResponse {
         $establecimiento = $_POST['establecimiento'] ?? '';
         $negocio = Negocio::query()->find($establecimiento);
         $sucursal = Sucursal::query()->find($establecimiento);
@@ -78,12 +74,12 @@ final class EmpleadoController extends Controller
 
             DB::insert('
                 INSERT INTO usuarios_establecimientos
-                (usuario_id, negocio_slug, sucursal_id) VALUES
-                (:usuario_id, :negocio_slug, :sucursal_id)
+                (usuario_correo, negocio_slug, sucursal_slug) VALUES
+                (:usuario_correo, :negocio_slug, :sucursal_slug)
             ', [
-                ':usuario_id' => $empleado->id,
+                ':usuario_correo' => $empleado->correo,
                 ':negocio_slug' => $negocio?->slug,
-                ':sucursal_id' => $sucursal?->id,
+                ':sucursal_slug' => $sucursal?->slug,
             ]);
         });
 
@@ -93,7 +89,6 @@ final class EmpleadoController extends Controller
     }
 
     public function update(
-        Request $request,
         Negocio $negocio,
         Usuario $empleado,
     ): RedirectResponse {
@@ -124,12 +119,12 @@ final class EmpleadoController extends Controller
             DB::update('
                 UPDATE usuarios_establecimientos SET
                 negocio_slug = :negocio_slug,
-                sucursal_id = :sucursal_id
-                WHERE usuario_id = :usuario_id
+                sucursal_slug = :sucursal_slug
+                WHERE usuario_correo = :usuario_correo
             ', [
                 ':negocio_slug' => $negocio?->slug,
-                ':sucursal_id' => $sucursal?->id,
-                ':usuario_id' => $empleado->id,
+                ':sucursal_slug' => $sucursal?->slug,
+                ':usuario_correo' => $empleado->correo,
             ]);
         });
 

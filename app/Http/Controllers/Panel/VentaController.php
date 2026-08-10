@@ -10,13 +10,13 @@ use App\Models\Reserva;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 final class VentaController extends Controller
 {
-    public function index(Request $request, Negocio $negocio): View
+    public function index(Negocio $negocio): View
     {
-        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
 
         return view('paginas.panel.ventas', [
             'negocio' => $negocio,
@@ -25,7 +25,6 @@ final class VentaController extends Controller
     }
 
     public function store(
-        Request $request,
         Negocio $negocio,
         ?Reserva $reserva = null,
     ): RedirectResponse {

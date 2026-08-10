@@ -9,24 +9,23 @@ use App\Models\Negocio;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 final class NegocioController extends Controller
 {
-    public function index(Request $request): View
+    public function index(): View
     {
-        $usuarioId = $_SESSION['panel']['usuario']['id'];
-        $usuario = Usuario::query()->findOrFail($usuarioId);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
 
         return view('paginas.panel.negocios', ['usuario' => $usuario]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(): RedirectResponse
     {
         DB::transaction(static function (): void {
-            $usuarioId = $_SESSION['panel']['usuario']['id'];
-            $usuario = Usuario::query()->findOrFail($usuarioId);
+            $correo = $_SESSION['panel']['usuario']['correo'];
+            $usuario = Usuario::query()->findOrFail($correo);
 
             $usuario->negocios()->create([
                 'nombre' => $_POST['nombre'] ?? '',
@@ -39,10 +38,10 @@ final class NegocioController extends Controller
         return to_route('panel.negocios');
     }
 
-    public function show(Request $request, Negocio $negocio): View
+    public function show(Negocio $negocio): View
     {
-        $usuarioId = $_SESSION['panel']['usuario']['id'];
-        $usuario = Usuario::query()->findOrFail($usuarioId);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
 
         return view('paginas.panel.negocio', [
             'negocio' => $negocio,
@@ -50,10 +49,10 @@ final class NegocioController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Negocio $negocio): View
+    public function edit(Negocio $negocio): View
     {
-        $usuarioId = $_SESSION['panel']['usuario']['id'];
-        $usuario = Usuario::query()->findOrFail($usuarioId);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
 
         return view('paginas.panel.editar-negocio', [
             'negocio' => $negocio,
@@ -61,10 +60,7 @@ final class NegocioController extends Controller
         ]);
     }
 
-    public function update(
-        Request $request,
-        Negocio $negocio,
-    ): RedirectResponse {
+    public function update(Negocio $negocio): RedirectResponse {
         $cargaInicialAbierta = $_POST['carga_inicial_abierta'] ?? '';
 
         $negocio->update([

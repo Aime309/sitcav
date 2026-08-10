@@ -10,13 +10,13 @@ use App\Models\Producto;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 final class ProductoController extends Controller
 {
-    public function index(Request $request, Negocio $negocio): View
+    public function index(Negocio $negocio): View
     {
-        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
 
         return view('paginas.panel.productos', [
             'negocio' => $negocio,
@@ -24,7 +24,7 @@ final class ProductoController extends Controller
         ]);
     }
 
-    public function store(Request $request, Negocio $negocio): RedirectResponse
+    public function store(Negocio $negocio): RedirectResponse
     {
         $nombre = $_POST['nombre'] ?? '';
         $descripcion = $_POST['descripcion'] ?? '';
@@ -55,9 +55,10 @@ final class ProductoController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Negocio $negocio, Producto $producto): View
+    public function edit(Negocio $negocio, Producto $producto): View
     {
-        $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
 
         return view('paginas.panel.editar-producto', [
             'negocio' => $negocio,
@@ -66,7 +67,7 @@ final class ProductoController extends Controller
         ]);
     }
 
-    public function update(Request $request, Negocio $negocio, Producto $producto): RedirectResponse
+    public function update(Negocio $negocio, Producto $producto): RedirectResponse
     {
         $nombre = $_POST['nombre'] ?? $producto->nombre;
         $descripcion = $_POST['descripcion'] ?? $producto->descripcion;

@@ -9,14 +9,13 @@ use App\Models\Negocio;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 final class PerfilController extends Controller
 {
-    public function edit(Request $request, Negocio $negocio): View
+    public function edit(Negocio $negocio): View
     {
-        $usuarioId = $_SESSION['panel']['usuario']['id'];
-        $usuario = Usuario::query()->findOrFail($usuarioId);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
 
         return view('paginas.panel.perfil', [
             'negocio' => $negocio,
@@ -24,10 +23,10 @@ final class PerfilController extends Controller
         ]);
     }
 
-    public function update(Request $request, Negocio $negocio): RedirectResponse
+    public function update(Negocio $negocio): RedirectResponse
     {
-        $usuarioId = $_SESSION['panel']['usuario']['id'];
-        $usuario = Usuario::query()->findOrFail($usuarioId);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
         $usuario->correo = $_POST['correo'] ?? $usuario->correo;
 
         if (!empty($_POST['clave'])) {

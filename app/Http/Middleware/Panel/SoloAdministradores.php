@@ -13,8 +13,8 @@ final readonly class SoloAdministradores
     /** @param callable(Request): Response $next */
     public function handle(Request $request, callable $next): Response
     {
-        $usuarioId = $_SESSION['panel']['usuario']['id'];
-        $usuario = Usuario::query()->findOrFail($usuarioId);
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
 
         if ($usuario->roles->contains('rol', 'administrador')) {
             return $next($request);

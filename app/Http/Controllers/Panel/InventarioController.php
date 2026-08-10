@@ -10,11 +10,10 @@ use App\Models\Producto;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 final class InventarioController extends Controller
 {
-    public function index(Request $request, Negocio $negocio): View
+    public function index(Negocio $negocio): View
     {
         $usuario = Usuario::query()->find($_SESSION['panel']['usuario']['id']);
 
@@ -34,14 +33,16 @@ final class InventarioController extends Controller
         ]);
     }
 
-    public function update(Request $request, Negocio $negocio, Producto $producto): RedirectResponse
-    {
+    public function update(
+        Negocio $negocio,
+        Producto $producto,
+    ): RedirectResponse {
         $stock = $_POST['stock'] ?? 0;
 
         $inventario = PDO
             ->query("
                 SELECT * FROM inventarios
-                WHERE negocio_id = '{$negocio['id']}'
+                WHERE negocio_slug = '{$negocio['slug']}'
                 AND producto_id = '{$producto['id']}'
             ")
             ->fetch();
@@ -51,21 +52,21 @@ final class InventarioController extends Controller
                 'UPDATE inventarios SET
                 stock = :stock,
                 actualizado_en = CURRENT_TIMESTAMP
-                WHERE negocio_id = :negocio_id
+                WHERE negocio_slug = :negocio_slug
                 AND producto_id = :producto_id'
             )->execute([
                 ':stock' => $stock,
-                ':negocio_id' => $negocio->id,
+                ':negocio_slug' => $negocio->slug,
                 ':producto_id' => $producto->id,
             ]);
         } else {
             PDO->prepare(
                 'INSERT INTO inventarios
-                (id, negocio_id, producto_id, stock) VALUES
-                (:id, :negocio_id, :producto_id, :stock)'
+                (id, negocio_slug, producto_id, stock) VALUES
+                (:id, :negocio_slug, :producto_id, :stock)'
             )->execute([
                 ':id' => uniqid(),
-                ':negocio_id' => $negocio->id,
+                ':negocio_slug' => $negocio->slug,
                 ':producto_id' => $producto->id,
                 ':stock' => $stock,
             ]);
