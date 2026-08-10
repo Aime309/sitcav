@@ -39,6 +39,8 @@ use Illuminate\Support\Facades\Route;
 /** @deprecated */
 define('PDO', DB::getPdo());
 
+Route::fallback(static fn(): View => view('paginas.panel.404'));
+
 Route::redirect('/', '/panel/iniciar-sesion');
 Route::redirect('/panel', '/panel/iniciar-sesion');
 
