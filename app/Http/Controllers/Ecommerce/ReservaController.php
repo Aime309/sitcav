@@ -10,13 +10,12 @@ use App\Models\Negocio;
 use App\Models\Reserva;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 final class ReservaController extends Controller
 {
-    public function index(Request $request, Negocio $negocio): View
+    public function index(Negocio $negocio): View
     {
-        $usuarioId = $_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'];
+        $usuarioId = $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'];
         $usuario = Cliente::query()->findOrFail($usuarioId);
 
         return view('paginas.ecommerce.reservas', [
@@ -25,7 +24,7 @@ final class ReservaController extends Controller
         ]);
     }
 
-    public function store(Request $request, Negocio $negocio): RedirectResponse
+    public function store(Negocio $negocio): RedirectResponse
     {
         return to_route('{negocio}.reservas.{reserva}', [
             'negocio' => $negocio,
@@ -33,9 +32,9 @@ final class ReservaController extends Controller
         ]);
     }
 
-    public function show(Request $request, Negocio $negocio, Reserva $reserva): View
+    public function show(Negocio $negocio, Reserva $reserva): View
     {
-        $usuarioId = $_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'];
+        $usuarioId = $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'];
         $usuario = Cliente::query()->findOrFail($usuarioId);
 
         return view('paginas.ecommerce.reserva', [
@@ -46,7 +45,6 @@ final class ReservaController extends Controller
     }
 
     public function update(
-        Request $request,
         Negocio $negocio,
         Reserva $reserva,
     ): RedirectResponse {

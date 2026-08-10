@@ -10,11 +10,10 @@ use App\Models\Negocio;
 use App\Models\Producto;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 final class CarritoController extends Controller
 {
-    public function index(Request $request, Negocio $negocio): View
+    public function index(Negocio $negocio): View
     {
         $usuarioId = $_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'];
         $usuario = Cliente::query()->findOrFail($usuarioId);
@@ -26,9 +25,8 @@ final class CarritoController extends Controller
     }
 
     public function update(
-        Request $request,
         Negocio $negocio,
-        ?Producto $producto = null
+        ?Producto $producto = null,
     ): RedirectResponse {
         $stocks = $_POST['stocks'] ?? [];
 

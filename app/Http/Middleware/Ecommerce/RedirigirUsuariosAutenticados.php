@@ -22,6 +22,6 @@ final readonly class RedirigirUsuariosAutenticados
             return $next($request);
         }
 
-        return redirect($_SERVER['REQUEST_URI']);
+        return to_route('{negocio}', ['negocio' => $negocio]);
     }
 }

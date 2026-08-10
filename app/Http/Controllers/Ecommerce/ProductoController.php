@@ -10,13 +10,16 @@ use App\Models\Negocio;
 use App\Models\Producto;
 use App\Models\Sucursal;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 use SplObjectStorage;
 
 final class ProductoController extends Controller
 {
-    public function index(Request $request, Negocio $negocio): View
+    public function index(Negocio $negocio): View
     {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
         foreach ($negocio->productos as $producto) {
             $producto['stocks'] = new SplObjectStorage;
             $producto['stock'] = 0;
@@ -36,7 +39,8 @@ final class ProductoController extends Controller
             }
         }
 
-        $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
+        $usuarioId = $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'] ?? null;
+        $usuario = Cliente::query()->find($usuarioId);
 
         return view('paginas.ecommerce.productos', [
             'negocio' => $negocio,
@@ -44,9 +48,10 @@ final class ProductoController extends Controller
         ]);
     }
 
-    public function show(Request $request, Negocio $negocio, Producto $producto): View
+    public function show(Negocio $negocio, Producto $producto): View
     {
-        $usuario = Cliente::query()->find($_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'] ?? null);
+        $usuarioId = $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'] ?? null;
+        $usuario = Cliente::query()->find($usuarioId);
 
         return view('paginas.ecommerce.producto', [
             'negocio' => $negocio,

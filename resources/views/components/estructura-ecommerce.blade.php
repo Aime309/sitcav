@@ -33,15 +33,19 @@
                 <li class="w3-bar-item">
                     <h1>
                         <a
-                            href="{{ route('{negocio}', ['negocio' => $negocio['slug']]) }}"
+                            href="{{ route('{negocio}', [
+                                'negocio' => $negocio
+                            ]) }}"
                             class="w3-button">
-                            {{ $negocio['nombre'] }}
+                            {{ $negocio->nombre }}
                         </a>
                     </h1>
                 </li>
                 <li class="w3-bar-item">
                     <a
-                        href="{{ route('{negocio}.productos', ['negocio' => $negocio['slug']]) }}"
+                        href="{{ route('{negocio}.productos', [
+                            'negocio' => $negocio
+                        ]) }}"
                         class="w3-button">
                         Productos
                     </a>

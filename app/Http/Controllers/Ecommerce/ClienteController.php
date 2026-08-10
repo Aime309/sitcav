@@ -9,11 +9,10 @@ use App\Models\Cliente;
 use App\Models\Negocio;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 final class ClienteController extends Controller
 {
-    public function create(Request $request, Negocio $negocio): View
+    public function create(Negocio $negocio): View
     {
         return view(
             'paginas.ecommerce.registrarse',
@@ -21,7 +20,7 @@ final class ClienteController extends Controller
         );
     }
 
-    public function store(Request $request, Negocio $negocio): RedirectResponse
+    public function store(Negocio $negocio): RedirectResponse
     {
         $cliente = $negocio->clientes()->create([
             'nombre' => $_POST['nombre'] ?? '',
@@ -34,13 +33,13 @@ final class ClienteController extends Controller
         $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'] = $cliente->id;
 
         return to_route('{negocio}', [
-            'negocio' => $negocio['slug'],
+            'negocio' => $negocio->slug,
         ]);
     }
 
-    public function edit(Request $request, Negocio $negocio): View
+    public function edit(Negocio $negocio): View
     {
-        $usuarioId = $_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'];
+        $usuarioId = $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'];
         $usuario = Cliente::query()->findOrFail($usuarioId);
 
         return view('paginas.ecommerce.perfil', [
@@ -49,11 +48,8 @@ final class ClienteController extends Controller
         ]);
     }
 
-    public function update(
-        Request $request,
-        Negocio $negocio,
-    ): RedirectResponse {
-        $usuarioId = $_SESSION['ecommerce'][$negocio['slug']]['usuario']['id'];
+    public function update(Negocio $negocio): RedirectResponse {
+        $usuarioId = $_SESSION['ecommerce'][$negocio->slug]['usuario']['id'];
         $cliente = Cliente::query()->findOrFail($usuarioId);
 
         $cliente->nombre = $_POST['nombre'] ?? $cliente->nombre;
