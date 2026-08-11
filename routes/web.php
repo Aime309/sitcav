@@ -2,39 +2,50 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Ecommerce\CarritoController;
-use App\Http\Controllers\Ecommerce\CerrarSesion as EcommerceCerrarSesion;
-use App\Http\Controllers\Ecommerce\ClienteController as EcommerceClienteController;
-use App\Http\Controllers\Ecommerce\IniciarSesion as EcommerceIniciarSesion;
-use App\Http\Controllers\Ecommerce\NegocioController as EcommerceNegocioController;
-use App\Http\Controllers\Ecommerce\ProductoController as EcommerceProductoController;
-use App\Http\Controllers\Ecommerce\ReservaController as EcommerceReservaController;
-use App\Http\Controllers\Panel\AdministradorController;
-use App\Http\Controllers\Panel\CerrarSesion;
-use App\Http\Controllers\Panel\ClienteController;
-use App\Http\Controllers\Panel\CompraController;
-use App\Http\Controllers\Panel\EmpleadoController;
-use App\Http\Controllers\Panel\IniciarSesion;
-use App\Http\Controllers\Panel\InventarioController;
-use App\Http\Controllers\Panel\NegocioController;
-use App\Http\Controllers\Panel\PerfilController;
-use App\Http\Controllers\Panel\ProductoController;
-use App\Http\Controllers\Panel\ProveedorController;
-use App\Http\Controllers\Panel\ReservaController;
-use App\Http\Controllers\Panel\SucursalController;
-use App\Http\Controllers\Panel\VentaController;
-use App\Http\Middleware\Ecommerce\RedirigirUsuariosAutenticados as EcommerceRedirigirUsuariosAutenticados;
-use App\Http\Middleware\Ecommerce\SoloUsuariosAutenticados as EcommerceSoloUsuariosAutenticados;
-use App\Http\Middleware\Panel\RedirigirAlEstablecimientoAsignado;
-use App\Http\Middleware\Panel\RedirigirUsuariosAutenticados;
-use App\Http\Middleware\Panel\SoloAdministradores;
-use App\Http\Middleware\Panel\SoloEncargados;
-use App\Http\Middleware\Panel\SoloEstablecimientosAsignados;
-use App\Http\Middleware\Panel\SoloUsuariosAutenticados;
+use App\Http\Controllers\Ecommerce\{
+    CarritoController,
+    CerrarSesion as EcommerceCerrarSesion,
+    ClienteController as EcommerceClienteController,
+    IniciarSesion as EcommerceIniciarSesion,
+    NegocioController as EcommerceNegocioController,
+    ProductoController as EcommerceProductoController,
+    ReservaController as EcommerceReservaController,
+};
+
+use App\Http\Controllers\Panel\{
+    AdministradorController,
+    CerrarSesion,
+    ClienteController,
+    CompraController,
+    EmpleadoController,
+    IniciarSesion,
+    InventarioController,
+    NegocioController,
+    PerfilController,
+    ProductoController,
+    ProveedorController,
+    ReservaController,
+    SucursalController,
+    VentaController,
+};
+
+use App\Http\Middleware\Ecommerce\{
+    RedirigirUsuariosAutenticados as EcommerceRedirigirUsuariosAutenticados,
+    SoloUsuariosAutenticados as EcommerceSoloUsuariosAutenticados
+};
+
+use App\Http\Middleware\Panel\{
+    RedirigirAlEstablecimientoAsignado,
+    RedirigirUsuariosAutenticados,
+    SoloAdministradores,
+    SoloEncargados,
+    SoloEstablecimientosAsignados,
+    SoloUsuariosAutenticados
+};
+
 use App\Models\Negocio;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\{DB, Route};
 
 /** @deprecated */
 define('PDO', DB::getPdo());
@@ -151,7 +162,6 @@ Route::prefix('panel')
                                         // Actualizar proveedor
                                         Route::post('/', 'update');
                                     });
-
                             });
 
                         Route::prefix('clientes')
