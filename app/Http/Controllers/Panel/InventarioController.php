@@ -10,6 +10,7 @@ use App\Models\Producto;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 final class InventarioController extends Controller
 {
@@ -23,8 +24,8 @@ final class InventarioController extends Controller
                 ->query("
                     SELECT stock
                     FROM inventarios
-                    WHERE negocio_id = '{$negocio['id']}'
-                    AND producto_id = '{$producto['id']}'
+                    WHERE negocio_slug = '$negocio->slug'
+                    AND producto_id = '$producto->id'
                 ")->fetchColumn() ?: 0;
         }
 
@@ -35,24 +36,26 @@ final class InventarioController extends Controller
     }
 
     public function update(
+        Request $request,
         Negocio $negocio,
         Producto $producto,
     ): RedirectResponse {
-        $stock = $_POST['stock'] ?? 0;
+        ['stock' => $stock] = $request->validate([
+            'stock' => 'required',
+        ]);
 
         $inventario = PDO
             ->query("
                 SELECT * FROM inventarios
-                WHERE negocio_slug = '{$negocio['slug']}'
-                AND producto_id = '{$producto['id']}'
+                WHERE negocio_slug = '{$negocio->slug}'
+                AND producto_id = '{$producto->id}'
             ")
             ->fetch();
 
         if ($inventario) {
             PDO->prepare(
                 'UPDATE inventarios SET
-                stock = :stock,
-                actualizado_en = CURRENT_TIMESTAMP
+                stock = :stock
                 WHERE negocio_slug = :negocio_slug
                 AND producto_id = :producto_id'
             )->execute([
@@ -66,7 +69,6 @@ final class InventarioController extends Controller
                 (id, negocio_slug, producto_id, stock) VALUES
                 (:id, :negocio_slug, :producto_id, :stock)'
             )->execute([
-                ':id' => uniqid(),
                 ':negocio_slug' => $negocio->slug,
                 ':producto_id' => $producto->id,
                 ':stock' => $stock,

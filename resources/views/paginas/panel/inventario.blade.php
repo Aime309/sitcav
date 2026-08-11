@@ -14,8 +14,8 @@
                             action="{{ route(
                                 'panel.negocios.{negocio}.inventario.{producto}',
                                 [
-                                    'negocio' => $negocio->id,
-                                    'producto' => $producto->id,
+                                    'negocio' => $negocio,
+                                    'producto' => $producto,
                                 ]
                             ) }}">
                             @csrf

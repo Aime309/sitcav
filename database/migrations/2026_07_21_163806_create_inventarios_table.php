@@ -39,7 +39,6 @@ return new class extends Migration
                     ->cascadeOnUpdate();
 
                 $table->integer('stock')->unique();
-                $table->timestamps();
             },
         );
     }
