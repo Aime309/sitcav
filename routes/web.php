@@ -143,9 +143,15 @@ Route::prefix('panel')
                                 // Registrar proveedor
                                 Route::post('/', 'store');
 
-                                // Actualizar proveedor
-                                Route::post('{proveedor}', 'update')
-                                    ->name('.{proveedor}');
+                                Route::prefix('{proveedor}')
+                                    ->name('.{proveedor}')
+                                    ->group(static function (): void {
+                                        Route::get('/', 'edit');
+
+                                        // Actualizar proveedor
+                                        Route::post('/', 'update');
+                                    });
+
                             });
 
                         Route::prefix('clientes')

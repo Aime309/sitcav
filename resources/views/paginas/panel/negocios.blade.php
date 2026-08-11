@@ -33,7 +33,7 @@
             method="post"
             class="w3-half w3-card-4"
             x-data="{
-                nombre: '',
+                nombre: @json(old('nombre')),
 
                 get slug() {
                     return this.nombre.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -49,7 +49,6 @@
                 pattern="[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+"
                 title="El nombre debe contener solo letras y espacios."
                 :message="$message ?? ''"
-                :value="old('nombre')"
                 model="nombre"
             />
 

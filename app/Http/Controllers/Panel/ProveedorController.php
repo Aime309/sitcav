@@ -10,6 +10,7 @@ use App\Models\Proveedor;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 final class ProveedorController extends Controller
 {
@@ -24,10 +25,33 @@ final class ProveedorController extends Controller
         ]);
     }
 
-    public function store(Negocio $negocio): RedirectResponse
+    public function store(
+        Request $request,
+        Negocio $negocio,
+    ): RedirectResponse
     {
+        ['nombre' => $nombre] = $request->validate([
+            'nombre' => 'required',
+        ]);
+
+        $negocio->proveedores()->create([
+            'nombre' => $nombre,
+        ]);
+
         return to_route('panel.negocios.{negocio}.proveedores', [
             'negocio' => $negocio,
+        ]);
+    }
+
+    public function edit(Negocio $negocio, Proveedor $proveedor): View
+    {
+        $correo = $_SESSION['panel']['usuario']['correo'];
+        $usuario = Usuario::query()->findOrFail($correo);
+
+        return view('paginas.panel.editar-proveedor', [
+            'negocio' => $negocio,
+            'proveedor' => $proveedor,
+            'usuario' => $usuario,
         ]);
     }
 
@@ -35,6 +59,15 @@ final class ProveedorController extends Controller
         Negocio $negocio,
         Proveedor $proveedor,
     ): RedirectResponse {
+        ['nombre' => $nombre] = request()->validate([
+            'nombre' => 'required',
+        ]);
+
+        $proveedor->update([
+            'nombre' => $nombre,
+            'slug' => $proveedor->newUniqueId(),
+        ]);
+
         return to_route('panel.negocios.{negocio}.proveedores', [
             'negocio' => $negocio,
         ]);

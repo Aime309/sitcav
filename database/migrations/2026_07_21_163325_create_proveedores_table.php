@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create(
             'proveedores',
             static function (Blueprint $table): void {
-                $table->id();
+                $table->string('slug')->primary();
 
                 $table
                     ->foreignIdFor(Negocio::class)

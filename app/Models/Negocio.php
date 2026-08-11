@@ -25,6 +25,7 @@ use Illuminate\Support\Str;
  * @property-read Collection<int, Usuario> $empleados
  * @property-read Collection<int, Sucursal> $sucursales
  * @property-read Collection<int, Producto> $productos
+ * @property-read Collection<int, Proveedor> $proveedores
  */
 #[Fillable(
     'slug',
@@ -53,25 +54,32 @@ final class Negocio extends Model
         return ['slug'];
     }
 
-    /** @return HasMany<Producto> */
+    /** @return HasMany<Producto, $this> */
     public function productos(): HasMany
     {
         return $this->hasMany(Producto::class);
     }
 
-    /** @return HasMany<Sucursal> */
+    /** @return HasMany<Sucursal, $this> */
     public function sucursales(): HasMany
     {
         return $this->hasMany(Sucursal::class);
     }
 
-    /** @return HasMany<Sucursal> */
+    /** @return HasMany<Sucursal, $this> */
     public function sucursals(): HasMany
     {
         return $this->sucursales();
     }
 
+    /** @return HasMany<Proveedor, $this> */
     public function proveedores(): HasMany
+    {
+        return $this->hasMany(Proveedor::class);
+    }
+
+    /** @return HasMany<Proveedor, $this> */
+    public function proveedors(): HasMany
     {
         return $this->hasMany(Proveedor::class);
     }
@@ -82,6 +90,7 @@ final class Negocio extends Model
         return $this->hasMany(Cliente::class);
     }
 
+    /** @return HasMany<Reserva, $this> */
     public function reservas(): HasMany
     {
         return $this->hasMany(Reserva::class);
