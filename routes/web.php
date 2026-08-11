@@ -165,9 +165,14 @@ Route::prefix('panel')
                                 // Registrar cliente
                                 Route::post('/', 'store');
 
-                                // Actualizar cliente
-                                Route::post('{cliente}', 'update')
-                                    ->name('.{cliente}');
+                                Route::prefix('{cliente}')
+                                    ->name('.{cliente}')
+                                    ->group(static function (): void {
+                                        Route::get('/', 'edit');
+
+                                        // Actualizar cliente
+                                        Route::post('/', 'update');
+                                    });
                             });
 
                         Route::prefix('productos')

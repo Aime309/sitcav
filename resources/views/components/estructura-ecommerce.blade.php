@@ -1,4 +1,4 @@
-@props(['titulo'])
+@props(['titulo', 'negocio', 'usuario'])
 
 <!doctype html>
 <html
@@ -60,7 +60,7 @@
                     <li class="w3-bar-item w3-right">
                         <a
                             href="{{ route('{negocio}.registrarse', [
-                                'negocio' => $negocio['slug'],
+                                'negocio' => $negocio,
                             ]) }}"
                             class="w3-button">
                             Registrarse
@@ -69,7 +69,7 @@
                     <li class="w3-bar-item w3-right">
                         <a
                             href="{{ route('{negocio}.iniciar-sesion', [
-                                'negocio' => $negocio['slug'],
+                                'negocio' => $negocio,
                             ]) }}"
                             class="w3-button">
                             Iniciar sesión
@@ -79,7 +79,7 @@
                     <li class="w3-bar-item w3-right">
                         <a
                             href="{{ route('{negocio}.cerrar-sesion', [
-                                'negocio' => $negocio['slug'],
+                                'negocio' => $negocio,
                             ]) }}"
                             class="w3-button">
                             Cerrar sesión
@@ -88,7 +88,7 @@
                     <li class="w3-bar-item w3-right">
                         <a
                             href="{{ route('{negocio}.perfil', [
-                                'negocio' => $negocio['slug'],
+                                'negocio' => $negocio,
                             ]) }}"
                             class="w3-button">
                             Editar perfil
@@ -97,7 +97,7 @@
                     <li class="w3-bar-item w3-right">
                         <a
                             href="{{ route('{negocio}.carrito', [
-                                'negocio' => $negocio['slug'],
+                                'negocio' => $negocio,
                             ]) }}"
                             class="w3-button">
                             Carrito
@@ -106,7 +106,7 @@
                     <li class="w3-bar-item w3-right">
                         <a
                             href="{{ route('{negocio}.reservas', [
-                                'negocio' => $negocio['slug'],
+                                'negocio' => $negocio,
                             ]) }}"
                             class="w3-button">
                             Reservas

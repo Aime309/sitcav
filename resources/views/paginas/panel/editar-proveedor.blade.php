@@ -1,6 +1,6 @@
 <x-panel.estructuras.privada
     :titulo="$proveedor->nombre"
-    :crumbs="['Proveedores']"
+    :crumbs="['Proveedores', $proveedor->nombre, 'Editar']"
     :negocio="$negocio"
     :usuario="$usuario">
     <form

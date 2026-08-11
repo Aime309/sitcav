@@ -26,6 +26,7 @@ use Illuminate\Support\Str;
  * @property-read Collection<int, Sucursal> $sucursales
  * @property-read Collection<int, Producto> $productos
  * @property-read Collection<int, Proveedor> $proveedores
+ * @property-read Collection<int, Cliente> $clientes
  */
 #[Fillable(
     'slug',

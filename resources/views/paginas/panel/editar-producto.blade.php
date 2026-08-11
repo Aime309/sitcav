@@ -1,6 +1,6 @@
 <x-panel.estructuras.privada
-    titulo="{{ $producto['nombre'] }}"
-    :crumbs="['Productos', $producto['nombre']]"
+    :titulo="$producto->nombre"
+    :crumbs="['Productos', $producto->nombre, 'Editar']"
     :negocio="$negocio"
     :usuario="$usuario">
     <form method="post" enctype="multipart/form-data" class="w3-container">
