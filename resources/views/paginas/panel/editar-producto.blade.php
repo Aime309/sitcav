@@ -3,45 +3,34 @@
     :crumbs="['Productos', $producto->nombre, 'Editar']"
     :negocio="$negocio"
     :usuario="$usuario">
-    <form method="post" enctype="multipart/form-data" class="w3-container">
+    <form method="post" class="w3-container">
         @csrf
-        <input
+
+        <x-panel.campo
             name="nombre"
             placeholder="Nombre"
-            class="w3-input"
             required
-            minlength="1"
+            :minlength="1"
             pattern="[A-Za-z0-9\s]+"
             title="El nombre debe contener solo letras, números y espacios."
-            value="{{ $producto['nombre'] }}"
+            :message="$message ?? ''"
+            :value="old('nombre', $producto->nombre)"
         />
-        <textarea
-            name="descripcion"
-            pattern=".*"
-            title="La descripción puede contener cualquier carácter."
-            class="w3-input"
-            placeholder="Descripción">{{ $producto['descripcion'] }}</textarea>
-        <input
+
+        <x-panel.campo
             type="number"
             step=".01"
             name="precio"
             placeholder="Precio"
             required
-            min="0.01"
-            class="w3-input"
-            value="{{ $producto['precio'] }}"
+            :min="0.01"
+            :message="$message ?? ''"
+            :value="old('precio', $producto->precio)"
         />
-        <label>
-            <input
-                type="checkbox"
-                name="activo"
-                @checked($producto->activo)
-            />
-            Activo
-        </label>
+
         <input
             type="submit"
-            value="Actualizar"
+            value="Actualizar Producto"
             class="w3-button w3-blue w3-hover-light-blue w3-block"
         />
     </form>

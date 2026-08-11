@@ -10,6 +10,7 @@ use App\Models\Producto;
 use App\Models\Usuario;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 final class ProductoController extends Controller
 {
@@ -24,31 +25,22 @@ final class ProductoController extends Controller
         ]);
     }
 
-    public function store(Negocio $negocio): RedirectResponse
-    {
-        $nombre = $_POST['nombre'] ?? '';
-        $descripcion = $_POST['descripcion'] ?? '';
-        $precio = $_POST['precio'] ?? '';
-
-        PDO->beginTransaction();
-
-        $producto = $negocio->productos()->create([
-            'id' => uniqid(),
+    public function store(
+        Request $request,
+        Negocio $negocio,
+    ): RedirectResponse {
+        [
             'nombre' => $nombre,
-            'descripcion' => $descripcion,
             'precio' => $precio,
+        ] = $request->validate([
+            'nombre' => 'required',
+            'precio' => 'required',
         ]);
 
-        foreach ($_FILES['imagenes']['error'] as $indice => $error) {
-            if ($error === UPLOAD_ERR_OK) {
-                $producto->imagenes()->create([
-                    'id' => uniqid(),
-                    'imagen' => fopen($_FILES['imagenes']['tmp_name'][$indice], 'rb'),
-                ]);
-            }
-        }
-
-        PDO->commit();
+        $negocio->productos()->create([
+            'nombre' => $nombre,
+            'precio' => $precio,
+        ]);
 
         return to_route('panel.negocios.{negocio}.productos', [
             'negocio' => $negocio,
@@ -67,17 +59,23 @@ final class ProductoController extends Controller
         ]);
     }
 
-    public function update(Negocio $negocio, Producto $producto): RedirectResponse
-    {
-        $nombre = $_POST['nombre'] ?? $producto->nombre;
-        $descripcion = $_POST['descripcion'] ?? $producto->descripcion;
-        $precio = $_POST['precio'] ?? $producto->precio;
+    public function update(
+        Request $request,
+        Negocio $negocio,
+        Producto $producto,
+    ): RedirectResponse {
+        [
+            'nombre' => $nombre,
+            'precio' => $precio,
+        ] = $request->validate([
+            'nombre' => 'required',
+            'precio' => 'required',
+        ]);
 
-        $producto->nombre = $nombre;
-        $producto->descripcion = $descripcion;
-        $producto->precio = $precio;
-        $producto->activo = empty($_POST['activo']) ? 0 : 1;
-        $producto->save();
+        $producto->update([
+            'nombre' => $nombre,
+            'precio' => $precio,
+        ]);
 
         return to_route(
             'panel.negocios.{negocio}.productos.{producto}',

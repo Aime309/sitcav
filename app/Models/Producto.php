@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -13,4 +14,5 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read float $precio
  */
 #[Fillable('nombre', 'precio')]
+#[WithoutTimestamps]
 final class Producto extends Model {}

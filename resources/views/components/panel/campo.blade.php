@@ -13,6 +13,8 @@
     'title',
     'type',
     'model',
+    'step',
+    'min',
 ])
 
 @php
@@ -46,6 +48,8 @@ $id = uniqid();
             title="{{ $title ?? '' }}"
             type="{{ $type ?? 'text' }}"
             {{ empty($model) ?: "x-model=$model" }}
+            step="{{ $step ?? 1 }}"
+            min="{{ $min ?? 0 }}"
         />
     @else
         <div class="input-icon">
@@ -66,6 +70,8 @@ $id = uniqid();
                 title="{{ $title ?? '' }}"
                 type="{{ $type ?? 'text' }}"
                 {{ empty($model) ?: "x-model=$model" }}
+                step="{{ $step ?? 1 }}"
+                min="{{ $min ?? 0 }}"
             />
         </div>
     @endif
