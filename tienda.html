@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITCAV Tienda — Aparta tu producto</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%236366f1'/%3E%3Cstop offset='100%25' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='72' height='72' rx='18' fill='url(%23g)'/%3E%3Cpath d='M22 30 h36 l-4 22 a4 4 0 0 1 -4 3 h-20 a4 4 0 0 1 -4 -3 z' fill='none' stroke='white' stroke-width='3.5' stroke-linejoin='round'/%3E%3Cpath d='M28 30 a12 12 0 0 1 24 0' fill='none' stroke='white' stroke-width='3.5'/%3E%3Ccircle cx='32' cy='55' r='3' fill='white'/%3E%3Ccircle cx='48' cy='55' r='3' fill='white'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-grad: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --primary-soft: #eef2ff;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --muted: #64748b;
+            --light: #f1f5f9;
+            --border: #e2e8f0;
+            --radius: 14px;
+            --font: 'Segoe UI', 'Inter', system-ui, sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--primary-grad);
+            color: #fff;
+            padding: 12px 28px;
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.35);
+        }
+        .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .brand-logo {
+            width: 42px; height: 42px; border-radius: 12px;
+            background: rgba(255, 255, 255, 0.18);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+        .brand h1 { font-size: 1.25rem; letter-spacing: 0.5px; }
+        .brand small { display: block; font-weight: 400; opacity: 0.85; font-size: 0.68rem; }
+        .search-box { flex: 1; max-width: 520px; position: relative; }
+        .search-box input {
+            width: 100%; padding: 10px 16px 10px 40px;
+            border: none; border-radius: 999px; font-size: 0.92rem; outline: none;
+        }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+        .top-actions { display: flex; gap: 10px; align-items: center; margin-left: auto; }
+        .btn {
+            padding: 9px 18px; border: none; border-radius: 10px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 600; font-family: var(--font); transition: all 0.15s;
+        }
+        .btn-light { background: #fff; color: var(--primary); }
+        .btn-light:hover { background: var(--primary-soft); }
+        .btn-ghost { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.5); }
+        .btn-ghost:hover { background: rgba(255,255,255,0.12); }
+        .btn-primary { background: var(--primary-grad); color: #fff; }
+        .btn-primary:hover { filter: brightness(1.1); }
+        .btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
+        .btn-outline:hover { background: var(--primary-soft); }
+        .user-chip {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.15); padding: 7px 14px; border-radius: 999px;
+            font-size: 0.88rem; font-weight: 600;
+        }
+        .user-chip i { font-size: 0.95rem; }
+        .user-chip .logout { cursor: pointer; opacity: 0.75; }
+        .user-chip .logout:hover { opacity: 1; }
+        main { flex: 1; width: 100%; max-width: 1280px; margin: 0 auto; padding: 26px 28px 50px; }
+        .hero {
+            background: var(--primary-grad);
+            border-radius: 18px; padding: 34px 40px; color: #fff;
+            margin-bottom: 26px;
+            display: flex; justify-content: space-between; align-items: center; gap: 20px;
+            box-shadow: 0 12px 30px rgba(79, 70, 229, 0.25);
+        }
+        .hero h2 { font-size: 1.7rem; margin-bottom: 6px; }
+        .hero p { opacity: 0.9; font-size: 0.95rem; }
+        .tasa-badge {
+            background: rgba(255,255,255,0.16); padding: 10px 18px; border-radius: 12px;
+            font-size: 0.9rem; text-align: center; white-space: nowrap;
+        }
+        .tasa-badge strong { display: block; font-size: 1.15rem; margin-top: 3px; }
+        .tasa-badge.warning { background: rgba(245, 158, 11, 0.9); color: #1e293b; }
+        .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .section-title h3 { font-size: 1.15rem; }
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 18px; margin-bottom: 30px;
+        }
+        .card {
+            background: #fff; border-radius: var(--radius); overflow: hidden;
+            box-shadow: 0 2px 12px rgba(15, 23, 42, 0.07);
+            display: flex; flex-direction: column; transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(15, 23, 42, 0.13); }
+        .card-img {
+            height: 150px; background: var(--light);
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+        }
+        .card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .card-img i { font-size: 46px; color: #cbd5e1; }
+        .card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .card-body h4 { font-size: 0.98rem; line-height: 1.3; min-height: 2.5em; }
+        .card-cat { font-size: 0.74rem; color: var(--muted); }
+        .card-prices { display: flex; justify-content: space-between; align-items: baseline; }
+        .price-usd { font-weight: 700; font-size: 1.05rem; color: var(--primary); }
+        .price-bs { font-size: 0.8rem; color: var(--muted); }
+        .card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+        .stock-tag { font-size: 0.78rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
+        .stock-ok { background: #d1fae5; color: #047857; }
+        .stock-bajo { background: #fef3c7; color: #b45309; }
+        .stock-no { background: #fee2e2; color: #b91c1c; }
+        .btn-apartar { padding: 8px 14px; font-size: 0.85rem; }
+        .empty { text-align: center; padding: 50px 0; color: var(--muted); }
+        .empty i { font-size: 44px; display: block; margin-bottom: 12px; color: #cbd5e1; }
+        footer {
+            background: var(--dark); color: #94a3b8; text-align: center;
+            padding: 18px; font-size: 0.82rem;
+        }
+        footer a { color: #c7d2fe; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        .modal {
+            display: none; position: fixed; inset: 0; z-index: 200;
+            background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(3px);
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal.open { display: flex; }
+        .modal-box {
+            background: #fff; border-radius: 16px; width: 100%; max-width: 440px;
+            padding: 26px; box-shadow: 0 25px 60px rgba(15, 23, 42, 0.3);
+            max-height: 92vh; overflow-y: auto;
+        }
+        .modal-box.lg { max-width: 560px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .modal-header h3 { font-size: 1.1rem; }
+        .modal-close { background: none; border: none; font-size: 1.15rem; color: var(--muted); cursor: pointer; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 0.84rem; font-weight: 600; margin-bottom: 6px; color: var(--dark); }
+        .form-group input, .form-group select {
+            width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
+            border-radius: 10px; font-size: 0.92rem; font-family: var(--font); outline: none;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+        .captcha-row { display: flex; gap: 10px; align-items: center; }
+        .captcha-row img { border-radius: 8px; height: 48px; cursor: pointer; }
+        .captcha-row input { flex: 1; }
+        .password-hint { font-size: 0.76rem; color: var(--muted); margin-top: 5px; }
+        .terms-check { display: flex; gap: 9px; align-items: flex-start; font-size: 0.84rem; color: var(--muted); margin: 16px 0; }
+        .terms-check input { margin-top: 3px; accent-color: var(--primary); }
+        .terms-check a { color: var(--primary); text-decoration: none; }
+        .error-msg { color: var(--danger); font-size: 0.85rem; margin-bottom: 12px; display: none; }
+        .error-msg.show { display: block; }
+        .toast-container { position: fixed; top: 18px; right: 18px; z-index: 500; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            background: var(--dark); color: #fff; padding: 12px 18px; border-radius: 10px;
+            font-size: 0.88rem; box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            display: flex; align-items: center; gap: 10px; animation: slideIn 0.25s ease;
+            max-width: 360px;
+        }
+        .toast.success { background: #047857; }
+        .toast.error { background: #b91c1c; }
+        .toast.warning { background: #b45309; }
+        @keyframes slideIn { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+        .apartados-list { display: flex; flex-direction: column; gap: 12px; }
+        .apartado-card { border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+        .apartado-card .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .apartado-card .head h4 { font-size: 0.95rem; }
+        .apartado-card p { font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; }
+        .badge { font-size: 0.74rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+        .badge.active { background: #d1fae5; color: #047857; }
+        .badge.completado { background: #e0e7ff; color: #4338ca; }
+        .badge.cancelado { background: #fee2e2; color: #b91c1c; }
+        .badge.warn { background: #fef3c7; color: #b45309; }
+        @media (max-width: 640px) {
+            .top-bar { flex-wrap: wrap; padding: 10px 14px; gap: 10px; }
+            .search-box { order: 3; flex-basis: 100%; }
+            .hero { flex-direction: column; text-align: center; }
+            main { padding: 18px 14px 40px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <header class="top-bar">
+        <div class="brand" onclick="location.reload()">
+            <div class="brand-logo"><i class="fas fa-store"></i></div>
+            <div>
+                <h1>SITCAV Tienda</h1>
+                <small>Aparta tu producto y retíralo en la sucursal</small>
+            </div>
+        </div>
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="tienda-search" placeholder="Buscar productos..." oninput="renderProductos()">
+        </div>
+        <div class="top-actions">
+            <button class="btn btn-ghost" onclick="openMisApartados()" title="Mis apartados">
+                <i class="fas fa-box-open"></i> Mis Apartados
+            </button>
+            <div id="auth-buttons">
+                <button class="btn btn-light" onclick="openAuthModal('login')"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</button>
+                <button class="btn btn-ghost" onclick="openAuthModal('register')"><i class="fas fa-user-plus"></i> Crear Cuenta</button>
+            </div>
+            <div id="user-chip" class="user-chip" style="display: none;">
+                <i class="fas fa-user-circle"></i>
+                <span id="chip-name">Cliente</span>
+                <i class="fas fa-sign-out-alt logout" title="Cerrar sesión" onclick="logoutTienda()"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="hero">
+            <div>
+                <h2><i class="fas fa-box-open"></i> Aparta tu producto hoy</h2>
+                <p>Reserva con un abono inicial y asegura tu producto. Paga el resto cuando quieras antes de la fecha límite.</p>
+            </div>
+            <div class="tasa-badge" id="tasa-badge">
+                Cotización vigente
+                <strong id="tasa-valor">Bs 0,00</strong>
+            </div>
+        </div>
+
+        <div class="section-title">
+            <h3><i class="fas fa-fire"></i> Catálogo de productos</h3>
+        </div>
+        <div class="grid" id="productos-grid">
+            <div class="empty"><i class="fas fa-spinner fa-spin"></i> Cargando productos...</div>
+        </div>
+    </main>
+
+    <footer>
+        SITCAV — Sistema Integral de Tecnología, Control y Análisis de Ventas ·
+        <a href="/index.html">Acceso al sistema interno</a>
+    </footer>
+
+    <!-- MODAL AUTH (login/registro) -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="auth-modal-title">Iniciar Sesión</h3>
+                <button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="error-msg" id="auth-error"></div>
+            <div id="auth-login-form">
+                <div class="form-group">
+                    <label>Cédula de Identidad</label>
+                    <input type="text" id="auth-cedula" placeholder="Ej: 12345678">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="auth-password" onkeydown="if(event.key==='Enter')tiendaLogin()">
+                </div>
+                <button class="btn btn-primary" style="width:100%;" onclick="tiendaLogin()">Entrar</button>
+                <p style="text-align:center; font-size:.84rem; margin-top:14px; color:var(--muted);">
+                    ¿No tienes cuenta? <a href="#" style="color:var(--primary);" onclick="switchAuthMode('register')">Regístrate</a>
+                </p>
+            </div>
+            <div id="auth-register-form" style="display:none;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="reg-nombre" placeholder="Ej: María">
+                    </div>
+                    <div class="form-group">
+                        <label>Apellidos</label>
+                        <input type="text" id="reg-apellidos" placeholder="Ej: Rodríguez">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Cédula *</label>
+                    <input type="text" id="reg-cedula" placeholder="Obligatoria">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel" id="reg-telefono" placeholder="Opcional">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="reg-password">
+                    <div class="password-hint">Mínimo 8 caracteres, una mayúscula, una minúscula y un carácter especial.</div>
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Contraseña</label>
+                    <input type="password" id="reg-password-confirm">
+                </div>
+                <div class="form-group">
+                    <label>¿Cuánto es? <small style="font-weight:400;">(clic en la imagen para actualizar)</small></label>
+                    <div class="captcha-row">
+                        <img id="captcha-img" alt="Captcha" title="Actualizar captcha" onclick="cargarCaptcha()">
+                        <input type="text" id="captcha-respuesta" placeholder="Respuesta">
+                    </div>
+                </div>
+                <div class="terms-check">
+                    <input type="checkbox" id="reg-terminos">
+                    <label for="reg-terminos">Acepto los <a href="/index.html" onclick="alertTienda('Los Términos y Condiciones están disponibles en el sistema interno de SITCAV.'); return false;">Términos y Condiciones</a> de SITCAV.</label>
+                </div>
+                <button class="btn btn-primary" style="width:100%;" onclick="tiendaRegistro()">Crear Cuenta</button>
+                <p style="text-align:center; font-size:.84rem; margin-top:14px; color:var(--muted);">
+                    ¿Ya tienes cuenta? <a href="#" style="color:var(--primary);" onclick="switchAuthMode('login')">Inicia sesión</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL APARTAR -->
+    <div class="modal" id="apartar-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fas fa-box-open"></i> Apartar producto</h3>
+                <button class="modal-close" onclick="closeModal('apartar-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="error-msg" id="apartar-error"></div>
+            <div id="apartar-producto-info"></div>
+            <div class="form-group">
+                <label>Cantidad</label>
+                <input type="number" id="apartar-cantidad" min="1" value="1">
+            </div>
+            <div class="form-group">
+                <label>Abono inicial (USD, opcional)</label>
+                <input type="number" id="apartar-abono" min="0" step="0.01" value="0">
+                <div class="password-hint">Puedes apartar sin abono y pagar después. El producto queda reservado para ti.</div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;" onclick="confirmarApartar()">
+                <i class="fas fa-check-circle"></i> Confirmar Apartado
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL MIS APARTADOS -->
+    <div class="modal" id="mis-apartados-modal">
+        <div class="modal-box lg">
+            <div class="modal-header">
+                <h3><i class="fas fa-box-open"></i> Mis Apartados</h3>
+                <button class="modal-close" onclick="closeModal('mis-apartados-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="error-msg" id="apartados-error"></div>
+            <div class="apartados-list" id="apartados-list">
+                <div class="empty"><i class="fas fa-spinner fa-spin"></i> Cargando...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="tienda.js?v=5"></script>
+</body>
+
+</html>
