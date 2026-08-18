@@ -101,6 +101,7 @@ async function cargarCatalogo() {
             : 'Cotización vigente (24h)<strong id="tasa-valor">Bs ' + tasaActual.toLocaleString('es-VE', { maximumFractionDigits: 2 }) + '</strong>';
         if (cotizacionCaducada) badge.classList.add('warning');
         renderProductos();
+        renderDestacados();
     } catch (error) {
         document.getElementById('productos-grid').innerHTML = '<div class="empty"><i class="fas fa-plug"></i> No se pudo conectar con el servidor. Asegúrate de que SITCAV esté iniciado.</div>';
     }
@@ -150,6 +151,100 @@ function renderProductos() {
         `;
         grid.appendChild(card);
     });
+}
+
+// =====================================================
+// CARRUSEL DE TENDENCIAS (más vendidos / nuevos)
+// =====================================================
+let destacados = [];
+let destacadoActual = 0;
+let destacadoTimer = null;
+
+function renderDestacados() {
+    const section = document.getElementById('destacados-section');
+    const track = document.getElementById('destacados-track');
+    const dots = document.getElementById('destacados-dots');
+
+    destacados = [...catalogo]
+        .filter(p => p.stock > 0)
+        .sort((a, b) => (b.vendidos || 0) - (a.vendidos || 0) || b.id - a.id)
+        .slice(0, 5);
+
+    if (destacados.length < 2) {
+        section.style.display = 'none';
+        detenerAutoDestacados();
+        return;
+    }
+    section.style.display = '';
+    track.innerHTML = '';
+    dots.innerHTML = '';
+
+    destacados.forEach((p, i) => {
+        const img = p.imagen_url
+            ? `<img src="${p.imagen_url.startsWith('http') ? p.imagen_url : API_BASE_URL + p.imagen_url}" onerror="this.onerror=null;this.parentElement.innerHTML='<i class=\'fas fa-box\'></i>'">`
+            : '<i class="fas fa-box"></i>';
+        const badge = (p.vendidos || 0) > 0
+            ? `<span class="slide-badge"><i class="fas fa-fire"></i> Más vendido #${i + 1} · ${p.vendidos} vendido(s)</span>`
+            : '<span class="slide-badge"><i class="fas fa-star"></i> Nuevo en SITCAV</span>';
+        const stockTag = p.stock === 0 ? 'Agotado' : `En stock (${p.stock})`;
+
+        const slide = document.createElement('div');
+        slide.className = 'slide' + (i === 0 ? ' active' : '');
+        slide.innerHTML = `
+            <div class="slide-info">
+                ${badge}
+                <h2>${p.nombre}</h2>
+                <p>${p.descripcion || (p.categoria ? 'Categoría: ' + p.categoria : '')}</p>
+                <div class="slide-prices">
+                    <span class="slide-price-usd">$${p.precio_usd.toFixed(2)}</span>
+                    <span class="slide-price-bs">Bs ${(p.precio_bs || 0).toLocaleString('es-VE', { maximumFractionDigits: 2 })}</span>
+                </div>
+                <div class="slide-stock"><i class="fas fa-boxes"></i> ${stockTag}${p.cantidad_apartada > 0 ? ' · ' + p.cantidad_apartada + ' apartado(s)' : ''}</div>
+                <button class="btn btn-light" onclick="openApartarModal(${p.id})"><i class="fas fa-hand-holding-usd"></i> Apartar ahora</button>
+            </div>
+            <div class="slide-img">${img}</div>
+        `;
+        track.appendChild(slide);
+
+        const dot = document.createElement('button');
+        dot.className = i === 0 ? 'active' : '';
+        dot.title = `Ir al producto ${i + 1}`;
+        dot.onclick = () => irADestacado(i);
+        dots.appendChild(dot);
+    });
+
+    destacadoActual = 0;
+    iniciarAutoDestacados();
+}
+
+function irADestacado(i) {
+    const slides = document.querySelectorAll('#destacados-track .slide');
+    const dots = document.querySelectorAll('#destacados-dots button');
+    if (slides.length === 0) return;
+    if (i < 0) i = slides.length - 1;
+    if (i >= slides.length) i = 0;
+    destacadoActual = i;
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+}
+
+function slideDestacado(dir) {
+    irADestacado(destacadoActual + dir);
+}
+
+function iniciarAutoDestacados() {
+    detenerAutoDestacados();
+    const slider = document.getElementById('destacados-slider');
+    destacadoTimer = setInterval(() => irADestacado(destacadoActual + 1), 5000);
+    slider.onmouseenter = detenerAutoDestacados;
+    slider.onmouseleave = iniciarAutoDestacados;
+}
+
+function detenerAutoDestacados() {
+    if (destacadoTimer) {
+        clearInterval(destacadoTimer);
+        destacadoTimer = null;
+    }
 }
 
 // =====================================================

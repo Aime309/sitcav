@@ -4477,8 +4477,13 @@ async function loadTransferencias() {
                             <button class="action-btn success" onclick="recibirTransferencia(${t.id})" title="Confirmar recepción">
                                 <i class="fas fa-check-double"></i>
                             </button>
-                            <button class="action-btn delete" onclick="cancelarTransferencia(${t.id})" title="Cancelar transferencia">
+                            <button class="action-btn warning" onclick="cancelarTransferencia(${t.id})" title="Cancelar transferencia (el stock vuelve al origen)">
                                 <i class="fas fa-ban"></i>
+                            </button>
+                        ` : ''}
+                        ${currentUser.rol === 'Administrador' ? `
+                            <button class="action-btn delete" onclick="eliminarTransferencia(${t.id})" title="Eliminar transferencia (si está pendiente, el stock vuelve al origen)">
+                                <i class="fas fa-trash"></i>
                             </button>
                         ` : ''}
                     </div>
@@ -4631,6 +4636,24 @@ async function cancelarTransferencia(id) {
             loadNotificaciones();
         } else {
             alert(data.message || 'Error al cancelar');
+        }
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
+async function eliminarTransferencia(id) {
+    if (!(await confirmAsync('¿Eliminar la transferencia del historial? Si está pendiente, el stock volverá al origen.'))) return;
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/transferencias/${id}`, { method: 'DELETE' });
+        const data = await response.json();
+        if (response.ok) {
+            alert('Transferencia eliminada');
+            loadTransferencias();
+            loadSucursales();
+            loadNotificaciones();
+        } else {
+            alert(data.message || 'Error al eliminar');
         }
     } catch (error) {
         alert('Error de conexión');

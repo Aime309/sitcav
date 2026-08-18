@@ -185,10 +185,53 @@
         .badge.completado { background: #e0e7ff; color: #4338ca; }
         .badge.cancelado { background: #fee2e2; color: #b91c1c; }
         .badge.warn { background: #fef3c7; color: #b45309; }
+        .slider { position: relative; border-radius: 18px; overflow: hidden; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18); margin-bottom: 6px; }
+        .slider-track { position: relative; height: 300px; }
+        .slide {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between;
+            gap: 24px; padding: 30px 44px; color: #fff; background: var(--primary-grad);
+            opacity: 0; transform: scale(0.96); transition: opacity 0.6s ease, transform 0.6s ease;
+            pointer-events: none;
+        }
+        .slide.active { opacity: 1; transform: scale(1); pointer-events: auto; }
+        .slide-info { flex: 1; max-width: 580px; }
+        .slide-badge {
+            display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.18);
+            padding: 6px 14px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin-bottom: 14px;
+        }
+        .slide h2 { font-size: 1.6rem; margin-bottom: 8px; line-height: 1.25; }
+        .slide p { opacity: 0.92; font-size: 0.92rem; margin-bottom: 14px; }
+        .slide-prices { display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px; }
+        .slide-price-usd { font-size: 1.5rem; font-weight: 800; }
+        .slide-price-bs { font-size: 0.95rem; opacity: 0.9; }
+        .slide-stock { font-size: 0.8rem; opacity: 0.85; margin-bottom: 18px; }
+        .slide-img {
+            width: 240px; height: 205px; border-radius: 16px; flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.14); display: flex; align-items: center;
+            justify-content: center; overflow: hidden;
+        }
+        .slide-img img { width: 100%; height: 100%; object-fit: cover; }
+        .slide-img i { font-size: 64px; color: rgba(255, 255, 255, 0.6); }
+        .slider-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
+            width: 42px; height: 42px; border-radius: 50%; border: none;
+            background: rgba(15, 23, 42, 0.35); color: #fff; font-size: 1.05rem; cursor: pointer;
+            transition: background 0.15s;
+        }
+        .slider-arrow:hover { background: rgba(15, 23, 42, 0.6); }
+        .slider-arrow.prev { left: 14px; }
+        .slider-arrow.next { right: 14px; }
+        .slider-dots { display: flex; justify-content: center; gap: 8px; padding: 14px 0 4px; }
+        .slider-dots button { width: 9px; height: 9px; border-radius: 999px; border: none; background: #cbd5e1; cursor: pointer; transition: all 0.2s; }
+        .slider-dots button.active { background: var(--primary); width: 26px; }
         @media (max-width: 640px) {
             .top-bar { flex-wrap: wrap; padding: 10px 14px; gap: 10px; }
             .search-box { order: 3; flex-basis: 100%; }
             .hero { flex-direction: column; text-align: center; }
+            .slide { flex-direction: column; text-align: center; padding: 26px 20px; }
+            .slide-img { display: none; }
+            .slider-track { height: 340px; }
+            .slide-badge { justify-content: center; }
             main { padding: 18px 14px 40px; }
         }
     </style>
@@ -236,6 +279,18 @@
                 Cotización vigente
                 <strong id="tasa-valor">Bs 0,00</strong>
             </div>
+        </div>
+
+        <div class="slider-section" id="destacados-section" style="display:none;">
+            <div class="section-title">
+                <h3><i class="fas fa-fire"></i> En tendencia — los más vendidos</h3>
+            </div>
+            <div class="slider" id="destacados-slider">
+                <button class="slider-arrow prev" onclick="slideDestacado(-1)" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+                <div class="slider-track" id="destacados-track"></div>
+                <button class="slider-arrow next" onclick="slideDestacado(1)" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="slider-dots" id="destacados-dots"></div>
         </div>
 
         <div class="section-title">
@@ -358,7 +413,7 @@
         </div>
     </div>
 
-    <script src="tienda.js?v=5"></script>
+    <script src="tienda.js?v=6"></script>
 </body>
 
 </html>
