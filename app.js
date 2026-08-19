@@ -223,6 +223,8 @@ function showWelcome() {
     document.getElementById('login-form').classList.add('hidden');
     document.getElementById('register-form').classList.add('hidden');
     document.getElementById('app-container').classList.remove('active');
+    const launcher = document.getElementById('chat-soporte-launcher');
+    if (launcher) launcher.style.display = 'none';
 }
 
 function showLogin() {
@@ -273,6 +275,7 @@ async function handleLogin(event) {
             };
             console.log('currentUser set to:', JSON.stringify(currentUser));
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            if (data.token) localStorage.setItem(SESSION_TOKEN_KEY, data.token);
             loadDashboard();
         } else {
             errorDiv.textContent = data.message;
@@ -386,6 +389,7 @@ function loginAsAnonymous() {
 function handleLogout() {
     currentUser = null;
     localStorage.removeItem('currentUser');
+    localStorage.removeItem(SESSION_TOKEN_KEY);
     showWelcome();
 }
 
@@ -415,6 +419,11 @@ function loadDashboard() {
 
     // Show/hide navigation based on role
     setupRolePermissions();
+
+    // Burbuja de soporte del personal: SOLO con sesión iniciada y rol de personal
+    const esPersonalRol = ['Administrador', 'Encargado', 'Vendedor'].indexOf(currentUser.rol) !== -1;
+    const launcher = document.getElementById('chat-soporte-launcher');
+    if (launcher) launcher.style.display = esPersonalRol ? 'flex' : 'none';
 
     // Load dashboard data
     loadDashboardStats();
@@ -3902,6 +3911,7 @@ async function saveNewPassword(event) {
             alert('La contraseña actual es incorrecta');
             return;
         }
+        if (verifyResult.token) localStorage.setItem(SESSION_TOKEN_KEY, verifyResult.token);
 
         console.log('Password verified! Updating password...');
 
@@ -4772,6 +4782,10 @@ function switchSoporteTab(tab) {
 async function loadSoporteChats() {
     const body = document.getElementById('soporte-chats-body');
     if (!body) return;
+    if (!currentUser || ['Administrador', 'Encargado', 'Vendedor'].indexOf(currentUser.rol) === -1) {
+        body.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--muted);">Inicia sesión como personal para ver las conversaciones de soporte.</td></tr>';
+        return;
+    }
     body.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px;"><i class="fas fa-spinner fa-spin"></i> Cargando conversaciones...</td></tr>';
     try {
         const data = await fetch(`${API_BASE_URL}/api/chat/soporte?cedula=${encodeURIComponent(currentUser.cedula)}`).then(r => r.json());
@@ -4813,6 +4827,7 @@ function abrirChatSoporte(id) {
 }
 
 function toggleChatSoporteWidget(forzar) {
+    if (!currentUser || ['Administrador', 'Encargado', 'Vendedor'].indexOf(currentUser.rol) === -1) return;
     soporteWidgetAbierto = forzar !== undefined ? forzar : !soporteWidgetAbierto;
     document.getElementById('chat-soporte-window').classList.toggle('open', soporteWidgetAbierto);
     if (soporteWidgetAbierto) {
@@ -4889,7 +4904,7 @@ function renderChatSoporte() {
 }
 
 async function refrescarChatSoporte() {
-    if (!currentUser) return;
+    if (!currentUser || ['Administrador', 'Encargado', 'Vendedor'].indexOf(currentUser.rol) === -1) return;
     try {
         const data = await fetch(`${API_BASE_URL}/api/chat/soporte?cedula=${encodeURIComponent(currentUser.cedula)}`).then(r => r.json());
         soporteConversaciones = data.conversaciones || [];
@@ -4973,7 +4988,7 @@ async function marcarLeidoChatSoporte(id) {
 function iniciarPollingChatSoporte() {
     if (soporteChatTimer) clearInterval(soporteChatTimer);
     soporteChatTimer = setInterval(() => {
-        if (!currentUser) return;
+        if (!currentUser || ['Administrador', 'Encargado', 'Vendedor'].indexOf(currentUser.rol) === -1) return;
         refrescarChatSoporte().then(() => {
             if (soporteWidgetAbierto) {
                 const conv = soporteConversaciones.find(c => c.id === soporteChatActualId);

@@ -82,6 +82,7 @@ function renderAuth() {
 function logoutTienda() {
     tiendaUser = null;
     localStorage.removeItem(TIENDA_USER_KEY);
+    localStorage.removeItem(TIENDA_TOKEN_KEY);
     renderAuth();
     showToast('Sesión cerrada', 'info');
 }
@@ -300,6 +301,7 @@ async function tiendaLogin() {
         if (response.ok && data.rol === 'Cliente online') {
             tiendaUser = data;
             localStorage.setItem(TIENDA_USER_KEY, JSON.stringify(tiendaUser));
+            if (data.token) localStorage.setItem(TIENDA_TOKEN_KEY, data.token);
             renderAuth();
             closeModal('auth-modal');
             showToast(`Bienvenido(a), ${data.nombre}!`, 'success');
