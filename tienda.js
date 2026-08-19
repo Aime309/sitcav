@@ -757,21 +757,25 @@ function renderChat() {
     body.scrollTop = body.scrollHeight;
     if (c.estado === 'solicitada') {
         body.innerHTML += '<div class="chat-center"><div class="pill"><i class="fas fa-spinner fa-spin"></i> Esperando que un miembro del personal acepte tu solicitud...</div></div>';
+        actions.innerHTML = '';
     } else if (c.estado === 'activa') {
         foot.style.display = 'flex';
         actions.innerHTML = '<button class="btn btn-outline" onclick="finalizarChat()"><i class="fas fa-flag-checkered"></i> Finalizar conversación</button>';
     } else if (c.estado === 'finalizada') {
-        actions.innerHTML = `<div class="rate-box">
-            <p style="font-weight:700; margin-bottom:6px;">¿Cómo fue la atención?</p>
-            <div class="stars-input" id="chat-rate-stars"></div>
-            <input type="text" id="chat-rate-comment" placeholder="Comentario (opcional)">
-            <button class="btn btn-primary" style="margin-top:8px; width:100%;" onclick="calificarChat()">Enviar calificación</button>
-        </div>`;
-        chatCalificando = 0;
-        renderChatStarsInput('chat-rate-stars');
+        if (!document.getElementById('chat-rate-stars')) {
+            actions.innerHTML = `<div class="rate-box">
+                <p style="font-weight:700; margin-bottom:6px;">¿Cómo fue la atención?</p>
+                <div class="stars-input" id="chat-rate-stars"></div>
+                <input type="text" id="chat-rate-comment" placeholder="Comentario (opcional)">
+                <button class="btn btn-primary" style="margin-top:8px; width:100%;" onclick="calificarChat()">Enviar calificación</button>
+                <a href="#" onclick="solicitarChat(); return false;" style="display:block; text-align:center; font-size:.78rem; color:var(--muted); margin-top:8px;">Omitir e iniciar nueva conversación</a>
+            </div>`;
+            chatCalificando = 0;
+            renderChatStarsInput('chat-rate-stars');
+        }
     } else if (c.estado === 'calificada') {
         body.innerHTML += '<div class="chat-center"><div class="pill"><i class="fas fa-star"></i> ¡Gracias por calificar! ' + '★'.repeat(c.calificacion || 0) + '</div></div>';
-        actions.innerHTML = '<div style="text-align:center; color:var(--muted); font-size:.8rem; padding:4px 0;">Atención finalizada · ' + (c.nombre_agente || 'Agente') + '</div>';
+        actions.innerHTML = '<button class="btn btn-primary" style="width:100%;" onclick="solicitarChat()"><i class="fas fa-comments"></i> Iniciar nueva conversación</button>';
     }
 }
 

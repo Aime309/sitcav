@@ -972,16 +972,16 @@ async function deleteProduct(id) {
 // =====================================================
 async function loadClients() {
     const tbody = document.getElementById('clientes-table-body');
-    tbody.innerHTML = '<tr><td colspan="5" class="loading active"><div class="spinner"></div>Cargando...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="loading active"><div class="spinner"></div>Cargando...</td></tr>';
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/clientes`);
+        const response = await fetch(`${API_BASE_URL}/api/clientes?cedula=${encodeURIComponent(currentUser ? currentUser.cedula : '')}`);
         const clients = await response.json();
 
         tbody.innerHTML = '';
 
         if (clients.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No hay clientes registrados</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">No hay clientes registrados</td></tr>';
             return;
         }
 
@@ -992,13 +992,14 @@ async function loadClients() {
                 <td>${client.nombre} ${client.apellidos}</td>
                 <td>${client.cedula}</td>
                 <td>${client.telefono || 'N/A'}</td>
+                <td>${client.tiene_cuenta ? '<span class="badge proceso">Sí (tienda)</span>' : '<span class="badge">No</span>'}</td>
                 <td>
                     <div class="action-btns">
                         ${canManage(currentUser.rol) ? `
-                            <button class="action-btn edit" onclick="editClient(${client.id})" title="Editar">
+                            <button class="action-btn edit" onclick="editClient(${client.id})" title="Editar / cambiar contraseña">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="action-btn delete" onclick="deleteClient(${client.id})" title="Eliminar">
+                            <button class="action-btn delete" onclick="deleteClient(${client.id})" title="Eliminar de la base de datos">
                                 <i class="fas fa-trash"></i>
                             </button>
                         ` : ''}
@@ -1008,7 +1009,7 @@ async function loadClients() {
             tbody.appendChild(tr);
         });
     } catch (error) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: red;">Error al cargar clientes</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: red;">Error al cargar clientes</td></tr>';
     }
 }
 
@@ -1016,11 +1017,22 @@ function openClientModal() {
     document.getElementById('client-modal').classList.add('active');
     document.querySelector('#client-modal form').reset();
     document.getElementById('client-id').value = '';  // Clear ID for new client
+    document.getElementById('client-cuenta-info').value = '';
+    document.getElementById('client-contrasena-hash').value = '';
+    document.getElementById('client-cuenta-group').style.display = 'none';
+    document.getElementById('client-hash-group').style.display = 'none';
+    document.getElementById('client-nueva-pass-group').style.display = 'block';
+    document.getElementById('client-nueva-pass-label').textContent = 'Contraseña de la tienda (opcional: crea su cuenta para iniciar sesión)';
 }
 
 function closeClientModal() {
     document.getElementById('client-modal').classList.remove('active');
     document.getElementById('client-id').value = '';  // Clear ID when closing
+}
+
+function toggleClientePassword() {
+    const input = document.getElementById('client-contrasena');
+    input.type = input.type === 'password' ? 'text' : 'password';
 }
 
 async function saveClient(event) {
@@ -1034,10 +1046,12 @@ async function saveClient(event) {
         telefono: document.getElementById('client-telefono').value,
         direccion: document.getElementById('client-direccion').value
     };
+    const nuevaPass = document.getElementById('client-contrasena').value;
+    if (nuevaPass) clientData.contrasena = nuevaPass;
 
     try {
         const url = clientId
-            ? `${API_BASE_URL}/api/clientes/${clientId}`
+            ? `${API_BASE_URL}/api/clientes/${clientId}?cedula=${encodeURIComponent(currentUser.cedula)}`
             : `${API_BASE_URL}/api/clientes`;
         const method = clientId ? 'PUT' : 'POST';
 
@@ -1061,18 +1075,19 @@ async function saveClient(event) {
 }
 
 async function deleteClient(id) {
-    if (!(await confirmAsync('¿Está seguro de eliminar este cliente?'))) return;
+    if (!(await confirmAsync('¿Está seguro de eliminar este cliente? Se eliminará también su cuenta de la tienda (chats, tickets, preguntas y valoraciones).'))) return;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/clientes/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/clientes/${id}?cedula=${encodeURIComponent(currentUser.cedula)}`, {
             method: 'DELETE'
         });
 
+        const data = await response.json().catch(() => ({}));
         if (response.ok) {
             loadClients();
-            alert('Cliente eliminado');
+            alert(data.message || 'Cliente eliminado');
         } else {
-            alert('Error al eliminar cliente');
+            alert(data.message || 'Error al eliminar cliente');
         }
     } catch (error) {
         alert('Error de conexión');
@@ -1085,7 +1100,7 @@ async function editClient(id) {
     modal.classList.add('active');
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/clientes`);
+        const response = await fetch(`${API_BASE_URL}/api/clientes?cedula=${encodeURIComponent(currentUser ? currentUser.cedula : '')}`);
         const clients = await response.json();
         const client = clients.find(c => c.id === id);
 
@@ -1096,6 +1111,13 @@ async function editClient(id) {
             document.getElementById('client-cedula').value = client.cedula;
             document.getElementById('client-telefono').value = client.telefono || '';
             document.getElementById('client-direccion').value = client.direccion || '';
+            document.getElementById('client-contrasena').value = '';
+            document.getElementById('client-cuenta-info').value = client.tiene_cuenta ? 'Sí — puede iniciar sesión en la tienda' : 'No tiene cuenta en la tienda';
+            document.getElementById('client-contrasena-hash').value = client.contrasena_hash || '(sin cuenta)';
+            document.getElementById('client-cuenta-group').style.display = 'block';
+            document.getElementById('client-hash-group').style.display = 'block';
+            document.getElementById('client-nueva-pass-group').style.display = 'block';
+            document.getElementById('client-nueva-pass-label').textContent = 'Nueva contraseña (dejar vacío para no cambiarla)';
         }
     } catch (error) {
         alert('Error al cargar datos del cliente');
