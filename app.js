@@ -4270,7 +4270,8 @@ setInterval(() => {
     if (currentUser) loadNotificaciones();
 }, 60000);
 
-iniciarPollingChatSoporte();
+// OJO (sesión 12): la llamada a iniciarPollingChatSoporte() está al FINAL del
+// archivo, DESPUÉS de las declaraciones let de soporte (regla 74: TDZ).
 
 // =====================================================
 // SITCAV — STOCK BAJO (modal del dashboard)
@@ -4769,6 +4770,7 @@ let soporteConversaciones = [];
 let soporteChatActualId = null;
 let soporteChatTimer = null;
 let soporteWidgetAbierto = false;
+let soporteSolicitudesVistas = new Set();
 
 function switchSoporteTab(tab) {
     document.getElementById('tab-soporte-chats').classList.toggle('active', tab === 'chats');
@@ -4834,6 +4836,7 @@ function toggleChatSoporteWidget(forzar) {
         refrescarChatSoporte();
         const conv = soporteConversaciones.find(c => c.id === soporteChatActualId);
         if (conv && (conv.estado === 'activa' || conv.estado === 'solicitada')) marcarLeidoChatSoporte(conv.id);
+        soporteConversaciones.forEach(c => { if (c.estado === 'solicitada') soporteSolicitudesVistas.add(c.id); });
     }
 }
 
@@ -4909,6 +4912,17 @@ async function refrescarChatSoporte() {
         const data = await fetch(`${API_BASE_URL}/api/chat/soporte?cedula=${encodeURIComponent(currentUser.cedula)}`).then(r => r.json());
         soporteConversaciones = data.conversaciones || [];
         actualizarBadgeChatSoporte();
+        soporteConversaciones.forEach(c => {
+            if (c.estado === 'solicitada' && !soporteSolicitudesVistas.has(c.id)) {
+                soporteSolicitudesVistas.add(c.id);
+                showToast(`Nueva solicitud de chat #${c.id} de ${c.nombre_cliente || 'un cliente'} — abre el chat de soporte para aceptarla`, 'info');
+                const launcher = document.getElementById('chat-soporte-launcher');
+                if (launcher) {
+                    launcher.classList.add('pulse');
+                    setTimeout(() => launcher.classList.remove('pulse'), 4000);
+                }
+            }
+        });
         if (soporteWidgetAbierto) renderChatSoporte();
     } catch (e) { }
 }
@@ -4997,6 +5011,8 @@ function iniciarPollingChatSoporte() {
         });
     }, 5000);
 }
+
+iniciarPollingChatSoporte();
 
 // =====================================================
 // SESIÓN 10 — SOPORTE: TICKETS (personal)

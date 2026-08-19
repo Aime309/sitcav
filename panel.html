@@ -1082,6 +1082,8 @@
             box-shadow: 0 10px 26px rgba(79, 70, 229, .45); transition: transform .15s;
         }
         .chat-launcher .launcher-btn:hover { transform: scale(1.06); }
+        .chat-launcher.pulse { animation: launcherPulse .8s ease 4; }
+        @keyframes launcherPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
         .chat-badge {
             position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px; border-radius: 999px;
             background: #dc2626; color: #fff; font-size: .72rem; font-weight: 800;
@@ -3472,7 +3474,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=23"></script>
+    <script src="app.js?v=24"></script>
 </body>
 
 </html>
