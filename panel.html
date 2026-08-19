@@ -1062,6 +1062,57 @@
         html[data-theme="dark"] .terms-scroll h4 { color: #e2e8f0; }
         html[data-theme="dark"] .stock-row .stock-name { color: #e2e8f0; }
         html[data-theme="dark"] .suc-card h3 { color: #e2e8f0; }
+    .prod-tabs { display: flex; gap: 8px; }
+        .prod-tab { padding: 10px 16px; font-size: .88rem; font-weight: 700; color: var(--muted); cursor: pointer; border: none; background: none; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+        .prod-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .qa-item { border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+        .qa-item .q { font-weight: 600; font-size: .9rem; margin-bottom: 4px; }
+        .qa-item .a { font-size: .86rem; color: var(--muted); border-left: 3px solid var(--primary); padding-left: 10px; margin-top: 6px; }
+        .qa-item .meta { font-size: .72rem; color: var(--muted); margin-top: 4px; }
+        .val-item { border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+        .val-item .name { font-weight: 600; font-size: .86rem; }
+        .val-item .comment { font-size: .86rem; color: var(--muted); margin-top: 4px; }
+        .resp-box { display: flex; gap: 8px; margin-top: 8px; align-items: flex-end; }
+        .resp-box textarea { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-family: var(--font); font-size: .85rem; resize: vertical; }
+        .resp-box .btn { white-space: nowrap; }
+        .chat-launcher { position: fixed; right: 22px; bottom: 22px; z-index: 900; }
+        .chat-launcher .launcher-btn {
+            width: 62px; height: 62px; border-radius: 50%; border: none; cursor: pointer;
+            background: var(--primary-grad, linear-gradient(135deg, var(--primary), #6d5ef0)); color: #fff; font-size: 1.45rem;
+            box-shadow: 0 10px 26px rgba(79, 70, 229, .45); transition: transform .15s;
+        }
+        .chat-launcher .launcher-btn:hover { transform: scale(1.06); }
+        .chat-badge {
+            position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px; border-radius: 999px;
+            background: #dc2626; color: #fff; font-size: .72rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center; padding: 0 6px; border: 2px solid #fff;
+        }
+        .chat-window {
+            position: fixed; right: 22px; bottom: 96px; z-index: 901; width: 380px; height: 560px;
+            background: #fff; border-radius: 18px; overflow: hidden; display: none; flex-direction: column;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, .35); animation: chatIn .25s ease;
+        }
+        .chat-window.open { display: flex; }
+        @keyframes chatIn { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+        .chat-head { background: var(--primary-grad, linear-gradient(135deg, var(--primary), #6d5ef0)); color: #fff; padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+        .chat-head .avatar { width: 38px; height: 38px; border-radius: 50%; background: rgba(255, 255, 255, .2); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .chat-head h4 { font-size: .95rem; }
+        .chat-head small { opacity: .85; font-size: .72rem; display: block; }
+        .chat-head .close { margin-left: auto; background: none; border: none; color: #fff; font-size: 1.1rem; cursor: pointer; }
+        .chat-body { flex: 1; overflow-y: auto; padding: 14px; background: #f8fafc; display: flex; flex-direction: column; gap: 8px; }
+        .chat-msg { max-width: 78%; padding: 9px 13px; border-radius: 14px; font-size: .86rem; line-height: 1.4; word-wrap: break-word; }
+        .chat-msg.agente { align-self: flex-end; background: var(--primary-grad, linear-gradient(135deg, var(--primary), #6d5ef0)); color: #fff; border-bottom-right-radius: 4px; }
+        .chat-msg.cliente { align-self: flex-start; background: #fff; border: 1.5px solid var(--border); border-bottom-left-radius: 4px; }
+        .chat-msg .hora { display: block; font-size: .64rem; opacity: .7; margin-top: 3px; }
+        .chat-center { text-align: center; font-size: .8rem; color: var(--muted); padding: 12px 0; }
+        .chat-center .pill { display: inline-block; background: var(--primary-soft, #eef2ff); color: var(--primary); font-weight: 700; padding: 6px 14px; border-radius: 999px; font-size: .78rem; }
+        .chat-foot { padding: 10px 12px; background: #fff; border-top: 1.5px solid var(--border); display: flex; gap: 8px; }
+        .chat-foot input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 999px; outline: none; font-size: .88rem; font-family: var(--font); }
+        .chat-foot input:focus { border-color: var(--primary); }
+        .chat-foot button { background: var(--primary-grad, linear-gradient(135deg, var(--primary), #6d5ef0)); color: #fff; border: none; border-radius: 50%; width: 42px; height: 42px; cursor: pointer; font-size: .95rem; }
+        .chat-actions { padding: 0 14px 12px; display: flex; gap: 8px; flex-direction: column; }
+        .chat-actions .btn { flex: 1; padding: 8px; font-size: .8rem; }
+        .chat-select { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: .85rem; font-family: var(--font); outline: none; background: #fff; }
     </style>
 </head>
 
@@ -1374,6 +1425,18 @@
                     <a class="nav-link" onclick="showSection('reembolsos')">
                         <i class="fas fa-undo"></i>
                         <span>Reembolsos</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="nav-buzon" style="display: none;">
+                    <a class="nav-link" onclick="showSection('buzon')">
+                        <i class="fas fa-inbox"></i>
+                        <span>Buzón</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="nav-soporte" style="display: none;">
+                    <a class="nav-link" onclick="showSection('soporte')">
+                        <i class="fas fa-headset"></i>
+                        <span>Soporte</span>
                     </a>
                 </li>
                 <li class="nav-item" id="nav-estadisticas" style="display: none;">
@@ -2106,6 +2169,93 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </section>
+
+            <!-- BUZÓN SECTION -->
+            <section id="buzon-section" class="content-section">
+                <div class="section-header">
+                    <h2>Buzón de Comentarios</h2>
+                    <p>Preguntas y valoraciones de los clientes sobre los productos de la tienda online</p>
+                </div>
+                <div class="table-container" style="margin-bottom: 24px;">
+                    <div class="table-header">
+                        <h3 style="margin: 0;"><i class="fas fa-question-circle"></i> Preguntas de clientes</h3>
+                    </div>
+                    <div id="buzon-preguntas" style="margin-top: 14px;">
+                        <div style="text-align: center; padding: 30px; color: var(--muted);">Cargando preguntas...</div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 style="margin: 0;"><i class="fas fa-star"></i> Valoraciones recibidas</h3>
+                    </div>
+                    <div id="buzon-valoraciones" style="margin-top: 14px;">
+                        <div style="text-align: center; padding: 30px; color: var(--muted);">Cargando valoraciones...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SOPORTE SECTION -->
+            <section id="soporte-section" class="content-section">
+                <div class="section-header">
+                    <h2>Módulo de Soporte</h2>
+                    <p>Atención al cliente: chats en vivo y tickets de reporte</p>
+                </div>
+                <div class="prod-tabs" style="border-bottom: 2px solid var(--border); margin: 0 0 18px; display: flex; gap: 8px;">
+                    <button class="prod-tab active" id="tab-soporte-chats" onclick="switchSoporteTab('chats')"><i class="fas fa-comments"></i> Chats en vivo</button>
+                    <button class="prod-tab" id="tab-soporte-tickets" onclick="switchSoporteTab('tickets')"><i class="fas fa-ticket-alt"></i> Tickets</button>
+                </div>
+                <div id="soporte-chats-pane">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 style="margin: 0;"><i class="fas fa-headset"></i> Conversaciones</h3>
+                            <span style="color: var(--muted); font-size: .82rem;">El primer cargo que acepte una solicitud se queda con la conversación</span>
+                        </div>
+                        <table class="transfer-table" id="soporte-chats-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Cliente</th>
+                                    <th>Estado</th>
+                                    <th>Atendido por</th>
+                                    <th>Mensajes</th>
+                                    <th>Calificación</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="soporte-chats-body">
+                                <tr><td colspan="7" style="text-align: center; padding: 30px;">Cargando conversaciones...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="soporte-tickets-pane" style="display:none;">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 style="margin: 0;"><i class="fas fa-ticket-alt"></i> Tickets de clientes</h3>
+                        </div>
+                        <table class="transfer-table" id="soporte-tickets-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Cédula</th>
+                                    <th>Teléfono</th>
+                                    <th>Dirección</th>
+                                    <th>Categoría</th>
+                                    <th>Asunto</th>
+                                    <th>Estado</th>
+                                    <th>Atendido por</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="soporte-tickets-body">
+                                <tr><td colspan="11" style="text-align: center; padding: 30px;">Cargando tickets...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -3295,7 +3445,34 @@
     <div class="toast-container" id="toast-container"></div>
     <div id="confirm-overlay-root"></div>
 
-    <script src="app.js?v=21"></script>
+    <!-- CHAT DE SOPORTE PARA EL PERSONAL -->
+    <div class="chat-launcher" id="chat-soporte-launcher">
+        <button class="launcher-btn" onclick="toggleChatSoporteWidget()" title="Chat de soporte en vivo"><i class="fas fa-headset"></i></button>
+        <span class="chat-badge" id="chat-soporte-badge" style="display:none;">0</span>
+    </div>
+    <div class="chat-window" id="chat-soporte-window">
+        <div class="chat-head">
+            <div class="avatar"><i class="fas fa-headset"></i></div>
+            <div>
+                <h4>Chat de soporte</h4>
+                <small id="chat-soporte-estado">Selecciona una conversación</small>
+            </div>
+            <button class="close" onclick="toggleChatSoporteWidget(false)"><i class="fas fa-times"></i></button>
+        </div>
+        <div style="padding: 8px 14px 0;">
+            <select id="chat-soporte-select" class="chat-select" onchange="chatSoporteSeleccionar(this.value)">
+                <option value="">— Seleccionar conversación —</option>
+            </select>
+        </div>
+        <div class="chat-body" id="chat-soporte-body"></div>
+        <div class="chat-actions" id="chat-soporte-actions"></div>
+        <div class="chat-foot" id="chat-soporte-foot" style="display:none;">
+            <input type="text" id="chat-soporte-input" placeholder="Escribe tu mensaje..." onkeydown="if(event.key==='Enter')enviarMensajeSoporte()">
+            <button onclick="enviarMensajeSoporte()" title="Enviar"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="app.js?v=22"></script>
 </body>
 
 </html>

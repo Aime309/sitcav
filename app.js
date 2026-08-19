@@ -262,7 +262,6 @@ async function handleLogin(event) {
         console.log('data.foto_url:', data.foto_url);
 
         if (data.success) {
-            localStorage.setItem(SESSION_TOKEN_KEY, data.token || '');
             const nombreLimpio = (data.nombre || '').replace(/\s*\([^)]*\)\s*$/, '');
             currentUser = {
                 id: data.usuario_id,
@@ -385,10 +384,8 @@ function loginAsAnonymous() {
 }
 
 function handleLogout() {
-    try { fetch(`${API_BASE_URL}/logout`, { method: 'POST' }); } catch (e) { /* la sesión local se limpia igualmente */ }
     currentUser = null;
     localStorage.removeItem('currentUser');
-    localStorage.removeItem(SESSION_TOKEN_KEY);
     showWelcome();
 }
 
@@ -433,7 +430,7 @@ function setupRolePermissions() {
         'nav-empleados', 'nav-proveedores', 'nav-compras', 'nav-backup',
         'nav-productos', 'nav-clientes', 'nav-ventas', 'nav-consultas',
         'nav-apartados', 'nav-inventario', 'nav-cotizacion', 'nav-credenciales',
-        'nav-reembolsos', 'nav-estadisticas', 'nav-sucursales'
+        'nav-reembolsos', 'nav-estadisticas', 'nav-sucursales', 'nav-buzon', 'nav-soporte'
     ];
     const allCards = [
         'dash-card-empleados', 'dash-card-proveedores', 'dash-card-compras',
@@ -482,7 +479,7 @@ function setupRolePermissions() {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
         });
-        ['nav-productos', 'nav-clientes', 'nav-ventas', 'nav-apartados', 'nav-inventario'].forEach(id => {
+        ['nav-productos', 'nav-clientes', 'nav-ventas', 'nav-apartados', 'nav-inventario', 'nav-buzon', 'nav-soporte'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'block';
         });
@@ -619,7 +616,9 @@ function showSection(sectionName) {
         'credenciales': 'Credenciales',
         'reembolsos': 'Reembolsos',
         'estadisticas': 'Estadísticas',
-        'sucursales': 'Sucursales y Transferencias'
+        'sucursales': 'Sucursales y Transferencias',
+        'buzon': 'Buzón de Comentarios',
+        'soporte': 'Módulo de Soporte'
     };
     const titleElement = document.getElementById('current-section-title');
     if (titleElement) {
@@ -670,6 +669,14 @@ function showSection(sectionName) {
             break;
         case 'sucursales':
             loadSucursales();
+            break;
+        case 'buzon':
+            loadBuzonPreguntas();
+            loadBuzonValoraciones();
+            break;
+        case 'soporte':
+            loadSoporteChats();
+            loadSoporteTickets();
             break;
         default:
             console.log(`Section ${sectionName} loaded`);
@@ -1142,7 +1149,7 @@ async function loadVentas() {
 }
 
 async function verFactura(ventaId) {
-    downloadPdf(`${API_BASE_URL}/api/factura/${ventaId}`);
+    window.open(`${API_BASE_URL}/api/factura/${ventaId}`, '_blank');
 }
 
 // Variable to store products for venta modal
@@ -1962,7 +1969,7 @@ async function createCompra(event) {
 }
 
 function downloadCompraPDF(id) {
-    downloadPdf(`${API_BASE_URL}/api/compras/${id}/pdf`);
+    window.open(`${API_BASE_URL}/api/compras/${id}/pdf`, '_blank');
 }
 
 async function deleteCompra(id) {
@@ -2773,7 +2780,7 @@ PRODUCTOS:
 }
 
 function viewApartadoPDF(id) {
-    downloadPdf(`${API_BASE_URL}/api/apartados/${id}/pdf`);
+    window.open(`${API_BASE_URL}/api/apartados/${id}/pdf`, '_blank');
 }
 
 async function deleteApartado(id) {
@@ -3153,7 +3160,7 @@ async function exportarConsultasPDF() {
     if (fechaDesde) params.append('fecha_desde', fechaDesde);
     if (fechaHasta) params.append('fecha_hasta', fechaHasta);
 
-    downloadPdf(`${API_BASE_URL}/api/consultas/ventas/pdf?${params.toString()}`);
+    window.open(`${API_BASE_URL}/api/consultas/ventas/pdf?${params.toString()}`, '_blank');
 }
 
 // =====================================================
@@ -3527,7 +3534,7 @@ async function deleteReembolso(id) {
 }
 
 function printReembolso(id) {
-    downloadPdf(`${API_BASE_URL}/api/reembolsos/${id}/pdf`);
+    window.open(`${API_BASE_URL}/api/reembolsos/${id}/pdf`, '_blank');
 }
 
 // =====================================================
@@ -3896,11 +3903,6 @@ async function saveNewPassword(event) {
             return;
         }
 
-        // El login de verificación renueva el token (sesión online)
-        if (verifyResult.token) {
-            localStorage.setItem(SESSION_TOKEN_KEY, verifyResult.token);
-        }
-
         console.log('Password verified! Updating password...');
 
         // Update the password
@@ -4166,7 +4168,10 @@ const NOTIF_ICONS = {
     stock_bajo: 'fa-exclamation-triangle',
     cotizacion: 'fa-dollar-sign',
     transferencia: 'fa-exchange-alt',
-    sistema: 'fa-cog'
+    sistema: 'fa-cog',
+    pregunta: 'fa-question-circle',
+    chat: 'fa-comments',
+    ticket: 'fa-life-ring'
 };
 
 let notifPanelAbierto = false;
@@ -4254,6 +4259,8 @@ async function eliminarNotificacion(id) {
 setInterval(() => {
     if (currentUser) loadNotificaciones();
 }, 60000);
+
+iniciarPollingChatSoporte();
 
 // =====================================================
 // SITCAV — STOCK BAJO (modal del dashboard)
@@ -4654,6 +4661,416 @@ async function eliminarTransferencia(id) {
             loadNotificaciones();
         } else {
             alert(data.message || 'Error al eliminar');
+        }
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
+// =====================================================
+// SESIÓN 10 — BUZÓN DE COMENTARIOS (preguntas + valoraciones)
+// =====================================================
+async function loadBuzonPreguntas() {
+    const cont = document.getElementById('buzon-preguntas');
+    if (!cont) return;
+    cont.innerHTML = '<div style="text-align: center; padding: 30px; color: var(--muted);"><i class="fas fa-spinner fa-spin"></i> Cargando preguntas...</div>';
+    try {
+        const data = await fetch(`${API_BASE_URL}/api/preguntas`).then(r => r.json());
+        const preguntas = data.preguntas || [];
+        if (preguntas.length === 0) {
+            cont.innerHTML = '<div style="text-align: center; padding: 30px; color: var(--muted);"><i class="fas fa-inbox"></i> No hay preguntas de clientes.</div>';
+            return;
+        }
+        cont.innerHTML = '';
+        preguntas.forEach(q => {
+            const card = document.createElement('div');
+            card.className = 'qa-item';
+            card.innerHTML = `
+                <div class="q"><i class="fas fa-user"></i> ${q.nombre_cliente || 'Cliente'} · <i class="fas fa-box"></i> ${q.nombre_producto || 'Producto'} ${q.estado === 'pendiente' ? '<span class="badge warn" style="margin-left:8px;">Pendiente</span>' : '<span class="badge resuelto" style="margin-left:8px;">Respondida</span>'}</div>
+                <div class="q">${q.pregunta}</div>
+                <div class="meta">${q.fecha_pregunta || ''}</div>
+                ${q.respuesta ? `<div class="a"><i class="fas fa-reply"></i> ${q.respuesta} <span class="meta">${q.fecha_respuesta || ''}</span></div>` : `
+                <div class="resp-box">
+                    <textarea id="resp-pregunta-${q.id}" rows="2" placeholder="Escribe la respuesta para el cliente..."></textarea>
+                    <button class="btn btn-primary" onclick="responderPregunta(${q.id})"><i class="fas fa-paper-plane"></i> Responder</button>
+                </div>`}
+            `;
+            cont.appendChild(card);
+        });
+    } catch (error) {
+        cont.innerHTML = '<div style="text-align: center; padding: 30px; color: var(--danger);">Error al cargar preguntas</div>';
+    }
+}
+
+async function responderPregunta(id) {
+    const textarea = document.getElementById(`resp-pregunta-${id}`);
+    const respuesta = textarea.value.trim();
+    if (respuesta.length < 3) { alert('Escribe una respuesta'); return; }
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/preguntas/${id}/responder`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ respuesta })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert('Respuesta enviada al cliente');
+            loadBuzonPreguntas();
+        } else {
+            alert(data.message || 'Error al responder');
+        }
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
+async function loadBuzonValoraciones() {
+    const cont = document.getElementById('buzon-valoraciones');
+    if (!cont) return;
+    cont.innerHTML = '<div style="text-align: center; padding: 30px; color: var(--muted);"><i class="fas fa-spinner fa-spin"></i> Cargando valoraciones...</div>';
+    try {
+        const data = await fetch(`${API_BASE_URL}/api/valoraciones`).then(r => r.json());
+        const valoraciones = data.valoraciones || [];
+        if (valoraciones.length === 0) {
+            cont.innerHTML = '<div style="text-align: center; padding: 30px; color: var(--muted);"><i class="fas fa-star"></i> Aún no hay valoraciones.</div>';
+            return;
+        }
+        cont.innerHTML = '';
+        valoraciones.forEach(v => {
+            const card = document.createElement('div');
+            card.className = 'val-item';
+            card.innerHTML = `
+                <div class="name"><i class="fas fa-user"></i> ${v.nombre_cliente || 'Cliente'} · <i class="fas fa-box"></i> ${v.nombre_producto || 'Producto'}</div>
+                <div class="stars-display" style="color:#f59e0b;">${'★'.repeat(v.estrellas)}${'☆'.repeat(5 - v.estrellas)}</div>
+                ${v.comentario ? `<div class="comment">${v.comentario}</div>` : ''}
+                <div class="meta">${v.fecha || ''}</div>
+            `;
+            cont.appendChild(card);
+        });
+    } catch (error) {
+        cont.innerHTML = '<div style="text-align: center; padding: 30px; color: var(--danger);">Error al cargar valoraciones</div>';
+    }
+}
+
+// =====================================================
+// SESIÓN 10 — SOPORTE: CHATS EN VIVO (personal)
+// =====================================================
+let soporteConversaciones = [];
+let soporteChatActualId = null;
+let soporteChatTimer = null;
+let soporteWidgetAbierto = false;
+
+function switchSoporteTab(tab) {
+    document.getElementById('tab-soporte-chats').classList.toggle('active', tab === 'chats');
+    document.getElementById('tab-soporte-tickets').classList.toggle('active', tab === 'tickets');
+    document.getElementById('soporte-chats-pane').style.display = tab === 'chats' ? '' : 'none';
+    document.getElementById('soporte-tickets-pane').style.display = tab === 'tickets' ? '' : 'none';
+    if (tab === 'chats') loadSoporteChats();
+    else loadSoporteTickets();
+}
+
+async function loadSoporteChats() {
+    const body = document.getElementById('soporte-chats-body');
+    if (!body) return;
+    body.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px;"><i class="fas fa-spinner fa-spin"></i> Cargando conversaciones...</td></tr>';
+    try {
+        const data = await fetch(`${API_BASE_URL}/api/chat/soporte?cedula=${encodeURIComponent(currentUser.cedula)}`).then(r => r.json());
+        const conversaciones = data.conversaciones || [];
+        soporteConversaciones = conversaciones;
+        if (conversaciones.length === 0) {
+            body.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--muted);">No hay conversaciones aún. Los clientes pueden iniciar una desde el chat flotante de la tienda.</td></tr>';
+            return;
+        }
+        body.innerHTML = '';
+        conversaciones.forEach(c => {
+            const tr = document.createElement('tr');
+            const badge = c.estado === 'solicitada' ? '<span class="badge warn">Solicitada</span>'
+                : c.estado === 'activa' ? '<span class="badge proceso">Activa</span>'
+                : c.estado === 'finalizada' ? '<span class="badge cerrado">Finalizada</span>'
+                : '<span class="badge resuelto">Calificada</span>';
+            const calif = c.estado === 'calificada' ? `${'★'.repeat(c.calificacion || 0)}${'☆'.repeat(5 - (c.calificacion || 0))}${c.comentario_calificacion ? ' · ' + c.comentario_calificacion : ''}` : '—';
+            tr.innerHTML = `
+                <td>#${c.id}</td>
+                <td><strong>${c.nombre_cliente || ''}</strong><br><small style="color:var(--muted);">${c.cedula || ''}</small></td>
+                <td>${badge}</td>
+                <td>${c.nombre_agente || '—'}</td>
+                <td>${(c.mensajes || []).length}</td>
+                <td>${calif}</td>
+                <td><button class="btn btn-primary" style="padding:6px 12px; font-size:.78rem;" onclick="abrirChatSoporte(${c.id})"><i class="fas fa-comments"></i> ${c.estado === 'solicitada' ? 'Aceptar' : 'Ver'}</button></td>
+            `;
+            body.appendChild(tr);
+        });
+    } catch (error) {
+        body.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--danger);">Error al cargar conversaciones</td></tr>';
+    }
+}
+
+function abrirChatSoporte(id) {
+    const select = document.getElementById('chat-soporte-select');
+    select.value = String(id);
+    chatSoporteSeleccionar(String(id));
+    toggleChatSoporteWidget(true);
+}
+
+function toggleChatSoporteWidget(forzar) {
+    soporteWidgetAbierto = forzar !== undefined ? forzar : !soporteWidgetAbierto;
+    document.getElementById('chat-soporte-window').classList.toggle('open', soporteWidgetAbierto);
+    if (soporteWidgetAbierto) {
+        refrescarChatSoporte();
+        const conv = soporteConversaciones.find(c => c.id === soporteChatActualId);
+        if (conv && (conv.estado === 'activa' || conv.estado === 'solicitada')) marcarLeidoChatSoporte(conv.id);
+    }
+}
+
+function chatSoporteSeleccionar(id) {
+    soporteChatActualId = id ? parseInt(id) : null;
+    renderChatSoporte();
+}
+
+function actualizarBadgeChatSoporte() {
+    const badge = document.getElementById('chat-soporte-badge');
+    if (!badge) return;
+    let pendientes = 0;
+    soporteConversaciones.forEach(c => {
+        if (c.estado === 'solicitada') pendientes += 1;
+        else if (c.estado === 'activa' && c.no_leidos) pendientes += c.no_leidos;
+    });
+    badge.style.display = pendientes > 0 ? 'flex' : 'none';
+    badge.textContent = pendientes > 9 ? '9+' : pendientes;
+}
+
+function renderChatSoporte() {
+    const body = document.getElementById('chat-soporte-body');
+    const foot = document.getElementById('chat-soporte-foot');
+    const actions = document.getElementById('chat-soporte-actions');
+    const estado = document.getElementById('chat-soporte-estado');
+    body.innerHTML = '';
+    foot.style.display = 'none';
+    actions.innerHTML = '';
+    const select = document.getElementById('chat-soporte-select');
+    select.innerHTML = '<option value="">— Seleccionar conversación —</option>';
+    soporteConversaciones.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `#${c.id} ${c.nombre_cliente || ''} (${c.estado})`;
+        select.appendChild(opt);
+    });
+    if (soporteChatActualId) select.value = String(soporteChatActualId);
+
+    const c = soporteConversaciones.find(x => x.id === soporteChatActualId);
+    if (!c) {
+        estado.textContent = 'Selecciona una conversación';
+        body.innerHTML = '<div class="chat-center"><div class="pill"><i class="fas fa-comments"></i> Las solicitudes de los clientes aparecerán aquí en tiempo real.</div></div>';
+        return;
+    }
+    estado.textContent = `${c.nombre_cliente || ''} · ${c.estado}`;
+    (c.mensajes || []).forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'chat-msg ' + (m.emisor === 'agente' ? 'agente' : 'cliente');
+        div.innerHTML = `${m.contenido}<span class="hora">${m.fecha ? m.fecha.slice(11, 16) : ''}${m.emisor === 'agente' ? ' · ' + (c.nombre_agente || 'Agente') : ' · Cliente'}</span>`;
+        body.appendChild(div);
+    });
+    body.scrollTop = body.scrollHeight;
+
+    const esMiChat = c.id_agente === currentUser.id || (c.estado !== 'solicitada' && c.estado !== 'activa');
+    if (c.estado === 'solicitada') {
+        actions.innerHTML = '<button class="btn btn-primary" style="width:100%;" onclick="aceptarChatSoporte()"><i class="fas fa-check-circle"></i> Aceptar y atender esta conversación</button>';
+        body.innerHTML += '<div class="chat-center"><div class="pill"><i class="fas fa-hourglass-half"></i> Solicitud esperando ser aceptada</div></div>';
+    } else if (c.estado === 'activa') {
+        if (esMiChat) {
+            foot.style.display = 'flex';
+            actions.innerHTML = '<button class="btn btn-outline" onclick="finalizarChatSoporte()"><i class="fas fa-flag-checkered"></i> Finalizar conversación</button>';
+        } else {
+            actions.innerHTML = '<div class="chat-center"><div class="pill"><i class="fas fa-user-shield"></i> Esta conversación la atiende ' + (c.nombre_agente || 'otro miembro del personal') + '</div></div>';
+        }
+    } else if (c.estado === 'calificada') {
+        body.innerHTML += '<div class="chat-center"><div class="pill"><i class="fas fa-star"></i> Cliente calificó: ' + '★'.repeat(c.calificacion || 0) + (c.comentario_calificacion ? ' — ' + c.comentario_calificacion : '') + '</div></div>';
+    }
+}
+
+async function refrescarChatSoporte() {
+    if (!currentUser) return;
+    try {
+        const data = await fetch(`${API_BASE_URL}/api/chat/soporte?cedula=${encodeURIComponent(currentUser.cedula)}`).then(r => r.json());
+        soporteConversaciones = data.conversaciones || [];
+        actualizarBadgeChatSoporte();
+        if (soporteWidgetAbierto) renderChatSoporte();
+    } catch (e) { }
+}
+
+async function aceptarChatSoporte() {
+    if (!soporteChatActualId) return;
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/chat/${soporteChatActualId}/aceptar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: currentUser.cedula })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert(data.message || 'Conversación aceptada');
+            refrescarChatSoporte();
+            loadSoporteChats();
+            loadNotificaciones();
+        } else {
+            alert(data.message || 'Error al aceptar');
+        }
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
+async function enviarMensajeSoporte() {
+    const input = document.getElementById('chat-soporte-input');
+    const contenido = input.value.trim();
+    if (!contenido || !soporteChatActualId) return;
+    input.value = '';
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/chat/${soporteChatActualId}/mensaje`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: currentUser.cedula, contenido })
+        });
+        const data = await response.json();
+        if (!response.ok) alert(data.message || 'Error al enviar');
+        refrescarChatSoporte();
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
+async function finalizarChatSoporte() {
+    if (!confirm('¿Finalizar esta conversación? El cliente podrá calificar la atención.')) return;
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/chat/${soporteChatActualId}/finalizar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: currentUser.cedula })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert(data.message || 'Conversación finalizada');
+            refrescarChatSoporte();
+            loadSoporteChats();
+        } else {
+            alert(data.message || 'Error al finalizar');
+        }
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
+async function marcarLeidoChatSoporte(id) {
+    try {
+        await fetch(`${API_BASE_URL}/api/chat/${id}/leer`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: currentUser.cedula })
+        });
+    } catch (e) { }
+}
+
+function iniciarPollingChatSoporte() {
+    if (soporteChatTimer) clearInterval(soporteChatTimer);
+    soporteChatTimer = setInterval(() => {
+        if (!currentUser) return;
+        refrescarChatSoporte().then(() => {
+            if (soporteWidgetAbierto) {
+                const conv = soporteConversaciones.find(c => c.id === soporteChatActualId);
+                if (conv && (conv.estado === 'activa' || conv.estado === 'solicitada')) marcarLeidoChatSoporte(conv.id);
+            }
+        });
+    }, 5000);
+}
+
+// =====================================================
+// SESIÓN 10 — SOPORTE: TICKETS (personal)
+// =====================================================
+async function loadSoporteTickets() {
+    const body = document.getElementById('soporte-tickets-body');
+    if (!body) return;
+    body.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 30px;"><i class="fas fa-spinner fa-spin"></i> Cargando tickets...</td></tr>';
+    try {
+        const data = await fetch(`${API_BASE_URL}/api/tickets?cedula=${encodeURIComponent(currentUser.cedula)}`).then(r => r.json());
+        const tickets = data.tickets || [];
+        if (tickets.length === 0) {
+            body.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 30px; color: var(--muted);">No hay tickets de clientes.</td></tr>';
+            return;
+        }
+        body.innerHTML = '';
+        tickets.forEach(t => {
+            const tr = document.createElement('tr');
+            const badge = t.estado === 'abierto' ? '<span class="badge warn">Abierto</span>'
+                : t.estado === 'en_proceso' ? '<span class="badge proceso">En proceso</span>'
+                : t.estado === 'resuelto' ? '<span class="badge resuelto">Resuelto</span>'
+                : '<span class="badge cerrado">Cerrado</span>';
+            tr.innerHTML = `
+                <td>#${t.id}</td>
+                <td>${t.fecha_creacion || ''}</td>
+                <td><strong>${t.nombre_cliente || ''}</strong></td>
+                <td>${t.cedula || ''}</td>
+                <td>${t.telefono || t.telefono_cliente || '—'}</td>
+                <td>${t.direccion || t.direccion_cliente || '—'}</td>
+                <td>${t.categoria || 'General'}</td>
+                <td title="${(t.descripcion || '').replace(/"/g, '&quot;')}">${t.asunto || ''}</td>
+                <td>${badge}</td>
+                <td>${t.nombre_agente || '—'}</td>
+                <td style="white-space:nowrap;">
+                    <button class="btn btn-primary" style="padding:5px 10px; font-size:.75rem;" onclick="abrirResponderTicket(${t.id})"><i class="fas fa-reply"></i> Responder</button>
+                    <select style="margin-top:4px; padding:5px; font-size:.75rem; border:1.5px solid var(--border); border-radius:8px;" onchange="cambiarEstadoTicket(${t.id}, this.value)">
+                        <option value="abierto" ${t.estado === 'abierto' ? 'selected' : ''}>Abierto</option>
+                        <option value="en_proceso" ${t.estado === 'en_proceso' ? 'selected' : ''}>En proceso</option>
+                        <option value="resuelto" ${t.estado === 'resuelto' ? 'selected' : ''}>Resuelto</option>
+                        <option value="cerrado" ${t.estado === 'cerrado' ? 'selected' : ''}>Cerrado</option>
+                    </select>
+                </td>
+            `;
+            body.appendChild(tr);
+        });
+    } catch (error) {
+        body.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 30px; color: var(--danger);">Error al cargar tickets</td></tr>';
+    }
+}
+
+async function abrirResponderTicket(id) {
+    const ticket = (await fetch(`${API_BASE_URL}/api/tickets?cedula=${encodeURIComponent(currentUser.cedula)}`).then(r => r.json())).tickets.find(t => t.id === id);
+    if (!ticket) return;
+    const respuesta = prompt(`Responder al ticket #${id} de ${ticket.nombre_cliente || ''} (${ticket.asunto || ''}):\n\nDescripción: ${ticket.descripcion || ''}`, ticket.respuesta || '');
+    if (respuesta === null) return;
+    const texto = respuesta.trim();
+    if (texto.length < 3) { alert('Escribe una respuesta'); return; }
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/tickets/${id}/responder`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: currentUser.cedula, respuesta: texto })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert('Respuesta enviada al cliente');
+            loadSoporteTickets();
+            loadNotificaciones();
+        } else {
+            alert(data.message || 'Error al responder');
+        }
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
+async function cambiarEstadoTicket(id, estado) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/tickets/${id}/estado`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: currentUser.cedula, estado })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert(data.message || 'Estado actualizado');
+            loadSoporteTickets();
+        } else {
+            alert(data.message || 'Error al actualizar estado');
         }
     } catch (error) {
         alert('Error de conexión');

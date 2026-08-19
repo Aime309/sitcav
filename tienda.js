@@ -66,21 +66,22 @@ function loadTiendaUser() {
 function renderAuth() {
     const authButtons = document.getElementById('auth-buttons');
     const chip = document.getElementById('user-chip');
+    const soporteBtn = document.getElementById('btn-soporte-tienda');
     if (tiendaUser) {
         authButtons.style.display = 'none';
         chip.style.display = 'flex';
+        if (soporteBtn) soporteBtn.style.display = '';
         document.getElementById('chip-name').textContent = `${tiendaUser.nombre || ''} ${tiendaUser.apellidos || ''}`.trim() || tiendaUser.cedula;
     } else {
         authButtons.style.display = '';
         chip.style.display = 'none';
+        if (soporteBtn) soporteBtn.style.display = 'none';
     }
 }
 
 function logoutTienda() {
-    try { fetch(`${API_BASE_URL}/logout`, { method: 'POST' }); } catch (e) { /* se limpia la sesión local igualmente */ }
     tiendaUser = null;
     localStorage.removeItem(TIENDA_USER_KEY);
-    localStorage.removeItem(TIENDA_TOKEN_KEY);
     renderAuth();
     showToast('Sesión cerrada', 'info');
 }
@@ -133,10 +134,11 @@ function renderProductos() {
             : '<i class="fas fa-box"></i>';
 
         card.innerHTML = `
-            <div class="card-img">${img}</div>
+            <div class="card-img" onclick="openProductoModal(${p.id})">${img}</div>
             <div class="card-body">
-                <h4>${p.nombre}</h4>
+                <h4 onclick="openProductoModal(${p.id})">${p.nombre}</h4>
                 <span class="card-cat">${p.categoria || 'Sin categoría'}${p.cantidad_apartada > 0 ? ' · <i class="fas fa-lock"></i> ' + p.cantidad_apartada + ' apartado(s)' : ''}</span>
+                <div>${estrellasHtml(p.estrellas_promedio || 0, p.num_valoraciones || 0)}</div>
                 <div class="card-prices">
                     <span class="price-usd">$${p.precio_usd.toFixed(2)}</span>
                     <span class="price-bs">Bs ${(p.precio_bs || 0).toLocaleString('es-VE', { maximumFractionDigits: 2 })}</span>
@@ -298,7 +300,6 @@ async function tiendaLogin() {
         if (response.ok && data.rol === 'Cliente online') {
             tiendaUser = data;
             localStorage.setItem(TIENDA_USER_KEY, JSON.stringify(tiendaUser));
-            if (data.token) localStorage.setItem(TIENDA_TOKEN_KEY, data.token);
             renderAuth();
             closeModal('auth-modal');
             showToast(`Bienvenido(a), ${data.nombre}!`, 'success');
@@ -491,6 +492,469 @@ async function openMisApartados() {
 }
 
 // =====================================================
+// SESIÓN 10: ESTRELLAS (helpers compartidos)
+// =====================================================
+function estrellasHtml(promedio, num) {
+    promedio = parseFloat(promedio) || 0;
+    num = num || 0;
+    let html = '<span class="stars-display" title="' + promedio.toFixed(1) + ' de 5">';
+    for (let i = 1; i <= 5; i++) {
+        const full = promedio >= i - 0.25;
+        const half = !full && promedio >= i - 0.75;
+        html += '<i class="fas ' + (full ? 'fa-star' : half ? 'fa-star-half-alt' : 'fa-star') + (full || half ? '' : ' off') + '"></i>';
+    }
+    html += '</span>';
+    if (num > 0) html += ' <span class="stars-count">(' + num + ')</span>';
+    return html;
+}
+
+// =====================================================
+// SESIÓN 10: MODAL DE PRODUCTO (detalle + estrellas + QA + recomendados)
+// =====================================================
+let productoModalActual = null;
+let misEstrellasSeleccion = 0;
+
+function openProductoModal(productoId) {
+    const p = catalogo.find(x => x.id === productoId);
+    if (!p) return;
+    productoModalActual = p;
+    const content = document.getElementById('producto-modal-content');
+    const img = p.imagen_url
+        ? '<img src="' + (p.imagen_url.startsWith('http') ? p.imagen_url : API_BASE_URL + p.imagen_url) + '" onerror="this.onerror=null;this.outerHTML=\'<i class=\\\'fas fa-box\\\'></i>\'">'
+        : '<i class="fas fa-box"></i>';
+    content.innerHTML = `
+        <div class="prod-modal-grid">
+            <div class="prod-modal-img">${img}</div>
+            <div>
+                <span class="card-cat">${p.categoria || 'Sin categoría'}</span>
+                <h3 style="font-size:1.25rem; margin:4px 0 6px;">${p.nombre}</h3>
+                ${estrellasHtml(p.estrellas_promedio || 0, p.num_valoraciones || 0)}
+                <div class="prod-badges">
+                    ${(p.vendidos || 0) > 0 ? '<span class="prod-badge vendido"><i class="fas fa-fire"></i> ' + p.vendidos + ' vendido(s)</span>' : '<span class="prod-badge stock-ok2"><i class="fas fa-star"></i> Nuevo</span>'}
+                    ${p.stock === 0 ? '<span class="prod-badge stock-bajo2">Agotado</span>' : p.stock < 10 ? '<span class="prod-badge stock-bajo2">Quedan ' + p.stock + '</span>' : '<span class="prod-badge stock-ok2">En stock (' + p.stock + ')</span>'}
+                    ${p.cantidad_apartada > 0 ? '<span class="prod-badge stock-bajo2"><i class="fas fa-lock"></i> ' + p.cantidad_apartada + ' apartado(s)</span>' : ''}
+                </div>
+                <p style="font-size:.9rem; color:var(--muted); margin:8px 0;">${p.descripcion || 'Sin descripción.'}</p>
+                <div class="card-prices" style="margin:10px 0;">
+                    <span class="price-usd" style="font-size:1.35rem;">$${p.precio_usd.toFixed(2)}</span>
+                    <span class="price-bs">Bs ${(p.precio_bs || 0).toLocaleString('es-VE', { maximumFractionDigits: 2 })}</span>
+                </div>
+                <button class="btn btn-primary" ${p.stock === 0 ? 'disabled style="opacity:.5"' : ''} onclick="openApartarModal(${p.id})" style="width:100%;"><i class="fas fa-hand-holding-usd"></i> Apartar ahora</button>
+            </div>
+        </div>
+        <div class="prod-tabs">
+            <button class="prod-tab active" onclick="cambiarPestanaProducto('qa', this)"><i class="fas fa-question-circle"></i> Preguntas (${p.preguntas_count || 0})</button>
+            <button class="prod-tab" onclick="cambiarPestanaProducto('val', this)"><i class="fas fa-star"></i> Valoraciones</button>
+        </div>
+        <div id="prod-qa-pane"></div>
+        <div id="prod-val-pane" style="display:none;"></div>
+        <div style="margin-top:22px;">
+            <h4 style="margin-bottom:12px;"><i class="fas fa-thumbs-up"></i> Productos que podrían interesarte</h4>
+            <div class="reco-row" id="recomendados-row"><div class="empty" style="padding:16px;"><i class="fas fa-spinner fa-spin"></i></div></div>
+        </div>
+    `;
+    openModal('producto-modal');
+    cargarPreguntasProducto(p.id);
+    cargarValoracionesProducto(p.id);
+    renderRecomendados(p.id);
+}
+
+function cambiarPestanaProducto(pestana, btn) {
+    document.querySelectorAll('.prod-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('prod-qa-pane').style.display = pestana === 'qa' ? '' : 'none';
+    document.getElementById('prod-val-pane').style.display = pestana === 'val' ? '' : 'none';
+}
+
+async function cargarPreguntasProducto(productoId) {
+    const pane = document.getElementById('prod-qa-pane');
+    if (!pane) return;
+    pane.innerHTML = '<div class="empty" style="padding:20px;"><i class="fas fa-spinner fa-spin"></i></div>';
+    try {
+        const data = await fetch(`${API_BASE_URL}/api/tienda/productos/${productoId}/preguntas`).then(r => r.json());
+        const preguntas = data.preguntas || [];
+        pane.innerHTML = '';
+        if (preguntas.length === 0) pane.innerHTML = '<div class="empty" style="padding:16px;"><i class="fas fa-comments"></i> Aún no hay preguntas. ¡Sé el primero en preguntar!</div>';
+        preguntas.forEach(q => {
+            const item = document.createElement('div');
+            item.className = 'qa-item';
+            item.innerHTML = `
+                <div class="q"><i class="fas fa-user"></i> ${q.nombre_cliente || 'Cliente'}: ${q.pregunta}</div>
+                ${q.respuesta ? '<div class="a"><i class="fas fa-reply"></i> ' + q.respuesta + '</div>' : '<div class="a" style="color:var(--muted); font-style:italic;">Esperando respuesta del personal...</div>'}
+                <div class="meta">${q.fecha_pregunta || ''}${q.estado === 'respondida' ? ' · Respondida' : ' · Pendiente'}</div>
+            `;
+            pane.appendChild(item);
+        });
+        if (tiendaUser) {
+            pane.innerHTML += `
+                <div class="qa-item" style="background:var(--primary-soft); border-color:transparent;">
+                    <label style="font-weight:700; font-size:.88rem; display:block; margin-bottom:6px;">¿Tienes una pregunta sobre este producto?</label>
+                    <textarea id="nueva-pregunta" rows="2" style="width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:10px; font-family:var(--font); font-size:.88rem; resize:vertical;"></textarea>
+                    <button class="btn btn-primary" style="margin-top:8px;" onclick="enviarPregunta(${productoId})"><i class="fas fa-paper-plane"></i> Preguntar</button>
+                </div>`;
+        } else {
+            pane.innerHTML += '<p style="font-size:.82rem; color:var(--muted); text-align:center; padding:8px;"><a href="#" onclick="openAuthModal(\'login\'); return false;" style="color:var(--primary); font-weight:700;">Inicia sesión</a> para hacer preguntas.</p>';
+        }
+    } catch (e) { pane.innerHTML = '<div class="empty" style="padding:16px;"><i class="fas fa-plug"></i> Error al cargar</div>'; }
+}
+
+async function enviarPregunta(productoId) {
+    const pregunta = document.getElementById('nueva-pregunta').value.trim();
+    if (pregunta.length < 5) { showToast('Escribe tu pregunta (mínimo 5 caracteres)', 'warning'); return; }
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/tienda/productos/${productoId}/preguntas`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: tiendaUser.cedula, pregunta })
+        });
+        const data = await res.json();
+        if (data.success) { showToast(data.message, 'success'); cargarPreguntasProducto(productoId); }
+        else showToast(data.message || 'Error', 'warning');
+    } catch (e) { showToast('Error de conexión', 'error'); }
+}
+
+async function cargarValoracionesProducto(productoId) {
+    const pane = document.getElementById('prod-val-pane');
+    if (!pane) return;
+    pane.innerHTML = '<div class="empty" style="padding:20px;"><i class="fas fa-spinner fa-spin"></i></div>';
+    try {
+        const data = await fetch(`${API_BASE_URL}/api/tienda/productos/${productoId}/valoraciones`).then(r => r.json());
+        const valoraciones = data.valoraciones || [];
+        pane.innerHTML = '';
+        if (valoraciones.length === 0) pane.innerHTML = '<div class="empty" style="padding:16px;"><i class="fas fa-star"></i> Aún no hay calificaciones.</div>';
+        valoraciones.forEach(v => {
+            const item = document.createElement('div');
+            item.className = 'val-item';
+            item.innerHTML = `<div class="name">${v.nombre_cliente || 'Cliente'} <span style="float:right; color:var(--muted); font-size:.72rem;">${v.fecha || ''}</span></div>
+                <div class="stars-display">${'★'.repeat(v.estrellas)}${'☆'.repeat(5 - v.estrellas)}</div>
+                ${v.comentario ? '<div class="comment">' + v.comentario + '</div>' : ''}`;
+            pane.appendChild(item);
+        });
+        pane.innerHTML += `
+            <div class="val-item" style="background:var(--primary-soft); border-color:transparent;">
+                <label style="font-weight:700; font-size:.88rem; display:block; margin-bottom:6px;">Califica este producto</label>
+                <div class="stars-input" id="stars-input-producto"></div>
+                ${tiendaUser ? `<input type="text" id="val-comentario" placeholder="Comentario (opcional)" style="width:100%; margin-top:8px; padding:9px 12px; border:1.5px solid var(--border); border-radius:10px; font-size:.88rem; font-family:var(--font);">
+                <button class="btn btn-primary" style="margin-top:8px;" onclick="enviarValoracion(${productoId})"><i class="fas fa-star"></i> Enviar calificación</button>`
+                : '<p style="font-size:.82rem; color:var(--muted); margin-top:6px;"><a href="#" onclick="openAuthModal(\'login\'); return false;" style="color:var(--primary); font-weight:700;">Inicia sesión</a> para calificar.</p>'}
+            </div>`;
+        misEstrellasSeleccion = 0;
+        renderStarsInput('stars-input-producto');
+    } catch (e) { pane.innerHTML = '<div class="empty" style="padding:16px;"><i class="fas fa-plug"></i> Error al cargar</div>'; }
+}
+
+function renderStarsInput(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+        const star = document.createElement('i');
+        star.className = 'fas fa-star' + (i <= misEstrellasSeleccion ? ' on' : '');
+        star.onclick = () => { misEstrellasSeleccion = i; renderStarsInput(id); };
+        el.appendChild(star);
+    }
+}
+
+async function enviarValoracion(productoId) {
+    if (misEstrellasSeleccion < 1) { showToast('Selecciona de 1 a 5 estrellas', 'warning'); return; }
+    const comentario = document.getElementById('val-comentario') ? document.getElementById('val-comentario').value.trim() : '';
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/tienda/productos/${productoId}/valoraciones`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: tiendaUser.cedula, estrellas: misEstrellasSeleccion, comentario })
+        });
+        const data = await res.json();
+        if (data.success) { showToast(data.message, 'success'); cargarCatalogo(); cargarValoracionesProducto(productoId); }
+        else showToast(data.message || 'Error', 'warning');
+    } catch (e) { showToast('Error de conexión', 'error'); }
+}
+
+function renderRecomendados(productoId) {
+    const row = document.getElementById('recomendados-row');
+    if (!row) return;
+    const p = catalogo.find(x => x.id === productoId);
+    if (!p) { row.innerHTML = ''; return; }
+    const candidatos = catalogo
+        .filter(x => x.id !== productoId && x.stock > 0)
+        .sort((a, b) => (a.categoria === p.categoria ? -1 : 1) || (b.vendidos || 0) - (a.vendidos || 0) || b.id - a.id)
+        .slice(0, 4);
+    if (candidatos.length === 0) { row.innerHTML = '<div class="empty" style="padding:12px;"><i class="fas fa-box-open"></i> Por ahora no hay más productos.</div>'; return; }
+    row.innerHTML = '';
+    candidatos.forEach(x => {
+        const card = document.createElement('div');
+        card.className = 'reco-card';
+        card.onclick = () => openProductoModal(x.id);
+        const img = x.imagen_url
+            ? '<img src="' + (x.imagen_url.startsWith('http') ? x.imagen_url : API_BASE_URL + x.imagen_url) + '" onerror="this.onerror=null;this.outerHTML=\'<div class=\\\'ico\\\'><i class=\\\'fas fa-box\\\'></i></div>\'">'
+            : '<div class="ico"><i class="fas fa-box"></i></div>';
+        card.innerHTML = `${img}<h5>${x.nombre}</h5><div class="price">$${x.precio_usd.toFixed(2)}</div>${estrellasHtml(x.estrellas_promedio || 0, x.num_valoraciones || 0)}`;
+        row.appendChild(card);
+    });
+}
+
+// =====================================================
+// SESIÓN 10: CHAT FLOTANTE (tiempo real por polling)
+// =====================================================
+let miConversacion = null;
+let chatTimer = null;
+let chatWidgetAbierto = false;
+let chatCalificando = 0;
+
+function toggleChatWidget(forzar) {
+    chatWidgetAbierto = forzar !== undefined ? forzar : !chatWidgetAbierto;
+    const win = document.getElementById('chat-window');
+    win.classList.toggle('open', chatWidgetAbierto);
+    if (chatWidgetAbierto) {
+        refrescarChat();
+        if (miConversacion && (miConversacion.estado === 'activa' || miConversacion.estado === 'solicitada')) marcarChatLeido();
+    }
+}
+
+async function refrescarChat() {
+    if (!tiendaUser) { renderChatSinSesion(); return; }
+    try {
+        const data = await fetch(`${API_BASE_URL}/api/chat/mi?cedula=${encodeURIComponent(tiendaUser.cedula)}`).then(r => r.json());
+        miConversacion = data.conversacion || null;
+        actualizarBadgeChat();
+        if (chatWidgetAbierto) renderChat();
+    } catch (e) { }
+}
+
+function actualizarBadgeChat() {
+    const badge = document.getElementById('chat-launcher-badge');
+    if (!badge) return;
+    const n = miConversacion && (miConversacion.estado === 'activa' || miConversacion.estado === 'solicitada') ? (miConversacion.no_leidos || 0) : 0;
+    badge.style.display = n > 0 ? 'flex' : 'none';
+    badge.textContent = n > 9 ? '9+' : n;
+}
+
+function renderChat() {
+    const body = document.getElementById('chat-body');
+    const foot = document.getElementById('chat-foot');
+    const actions = document.getElementById('chat-actions');
+    const estadoTexto = document.getElementById('chat-estado-texto');
+    body.innerHTML = '';
+    foot.style.display = 'none';
+    actions.innerHTML = '';
+    if (!tiendaUser) { renderChatSinSesion(); return; }
+    if (!miConversacion) {
+        estadoTexto.textContent = '¿Necesitas ayuda?';
+        body.innerHTML = '<div class="chat-center"><div class="pill">¡Hola ' + tiendaUser.nombre + '! Un asesor te atenderá en breve.</div></div>';
+        actions.innerHTML = '<button class="btn btn-primary" style="width:100%;" onclick="solicitarChat()"><i class="fas fa-headset"></i> Iniciar conversación</button>';
+        return;
+    }
+    const c = miConversacion;
+    estadoTexto.textContent = c.estado === 'solicitada' ? 'Esperando que un agente te acepte...' : c.estado === 'activa' ? (c.nombre_agente ? 'Con ' + c.nombre_agente : 'Conversación activa') : 'Conversación finalizada';
+    (c.mensajes || []).forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'chat-msg ' + m.emisor;
+        div.innerHTML = `${m.contenido}<span class="hora">${m.fecha ? m.fecha.slice(11, 16) : ''}${m.emisor === 'agente' ? ' · ' + (c.nombre_agente || 'Agente') : ''}</span>`;
+        body.appendChild(div);
+    });
+    body.scrollTop = body.scrollHeight;
+    if (c.estado === 'solicitada') {
+        body.innerHTML += '<div class="chat-center"><div class="pill"><i class="fas fa-spinner fa-spin"></i> Esperando que un miembro del personal acepte tu solicitud...</div></div>';
+    } else if (c.estado === 'activa') {
+        foot.style.display = 'flex';
+        actions.innerHTML = '<button class="btn btn-outline" onclick="finalizarChat()"><i class="fas fa-flag-checkered"></i> Finalizar conversación</button>';
+    } else if (c.estado === 'finalizada') {
+        actions.innerHTML = `<div class="rate-box">
+            <p style="font-weight:700; margin-bottom:6px;">¿Cómo fue la atención?</p>
+            <div class="stars-input" id="chat-rate-stars"></div>
+            <input type="text" id="chat-rate-comment" placeholder="Comentario (opcional)">
+            <button class="btn btn-primary" style="margin-top:8px; width:100%;" onclick="calificarChat()">Enviar calificación</button>
+        </div>`;
+        chatCalificando = 0;
+        renderChatStarsInput('chat-rate-stars');
+    } else if (c.estado === 'calificada') {
+        body.innerHTML += '<div class="chat-center"><div class="pill"><i class="fas fa-star"></i> ¡Gracias por calificar! ' + '★'.repeat(c.calificacion || 0) + '</div></div>';
+        actions.innerHTML = '<div style="text-align:center; color:var(--muted); font-size:.8rem; padding:4px 0;">Atención finalizada · ' + (c.nombre_agente || 'Agente') + '</div>';
+    }
+}
+
+function renderChatSinSesion() {
+    const body = document.getElementById('chat-body');
+    if (!body) return;
+    body.innerHTML = '<div class="chat-center"><div class="pill"><i class="fas fa-user-lock"></i> Inicia sesión para hablar con el personal</div></div>';
+    document.getElementById('chat-estado-texto').textContent = 'Soporte en vivo';
+    document.getElementById('chat-actions').innerHTML = '<button class="btn btn-primary" style="width:100%;" onclick="toggleChatWidget(false); openAuthModal(\'login\');"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</button>';
+    document.getElementById('chat-foot').style.display = 'none';
+}
+
+async function solicitarChat() {
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/chat/solicitar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: tiendaUser.cedula })
+        });
+        const data = await res.json();
+        if (data.success) { showToast(data.message, 'success'); refrescarChat(); }
+        else showToast(data.message || 'No se pudo iniciar el chat', 'warning');
+    } catch (e) { showToast('Error de conexión', 'error'); }
+}
+
+async function enviarMensajeChat() {
+    const input = document.getElementById('chat-input');
+    const contenido = input.value.trim();
+    if (!contenido || !miConversacion) return;
+    input.value = '';
+    try {
+        await fetch(`${API_BASE_URL}/api/chat/${miConversacion.id}/mensaje`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: tiendaUser.cedula, contenido })
+        });
+        refrescarChat();
+    } catch (e) { showToast('Error de conexión', 'error'); }
+}
+
+async function finalizarChat() {
+    if (!confirm('¿Finalizar esta conversación?')) return;
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/chat/${miConversacion.id}/finalizar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: tiendaUser.cedula })
+        });
+        const data = await res.json();
+        showToast(data.message || 'Conversación finalizada', 'success');
+        refrescarChat();
+    } catch (e) { showToast('Error de conexión', 'error'); }
+}
+
+function renderChatStarsInput(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+        const star = document.createElement('i');
+        star.className = 'fas fa-star' + (i <= chatCalificando ? ' on' : '');
+        star.onclick = () => { chatCalificando = i; renderChatStarsInput(id); };
+        el.appendChild(star);
+    }
+}
+
+async function calificarChat() {
+    const comentario = document.getElementById('chat-rate-comment') ? document.getElementById('chat-rate-comment').value.trim() : '';
+    if (chatCalificando < 1) { showToast('Selecciona de 1 a 5 estrellas', 'warning'); return; }
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/chat/${miConversacion.id}/calificar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: tiendaUser.cedula, estrellas: chatCalificando, comentario })
+        });
+        const data = await res.json();
+        showToast(data.message || '¡Gracias por tu calificación!', 'success');
+        chatCalificando = 0;
+        refrescarChat();
+    } catch (e) { showToast('Error de conexión', 'error'); }
+}
+
+async function marcarChatLeido() {
+    if (!miConversacion || !miConversacion.no_leidos) return;
+    try {
+        await fetch(`${API_BASE_URL}/api/chat/${miConversacion.id}/leer`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: tiendaUser.cedula })
+        });
+        miConversacion.no_leidos = 0;
+        actualizarBadgeChat();
+    } catch (e) { }
+}
+
+function iniciarPollingChat() {
+    if (chatTimer) clearInterval(chatTimer);
+    chatTimer = setInterval(() => {
+        if (!tiendaUser) return;
+        refrescarChat().then(() => {
+            if (chatWidgetAbierto && miConversacion && (miConversacion.estado === 'activa' || miConversacion.estado === 'solicitada')) marcarChatLeido();
+        });
+    }, 4000);
+}
+
+// =====================================================
+// SESIÓN 10: TICKETS DEL CLIENTE
+// =====================================================
+function openMisTickets() {
+    if (!tiendaUser) { showToast('Inicia sesión para reportar', 'warning'); openAuthModal('login'); return; }
+    switchTicketsTab('list');
+    openModal('tickets-modal');
+    cargarMisTickets();
+}
+
+function switchTicketsTab(tab) {
+    document.getElementById('tickets-list').style.display = tab === 'list' ? '' : 'none';
+    document.getElementById('tickets-new').style.display = tab === 'new' ? '' : 'none';
+    document.getElementById('tab-tickets-list').classList.toggle('active', tab === 'list');
+    document.getElementById('tab-tickets-new').classList.toggle('active', tab === 'new');
+    if (tab === 'list') cargarMisTickets();
+}
+
+async function cargarMisTickets() {
+    const cont = document.getElementById('tickets-list');
+    cont.innerHTML = '<div class="empty"><i class="fas fa-spinner fa-spin"></i> Cargando...</div>';
+    try {
+        const data = await fetch(`${API_BASE_URL}/api/tickets/mis?cedula=${encodeURIComponent(tiendaUser.cedula)}`).then(r => r.json());
+        if (!data.tickets || data.tickets.length === 0) { cont.innerHTML = '<div class="empty"><i class="fas fa-life-ring"></i> No tienes reportes. Crea uno con el botón «Nuevo reporte».</div>'; return; }
+        cont.innerHTML = '';
+        data.tickets.forEach(t => {
+            const card = document.createElement('div');
+            card.className = 'ticket-card';
+            const badge = t.estado === 'abierto' ? '<span class="badge warn">Abierto</span>' : t.estado === 'en_proceso' ? '<span class="badge proceso">En proceso</span>' : t.estado === 'resuelto' ? '<span class="badge resuelto">Resuelto</span>' : '<span class="badge cerrado">Cerrado</span>';
+            card.innerHTML = `
+                <div class="head"><h4><i class="fas fa-ticket-alt"></i> #${t.id} — ${t.asunto}</h4>${badge}</div>
+                <p>${t.categoria || 'General'} · ${t.fecha_creacion || ''}</p>
+                <p>${t.descripcion}</p>
+                ${t.respuesta ? '<div class="resp"><strong>' + (t.nombre_agente || 'Personal') + ':</strong> ' + t.respuesta + '</div>' : '<p style="color:var(--muted); font-style:italic;">Esperando respuesta del personal...</p>'}
+            `;
+            cont.appendChild(card);
+        });
+    } catch (e) { cont.innerHTML = '<div class="empty"><i class="fas fa-plug"></i> Error al cargar</div>'; }
+}
+
+async function crearTicket() {
+    const asunto = document.getElementById('ticket-asunto').value.trim();
+    const descripcion = document.getElementById('ticket-descripcion').value.trim();
+    const categoria = document.getElementById('ticket-categoria').value;
+    const direccion = document.getElementById('ticket-direccion').value.trim();
+    const telefono = document.getElementById('ticket-telefono').value.trim();
+    const errorEl = document.getElementById('ticket-error');
+    errorEl.classList.remove('show');
+    if (asunto.length < 4) { errorEl.textContent = 'Escribe un asunto (mínimo 4 caracteres)'; errorEl.classList.add('show'); return; }
+    if (descripcion.length < 10) { errorEl.textContent = 'Describe el reporte (mínimo 10 caracteres)'; errorEl.classList.add('show'); return; }
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/tickets`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: tiendaUser.cedula, asunto, descripcion, categoria, direccion, telefono })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast(data.message, 'success');
+            document.getElementById('ticket-asunto').value = '';
+            document.getElementById('ticket-descripcion').value = '';
+            document.getElementById('ticket-direccion').value = '';
+            document.getElementById('ticket-telefono').value = '';
+            switchTicketsTab('list');
+        } else { errorEl.textContent = data.message || 'Error al enviar'; errorEl.classList.add('show'); }
+    } catch (e) { errorEl.textContent = 'Error de conexión'; errorEl.classList.add('show'); }
+}
+
+// =====================================================
+// SESIÓN 10: OJITO (mostrar/ocultar contraseña)
+// =====================================================
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    const ver = input.type === 'password';
+    input.type = ver ? 'text' : 'password';
+    icon.className = ver ? 'fas fa-eye-slash' : 'fas fa-eye';
+}
+
+// =====================================================
 // INIT
 // =====================================================
 loadTiendaUser();
@@ -498,3 +962,4 @@ cargarCatalogo();
 setInterval(() => {
     if (document.visibilityState === 'visible') cargarCatalogo();
 }, 45000);
+iniciarPollingChat();
