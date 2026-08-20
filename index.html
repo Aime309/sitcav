@@ -139,6 +139,7 @@
             align-items: center; justify-content: center; padding: 20px;
         }
         .modal.open { display: flex; }
+        #apartar-modal, #auth-modal { z-index: 250; }
         .modal-box {
             background: #fff; border-radius: 16px; width: 100%; max-width: 440px;
             padding: 26px; box-shadow: 0 25px 60px rgba(15, 23, 42, 0.3);
@@ -300,7 +301,7 @@
         .chat-head h4 { font-size: .95rem; }
         .chat-head small { opacity: .85; font-size: .72rem; display: block; }
         .chat-head .close { margin-left: auto; background: none; border: none; color: #fff; font-size: 1.1rem; cursor: pointer; }
-        .chat-body { flex: 1; overflow-y: auto; padding: 14px; background: #f8fafc; display: flex; flex-direction: column; gap: 8px; }
+        .chat-body { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; background: #f8fafc; display: flex; flex-direction: column; gap: 8px; }
         .chat-msg { max-width: 78%; padding: 9px 13px; border-radius: 14px; font-size: .86rem; line-height: 1.4; word-wrap: break-word; }
         .chat-msg.agente { align-self: flex-end; background: var(--primary-grad); color: #fff; border-bottom-right-radius: 4px; }
         .chat-msg.cliente { align-self: flex-start; background: #fff; border: 1.5px solid var(--border); border-bottom-left-radius: 4px; }
@@ -525,7 +526,10 @@
         <div class="modal-box prod-modal-box">
             <div class="modal-header">
                 <h3><i class="fas fa-box-open"></i> Detalle del producto</h3>
-                <button class="modal-close" onclick="closeModal('producto-modal')"><i class="fas fa-times"></i></button>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <button id="producto-modal-apartar-btn" class="btn btn-primary" style="display:none; padding:7px 14px; font-size:.82rem; margin:0;" onclick="openApartarModal(productoModalActual.id)"><i class="fas fa-hand-holding-usd"></i> Apartar</button>
+                    <button class="modal-close" onclick="closeModal('producto-modal')"><i class="fas fa-times"></i></button>
+                </div>
             </div>
             <div id="producto-modal-content"></div>
         </div>
@@ -602,7 +606,7 @@
         </div>
     </div>
 
-    <script src="tienda.js?v=9"></script>
+    <script src="tienda.js?v=10"></script>
 </body>
 
 </html>

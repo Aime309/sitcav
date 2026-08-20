@@ -4910,7 +4910,6 @@ function renderChatSoporte() {
         div.innerHTML = `${m.contenido}<span class="hora">${m.fecha ? m.fecha.slice(11, 16) : ''}${m.emisor === 'agente' ? ' · ' + (c.nombre_agente || 'Agente') : ' · Cliente'}</span>`;
         body.appendChild(div);
     });
-    body.scrollTop = body.scrollHeight;
 
     const esMiChat = c.id_agente === currentUser.id || (c.estado !== 'solicitada' && c.estado !== 'activa');
     if (c.estado === 'solicitada') {
@@ -4926,6 +4925,7 @@ function renderChatSoporte() {
     } else if (c.estado === 'calificada') {
         body.innerHTML += '<div class="chat-center"><div class="pill"><i class="fas fa-star"></i> Cliente calificó: ' + '★'.repeat(c.calificacion || 0) + (c.comentario_calificacion ? ' — ' + c.comentario_calificacion : '') + '</div></div>';
     }
+    body.scrollTop = body.scrollHeight;
 }
 
 async function refrescarChatSoporte() {

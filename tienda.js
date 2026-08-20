@@ -520,6 +520,8 @@ function openProductoModal(productoId) {
     const p = catalogo.find(x => x.id === productoId);
     if (!p) return;
     productoModalActual = p;
+    const apartarBtn = document.getElementById('producto-modal-apartar-btn');
+    if (apartarBtn) apartarBtn.style.display = p.stock > 0 ? 'inline-flex' : 'none';
     const content = document.getElementById('producto-modal-content');
     const img = p.imagen_url
         ? '<img src="' + (p.imagen_url.startsWith('http') ? p.imagen_url : API_BASE_URL + p.imagen_url) + '" onerror="this.onerror=null;this.outerHTML=\'<i class=\\\'fas fa-box\\\'></i>\'">'
@@ -738,7 +740,6 @@ function renderChat() {
     const estadoTexto = document.getElementById('chat-estado-texto');
     body.innerHTML = '';
     foot.style.display = 'none';
-    actions.innerHTML = '';
     if (!tiendaUser) { renderChatSinSesion(); return; }
     if (!miConversacion) {
         estadoTexto.textContent = '¿Necesitas ayuda?';
@@ -777,6 +778,7 @@ function renderChat() {
         body.innerHTML += '<div class="chat-center"><div class="pill"><i class="fas fa-star"></i> ¡Gracias por calificar! ' + '★'.repeat(c.calificacion || 0) + '</div></div>';
         actions.innerHTML = '<button class="btn btn-primary" style="width:100%;" onclick="solicitarChat()"><i class="fas fa-comments"></i> Iniciar nueva conversación</button>';
     }
+    body.scrollTop = body.scrollHeight;
 }
 
 function renderChatSinSesion() {
