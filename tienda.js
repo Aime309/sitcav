@@ -193,6 +193,7 @@ function renderDestacados() {
 
         const slide = document.createElement('div');
         slide.className = 'slide' + (i === 0 ? ' active' : '');
+        slide.onclick = () => openProductoModal(p.id);
         slide.innerHTML = `
             <div class="slide-info">
                 ${badge}
@@ -203,7 +204,10 @@ function renderDestacados() {
                     <span class="slide-price-bs">Bs ${(p.precio_bs || 0).toLocaleString('es-VE', { maximumFractionDigits: 2 })}</span>
                 </div>
                 <div class="slide-stock"><i class="fas fa-boxes"></i> ${stockTag}${p.cantidad_apartada > 0 ? ' · ' + p.cantidad_apartada + ' apartado(s)' : ''}</div>
-                <button class="btn btn-light" onclick="openApartarModal(${p.id})"><i class="fas fa-hand-holding-usd"></i> Apartar ahora</button>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button class="btn btn-light" onclick="event.stopPropagation(); openProductoModal(${p.id})"><i class="fas fa-eye"></i> Ver detalles</button>
+                    <button class="btn btn-light" onclick="event.stopPropagation(); openApartarModal(${p.id})"><i class="fas fa-hand-holding-usd"></i> Apartar ahora</button>
+                </div>
             </div>
             <div class="slide-img">${img}</div>
         `;
