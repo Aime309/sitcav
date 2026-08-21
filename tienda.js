@@ -579,7 +579,8 @@ async function cargarPreguntasProducto(productoId) {
     if (!pane) return;
     pane.innerHTML = '<div class="empty" style="padding:20px;"><i class="fas fa-spinner fa-spin"></i></div>';
     try {
-        const data = await fetch(`${API_BASE_URL}/api/tienda/productos/${productoId}/preguntas`).then(r => r.json());
+        const params = tiendaUser && tiendaUser.cedula ? `?cedula=${encodeURIComponent(tiendaUser.cedula)}` : '';
+        const data = await fetch(`${API_BASE_URL}/api/tienda/productos/${productoId}/preguntas${params}`).then(r => r.json());
         const preguntas = data.preguntas || [];
         pane.innerHTML = '';
         if (preguntas.length === 0) pane.innerHTML = '<div class="empty" style="padding:16px;"><i class="fas fa-comments"></i> Aún no hay preguntas. ¡Sé el primero en preguntar!</div>';
