@@ -616,7 +616,7 @@ async function enviarPregunta(productoId) {
             body: JSON.stringify({ cedula: tiendaUser.cedula, pregunta })
         });
         const data = await res.json();
-        if (data.success) { showToast(data.message, 'success'); cargarPreguntasProducto(productoId); }
+        if (data.success) { showToast(data.message, 'success'); const el = document.getElementById('nueva-pregunta'); if (el) el.value = ''; await cargarPreguntasProducto(productoId); }
         else showToast(data.message || 'Error', 'warning');
     } catch (e) { showToast('Error de conexión', 'error'); }
 }

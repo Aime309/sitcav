@@ -624,6 +624,7 @@ function showSection(sectionName) {
         'cotizacion': 'Cotización',
         'credenciales': 'Credenciales',
         'reembolsos': 'Reembolsos',
+        'consultas': 'Consultas',
         'estadisticas': 'Estadísticas',
         'sucursales': 'Sucursales y Transferencias',
         'buzon': 'Buzón de Comentarios',
@@ -1180,7 +1181,7 @@ async function loadVentas() {
 }
 
 async function verFactura(ventaId) {
-    window.open(`${API_BASE_URL}/api/factura/${ventaId}`, '_blank');
+    downloadPdf(`${API_BASE_URL}/api/factura/${ventaId}`);
 }
 
 // Variable to store products for venta modal
@@ -2000,7 +2001,7 @@ async function createCompra(event) {
 }
 
 function downloadCompraPDF(id) {
-    window.open(`${API_BASE_URL}/api/compras/${id}/pdf`, '_blank');
+    downloadPdf(`${API_BASE_URL}/api/compras/${id}/pdf`);
 }
 
 async function deleteCompra(id) {
@@ -2811,7 +2812,7 @@ PRODUCTOS:
 }
 
 function viewApartadoPDF(id) {
-    window.open(`${API_BASE_URL}/api/apartados/${id}/pdf`, '_blank');
+    downloadPdf(`${API_BASE_URL}/api/apartados/${id}/pdf`);
 }
 
 async function deleteApartado(id) {
@@ -3191,7 +3192,7 @@ async function exportarConsultasPDF() {
     if (fechaDesde) params.append('fecha_desde', fechaDesde);
     if (fechaHasta) params.append('fecha_hasta', fechaHasta);
 
-    window.open(`${API_BASE_URL}/api/consultas/ventas/pdf?${params.toString()}`, '_blank');
+    downloadPdf(`${API_BASE_URL}/api/consultas/ventas/pdf?${params.toString()}`);
 }
 
 // =====================================================
@@ -3565,7 +3566,7 @@ async function deleteReembolso(id) {
 }
 
 function printReembolso(id) {
-    window.open(`${API_BASE_URL}/api/reembolsos/${id}/pdf`, '_blank');
+    downloadPdf(`${API_BASE_URL}/api/reembolsos/${id}/pdf`);
 }
 
 // =====================================================
