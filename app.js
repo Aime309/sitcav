@@ -174,33 +174,44 @@ function checkPasswordPolicy(pw, prefix = 'pw') {
 }
 
 // =====================================================
-// REGISTRO: pestañas empleado / cliente
+// REGISTRO: pestañas empleado / cliente (unificado sesión 21: ambos con preguntas + captcha)
 // =====================================================
+let registerCaptchaToken = null;
+async function cargarCaptchaRegistro() {
+    try {
+        const data = await fetch(`${API_BASE_URL}/api/tienda/captcha`).then(r => r.json());
+        registerCaptchaToken = data.token;
+        const img = document.getElementById('register-captcha-img');
+        if (img) img.src = data.svg;
+        const inp = document.getElementById('register-captcha-respuesta');
+        if (inp) inp.value = '';
+    } catch (e) { }
+}
 function setRegTipo(tipo) {
     const empTab = document.getElementById('reg-tab-empleado');
     const cliTab = document.getElementById('reg-tab-cliente');
+    const secBlock = document.getElementById('register-security-block');
     if (tipo === 'cliente') {
         empTab.classList.remove('active');
         cliTab.classList.add('active');
-        document.getElementById('register-empleado-block').style.display = 'none';
         document.getElementById('register-telefono-group').style.display = 'block';
-        ['register-pregunta-1', 'register-pregunta-2', 'register-pregunta-3',
-         'register-respuesta-1', 'register-respuesta-2', 'register-respuesta-3'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.removeAttribute('required');
-        });
     } else {
         empTab.classList.add('active');
         cliTab.classList.remove('active');
-        document.getElementById('register-empleado-block').style.display = 'block';
         document.getElementById('register-telefono-group').style.display = 'none';
-        ['register-pregunta-1', 'register-pregunta-2', 'register-pregunta-3',
-         'register-respuesta-1', 'register-respuesta-2', 'register-respuesta-3'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.setAttribute('required', '');
-        });
     }
+    if (secBlock) secBlock.style.display = 'block';
+    // Compatibilidad: mantener empleado-block oculto (ya no se usa para ocultar preguntas)
+    const oldBlock = document.getElementById('register-empleado-block');
+    if (oldBlock) oldBlock.style.display = 'none';
+    // Las 3 preguntas siempre son obligatorias ahora (clientes también recuperan)
+    ['register-pregunta-1', 'register-pregunta-2', 'register-pregunta-3',
+     'register-respuesta-1', 'register-respuesta-2', 'register-respuesta-3'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute('required', '');
+    });
     document.getElementById('register-error').style.display = 'none';
+    cargarCaptchaRegistro();
 }
 
 // =====================================================
@@ -237,6 +248,7 @@ function showRegister() {
     document.getElementById('welcome-screen').classList.add('hidden');
     document.getElementById('login-form').classList.add('hidden');
     document.getElementById('register-form').classList.remove('hidden');
+    cargarCaptchaRegistro();
 }
 
 async function handleLogin(event) {
@@ -323,23 +335,30 @@ async function handleRegister(event) {
         return;
     }
 
+    const captchaResp = document.getElementById('register-captcha-respuesta') ? document.getElementById('register-captcha-respuesta').value.trim() : '';
+    if (!captchaResp) {
+        errorDiv.textContent = 'Complete el captcha';
+        errorDiv.style.display = 'block';
+        return;
+    }
     const payload = {
         nombre,
         apellidos,
         cedula,
         contrasena: password,
         terminos_aceptados: terminos,
-        tipo
+        tipo,
+        captcha_token: registerCaptchaToken,
+        captcha_respuesta: captchaResp,
+        pregunta_1: document.getElementById('register-pregunta-1').value,
+        respuesta_1: document.getElementById('register-respuesta-1').value,
+        pregunta_2: document.getElementById('register-pregunta-2').value,
+        respuesta_2: document.getElementById('register-respuesta-2').value,
+        pregunta_3: document.getElementById('register-pregunta-3').value,
+        respuesta_3: document.getElementById('register-respuesta-3').value
     };
     if (tipo === 'cliente') {
         payload.telefono = telefono || null;
-    } else {
-        payload.pregunta_1 = document.getElementById('register-pregunta-1').value;
-        payload.respuesta_1 = document.getElementById('register-respuesta-1').value;
-        payload.pregunta_2 = document.getElementById('register-pregunta-2').value;
-        payload.respuesta_2 = document.getElementById('register-respuesta-2').value;
-        payload.pregunta_3 = document.getElementById('register-pregunta-3').value;
-        payload.respuesta_3 = document.getElementById('register-respuesta-3').value;
     }
 
     try {
@@ -369,10 +388,12 @@ async function handleRegister(event) {
         } else {
             errorDiv.textContent = data.message;
             errorDiv.style.display = 'block';
+            cargarCaptchaRegistro();
         }
     } catch (error) {
         errorDiv.textContent = 'Error de conexión con el servidor';
         errorDiv.style.display = 'block';
+        cargarCaptchaRegistro();
     }
 }
 

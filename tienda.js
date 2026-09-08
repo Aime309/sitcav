@@ -338,6 +338,12 @@ async function tiendaRegistro() {
     const confirmar = document.getElementById('reg-password-confirm').value;
     const terminos = document.getElementById('reg-terminos').checked;
     const captchaRespuesta = document.getElementById('captcha-respuesta').value.trim();
+    const p1 = document.getElementById('reg-pregunta-1') ? document.getElementById('reg-pregunta-1').value : '';
+    const r1 = document.getElementById('reg-respuesta-1') ? document.getElementById('reg-respuesta-1').value.trim() : '';
+    const p2 = document.getElementById('reg-pregunta-2') ? document.getElementById('reg-pregunta-2').value : '';
+    const r2 = document.getElementById('reg-respuesta-2') ? document.getElementById('reg-respuesta-2').value.trim() : '';
+    const p3 = document.getElementById('reg-pregunta-3') ? document.getElementById('reg-pregunta-3').value : '';
+    const r3 = document.getElementById('reg-respuesta-3') ? document.getElementById('reg-respuesta-3').value.trim() : '';
 
     if (!nombre || !apellidos) { mostrarErrorAuth('Ingrese nombre y apellidos'); return; }
     if (!cedula) { mostrarErrorAuth('La cédula es obligatoria'); return; }
@@ -346,6 +352,9 @@ async function tiendaRegistro() {
         mostrarErrorAuth('La contraseña debe tener 8+ caracteres con mayúscula, minúscula y carácter especial');
         return;
     }
+    if (!p1 || !r1) { mostrarErrorAuth('Complete la pregunta de seguridad 1'); return; }
+    if (!p2 || !r2) { mostrarErrorAuth('Complete la pregunta de seguridad 2'); return; }
+    if (!p3 || !r3) { mostrarErrorAuth('Complete la pregunta de seguridad 3'); return; }
     if (!terminos) { mostrarErrorAuth('Debe aceptar los Términos y Condiciones'); return; }
     if (!captchaToken || !captchaRespuesta) { mostrarErrorAuth('Complete el captcha'); return; }
 
@@ -357,7 +366,10 @@ async function tiendaRegistro() {
                 nombre, apellidos, cedula, telefono, contrasena,
                 terminos_aceptados: terminos,
                 captcha_token: captchaToken,
-                captcha_respuesta: captchaRespuesta
+                captcha_respuesta: captchaRespuesta,
+                pregunta_1: p1, respuesta_1: r1,
+                pregunta_2: p2, respuesta_2: r2,
+                pregunta_3: p3, respuesta_3: r3
             })
         });
         const data = await response.json();
@@ -954,6 +966,75 @@ async function crearTicket() {
             switchTicketsTab('list');
         } else { errorEl.textContent = data.message || 'Error al enviar'; errorEl.classList.add('show'); }
     } catch (e) { errorEl.textContent = 'Error de conexión'; errorEl.classList.add('show'); }
+}
+
+// SESIÓN 21: RECUPERACIÓN DE CONTRASEÑA EN TIENDA (cliente)
+// =====================================================
+let tiendaRecoveryUserId = null;
+function openTiendaRecovery() {
+    closeModal('auth-modal');
+    document.getElementById('tienda-recovery-cedula').value = '';
+    document.getElementById('tienda-recovery-respuesta-1').value = '';
+    document.getElementById('tienda-recovery-respuesta-2').value = '';
+    document.getElementById('tienda-recovery-respuesta-3').value = '';
+    document.getElementById('tienda-recovery-password').value = '';
+    document.getElementById('tienda-recovery-confirm').value = '';
+    document.querySelectorAll('#tienda-recovery-modal .error-msg').forEach(el => { el.textContent = ''; el.classList.remove('show'); });
+    tiendaRecoveryUserId = null;
+    tiendaShowRecoveryStep(1);
+    openModal('tienda-recovery-modal');
+}
+function closeTiendaRecovery() { closeModal('tienda-recovery-modal'); }
+function tiendaShowRecoveryStep(step) {
+    document.getElementById('tienda-recovery-step-1').style.display = step === 1 ? '' : 'none';
+    document.getElementById('tienda-recovery-step-2').style.display = step === 2 ? '' : 'none';
+    document.getElementById('tienda-recovery-step-3').style.display = step === 3 ? '' : 'none';
+}
+async function tiendaCheckRecovery() {
+    const cedula = document.getElementById('tienda-recovery-cedula').value.trim();
+    const err = document.getElementById('tienda-recovery-error-1');
+    err.classList.remove('show');
+    if (!cedula) { err.textContent = 'Ingresa tu cédula'; err.classList.add('show'); return; }
+    try {
+        const res = await fetch(`${API_BASE_URL}/check-user-recovery`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cedula }) });
+        const data = await res.json();
+        if (data.success) {
+            tiendaRecoveryUserId = data.user_id;
+            const map = { 'nombre_mascota':'¿Cuál es el nombre de tu primera mascota?','ciudad_nacimiento':'¿En qué ciudad naciste?','apellido_madre':'¿Cuál es el primer apellido de tu madre?','escuela_primaria':'¿Cómo se llamaba tu escuela primaria?','mejor_amigo':'¿Cuál es el nombre de tu mejor amigo de la infancia?','pelicula_favorita':'¿Cuál es tu película favorita?','comida_favorita':'¿Cuál es tu comida favorita?','primer_trabajo':'¿Cuál fue tu primer trabajo?','color_favorito':'¿Cuál es tu color favorito?' };
+            document.getElementById('tienda-label-pregunta-1').textContent = map[data.preguntas[0]] || data.preguntas[0];
+            document.getElementById('tienda-label-pregunta-2').textContent = map[data.preguntas[1]] || data.preguntas[1];
+            document.getElementById('tienda-label-pregunta-3').textContent = map[data.preguntas[2]] || data.preguntas[2];
+            tiendaShowRecoveryStep(2);
+        } else { err.textContent = data.message || 'No encontrado'; err.classList.add('show'); }
+    } catch (e) { err.textContent = 'Error de conexión'; err.classList.add('show'); }
+}
+async function tiendaVerifyRecovery() {
+    const r1 = document.getElementById('tienda-recovery-respuesta-1').value.trim();
+    const r2 = document.getElementById('tienda-recovery-respuesta-2').value.trim();
+    const r3 = document.getElementById('tienda-recovery-respuesta-3').value.trim();
+    const err = document.getElementById('tienda-recovery-error-2');
+    err.classList.remove('show');
+    if (!r1 || !r2 || !r3) { err.textContent = 'Responde las 3 preguntas'; err.classList.add('show'); return; }
+    try {
+        const res = await fetch(`${API_BASE_URL}/verify-security-answers`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: tiendaRecoveryUserId, respuestas: [r1,r2,r3] }) });
+        const data = await res.json();
+        if (data.success) tiendaShowRecoveryStep(3);
+        else { err.textContent = data.message || 'Respuestas incorrectas'; err.classList.add('show'); }
+    } catch (e) { err.textContent = 'Error de conexión'; err.classList.add('show'); }
+}
+async function tiendaResetRecovery() {
+    const pass = document.getElementById('tienda-recovery-password').value;
+    const conf = document.getElementById('tienda-recovery-confirm').value;
+    const err = document.getElementById('tienda-recovery-error-3');
+    err.classList.remove('show');
+    if (pass.length < 8 || !/[A-Z]/.test(pass) || !/[a-z]/.test(pass) || !/[^A-Za-z0-9]/.test(pass)) { err.textContent = 'La contraseña debe tener 8+ caracteres, mayúscula, minúscula y carácter especial'; err.classList.add('show'); return; }
+    if (pass !== conf) { err.textContent = 'Las contraseñas no coinciden'; err.classList.add('show'); return; }
+    try {
+        const res = await fetch(`${API_BASE_URL}/reset-password-recovery`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: tiendaRecoveryUserId, new_password: pass }) });
+        const data = await res.json();
+        if (data.success) { showToast('Contraseña actualizada. Inicia sesión.', 'success'); closeTiendaRecovery(); openAuthModal('login'); }
+        else { err.textContent = data.message || 'Error'; err.classList.add('show'); }
+    } catch (e) { err.textContent = 'Error de conexión'; err.classList.add('show'); }
 }
 
 // =====================================================

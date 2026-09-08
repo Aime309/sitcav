@@ -1081,6 +1081,84 @@
         html[data-theme="dark"] .carousel-container { background: var(--surface) !important; }
         html[data-theme="dark"] .section-header p { color: var(--muted) !important; }
 
+    /* Sesión 21: cobertura dark exhaustiva para letras negras no legibles */
+        html[data-theme="dark"] input[readonly] { background: var(--card-alt) !important; color: var(--dark) !important; border-color: var(--border) !important; }
+        html[data-theme="dark"] #product-image-preview { background: var(--card-alt) !important; border-color: var(--border) !important; }
+        html[data-theme="dark"] #product-image-placeholder { color: var(--muted) !important; }
+        html[data-theme="dark"] #reembolso-calculo-bs { background: rgba(59,130,246,0.12) !important; color: var(--dark) !important; border: 1px solid var(--border) !important; }
+        html[data-theme="dark"] #btn-eliminar-categoria { background: rgba(239,68,68,0.12) !important; color: var(--danger) !important; border-color: var(--border) !important; }
+        html[data-theme="dark"] .stat-info h3, html[data-theme="dark"] .stat-info p, html[data-theme="dark"] .section-header h2, html[data-theme="dark"] .section-header h3 { color: var(--dark) !important; }
+        html[data-theme="dark"] .suc-stats b { color: var(--dark) !important; }
+        html[data-theme="dark"] .transfer-table th { background: var(--card-alt) !important; color: var(--dark) !important; }
+        html[data-theme="dark"] .transfer-table td { color: var(--dark) !important; border-color: var(--border) !important; }
+        html[data-theme="dark"] .stock-row .stock-sub { color: var(--muted) !important; }
+        html[data-theme="dark"] .notif-header { background: var(--card-alt) !important; border-color: var(--border) !important; }
+        html[data-theme="dark"] .notif-header h4 { color: var(--dark) !important; }
+        html[data-theme="dark"] .notif-item .notif-title { color: var(--dark) !important; }
+        html[data-theme="dark"] .notif-item .notif-msg, html[data-theme="dark"] .notif-item .notif-time { color: var(--muted) !important; }
+        html[data-theme="dark"] .confirm-box h3, html[data-theme="dark"] .modal-header h3 { color: var(--dark) !important; }
+        html[data-theme="dark"] .form-group label { color: var(--dark) !important; }
+        html[data-theme="dark"] .auth-container h2 { color: var(--dark) !important; }
+        html[data-theme="dark"] .qa-item, html[data-theme="dark"] .val-item { background: var(--card-alt) !important; border-color: var(--border) !important; }
+        html[data-theme="dark"] .qa-item .q, html[data-theme="dark"] .val-item .name, html[data-theme="dark"] .reco-card h5 { color: var(--dark) !important; }
+        html[data-theme="dark"] .reco-card { background: var(--card-alt) !important; border-color: var(--border) !important; }
+        html[data-theme="dark"] .welcome-screen h1 { color: var(--primary) !important; }
+        html[data-theme="dark"] .welcome-screen p { color: var(--muted) !important; }
+        html[data-theme="dark"] .terms-scroll { color: var(--muted) !important; }
+        html[data-theme="dark"] .card { background: var(--surface) !important; border-color: var(--border) !important; }
+        html[data-theme="dark"] .card h3, html[data-theme="dark"] .card h4 { color: var(--dark) !important; }
+        html[data-theme="dark"] .card p { color: var(--muted) !important; }
+        /* Fix sesión 21b: notificaciones / backup / sucursales / buzón — 0 letras negras */
+        html[data-theme="dark"] .notif-panel strong,
+        html[data-theme="dark"] .notif-panel .notif-body strong { color: var(--dark) !important; }
+        html[data-theme="dark"] .notif-panel span,
+        html[data-theme="dark"] .notif-panel .notif-body span { color: var(--muted) !important; }
+        html[data-theme="dark"] .notif-panel small,
+        html[data-theme="dark"] .notif-panel .notif-body small { color: var(--muted) !important; }
+        html[data-theme="dark"] .notif-empty,
+        html[data-theme="dark"] #notif-list div[style*="text-align:center"] { color: var(--muted) !important; }
+        html[data-theme="dark"] #backup-section h3 { color: var(--dark) !important; }
+        html[data-theme="dark"] #backup-section p { color: var(--muted) !important; }
+        html[data-theme="dark"] #sucursales-section h2,
+        html[data-theme="dark"] #sucursales-section h3 { color: var(--dark) !important; }
+        html[data-theme="dark"] #sucursales-section p { color: var(--muted) !important; }
+        html[data-theme="dark"] .suc-card p { color: var(--muted) !important; }
+        html[data-theme="dark"] .suc-card .suc-stats span { color: var(--muted) !important; }
+        html[data-theme="dark"] #sucursales-cards div[style*="text-align"],
+        html[data-theme="dark"] #transferencias-table td[colspan] { color: var(--muted) !important; }
+        html[data-theme="dark"] #buzon-section h2,
+        html[data-theme="dark"] #buzon-section h3 { color: var(--dark) !important; }
+        html[data-theme="dark"] #buzon-section p { color: var(--muted) !important; }
+        html[data-theme="dark"] #buzon-preguntas,
+        html[data-theme="dark"] #buzon-valoraciones { color: var(--dark) !important; }
+        html[data-theme="dark"] #buzon-preguntas div[style*="text-align"],
+        html[data-theme="dark"] #buzon-valoraciones div[style*="text-align"] { color: var(--muted) !important; }
+        html[data-theme="dark"] .qa-item .meta { color: var(--muted) !important; }
+        html[data-theme="dark"] .qa-item .a { color: var(--muted) !important; border-left-color: var(--primary) !important; }
+        html[data-theme="dark"] .val-item .comment { color: var(--muted) !important; }
+        html[data-theme="dark"] .empty { color: var(--muted) !important; }
+        html[data-theme="dark"] .empty i { color: var(--border) !important; }
+        html[data-theme="dark"] .header-section h2 { color: var(--dark) !important; }
+        html[data-theme="dark"] .header-section h2 i { color: var(--primary) !important; }
+        html[data-theme="dark"] #estadisticas-section h2,
+        html[data-theme="dark"] #estadisticas-section h3 { color: var(--dark) !important; }
+        html[data-theme="dark"] .suc-card h4 { color: var(--dark) !important; }
+        html[data-theme="dark"] .suc-card .suc-body p,
+        html[data-theme="dark"] .suc-card .suc-stock,
+        html[data-theme="dark"] .suc-card strong { color: var(--muted) !important; }
+        html[data-theme="dark"] .suc-card strong { color: var(--dark) !important; }
+        html[data-theme="dark"] a[onclick="showRecovery()"] { color: var(--primary) !important; }
+        /* Universal fallback anti-negro: títulos blancos, descripciones muted, links primary */
+        html[data-theme="dark"] .content-section h2,
+        html[data-theme="dark"] .content-section h3,
+        html[data-theme="dark"] .content-section h4 { color: var(--dark) !important; }
+        html[data-theme="dark"] .content-section p,
+        html[data-theme="dark"] .content-section span,
+        html[data-theme="dark"] .content-section small { color: var(--muted) !important; }
+        html[data-theme="dark"] .content-section a:not(.btn) { color: var(--primary) !important; }
+
+
+
     .prod-tabs { display: flex; gap: 8px; }
         .prod-tab { padding: 10px 16px; font-size: .88rem; font-weight: 700; color: var(--muted); cursor: pointer; border: none; background: none; border-bottom: 3px solid transparent; margin-bottom: -2px; }
         .prod-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
@@ -1190,7 +1268,7 @@
             </div>
             <div style="text-align: right; margin-top: 5px; margin-bottom: 15px;">
                 <a href="#" onclick="showRecovery()"
-                    style="color: var(--primary-color); text-decoration: none; font-size: 0.9em;">¿Olvidaste tu
+                    style="color: var(--primary); text-decoration: none; font-size: 0.9em;">¿Olvidaste tu
                     contraseña?</a>
             </div>
             <div class="form-actions">
@@ -1266,11 +1344,11 @@
                 </div>
             </div>
 
-            <div id="register-empleado-block">
+            <div id="register-security-block">
                 <div style="margin: 20px 0; border-top: 1px solid var(--border); padding-top: 20px;">
                     <h4 style="color: var(--dark); margin-bottom: 15px;">Preguntas de Seguridad</h4>
                     <p style="font-size: 0.85em; color: var(--muted); margin-bottom: 15px;">Necesarias para recuperar tu contraseña
-                        si la olvidas.</p>
+                        si la olvidas. Válido para clientes y empleados.</p>
 
                     <!-- Pregunta 1 -->
                     <div class="form-group">
@@ -1312,6 +1390,16 @@
                     </div>
                 </div>
             </div>
+            <!-- Captcha unificado (igual que tienda - sesión 21) -->
+            <div class="form-group" id="register-captcha-group">
+                <label>¿Cuánto es? <small style="font-weight:400;">(clic en la imagen para actualizar)</small></label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <img id="register-captcha-img" alt="Captcha" title="Actualizar captcha" onclick="cargarCaptchaRegistro()" style="border-radius:8px; height:48px; cursor:pointer; border:1.5px solid var(--border);">
+                    <input type="text" id="register-captcha-respuesta" placeholder="Respuesta" required style="flex:1;">
+                </div>
+            </div>
+            <!-- Compatibilidad: el JS antiguo espera register-empleado-block -->
+            <div id="register-empleado-block" style="display:none;"></div>
 
             <div class="terms-check">
                 <input type="checkbox" id="register-terminos" required>
@@ -3492,7 +3580,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=27"></script>
+    <script src="app.js?v=30"></script>
 </body>
 
 </html>

@@ -435,7 +435,10 @@
                     </div>
                 </div>
                 <button class="btn btn-primary" style="width:100%;" onclick="tiendaLogin()">Entrar</button>
-                <p style="text-align:center; font-size:.84rem; margin-top:14px; color:var(--muted);">
+                <p style="text-align:center; font-size:.84rem; margin-top:10px;">
+                    <a href="#" style="color:var(--primary);" onclick="openTiendaRecovery(); return false;">¿Olvidaste tu contraseña?</a>
+                </p>
+                <p style="text-align:center; font-size:.84rem; margin-top:8px; color:var(--muted);">
                     ¿No tienes cuenta? <a href="#" style="color:var(--primary);" onclick="switchAuthMode('register')">Regístrate</a>
                 </p>
             </div>
@@ -473,6 +476,41 @@
                         <button type="button" class="pwd-toggle" onclick="togglePassword('reg-password-confirm', this)" title="Mostrar/ocultar contraseña"><i class="fas fa-eye"></i></button>
                     </div>
                 </div>
+                <!-- Preguntas de Seguridad (unificado con acceso administrativo - sesión 21) -->
+                <div style="margin: 16px 0; border-top: 1px solid var(--border); padding-top: 14px;">
+                    <h4 style="font-size:.95em; color:var(--dark); margin-bottom:6px;">Preguntas de Seguridad</h4>
+                    <p style="font-size:.78em; color:var(--muted); margin-bottom:10px;">Necesarias para recuperar tu contraseña si la olvidas.</p>
+                    <div class="form-group">
+                        <label>Pregunta 1</label>
+                        <select id="reg-pregunta-1" required>
+                            <option value="">Seleccione...</option>
+                            <option value="nombre_mascota">¿Cuál es el nombre de tu primera mascota?</option>
+                            <option value="ciudad_nacimiento">¿En qué ciudad naciste?</option>
+                            <option value="apellido_madre">¿Cuál es el primer apellido de tu madre?</option>
+                        </select>
+                        <input type="text" id="reg-respuesta-1" required placeholder="Respuesta" style="margin-top:5px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Pregunta 2</label>
+                        <select id="reg-pregunta-2" required>
+                            <option value="">Seleccione...</option>
+                            <option value="escuela_primaria">¿Cómo se llamaba tu escuela primaria?</option>
+                            <option value="mejor_amigo">¿Cuál es el nombre de tu mejor amigo de la infancia?</option>
+                            <option value="pelicula_favorita">¿Cuál es tu película favorita?</option>
+                        </select>
+                        <input type="text" id="reg-respuesta-2" required placeholder="Respuesta" style="margin-top:5px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Pregunta 3</label>
+                        <select id="reg-pregunta-3" required>
+                            <option value="">Seleccione...</option>
+                            <option value="comida_favorita">¿Cuál es tu comida favorita?</option>
+                            <option value="primer_trabajo">¿Cuál fue tu primer trabajo?</option>
+                            <option value="color_favorito">¿Cuál es tu color favorito?</option>
+                        </select>
+                        <input type="text" id="reg-respuesta-3" required placeholder="Respuesta" style="margin-top:5px;">
+                    </div>
+                </div>
                 <div class="form-group">
                     <label>¿Cuánto es? <small style="font-weight:400;">(clic en la imagen para actualizar)</small></label>
                     <div class="captcha-row">
@@ -482,12 +520,49 @@
                 </div>
                 <div class="terms-check">
                     <input type="checkbox" id="reg-terminos">
-                    <label for="reg-terminos">Acepto los <a href="panel.html" onclick="alertTienda('Los Términos y Condiciones están disponibles en el sistema interno de SITCAV.'); return false;">Términos y Condiciones</a> de SITCAV.</label>
+                    <label for="reg-terminos">Acepto los <a href="/index.html" onclick="alertTienda('Los Términos y Condiciones están disponibles en el sistema interno de SITCAV.'); return false;">Términos y Condiciones</a> de SITCAV.</label>
                 </div>
                 <button class="btn btn-primary" style="width:100%;" onclick="tiendaRegistro()">Crear Cuenta</button>
                 <p style="text-align:center; font-size:.84rem; margin-top:14px; color:var(--muted);">
                     ¿Ya tienes cuenta? <a href="#" style="color:var(--primary);" onclick="switchAuthMode('login')">Inicia sesión</a>
                 </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RECUPERAR CONTRASEÑA TIENDA (sesión 21) -->
+    <div class="modal" id="tienda-recovery-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fas fa-key"></i> Recuperar Contraseña</h3>
+                <button class="modal-close" onclick="closeTiendaRecovery()"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="tienda-recovery-step-1">
+                <p style="margin-bottom:14px; color:var(--muted); font-size:.9em;">Ingresa tu cédula para buscar tu cuenta.</p>
+                <div class="form-group">
+                    <label>Cédula de Identidad</label>
+                    <input type="text" id="tienda-recovery-cedula" placeholder="Ej: 12345678">
+                </div>
+                <div class="error-msg" id="tienda-recovery-error-1"></div>
+                <button class="btn btn-primary" style="width:100%;" onclick="tiendaCheckRecovery()">Continuar</button>
+            </div>
+            <div id="tienda-recovery-step-2" style="display:none;">
+                <p style="margin-bottom:14px; color:var(--muted); font-size:.9em;">Responde tus 3 preguntas de seguridad.</p>
+                <div class="form-group"><label id="tienda-label-pregunta-1">Pregunta 1</label><input type="text" id="tienda-recovery-respuesta-1" placeholder="Respuesta"></div>
+                <div class="form-group"><label id="tienda-label-pregunta-2">Pregunta 2</label><input type="text" id="tienda-recovery-respuesta-2" placeholder="Respuesta"></div>
+                <div class="form-group"><label id="tienda-label-pregunta-3">Pregunta 3</label><input type="text" id="tienda-recovery-respuesta-3" placeholder="Respuesta"></div>
+                <div class="error-msg" id="tienda-recovery-error-2"></div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-outline" style="flex:1;" onclick="tiendaShowRecoveryStep(1)">Atrás</button>
+                    <button class="btn btn-primary" style="flex:1;" onclick="tiendaVerifyRecovery()">Verificar</button>
+                </div>
+            </div>
+            <div id="tienda-recovery-step-3" style="display:none;">
+                <p style="margin-bottom:14px; color:var(--muted); font-size:.9em;">¡Identidad verificada! Ingresa tu nueva contraseña.</p>
+                <div class="form-group"><label>Nueva Contraseña</label><div class="pwd-wrap"><input type="password" id="tienda-recovery-password"><button type="button" class="pwd-toggle" onclick="togglePassword('tienda-recovery-password', this)"><i class="fas fa-eye"></i></button></div></div>
+                <div class="form-group"><label>Confirmar</label><div class="pwd-wrap"><input type="password" id="tienda-recovery-confirm"><button type="button" class="pwd-toggle" onclick="togglePassword('tienda-recovery-confirm', this)"><i class="fas fa-eye"></i></button></div></div>
+                <div class="error-msg" id="tienda-recovery-error-3"></div>
+                <button class="btn btn-primary" style="width:100%;" onclick="tiendaResetRecovery()">Cambiar Contraseña</button>
             </div>
         </div>
     </div>
@@ -620,7 +695,7 @@
         </div>
     </div>
 
-    <script src="tienda.js?v=13"></script>
+    <script src="tienda.js?v=14"></script>
 </body>
 
 </html>
