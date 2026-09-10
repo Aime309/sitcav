@@ -787,8 +787,17 @@
         .badge.success { background: rgba(16, 185, 129, 0.13); color: var(--secondary); }
         .badge.warning { background: rgba(245, 158, 11, 0.16); color: var(--warning); }
         .badge.danger { background: rgba(239, 68, 68, 0.13); color: var(--danger); }
+        /* Aliases usados por JS (sin prefijo punto extra): warn/proceso/resuelto/cerrado + guion */
+        .badge.warn { background: rgba(245, 158, 11, 0.16); color: var(--warning); }
+        .badge.proceso { background: rgba(99, 102, 241, 0.13); color: var(--primary); }
+        .badge.resuelto { background: rgba(16, 185, 129, 0.13); color: var(--secondary); }
+        .badge.cerrado { background: rgba(100, 116, 139, 0.15); color: var(--muted); }
+        .badge-warning { background: rgba(245, 158, 11, 0.16); color: var(--warning); }
+        .badge-success { background: rgba(16, 185, 129, 0.13); color: var(--secondary); }
+        .badge-danger { background: rgba(239, 68, 68, 0.13); color: var(--danger); }
+        .badge-secondary { background: rgba(100, 116, 139, 0.15); color: var(--muted); }
 
-        .action-btns { display: flex; gap: 8px; }
+        .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .action-btn {
             width: 36px;
@@ -808,6 +817,53 @@
         .action-btn.view { background: rgba(16, 185, 129, 0.13); color: var(--secondary); }
 
         .action-btn:hover { transform: scale(1.12); box-shadow: var(--shadow-sm); }
+
+        /* .btn-icon legacy (apartados/inventario): mismo tema que .action-btn para unificar con ventas/consultas */
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+        .btn-icon:hover { transform: scale(1.12); box-shadow: var(--shadow-sm); }
+        .btn-icon.danger { background: rgba(239, 68, 68, 0.12); color: var(--danger); }
+        .btn-icon.success { background: rgba(16, 185, 129, 0.13); color: var(--secondary); }
+
+        /* Buscadores dentro de modales (compras/ventas/apartados/ajustes) */
+        .select-search {
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.92em;
+            background: var(--card-alt);
+            color: var(--dark);
+            font-family: var(--font);
+        }
+        .select-search:focus { outline: none; border-color: var(--primary); background: var(--surface); }
+
+        /* Prompt modal SITCAV (reemplazo de prompt() nativo: sin "github.io dice") */
+        .prompt-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.95em;
+            background: var(--card-alt);
+            color: var(--dark);
+            font-family: var(--font);
+            resize: vertical;
+        }
+        .prompt-input:focus { outline: none; border-color: var(--primary); background: var(--surface); }
 
         .header-section { margin-bottom: 24px; }
         .header-section h3 { color: var(--dark); }
@@ -1080,8 +1136,7 @@
         html[data-theme="dark"] .stat-card { background: var(--surface) !important; border-color: var(--border) !important; }
         html[data-theme="dark"] .carousel-container { background: var(--surface) !important; }
         html[data-theme="dark"] .section-header p { color: var(--muted) !important; }
-
-    /* Sesión 21: cobertura dark exhaustiva para letras negras no legibles */
+        /* Sesión 21: cobertura dark exhaustiva para letras negras no legibles */
         html[data-theme="dark"] input[readonly] { background: var(--card-alt) !important; color: var(--dark) !important; border-color: var(--border) !important; }
         html[data-theme="dark"] #product-image-preview { background: var(--card-alt) !important; border-color: var(--border) !important; }
         html[data-theme="dark"] #product-image-placeholder { color: var(--muted) !important; }
@@ -1543,6 +1598,12 @@
                         <span>Backup</span>
                     </a>
                 </li>
+                <li class="nav-item" id="nav-notificaciones" style="display: none;">
+                    <a class="nav-link" onclick="showSection('notificaciones')">
+                        <i class="fas fa-bell"></i>
+                        <span>Notificaciones</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" onclick="handleLogout()" style="color: var(--danger);">
                         <i class="fas fa-sign-out-alt"></i>
@@ -1841,6 +1902,17 @@
                                 class="fas fa-cog" style="font-size: 0.5em"></i></div>
                         <div style="color: var(--muted); font-size: 0.9em;">Configuración</div>
                     </div>
+
+                    <!-- Notificaciones Card -->
+                    <div class="module-card" id="dash-card-notificaciones" onclick="showSection('notificaciones')"
+                        style="background: var(--surface); padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s; text-align: center;">
+                        <div style="font-size: 2em; color: #f59e0b; margin-bottom: 10px;">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="module-count" id="dash-count-notificaciones"
+                            style="font-size: 1.8em; font-weight: bold; color: var(--dark); margin-bottom: 5px;">0</div>
+                        <div style="color: var(--muted); font-size: 0.9em;">Notificaciones</div>
+                    </div>
                 </div>
             </section>
 
@@ -2128,6 +2200,74 @@
                             <i class="fas fa-download"></i> Crear Respaldo
                         </button>
                     </div>
+                </div>
+            </section>
+
+            <!-- NOTIFICACIONES SECTION (módulo administrable, sesión 22) -->
+            <section id="notificaciones-section" class="content-section">
+                <div class="section-header">
+                    <h2>Gestión de Notificaciones</h2>
+                    <p>Administra los avisos del sistema: filtra, marca y elimina</p>
+                </div>
+                <div class="table-container">
+                    <div class="table-header">
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%;">
+                            <select id="filtro-notif-tipo" class="form-control" style="padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--dark);" onchange="loadNotificacionesTabla()">
+                                <option value="">Todos los tipos</option>
+                                <option value="apartado">Apartado</option>
+                                <option value="pago_apartado">Pago apartado</option>
+                                <option value="apartado_vencer">Apartado por vencer</option>
+                                <option value="stock_bajo">Stock bajo</option>
+                                <option value="cotizacion">Cotización</option>
+                                <option value="transferencia">Transferencia</option>
+                                <option value="sistema">Sistema</option>
+                                <option value="pregunta">Pregunta</option>
+                                <option value="chat">Chat</option>
+                                <option value="ticket">Ticket</option>
+                            </select>
+                            <select id="filtro-notif-leida" class="form-control" style="padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--dark);" onchange="loadNotificacionesTabla()">
+                                <option value="">Todas</option>
+                                <option value="false">No leídas</option>
+                                <option value="true">Leídas</option>
+                            </select>
+                            <div class="search-box" style="flex: 1; min-width: 200px;">
+                                <input type="text" id="search-notificaciones" placeholder="Buscar por título o mensaje..." onkeyup="loadNotificacionesTabla()">
+                            </div>
+                            <button class="btn btn-primary" onclick="loadNotificacionesTabla()">
+                                <i class="fas fa-filter"></i> Filtrar
+                            </button>
+                            <button class="btn btn-secondary" onclick="openCrearAvisoModal()">
+                                <i class="fas fa-plus"></i> Nuevo aviso
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; margin-top: 10px;">
+                            <button class="btn btn-outline btn-sm" onclick="marcarSeleccionadasLeidas()">
+                                <i class="fas fa-check-double"></i> Marcar leídas
+                            </button>
+                            <button class="btn btn-outline btn-sm" onclick="eliminarSeleccionadasNotificaciones()" style="border-color: var(--danger); color: var(--danger);">
+                                <i class="fas fa-trash"></i> Eliminar seleccionadas
+                            </button>
+                            <span id="notif-total-info" style="margin-left: auto; font-size: 0.85em; color: var(--muted);"></span>
+                        </div>
+                    </div>
+                    <table id="notificaciones-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 36px;"><input type="checkbox" id="notif-check-all" onchange="toggleCheckAllNotificaciones(this.checked)"></th>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Título</th>
+                                <th>Mensaje</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notificaciones-table-body">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px;">Cargando notificaciones...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
@@ -2889,6 +3029,7 @@
             <form onsubmit="createCompra(event)">
                 <div class="form-group">
                     <label>Proveedor</label>
+                    <input type="text" id="compra-proveedor-search" class="select-search" placeholder="Buscar proveedor..." oninput="filtrarSelect('compra-proveedor', this.value)">
                     <select id="compra-proveedor" required>
                         <option value="">Seleccione un proveedor...</option>
                     </select>
@@ -2896,6 +3037,7 @@
 
                 <div class="form-group">
                     <label>Productos</label>
+                    <input type="text" id="compra-producto-search" class="select-search" placeholder="Buscar producto y filtrar filas..." oninput="filtrarOpcionesEnFilas('compra-productos-body', 'compra-product-select', this.value)">
                     <div class="table-container" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;">
                         <table id="compra-productos-table" style="width: 100%;">
                             <thead>
@@ -2941,6 +3083,7 @@
                 <input type="hidden" id="venta-id">
                 <div class="form-group">
                     <label>Cliente</label>
+                    <input type="text" id="venta-cliente-search" class="select-search" placeholder="Buscar cliente..." oninput="filtrarSelect('venta-cliente', this.value)">
                     <select id="venta-cliente" required>
                         <option value="">Seleccione un cliente...</option>
                     </select>
@@ -2948,6 +3091,7 @@
 
                 <div class="form-group">
                     <label>Productos</label>
+                    <input type="text" id="venta-producto-search" class="select-search" placeholder="Buscar producto y filtrar filas..." oninput="filtrarOpcionesEnFilas('venta-productos-body', 'venta-producto-select', this.value)">
                     <div style="max-height: 300px; overflow-y: auto;">
                         <table style="width: 100%;">
                             <thead>
@@ -2994,6 +3138,7 @@
             <form onsubmit="saveApartado(event)">
                 <div class="form-group">
                     <label>Cliente</label>
+                    <input type="text" id="apartado-cliente-search" class="select-search" placeholder="Buscar cliente..." oninput="filtrarSelect('apartado-cliente', this.value)">
                     <select id="apartado-cliente" required>
                         <option value="">Seleccione un cliente...</option>
                     </select>
@@ -3004,6 +3149,7 @@
                 </div>
                 <div class="form-group">
                     <label>Productos</label>
+                    <input type="text" id="apartado-producto-search" class="select-search" placeholder="Buscar producto y filtrar filas..." oninput="filtrarOpcionesEnFilas('apartado-productos-body', 'apartado-producto', this.value)">
                     <div style="max-height: 200px; overflow-y: auto;">
                         <table style="width: 100%;">
                             <thead>
@@ -3084,6 +3230,7 @@
             <form onsubmit="realizarAjusteInventario(event)">
                 <div class="form-group">
                     <label>Producto</label>
+                    <input type="text" id="ajuste-producto-search" class="select-search" placeholder="Buscar producto..." oninput="filtrarSelect('ajuste-producto', this.value)">
                     <select id="ajuste-producto" required>
                         <option value="">Seleccione un producto...</option>
                     </select>
@@ -3549,9 +3696,62 @@
         </div>
     </div>
 
+    <!-- Crear Aviso Modal (notificaciones) -->
+    <div id="aviso-modal" class="modal">
+        <div class="modal-content" style="max-width: 520px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-bell"></i> Nuevo aviso</h3>
+                <button class="close-modal" onclick="closeCrearAvisoModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form onsubmit="crearAvisoManual(event)">
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select id="aviso-tipo" required>
+                        <option value="sistema">Sistema</option>
+                        <option value="apartado">Apartado</option>
+                        <option value="stock_bajo">Stock bajo</option>
+                        <option value="cotizacion">Cotización</option>
+                        <option value="transferencia">Transferencia</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" id="aviso-titulo" required maxlength="150" placeholder="Ej: Mantenimiento programado">
+                </div>
+                <div class="form-group">
+                    <label>Mensaje</label>
+                    <textarea id="aviso-mensaje" rows="3" required maxlength="300" placeholder="Detalle del aviso..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeCrearAvisoModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear aviso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Contenedores SITCAV: toasts y confirmación -->
     <div class="toast-container" id="toast-container"></div>
     <div id="confirm-overlay-root"></div>
+    <div id="prompt-overlay-root"></div>
+
+    <!-- Modal genérico de detalle (reemplaza alert(detalleHTML): sin "github.io dice") -->
+    <div id="detail-modal" class="modal">
+        <div class="modal-content" style="max-width: 560px;">
+            <div class="modal-header">
+                <h3 id="detail-modal-title"><i class="fas fa-eye"></i> Detalle</h3>
+                <button class="close-modal" onclick="closeDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <pre id="detail-modal-body" style="white-space: pre-wrap; font-family: var(--font); font-size: 0.9em; color: var(--dark); background: var(--card-alt); padding: 16px; border-radius: 12px; border: 1px solid var(--border); max-height: 50vh; overflow-y: auto; margin: 0;"></pre>
+            <div class="form-actions">
+                <button type="button" class="btn btn-primary" onclick="closeDetailModal()">Entendido</button>
+            </div>
+        </div>
+    </div>
 
     <!-- CHAT DE SOPORTE PARA EL PERSONAL -->
     <div class="chat-launcher" id="chat-soporte-launcher" style="display:none;">
@@ -3580,7 +3780,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=30"></script>
+    <script src="app.js?v=31"></script>
 </body>
 
 </html>

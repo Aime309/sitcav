@@ -154,6 +154,83 @@ window.confirm = function (message) {
     return confirmAsync(String(message || ''));
 };
 
+// Prompt SITCAV (reemplazo de prompt() nativo: sin "github.io dice").
+// Uso: const texto = await promptAsync(titulo, descripcion, valorInicial);
+function promptAsync(titulo, descripcion, valorInicial) {
+    return new Promise((resolve) => {
+        const root = document.getElementById('prompt-overlay-root');
+        if (!root) { resolve(null); return; }
+        const safeTitulo = String(titulo || 'Responder');
+        const safeDesc = String(descripcion || '');
+        const safeVal = String(valorInicial || '').replace(/</g, '&lt;');
+        root.innerHTML = `
+            <div class="confirm-overlay" id="prompt-overlay">
+                <div class="confirm-box" style="text-align: left; max-width: 480px;">
+                    <div class="confirm-icon" style="text-align: center;"><i class="fas fa-reply"></i></div>
+                    <h3 style="text-align: center; margin-bottom: 8px; color: var(--dark);">${safeTitulo}</h3>
+                    <p style="color: var(--muted); font-size: 0.88em; margin-bottom: 12px; white-space: pre-wrap;">${safeDesc}</p>
+                    <textarea id="prompt-textarea" class="prompt-input" rows="4">${safeVal}</textarea>
+                    <div class="error-message" id="prompt-error" style="display: none;"></div>
+                    <div class="confirm-actions" style="margin-top: 16px;">
+                        <button type="button" class="btn btn-outline" id="prompt-no">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="prompt-yes">Aceptar</button>
+                    </div>
+                </div>
+            </div>`;
+        const overlay = document.getElementById('prompt-overlay');
+        const close = (result) => {
+            if (overlay) overlay.remove();
+            root.innerHTML = '';
+            resolve(result);
+        };
+        document.getElementById('prompt-yes').onclick = () => {
+            const val = document.getElementById('prompt-textarea').value;
+            close(val);
+        };
+        document.getElementById('prompt-no').onclick = () => close(null);
+        overlay.onclick = (e) => { if (e.target === overlay) close(null); };
+        setTimeout(() => document.getElementById('prompt-textarea')?.focus(), 50);
+    });
+}
+
+window.prompt = function (message, defaultVal) {
+    return promptAsync('Aviso del sistema', message, defaultVal);
+};
+
+// Modal genérico de detalle (reemplaza alert(textoLargo) de verDetalleApartado/viewCompra/verMovimientos)
+function showDetailModal(titulo, texto) {
+    const modal = document.getElementById('detail-modal');
+    if (!modal) { showToast(String(texto || '').slice(0, 300), 'info'); return; }
+    document.getElementById('detail-modal-title').innerHTML = '<i class="fas fa-eye"></i> ' + String(titulo || 'Detalle');
+    document.getElementById('detail-modal-body').textContent = String(texto || '');
+    modal.classList.add('active');
+}
+
+function closeDetailModal() {
+    document.getElementById('detail-modal')?.classList.remove('active');
+}
+
+// Buscadores para selects en modales (compras/ventas/apartados/ajustes)
+function filtrarSelect(selectId, texto) {
+    const sel = document.getElementById(selectId);
+    if (!sel) return;
+    const q = String(texto || '').toLowerCase();
+    Array.from(sel.options).forEach(opt => {
+        if (!opt.value) { opt.style.display = ''; return; }
+        opt.style.display = opt.text.toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+
+function filtrarOpcionesEnFilas(tbodyId, selectClass, texto) {
+    const q = String(texto || '').toLowerCase();
+    document.querySelectorAll('#' + tbodyId + ' .' + selectClass).forEach(sel => {
+        Array.from(sel.options).forEach(opt => {
+            if (!opt.value) { opt.style.display = ''; return; }
+            opt.style.display = opt.text.toLowerCase().includes(q) ? '' : 'none';
+        });
+    });
+}
+
 // =====================================================
 // PASSWORD POLICY CHECKER (vista) — ids pw-len/pw-may/pw-min/pw-esp
 // =====================================================
@@ -287,7 +364,6 @@ async function handleLogin(event) {
             };
             console.log('currentUser set to:', JSON.stringify(currentUser));
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            if (data.token) localStorage.setItem(SESSION_TOKEN_KEY, data.token);
             loadDashboard();
         } else {
             errorDiv.textContent = data.message;
@@ -410,7 +486,7 @@ function loginAsAnonymous() {
 function handleLogout() {
     currentUser = null;
     localStorage.removeItem('currentUser');
-    localStorage.removeItem(SESSION_TOKEN_KEY);
+    try { localStorage.removeItem(SESSION_TOKEN_KEY); } catch (e) {}
     showWelcome();
 }
 
@@ -450,6 +526,7 @@ function loadDashboard() {
     loadDashboardStats();
     loadProductCarousel();
     loadNotificaciones();
+    if (typeof updateNotifDashCount === 'function') updateNotifDashCount();
 }
 
 function setupRolePermissions() {
@@ -460,7 +537,8 @@ function setupRolePermissions() {
         'nav-empleados', 'nav-proveedores', 'nav-compras', 'nav-backup',
         'nav-productos', 'nav-clientes', 'nav-ventas', 'nav-consultas',
         'nav-apartados', 'nav-inventario', 'nav-cotizacion', 'nav-credenciales',
-        'nav-reembolsos', 'nav-estadisticas', 'nav-sucursales', 'nav-buzon', 'nav-soporte'
+        'nav-reembolsos', 'nav-estadisticas', 'nav-sucursales', 'nav-buzon', 'nav-soporte',
+        'nav-notificaciones'
     ];
     const allCards = [
         'dash-card-empleados', 'dash-card-proveedores', 'dash-card-compras',
@@ -649,7 +727,8 @@ function showSection(sectionName) {
         'estadisticas': 'Estadísticas',
         'sucursales': 'Sucursales y Transferencias',
         'buzon': 'Buzón de Comentarios',
-        'soporte': 'Módulo de Soporte'
+        'soporte': 'Módulo de Soporte',
+        'notificaciones': 'Notificaciones'
     };
     const titleElement = document.getElementById('current-section-title');
     if (titleElement) {
@@ -708,6 +787,9 @@ function showSection(sectionName) {
         case 'soporte':
             loadSoporteChats();
             loadSoporteTickets();
+            break;
+        case 'notificaciones':
+            loadNotificacionesTabla();
             break;
         default:
             console.log(`Section ${sectionName} loaded`);
@@ -1211,6 +1293,10 @@ let ventaProductsData = [];
 async function openVentaModal() {
     const modal = document.getElementById('venta-modal');
     modal.classList.add('active');
+    const _vcs = document.getElementById('venta-cliente-search');
+    if (_vcs) _vcs.value = '';
+    const _vps = document.getElementById('venta-producto-search');
+    if (_vps) _vps.value = '';
 
     // Reset form
     document.getElementById('venta-id').value = '';
@@ -1866,15 +1952,17 @@ async function loadCompras() {
                 <td>${new Date(compra.fecha_creacion).toLocaleDateString()}</td>
                 <td>$${total.toFixed(2)}</td>
                 <td>
-                    <button class="action-btn" onclick="downloadCompraPDF(${compra.id})" title="Descargar Factura">
-                        <i class="fas fa-file-pdf"></i>
-                    </button>
-                    <button class="action-btn" onclick="viewCompra(${compra.id})" title="Ver Detalles">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn delete" onclick="deleteCompra(${compra.id})" title="Eliminar Compra">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <div class="action-btns">
+                        <button class="action-btn view" onclick="viewCompra(${compra.id})" title="Ver Detalles">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn edit" onclick="downloadCompraPDF(${compra.id})" title="Descargar Factura">
+                            <i class="fas fa-file-pdf"></i>
+                        </button>
+                        <button class="action-btn delete" onclick="deleteCompra(${compra.id})" title="Eliminar Compra">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -1886,6 +1974,10 @@ async function loadCompras() {
 
 async function openCompraModal() {
     document.getElementById('compra-modal').classList.add('active');
+    const _bps = document.getElementById('compra-proveedor-search');
+    if (_bps) _bps.value = '';
+    const _bpr = document.getElementById('compra-producto-search');
+    if (_bpr) _bpr.value = '';
 
     // Load Proveedores for Select
     const select = document.getElementById('compra-proveedor');
@@ -2088,7 +2180,7 @@ Productos:
             detalleHTML += `- Producto ID ${d.id_producto}: ${d.cantidad} x $${d.precio_unitario}\n`;
         });
 
-        alert(detalleHTML);
+        showDetailModal(`Detalle de la compra #${compra.id}`, detalleHTML);
 
     } catch (error) {
         alert('Error al cargar detalles: ' + error.message);
@@ -2525,28 +2617,30 @@ async function loadApartados() {
                 <td style="color: var(--danger);">$${(parseFloat(a.monto_total || 0) - parseFloat(a.monto_pagado || 0)).toFixed(2)}</td>
                 <td><span class="badge ${getEstadoBadgeClass(a.estado)}">${a.estado}</span></td>
                 <td>
-                    <button class="btn-icon" onclick="verDetalleApartado(${a.id})" title="Ver detalle">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="btn-icon" onclick="viewApartadoPDF(${a.id})" title="Ver PDF" style="color: var(--primary);">
-                        <i class="fas fa-file-pdf"></i>
-                    </button>
-                    ${a.estado === 'activo' ? `
-                        <button class="btn-icon" onclick="openPagoApartadoModal(${a.id}, ${a.monto_total - a.monto_pagado})" title="Registrar pago">
-                            <i class="fas fa-dollar-sign"></i>
+                    <div class="action-btns">
+                        <button class="action-btn view" onclick="verDetalleApartado(${a.id})" title="Ver detalle">
+                            <i class="fas fa-eye"></i>
                         </button>
-                        <button class="btn-icon" onclick="completarApartado(${a.id})" title="Completar" style="color: var(--success);">
-                            <i class="fas fa-check"></i>
+                        <button class="action-btn edit" onclick="viewApartadoPDF(${a.id})" title="Ver PDF">
+                            <i class="fas fa-file-pdf"></i>
                         </button>
-                        <button class="btn-icon" onclick="cancelarApartado(${a.id})" title="Cancelar" style="color: var(--danger);">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    ` : ''}
-                    ${(a.estado === 'cancelado' || a.estado === 'completado') ? `
-                        <button class="btn-icon" onclick="deleteApartado(${a.id})" title="Eliminar" style="color: var(--danger);">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    ` : ''}
+                        ${a.estado === 'activo' ? `
+                            <button class="action-btn edit" onclick="openPagoApartadoModal(${a.id}, ${a.monto_total - a.monto_pagado})" title="Registrar pago">
+                                <i class="fas fa-dollar-sign"></i>
+                            </button>
+                            <button class="action-btn view" onclick="completarApartado(${a.id})" title="Completar">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="cancelarApartado(${a.id})" title="Cancelar">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        ` : ''}
+                        ${(a.estado === 'cancelado' || a.estado === 'completado') ? `
+                            <button class="action-btn delete" onclick="deleteApartado(${a.id})" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : ''}
+                    </div>
                 </td>
             </tr>
         `).join('');
@@ -2559,10 +2653,10 @@ async function loadApartados() {
 
 function getEstadoBadgeClass(estado) {
     switch (estado) {
-        case 'activo': return 'badge-warning';
-        case 'completado': return 'badge-success';
-        case 'cancelado': return 'badge-danger';
-        default: return 'badge-secondary';
+        case 'activo': return 'warning';
+        case 'completado': return 'success';
+        case 'cancelado': return 'danger';
+        default: return 'secondary';
     }
 }
 
@@ -2576,6 +2670,11 @@ function formatDateApartado(dateStr) {
 async function openApartadoModal() {
     const modal = document.getElementById('apartado-modal');
     if (!modal) return;
+    modal.classList.add('active');
+    const _acs = document.getElementById('apartado-cliente-search');
+    if (_acs) _acs.value = '';
+    const _aps = document.getElementById('apartado-producto-search');
+    if (_aps) _aps.value = '';
 
     const clienteSelect = document.getElementById('apartado-cliente');
     try {
@@ -2601,11 +2700,10 @@ async function openApartadoModal() {
     document.getElementById('apartado-total').textContent = '0.00';
 
     addApartadoRow();
-    modal.style.display = 'flex';
 }
 
 function closeApartadoModal() {
-    document.getElementById('apartado-modal').style.display = 'none';
+    document.getElementById('apartado-modal').classList.remove('active');
 }
 
 function addApartadoRow() {
@@ -2625,7 +2723,7 @@ function addApartadoRow() {
         </td>
         <td><input type="number" class="apartado-cantidad" min="1" value="1" onchange="updateApartadoTotal()" required></td>
         <td><input type="number" class="apartado-precio" step="0.01" readonly style="background: #f5f5f5;"></td>
-        <td><button type="button" class="btn-icon" onclick="removeApartadoRow(this)" style="color: var(--danger);"><i class="fas fa-trash"></i></button></td>
+        <td><button type="button" class="action-btn delete" onclick="removeApartadoRow(this)"><i class="fas fa-trash"></i></button></td>
     `;
     tbody.appendChild(row);
 }
@@ -2821,11 +2919,11 @@ PRODUCTOS:
         if (data.pagos?.length > 0) {
             detalleHTML += '\nPAGOS:\n';
             data.pagos.forEach(p => {
-                detalleHTML += `- ${formatDateApartado(p.fecha)}: $${parseFloat(p.monto).toFixed(2)} ${p.observacion ? '(' + p.observacion + ')' : ''}\n`;
+                detalleHTML += `- ${formatDateApartado(p.fecha_pago || p.fecha)}: $${parseFloat(p.monto).toFixed(2)} ${p.observacion ? '(' + p.observacion + ')' : ''}\n`;
             });
         }
 
-        alert(detalleHTML);
+        showDetailModal(`Detalle de apartado #${data.id}`, detalleHTML);
     } catch (error) {
         console.error('Error:', error);
         alert('Error al cargar detalle');
@@ -2882,7 +2980,7 @@ async function loadInventario() {
             const disponible = p.cantidad_disponible - apartado;
             const total = p.cantidad_disponible;
             const estado = disponible <= 0 ? 'Sin stock' : (disponible <= 5 ? 'Stock bajo' : 'Disponible');
-            const estadoClass = disponible <= 0 ? 'badge-danger' : (disponible <= 5 ? 'badge-warning' : 'badge-success');
+            const estadoClass = disponible <= 0 ? 'danger' : (disponible <= 5 ? 'warning' : 'success');
 
             return `
                 <tr>
@@ -2906,6 +3004,8 @@ async function loadInventario() {
 async function openAjusteInventarioModal() {
     const modal = document.getElementById('ajuste-inventario-modal');
     if (!modal) return;
+    const _ajs = document.getElementById('ajuste-producto-search');
+    if (_ajs) _ajs.value = '';
 
     const productoSelect = document.getElementById('ajuste-producto');
     try {
@@ -2921,11 +3021,11 @@ async function openAjusteInventarioModal() {
     document.getElementById('ajuste-cantidad').value = '';
     document.getElementById('ajuste-observacion').value = '';
 
-    modal.style.display = 'flex';
+    modal.classList.add('active');
 }
 
 function closeAjusteInventarioModal() {
-    document.getElementById('ajuste-inventario-modal').style.display = 'none';
+    document.getElementById('ajuste-inventario-modal').classList.remove('active');
 }
 
 async function realizarAjusteInventario(event) {
@@ -2976,10 +3076,10 @@ async function verMovimientos() {
 
         let texto = 'HISTORIAL DE MOVIMIENTOS\n========================\n\n';
         data.slice(0, 20).forEach(m => {
-            texto += `${formatDateApartado(m.fecha)} | ${m.tipo.toUpperCase()} | ${m.producto?.nombre || 'N/A'} | Cant: ${m.cantidad} | ${m.razon || ''}\n`;
+            texto += `${formatDateApartado(m.fecha)} | ${m.tipo.toUpperCase()} | ${m.producto?.nombre || 'N/A'} | Cant: ${m.cantidad} | ${m.observacion || m.razon || ''}\n`;
         });
 
-        alert(texto);
+        showDetailModal('Historial de movimientos', texto);
     } catch (error) {
         console.error('Error:', error);
         alert('Error al cargar movimientos');
@@ -3146,12 +3246,14 @@ async function loadConsultas() {
                 <td>${v.cliente.nombre} ${v.cliente.apellidos || ''}</td>
                 <td>$ ${v.total.toFixed(2)}</td>
                 <td>
-                    <button class="action-btn view" onclick="verFactura(${v.id})" title="Ver Detalle">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn" onclick="verFactura(${v.id})" title="Imprimir" style="background: #6b7280; color: white;">
-                        <i class="fas fa-print"></i>
-                    </button>
+                    <div class="action-btns">
+                        <button class="action-btn view" onclick="verFactura(${v.id})" title="Ver Detalle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn edit" onclick="verFactura(${v.id})" title="Imprimir">
+                            <i class="fas fa-print"></i>
+                        </button>
+                    </div>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -3437,11 +3539,11 @@ async function loadReembolsos() {
                     <td>${r.fecha}</td>
                     <td>${r.motivo || '-'}</td>
                     <td>
-                        <div class="action-buttons">
-                            <button class="btn-icon" onclick="printReembolso(${r.id})" title="Imprimir">
+                        <div class="action-btns">
+                            <button class="action-btn edit" onclick="printReembolso(${r.id})" title="Imprimir">
                                 <i class="fas fa-print"></i>
                             </button>
-                            <button class="btn-icon danger" onclick="deleteReembolso(${r.id})" title="Eliminar">
+                            <button class="action-btn delete" onclick="deleteReembolso(${r.id})" title="Eliminar">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -3955,7 +4057,6 @@ async function saveNewPassword(event) {
             alert('La contraseña actual es incorrecta');
             return;
         }
-        if (verifyResult.token) localStorage.setItem(SESSION_TOKEN_KEY, verifyResult.token);
 
         console.log('Password verified! Updating password...');
 
@@ -4305,13 +4406,180 @@ async function eliminarNotificacion(id) {
     try {
         await fetch(`${API_BASE_URL}/api/notificaciones/${id}`, { method: 'DELETE' });
         loadNotificaciones();
+        if (document.getElementById('notificaciones-section')?.classList.contains('active')) loadNotificacionesTabla();
+        updateNotifDashCount();
     } catch (error) {
         console.error('Error deleting notification:', error);
     }
 }
 
+function updateNotifDashCount() {
+    fetch(`${API_BASE_URL}/api/notificaciones?limit=1`).then(r => r.json()).then(d => {
+        const el = document.getElementById('dash-count-notificaciones');
+        if (el) el.textContent = d.no_leidas ?? d.total ?? 0;
+    }).catch(() => {});
+}
+
+// Módulo administrable de notificaciones (sesión 22): tabla con filtros + selección múltiple + crear aviso
+async function loadNotificacionesTabla() {
+    const tbody = document.getElementById('notificaciones-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px;">Cargando notificaciones...</td></tr>';
+    try {
+        const tipo = document.getElementById('filtro-notif-tipo')?.value || '';
+        const leida = document.getElementById('filtro-notif-leida')?.value || '';
+        const q = document.getElementById('search-notificaciones')?.value || '';
+        const params = new URLSearchParams();
+        if (tipo) params.append('tipo', tipo);
+        if (leida) params.append('leida', leida);
+        if (q) params.append('q', q);
+        params.append('limit', '100');
+        const data = await fetch(`${API_BASE_URL}/api/notificaciones?${params.toString()}`).then(r => r.json());
+        const notifs = data.notificaciones || [];
+        const info = document.getElementById('notif-total-info');
+        if (info) info.textContent = `${notifs.length} mostradas · ${data.no_leidas || 0} sin leer`;
+        updateNotifDashCount();
+        if (notifs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--muted);">Sin notificaciones para estos filtros</td></tr>';
+            return;
+        }
+        tbody.innerHTML = '';
+        notifs.forEach(n => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="checkbox" class="notif-check" value="${n.id}"></td>
+                <td style="white-space: nowrap;">${n.fecha || ''}</td>
+                <td><span class="badge proceso">${n.tipo || ''}</span></td>
+                <td><strong>${n.titulo || ''}</strong></td>
+                <td>${n.mensaje || ''}</td>
+                <td>${n.leida ? '<span class="badge resuelto">Leída</span>' : '<span class="badge warning">No leída</span>'}</td>
+                <td style="white-space: nowrap;">
+                    <div class="action-btns">
+                        ${!n.leida ? `<button class="action-btn view" onclick="leerNotificacionTabla(${n.id})" title="Marcar leída"><i class="fas fa-check"></i></button>` : ''}
+                        <button class="action-btn delete" onclick="eliminarNotificacionTabla(${n.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--danger);">Error al cargar notificaciones</td></tr>';
+    }
+}
+
+function getNotificacionesSeleccionadas() {
+    return Array.from(document.querySelectorAll('.notif-check:checked')).map(c => parseInt(c.value)).filter(Boolean);
+}
+
+function toggleCheckAllNotificaciones(checked) {
+    document.querySelectorAll('.notif-check').forEach(c => { c.checked = checked; });
+}
+
+async function leerNotificacionTabla(id) {
+    try {
+        await fetch(`${API_BASE_URL}/api/notificaciones/${id}/leer`, { method: 'POST' });
+        loadNotificacionesTabla();
+        loadNotificaciones();
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
+async function eliminarNotificacionTabla(id) {
+    if (!(await confirmAsync('¿Eliminar esta notificación?'))) return;
+    try {
+        await fetch(`${API_BASE_URL}/api/notificaciones/${id}`, { method: 'DELETE' });
+        loadNotificacionesTabla();
+        loadNotificaciones();
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
+async function marcarSeleccionadasLeidas() {
+    const ids = getNotificacionesSeleccionadas();
+    if (ids.length === 0) { alert('Selecciona al menos una notificación'); return; }
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/notificaciones/leer-seleccionadas`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids })
+        });
+        if (response.ok) {
+            alert('Notificaciones marcadas como leídas');
+            loadNotificacionesTabla();
+            loadNotificaciones();
+        } else {
+            alert('Error al marcar');
+        }
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
+async function eliminarSeleccionadasNotificaciones() {
+    const ids = getNotificacionesSeleccionadas();
+    if (ids.length === 0) { alert('Selecciona al menos una notificación'); return; }
+    if (!(await confirmAsync(`¿Eliminar ${ids.length} notificación(es)? Esta acción no se puede deshacer.`))) return;
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/notificaciones`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids })
+        });
+        if (response.ok) {
+            alert('Notificaciones eliminadas');
+            loadNotificacionesTabla();
+            loadNotificaciones();
+        } else {
+            alert('Error al eliminar');
+        }
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
+function openCrearAvisoModal() {
+    document.getElementById('aviso-titulo').value = '';
+    document.getElementById('aviso-mensaje').value = '';
+    document.getElementById('aviso-tipo').value = 'sistema';
+    document.getElementById('aviso-modal').classList.add('active');
+}
+
+function closeCrearAvisoModal() {
+    document.getElementById('aviso-modal').classList.remove('active');
+}
+
+async function crearAvisoManual(event) {
+    event.preventDefault();
+    const payload = {
+        tipo: document.getElementById('aviso-tipo').value,
+        titulo: document.getElementById('aviso-titulo').value,
+        mensaje: document.getElementById('aviso-mensaje').value,
+        cedula: currentUser?.cedula
+    };
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/notificaciones`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert('Aviso creado exitosamente');
+            closeCrearAvisoModal();
+            loadNotificacionesTabla();
+            loadNotificaciones();
+        } else {
+            alert(data.message || 'Error al crear aviso');
+        }
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
+
 setInterval(() => {
-    if (currentUser) loadNotificaciones();
+    if (currentUser) { loadNotificaciones(); updateNotifDashCount(); }
 }, 60000);
 
 // OJO (sesión 12): la llamada a iniciarPollingChatSoporte() está al FINAL del
@@ -5013,7 +5281,7 @@ async function enviarMensajeSoporte() {
 }
 
 async function finalizarChatSoporte() {
-    if (!confirm('¿Finalizar esta conversación? El cliente podrá calificar la atención.')) return;
+    if (!(await confirmAsync('¿Finalizar esta conversación? El cliente podrá calificar la atención.'))) return;
     try {
         const response = await fetch(`${API_BASE_URL}/api/chat/${soporteChatActualId}/finalizar`, {
             method: 'POST',
@@ -5075,7 +5343,7 @@ async function loadSoporteTickets() {
         body.innerHTML = '';
         tickets.forEach(t => {
             const tr = document.createElement('tr');
-            const badge = t.estado === 'abierto' ? '<span class="badge warn">Abierto</span>'
+            const badge = t.estado === 'abierto' ? '<span class="badge warning">Abierto</span>'
                 : t.estado === 'en_proceso' ? '<span class="badge proceso">En proceso</span>'
                 : t.estado === 'resuelto' ? '<span class="badge resuelto">Resuelto</span>'
                 : '<span class="badge cerrado">Cerrado</span>';
@@ -5110,7 +5378,7 @@ async function loadSoporteTickets() {
 async function abrirResponderTicket(id) {
     const ticket = (await fetch(`${API_BASE_URL}/api/tickets?cedula=${encodeURIComponent(currentUser.cedula)}`).then(r => r.json())).tickets.find(t => t.id === id);
     if (!ticket) return;
-    const respuesta = prompt(`Responder al ticket #${id} de ${ticket.nombre_cliente || ''} (${ticket.asunto || ''}):\n\nDescripción: ${ticket.descripcion || ''}`, ticket.respuesta || '');
+    const respuesta = await promptAsync(`Responder al ticket #${id} de ${ticket.nombre_cliente || ''} (${ticket.asunto || ''})`, `Descripción: ${ticket.descripcion || ''}`, ticket.respuesta || '');
     if (respuesta === null) return;
     const texto = respuesta.trim();
     if (texto.length < 3) { alert('Escribe una respuesta'); return; }

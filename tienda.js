@@ -51,6 +51,37 @@ function alertTienda(message) {
     showToast(message, 'info');
 }
 
+window.alert = function (message) { showToast(String(message || ''), 'info'); };
+window.confirm = function (message) { return confirmTiendaAsync(String(message || '')); };
+
+// Confirm SITCAV tienda (sin "github.io dice"): modal propio
+function confirmTiendaAsync(message) {
+    return new Promise((resolve) => {
+        let root = document.getElementById('confirm-tienda-root');
+        if (!root) {
+            root = document.createElement('div');
+            root.id = 'confirm-tienda-root';
+            document.body.appendChild(root);
+        }
+        root.innerHTML = `
+            <div class="modal open" id="confirm-tienda-overlay">
+                <div class="modal-box" style="max-width: 420px; text-align: center;">
+                    <div style="font-size: 2em; margin-bottom: 12px; color: var(--primary);"><i class="fas fa-question-circle"></i></div>
+                    <div style="margin-bottom: 20px; font-size: 0.95em;">${String(message || '')}</div>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button type="button" class="btn btn-outline" id="confirm-tienda-no">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="confirm-tienda-yes">Sí, continuar</button>
+                    </div>
+                </div>
+            </div>`;
+        const overlay = document.getElementById('confirm-tienda-overlay');
+        const close = (result) => { root.innerHTML = ''; resolve(result); };
+        document.getElementById('confirm-tienda-yes').onclick = () => close(true);
+        document.getElementById('confirm-tienda-no').onclick = () => close(false);
+        overlay.onclick = (e) => { if (e.target === overlay) close(false); };
+    });
+}
+
 // =====================================================
 // SESIÓN
 // =====================================================
@@ -82,7 +113,6 @@ function renderAuth() {
 function logoutTienda() {
     tiendaUser = null;
     localStorage.removeItem(TIENDA_USER_KEY);
-    localStorage.removeItem(TIENDA_TOKEN_KEY);
     renderAuth();
     showToast('Sesión cerrada', 'info');
 }
@@ -305,7 +335,6 @@ async function tiendaLogin() {
         if (response.ok && data.rol === 'Cliente online') {
             tiendaUser = data;
             localStorage.setItem(TIENDA_USER_KEY, JSON.stringify(tiendaUser));
-            if (data.token) localStorage.setItem(TIENDA_TOKEN_KEY, data.token);
             renderAuth();
             closeModal('auth-modal');
             showToast(`Bienvenido(a), ${data.nombre}!`, 'success');
@@ -772,7 +801,6 @@ function renderChat() {
         div.innerHTML = `${m.contenido}<span class="hora">${m.fecha ? m.fecha.slice(11, 16) : ''}${m.emisor === 'agente' ? ' · ' + (c.nombre_agente || 'Agente') : ''}</span>`;
         body.appendChild(div);
     });
-    body.scrollTop = body.scrollHeight;
     if (c.estado === 'solicitada') {
         body.innerHTML += '<div class="chat-center"><div class="pill"><i class="fas fa-spinner fa-spin"></i> Esperando que un miembro del personal acepte tu solicitud...</div></div>';
         actions.innerHTML = '';
@@ -836,7 +864,7 @@ async function enviarMensajeChat() {
 }
 
 async function finalizarChat() {
-    if (!confirm('¿Finalizar esta conversación?')) return;
+    if (!(await confirmTiendaAsync('¿Finalizar esta conversación?'))) return;
     try {
         const res = await fetch(`${API_BASE_URL}/api/chat/${miConversacion.id}/finalizar`, {
             method: 'POST',
@@ -968,6 +996,7 @@ async function crearTicket() {
     } catch (e) { errorEl.textContent = 'Error de conexión'; errorEl.classList.add('show'); }
 }
 
+// =====================================================
 // SESIÓN 21: RECUPERACIÓN DE CONTRASEÑA EN TIENDA (cliente)
 // =====================================================
 let tiendaRecoveryUserId = null;
