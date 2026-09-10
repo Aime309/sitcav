@@ -111,8 +111,14 @@ function renderAuth() {
 }
 
 function logoutTienda() {
+    // ONLINE: invalidar la sesión en el servidor (fire-and-forget con el Bearer vigente)
+    try {
+        const token = localStorage.getItem(TIENDA_TOKEN_KEY);
+        if (token) fetch(`${API_BASE_URL}/logout`, { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } }).catch(() => {});
+    } catch (e) {}
     tiendaUser = null;
     localStorage.removeItem(TIENDA_USER_KEY);
+    try { localStorage.removeItem(TIENDA_TOKEN_KEY); } catch (e) {}
     renderAuth();
     showToast('Sesión cerrada', 'info');
 }
@@ -335,6 +341,8 @@ async function tiendaLogin() {
         if (response.ok && data.rol === 'Cliente online') {
             tiendaUser = data;
             localStorage.setItem(TIENDA_USER_KEY, JSON.stringify(tiendaUser));
+            // ONLINE (regla 73/89): persistir el token Bearer — sin él todo 401ea en silencio
+            try { if (data.token) localStorage.setItem(TIENDA_TOKEN_KEY, data.token); } catch (e) {}
             renderAuth();
             closeModal('auth-modal');
             showToast(`Bienvenido(a), ${data.nombre}!`, 'success');

@@ -364,6 +364,8 @@ async function handleLogin(event) {
             };
             console.log('currentUser set to:', JSON.stringify(currentUser));
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            // ONLINE (regla 73/89): persistir el token Bearer — sin él todo 401ea en silencio
+            try { if (data.token) localStorage.setItem(SESSION_TOKEN_KEY, data.token); } catch (e) {}
             loadDashboard();
         } else {
             errorDiv.textContent = data.message;
@@ -484,6 +486,11 @@ function loginAsAnonymous() {
 }
 
 function handleLogout() {
+    // ONLINE: invalidar la sesión en el servidor (fire-and-forget con el Bearer vigente)
+    try {
+        const token = localStorage.getItem(SESSION_TOKEN_KEY);
+        if (token) fetch(`${API_BASE_URL}/logout`, { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } }).catch(() => {});
+    } catch (e) {}
     currentUser = null;
     localStorage.removeItem('currentUser');
     try { localStorage.removeItem(SESSION_TOKEN_KEY); } catch (e) {}
@@ -4057,6 +4064,10 @@ async function saveNewPassword(event) {
             alert('La contraseña actual es incorrecta');
             return;
         }
+
+        // ONLINE (regla 73/89): crear_sesion invalida la sesión anterior en cada /login —
+        // renovar el token guardado o la siguiente llamada 401ea y expulsa al usuario
+        try { if (verifyResult.token) localStorage.setItem(SESSION_TOKEN_KEY, verifyResult.token); } catch (e) {}
 
         console.log('Password verified! Updating password...');
 
